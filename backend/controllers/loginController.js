@@ -86,6 +86,9 @@ const sendLoginOtp = async (req, res) => {
         });
       } catch (mailErr) {
         console.error("Failed to send login OTP email:", mailErr.message);
+        return res.status(502).json({
+          message: "Failed to send OTP email. Please try again later.",
+        });
       }
     }
 
@@ -192,6 +195,9 @@ const resendLoginOtp = async (req, res) => {
         });
       } catch (mailErr) {
         console.error("Failed to resend login OTP email:", mailErr.message);
+        return res.status(502).json({
+          message: "Failed to resend OTP email. Please try again later.",
+        });
       }
     }
 
