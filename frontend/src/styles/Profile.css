@@ -1,0 +1,1746 @@
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #111;
+}
+
+.profile-page,
+.profile-page * {
+  box-sizing: border-box;
+}
+
+.profile-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #f2f2f2;
+  color: #111;
+}
+
+/* HEADER */
+
+.profile-header {
+  width: 100%;
+  height: 85px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 72px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  flex-shrink: 0;
+}
+
+/* LOGO */
+
+.decathlon-logo {
+  display: flex;
+  align-items: center;
+  color: #3945bd;
+  user-select: none;
+}
+
+.decathlon-logo-mark {
+  width: 31px;
+  height: 31px;
+  border: 4px solid #3945bd;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  margin-right: 7px;
+  flex-shrink: 0;
+}
+
+.decathlon-logo-mark span {
+  position: absolute;
+  width: 23px;
+  height: 6px;
+  background: #3945bd;
+  border-radius: 10px;
+  left: 2px;
+  top: 10px;
+  transform: rotate(-35deg);
+}
+
+.decathlon-logo-text {
+  font-size: 27px;
+  line-height: 31px;
+  font-weight: 700;
+  letter-spacing: -1.3px;
+}
+
+/* MAIN LAYOUT */
+
+.profile-layout {
+  width: 100%;
+  min-height: calc(100vh - 85px);
+  display: flex;
+  align-items: flex-start;
+}
+
+/* SIDEBAR */
+
+.profile-sidebar {
+  width: 374px;
+  min-width: 374px;
+  height: calc(100vh - 85px);
+  background: #fff;
+  position: sticky;
+  top: 85px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* USER BOX */
+
+.profile-user-box {
+  width: 100%;
+  height: 148px;
+  min-height: 148px;
+  background: #3945bd;
+  color: #fff;
+  padding: 18px 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.profile-user-box h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.profile-email {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+.profile-points {
+  margin-top: 7px;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  font-size: 18px;
+}
+
+.profile-points strong {
+  margin: 0;
+  font-size: 24px;
+  line-height: 27px;
+}
+
+.profile-points span {
+  font-size: 18px;
+}
+
+.redeem-btn {
+  height: 35px;
+  margin-top: 7px;
+  margin-left: 0;
+  padding: 0 17px;
+  border: 1px solid #fff;
+  border-radius: 20px;
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.redeem-btn:hover {
+  background: #fff;
+  color: #3945bd;
+}
+
+/* SIDEBAR MENU */
+
+.profile-menu {
+  width: 100%;
+  height: calc(100% - 148px);
+  padding: 40px 20px 30px;
+  background: #fff;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #999 #eee;
+}
+
+.profile-menu::-webkit-scrollbar {
+  width: 6px;
+}
+
+.profile-menu::-webkit-scrollbar-track {
+  background: #eee;
+}
+
+.profile-menu::-webkit-scrollbar-thumb {
+  background: #999;
+  border-radius: 10px;
+}
+
+.profile-menu::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* MENU SECTIONS */
+
+.menu-section {
+  width: 100%;
+  margin-bottom: 42px;
+}
+
+.menu-section h3 {
+  margin: 0 0 11px;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+/* MENU ITEM */
+
+.menu-item {
+  width: 100%;
+  min-height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.menu-item:hover {
+  color: #3945bd;
+}
+
+.menu-item span {
+  display: block;
+}
+
+.menu-item svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* EXTERNAL LINK */
+
+.menu-link-external {
+  width: 100%;
+  min-height: 27px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333;
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.menu-link-external:hover {
+  color: #3945bd;
+}
+
+.menu-link-external svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* MENU LINKS */
+
+.menu-link {
+  width: 100%;
+  min-height: 27px;
+  display: flex;
+  align-items: center;
+  color: #444;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.menu-link:hover {
+  color: #3945bd;
+}
+
+.active-menu {
+  color: #3945bd !important;
+  font-weight: 500 !important;
+}
+
+/* PLUS */
+
+.menu-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-with-icon svg {
+  width: 17px;
+  height: 17px;
+  margin-left: auto;
+}
+
+/* PROFILE MENU */
+
+.profile-menu-section {
+  margin-bottom: 42px;
+}
+
+/* LOGOUT */
+
+.logout {
+  width: 100%;
+  margin-top: 5px;
+  color: #333;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.logout:hover {
+  color: #3945bd;
+}
+
+/* CARD NUMBER */
+
+.card-number {
+  margin-top: 52px;
+  padding-bottom: 20px;
+  color: #555;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* CONTENT */
+
+.profile-content {
+  flex: 1;
+  min-width: 0;
+  padding: 43px 58px 40px;
+  background: #f2f2f2;
+}
+
+/* TOP */
+
+.profile-top {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin-bottom: 25px;
+}
+
+/* WELCOME */
+
+.welcome-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding-top: 10px;
+}
+
+.welcome-icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border: 2px solid #3945bd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-icon svg {
+  width: 34px;
+  height: 34px;
+  stroke-width: 1.6;
+}
+
+.welcome-text {
+  min-width: 0;
+}
+
+.welcome-text h1 {
+  margin: 0 0 3px;
+  font-size: 26px;
+  line-height: 31px;
+  font-weight: 700;
+}
+
+.welcome-text p {
+  max-width: 445px;
+  margin: 0;
+  color: #111;
+  font-size: 15px;
+  line-height: 21px;
+}
+
+/* LOYALTY */
+
+.loyalty-card {
+  width: 353px;
+  min-width: 353px;
+  min-height: 178px;
+  background: #fff;
+  padding: 17px 28px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.12);
+}
+
+.loyalty-new {
+  width: fit-content;
+  display: inline-block;
+  padding: 6px 9px;
+  margin: 0 0 4px;
+  background: #3945bd;
+  color: #fff;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.loyalty-card h2 {
+  margin: 0 0 7px;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.loyalty-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.loyalty-button {
+  width: 100%;
+  height: 33px;
+  margin-top: 16px;
+  padding: 0 12px;
+  border: none;
+  background: #3945bd;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.loyalty-button:hover {
+  background: #303aa5;
+}
+
+.loyalty-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* SPORTS BANNER */
+
+.sports-banner {
+  width: 100%;
+  min-height: 240px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 18px 48px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+}
+
+/* SPORTS IMAGE */
+
+.sports-illustration {
+  width: 185px;
+  height: 215px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.sports-svg {
+  width: 175px;
+  height: 205px;
+  display: block;
+  object-fit: contain;
+}
+
+/* SPORTS CONTENT */
+
+.sports-content {
+  flex: 1;
+  min-width: 0;
+  padding-left: 25px;
+}
+
+.sports-content h2 {
+  margin: 0 0 10px;
+  font-size: 19px;
+  line-height: 25px;
+  font-weight: 700;
+}
+
+.sports-content p {
+  max-width: 720px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 22px;
+}
+
+.synchronize-btn {
+  height: 48px;
+  margin-top: 25px;
+  margin-left: 0;
+  padding: 0 24px;
+  border: 0;
+  background: #3945bd;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synchronize-btn:hover {
+  background: #303aa5;
+}
+
+/* SHORTCUTS */
+
+.shortcuts-section {
+  width: 100%;
+  margin-top: 25px;
+}
+
+.shortcuts-title {
+  margin: 0 0 12px;
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+.shortcut-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+/* SHORTCUT CARD */
+
+.shortcut-card {
+  min-height: 130px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 20px 28px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.09);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.shortcut-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.13);
+}
+
+.shortcut-card-full {
+  grid-column: 1 / -1;
+}
+
+/* SHORTCUT ICON */
+
+.shortcut-icon {
+  width: 86px;
+  min-width: 86px;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3945bd;
+  font-size: 45px;
+  flex-shrink: 0;
+}
+
+.shortcut-icon svg {
+  width: 50px;
+  height: 50px;
+  stroke-width: 1.3;
+}
+
+/* SHORTCUT CONTENT */
+
+.shortcut-content {
+  padding-left: 15px;
+  margin-left: 0;
+  min-width: 0;
+}
+
+.shortcut-content h3 {
+  margin: 0 0 9px;
+  font-size: 20px;
+  line-height: 25px;
+  font-weight: 700;
+}
+
+.shortcut-content p {
+  max-width: 420px;
+  margin: 0;
+  color: #444;
+  font-size: 15px;
+  line-height: 21px;
+}
+
+/* FOOTER */
+
+.profile-footer {
+  padding: 46px 10px 10px;
+  text-align: center;
+  color: #444;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.profile-footer p {
+  margin: 0 0 8px;
+}
+
+.profile-footer span {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* 1200 */
+
+@media (max-width: 1200px) {
+  .profile-sidebar {
+    width: 300px;
+    min-width: 300px;
+  }
+
+  .profile-content {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+
+  .profile-top {
+    gap: 25px;
+  }
+
+  .loyalty-card {
+    width: 320px;
+    min-width: 320px;
+  }
+
+  .sports-banner {
+    padding-left: 35px;
+    padding-right: 35px;
+  }
+}
+
+/* 950 */
+
+@media (max-width: 950px) {
+  .profile-header {
+    height: 80px;
+    padding: 0 35px;
+  }
+
+  .profile-sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: calc(100vh - 80px);
+    top: 80px;
+  }
+
+  .profile-content {
+    padding: 30px 25px;
+  }
+
+  .profile-top {
+    flex-direction: column;
+  }
+
+  .welcome-area {
+    width: 100%;
+  }
+
+  .loyalty-card {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .sports-banner {
+    padding: 25px;
+  }
+
+  .sports-illustration {
+    width: 160px;
+  }
+
+  .sports-svg {
+    width: 150px;
+    height: 190px;
+  }
+}
+
+/* 750 */
+
+@media (max-width: 750px) {
+  .profile-header {
+    height: 75px;
+    padding: 0 20px;
+  }
+
+  .decathlon-logo-text {
+    font-size: 22px;
+  }
+
+  .decathlon-logo-mark {
+    width: 26px;
+    height: 26px;
+    border-width: 3px;
+  }
+
+  .decathlon-logo-mark span {
+    width: 19px;
+    height: 5px;
+    left: 1px;
+    top: 8px;
+  }
+
+  .profile-layout {
+    display: block;
+  }
+
+  .profile-sidebar {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    min-height: auto;
+    position: relative;
+    top: auto;
+    overflow: visible;
+  }
+
+  .profile-user-box {
+    height: 148px;
+    min-height: 148px;
+    position: static;
+  }
+
+  .profile-menu {
+    display: none;
+  }
+
+  .profile-content {
+    width: 100%;
+    padding: 25px 15px;
+  }
+
+  .welcome-area {
+    align-items: flex-start;
+  }
+
+  .welcome-icon {
+    width: 55px;
+    height: 55px;
+  }
+
+  .welcome-text h1 {
+    font-size: 23px;
+  }
+
+  .welcome-text p {
+    font-size: 14px;
+  }
+
+  .sports-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 25px 20px;
+  }
+
+  .sports-illustration {
+    width: 185px;
+    height: 190px;
+    margin-bottom: 10px;
+  }
+
+  .sports-svg {
+    width: 165px;
+    height: 180px;
+  }
+
+  .sports-content {
+    padding-left: 0;
+  }
+
+  .sports-content h2 {
+    font-size: 18px;
+  }
+
+  .sports-content p {
+    font-size: 14px;
+  }
+
+  .shortcut-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .shortcut-card-full {
+    grid-column: auto;
+  }
+
+  .shortcut-card {
+    min-height: 120px;
+  }
+
+  .shortcut-content h3 {
+    font-size: 18px;
+  }
+
+  .shortcut-content p {
+    font-size: 14px;
+  }
+
+  .profile-footer {
+    padding-top: 30px;
+  }
+
+  .footer-links {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+/* 480 */
+
+@media (max-width: 480px) {
+  .profile-user-box {
+    padding: 18px 15px;
+  }
+
+  .profile-content {
+    padding: 20px 12px;
+  }
+
+  .welcome-area {
+    gap: 10px;
+  }
+
+  .welcome-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .welcome-icon svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  .welcome-text h1 {
+    font-size: 21px;
+  }
+
+  .welcome-text p {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .loyalty-card {
+    padding: 15px 18px;
+  }
+
+  .sports-banner {
+    padding: 20px 15px;
+  }
+
+  .sports-illustration {
+    width: 160px;
+    height: 170px;
+  }
+
+  .sports-svg {
+    width: 145px;
+    height: 160px;
+  }
+
+  .shortcut-card {
+    padding: 15px;
+  }
+
+  .shortcut-icon {
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+  }
+
+  .shortcut-icon svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  .shortcut-content {
+    padding-left: 8px;
+  }
+
+  .shortcut-content h3 {
+    font-size: 16px;
+    line-height: 21px;
+  }
+
+  .shortcut-content p {
+    font-size: 13px;
+    line-height: 18px;
+  }
+}
+
+/* ==========================================================
+   PERSONAL INFORMATION STYLES (MATCHING DECATHLON OFFICIAL)
+========================================================== */
+
+.personal-info-container {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 10px 0 40px;
+}
+
+.back-to-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #3945bd;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 0;
+  margin-bottom: 22px;
+  transition: color 0.15s, transform 0.15s;
+}
+
+.back-to-profile-btn:hover {
+  color: #242c82;
+  transform: translateX(-2px);
+}
+
+.back-to-profile-btn svg {
+  font-size: 18px;
+}
+
+.personal-info-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 28px 0;
+  letter-spacing: -0.6px;
+}
+
+.personal-info-section-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 16px 0;
+}
+
+.personal-info-card {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e2e4e8;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.personal-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 26px;
+  border-bottom: 1px solid #f0f1f3;
+  transition: background 0.15s;
+}
+
+.personal-info-row:last-child {
+  border-bottom: none;
+}
+
+.personal-info-row:hover {
+  background: #fafbfc;
+}
+
+.personal-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.personal-info-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.personal-info-value {
+  font-size: 14px;
+  color: #767676;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.personal-info-value.has-value {
+  color: #222;
+  font-weight: 500;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #e6f7ec;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+}
+
+.verified-badge svg {
+  font-size: 14px;
+}
+
+.btn-edit-field {
+  font-size: 14px;
+  font-weight: 700;
+  color: #3945bd;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 4px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-edit-field:hover {
+  background: #f0f2ff;
+  text-decoration: underline;
+}
+
+/* DECATHLON CARD SECTION */
+.decathlon-card-section {
+  margin-top: 36px;
+}
+
+.decathlon-card-desc {
+  font-size: 14px;
+  color: #4a4a4a;
+  line-height: 1.5;
+  margin: 6px 0 16px 0;
+  max-width: 680px;
+}
+
+.decathlon-card-box {
+  background: #fff;
+  border: 1px solid #e2e4e8;
+  border-radius: 8px;
+  padding: 22px 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.decathlon-card-box:hover {
+  border-color: #3945bd;
+  box-shadow: 0 3px 12px rgba(57, 69, 189, 0.08);
+  transform: translateY(-1px);
+}
+
+.decathlon-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.decathlon-card-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.decathlon-card-digits {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+  letter-spacing: 2px;
+}
+
+.decathlon-card-arrow {
+  font-size: 22px;
+  color: #3945bd;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.decathlon-card-box:hover .decathlon-card-arrow {
+  transform: translateX(3px);
+}
+
+/* EDIT MODAL */
+.pi-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+.pi-modal {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalSlideUp 0.25s ease-out;
+}
+
+.pi-modal-header {
+  padding: 18px 24px;
+  background: #fafafa;
+  border-bottom: 1px solid #eaeaea;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pi-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.pi-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #666;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.pi-modal-close:hover {
+  color: #000;
+  background: #eee;
+}
+
+.pi-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pi-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pi-field-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+.pi-input {
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #d0d2d6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111;
+  background: #fff;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.pi-input:focus {
+  border-color: #3945bd;
+  box-shadow: 0 0 0 3px rgba(57, 69, 189, 0.15);
+}
+
+.pi-radio-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.pi-radio-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  transition: all 0.15s;
+}
+
+.pi-radio-label:has(input:checked) {
+  border-color: #3945bd;
+  background: #f0f2ff;
+  color: #3945bd;
+}
+
+.pi-radio-label input {
+  accent-color: #3945bd;
+  cursor: pointer;
+}
+
+.pi-modal-footer {
+  padding: 16px 24px;
+  background: #fafafa;
+  border-top: 1px solid #eaeaea;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-pi-cancel {
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-pi-cancel:hover {
+  background: #f5f5f5;
+  color: #111;
+}
+
+.btn-pi-save {
+  height: 40px;
+  padding: 0 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  background: #3945bd;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pi-save:hover:not(:disabled) {
+  background: #283296;
+}
+
+.btn-pi-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.menu-link.active-link {
+  color: #3945bd !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================
+   DECATHLON DIGITAL MEMBERSHIP CARD VIEW
+========================================================== */
+
+.decathlon-card-view-container {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 10px 0 40px;
+}
+
+.decathlon-card-view-container .personal-info-title {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.decathlon-card-view-container .decathlon-card-desc {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 24px auto;
+  font-size: 14px;
+  line-height: 22px;
+  color: #4a4d52;
+}
+
+.decathlon-digital-card {
+  background: #f0f3fa;
+  border-radius: 12px;
+  padding: 44px 30px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 620px;
+  width: 100%;
+  margin: 24px auto 38px auto;
+  box-shadow: 0 4px 18px rgba(57, 69, 189, 0.07);
+  border: 1px solid #dbe3f3;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.decathlon-digital-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(57, 69, 189, 0.08);
+}
+
+.digital-card-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 26px;
+  user-select: none;
+}
+
+.digital-card-logo .decathlon-logo-text {
+  font-size: 34px;
+  line-height: 36px;
+  font-weight: 900;
+  font-style: italic;
+  color: #3945bd;
+  letter-spacing: -1.4px;
+}
+
+.digital-card-logo .decathlon-logo-mark {
+  width: 38px;
+  height: 38px;
+  border: 4.5px solid #3945bd;
+  margin-right: 8px;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.digital-card-logo .decathlon-logo-mark span {
+  position: absolute;
+  width: 28px;
+  height: 7px;
+  background: #3945bd;
+  border-radius: 10px;
+  left: 3px;
+  top: 12px;
+  transform: rotate(-35deg);
+}
+
+.digital-card-barcode-box {
+  background: #fff;
+  border-radius: 6px;
+  padding: 26px 44px 22px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.barcode-svg {
+  width: 100%;
+  max-width: 340px;
+  height: 76px;
+}
+
+.barcode-number {
+  margin: 14px 0 0 0;
+  font-size: 21px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: 3px;
+  font-family: inherit;
+}
+
+/* CARD BENEFITS SECTION */
+.card-benefits-section {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 36px;
+  align-items: flex-start;
+  margin-top: 24px;
+}
+
+.benefits-left h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 12px 0;
+}
+
+.benefits-left p {
+  font-size: 14px;
+  color: #4a4a4a;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.benefits-loyalty-box {
+  background: #fff;
+  border: 1px solid #e2e4e8;
+  border-radius: 8px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.loyalty-badge-new {
+  display: inline-block;
+  background: #3945bd;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.loyalty-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.loyalty-box-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111;
+  margin: 0;
+}
+
+.loyalty-box-icon {
+  font-size: 24px;
+  color: #3945bd;
+}
+
+.loyalty-box-desc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.45;
+  margin: 0 0 18px 0;
+}
+
+.btn-manage-loyalty {
+  width: 100%;
+  height: 42px;
+  background: #3945bd;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-manage-loyalty:hover {
+  background: #272f88;
+}
+
+@media (max-width: 768px) {
+  .card-benefits-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .personal-info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .btn-edit-field {
+    align-self: flex-start;
+    padding-left: 0;
+  }
+
+  .digital-card-barcode-box {
+    padding: 20px 24px 16px;
+  }
+
+  .barcode-number {
+    font-size: 16px;
+    letter-spacing: 1.8px;
+  }
+}
+
+/* ==========================================================
+   COMMUNICATION / NOTIFICATION PREFERENCES
+========================================================== */
+
+.communication-prefs-container {
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 10px 0 40px;
+}
+
+.communication-prefs-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 28px 0;
+  letter-spacing: -0.6px;
+}
+
+.communication-section-heading {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.3px;
+}
+
+.comm-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e4e8;
+  padding: 26px 30px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.comm-card-intro {
+  font-size: 14px;
+  color: #3b3e44;
+  line-height: 22px;
+  margin: 0 0 20px 0;
+}
+
+.comm-card-subheading {
+  font-size: 17px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.2px;
+}
+
+.comm-options-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.comm-option-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.comm-option-row:last-child {
+  border-bottom: none;
+  padding-bottom: 4px;
+}
+
+.comm-option-label {
+  font-size: 14.5px;
+  color: #1f2328;
+  line-height: 22px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.comm-channel-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+}
+
+/* TOGGLE SWITCH - EXACT DECATHLON STYLE */
+.decathlon-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  border-radius: 20px;
+  background-color: #7b8089;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: background-color 0.22s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.decathlon-switch:hover {
+  filter: brightness(0.95);
+}
+
+.decathlon-switch:focus-visible {
+  box-shadow: 0 0 0 3px rgba(57, 69, 189, 0.3);
+}
+
+.decathlon-switch.is-active {
+  background-color: #3945bd;
+}
+
+.decathlon-switch .switch-thumb {
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+.decathlon-switch.is-active .switch-thumb {
+  transform: translateX(22px);
+}
+
+.switch-check-icon {
+  font-size: 13px;
+  color: #3945bd;
+  stroke-width: 3.5px;
+}
+
+/* UNSUBSCRIBE ROW CARD */
+.comm-action-card {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e2e4e8;
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.comm-action-card:hover {
+  background: #fbfcfe;
+  border-color: #3945bd;
+  transform: translateY(-1px);
+}
+
+.comm-action-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.2px;
+}
+
+.comm-action-chevron {
+  font-size: 20px;
+  color: #444;
+}
+
+/* LANGUAGE SELECTOR */
+.comm-language-selector-wrap {
+  margin-top: 14px;
+}
+
+.comm-language-select {
+  width: 100%;
+  max-width: 340px;
+  height: 44px;
+  padding: 0 14px;
+  border: 1px solid #caced4;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+  background: #fff;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.comm-language-select:focus {
+  border-color: #3945bd;
+  box-shadow: 0 0 0 3px rgba(57, 69, 189, 0.15);
+}

@@ -1,0 +1,346 @@
+/* ========================================
+   HOME PAGE
+======================================== */
+
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #ffffff;
+}
+
+.home-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+/* ========================================
+   HOME SKELETON / LOADING
+======================================== */
+.home-skeleton-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.home-skeleton-banner {
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: homeShimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.home-skeleton-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.home-skeleton-card {
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: homeShimmer 1.5s infinite;
+  border-radius: 7px;
+}
+
+@keyframes homeShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================================
+   CUSTOM OTHER SECTION
+======================================== */
+
+.custom-other-section {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* ========================================
+   TITLE
+======================================== */
+
+.custom-other-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.custom-other-title {
+  margin: 0;
+
+  font-size: 22px;
+  line-height: 28px;
+
+  font-weight: 700;
+
+  color: #111111;
+
+  letter-spacing: 0;
+}
+
+/* ========================================
+   GRID
+======================================== */
+
+.custom-other-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(8, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+/* ========================================
+   CARD
+======================================== */
+
+.custom-other-card {
+  position: relative;
+
+  width: 100%;
+  height: 145px;
+
+  overflow: hidden;
+
+  border-radius: 7px;
+
+  background: #eeeeee;
+
+  border: none;
+
+  box-shadow: none;
+
+  cursor: default;
+
+  transition:
+    transform 0.2s ease;
+}
+
+.custom-other-card.clickable {
+  cursor: pointer;
+}
+
+.custom-other-card.clickable:hover {
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   IMAGE WRAPPER
+======================================== */
+
+.custom-other-image-wrapper {
+  position: relative;
+
+  width: 100%;
+  height: 100%;
+
+  overflow: hidden;
+
+  background: #eeeeee;
+}
+
+/* ========================================
+   IMAGE
+======================================== */
+
+.custom-other-img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  object-position: center;
+
+  transition:
+    transform 0.3s ease;
+}
+
+.custom-other-card.clickable:hover
+.custom-other-img {
+  transform: scale(1.04);
+}
+
+/* ========================================
+   NO IMAGE
+======================================== */
+
+.custom-other-no-img {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #eeeeee;
+
+  color: #777777;
+
+  font-size: 13px;
+}
+
+/* ========================================
+   ITEM INFO
+======================================== */
+
+.custom-other-info {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: 7px;
+
+  z-index: 5;
+
+  display: flex;
+
+  justify-content: center;
+
+  padding: 0 4px;
+
+  pointer-events: none;
+}
+
+/* ========================================
+   ITEM TITLE
+======================================== */
+
+.custom-other-item-title {
+  display: inline-block;
+
+  max-width: 96%;
+
+  margin: 0;
+
+  padding: 2px 6px;
+
+  background: rgba(0, 0, 0, 0.86);
+
+  color: #ffffff;
+
+  border-radius: 2px;
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  line-height: 14px;
+
+  text-align: center;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1200px) {
+  .custom-other-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 900px) {
+  .home-container {
+    padding: 0 20px 32px;
+  }
+
+  .custom-other-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .custom-other-card {
+    height: 140px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 640px) {
+  .home-container {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 20px 24px;
+    gap: 16px;
+  }
+
+  .custom-other-header {
+    margin-bottom: 10px;
+  }
+
+  .custom-other-title {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .custom-other-grid {
+
+    display: flex;
+
+    gap: 10px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scrollbar-width: none;
+
+    -ms-overflow-style: none;
+  }
+
+  .custom-other-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .custom-other-card {
+
+    flex: 0 0 145px;
+
+    width: 145px;
+
+    height: 135px;
+  }
+
+  .custom-other-item-title {
+    font-size: 11px;
+  }
+
+}

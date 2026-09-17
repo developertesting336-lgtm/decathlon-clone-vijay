@@ -1,0 +1,1160 @@
+/* =========================================================
+   WORKOUT ESSENTIALS PAGE - DEDICATED DYNAMIC CSS
+   Matches the Decathlon Workout Essentials reference design
+   Features chamfered / octagon category cards & clean margins
+========================================================= */
+
+/* PAGE BASE */
+.dynamic-page-workout-essentials,
+.workout-essentials-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff !important;
+  color: #111111;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CONTAINER - 48px side padding matching global Decathlon standard */
+.dynamic-page-container-workout-essentials,
+.workout-essentials-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 32px;
+  box-sizing: border-box;
+}
+
+/* LOADING SKELETON */
+.dynamic-page-workout-essentials .dynamic-page-loading,
+.workout-essentials-page .dynamic-page-loading {
+  padding: 60px 48px;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.dynamic-page-workout-essentials .dynamic-skeleton-banner,
+.workout-essentials-page .dynamic-skeleton-banner {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: dynamicShimmerWorkout 1.5s infinite;
+}
+
+.dynamic-page-workout-essentials .dynamic-skeleton-row,
+.workout-essentials-page .dynamic-skeleton-row {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%);
+  background-size: 200% 100%;
+  animation: dynamicShimmerWorkout 1.5s infinite;
+}
+
+@keyframes dynamicShimmerWorkout {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 404 NOT FOUND */
+.dynamic-page-workout-essentials .dynamic-page-not-found,
+.workout-essentials-page .dynamic-page-not-found {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+}
+
+.dynamic-page-workout-essentials .dynamic-page-not-found h1,
+.workout-essentials-page .dynamic-page-not-found h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 12px;
+}
+
+.dynamic-page-workout-essentials .dynamic-page-not-found p,
+.workout-essentials-page .dynamic-page-not-found p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0 0 24px;
+}
+
+.dynamic-page-workout-essentials .dynamic-home-btn,
+.workout-essentials-page .dynamic-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #111111;
+  color: #ffffff;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.dynamic-page-workout-essentials .dynamic-home-btn:hover,
+.workout-essentials-page .dynamic-home-btn:hover {
+  background: #333333;
+}
+
+/* =========================================================
+   CATEGORY SECTION (OCTAGON / CHAMFERED SHAPE LIKE IMAGE)
+========================================================= */
+
+.dynamic-page-workout-essentials .dynamic-category-section,
+.workout-essentials-category-section {
+  width: 100% !important;
+  margin: 10px 0 18px !important;
+  padding: 4px 0 6px !important;
+  box-sizing: border-box !important;
+}
+
+/* Hide section title to match screenshot */
+.dynamic-page-workout-essentials .dynamic-category-title,
+.workout-essentials-category-section .dynamic-category-title {
+  display: none !important;
+}
+
+/* Category horizontal row spanning across full width */
+.dynamic-page-workout-essentials .dynamic-category-scroll,
+.workout-essentials-category-section .dynamic-category-scroll {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding: 4px 0 8px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-category-scroll::-webkit-scrollbar,
+.workout-essentials-category-section .dynamic-category-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Individual Category Item */
+.dynamic-page-workout-essentials .dynamic-category-item,
+.workout-essentials-category-section .dynamic-category-item {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: 116px !important;
+  max-width: 116px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-category-item:hover,
+.workout-essentials-category-section .dynamic-category-item:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* OCTAGON / CHAMFERED BOX (ZOOMED & PROMINENT) */
+.dynamic-page-workout-essentials .dynamic-category-circle,
+.workout-essentials-category-section .dynamic-category-circle {
+  width: 112px !important;
+  height: 122px !important;
+  border-radius: 0 !important;
+  background: #cbd0d6 !important;
+  clip-path: polygon(
+    18px 0%,
+    calc(100% - 18px) 0%,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0% calc(100% - 18px),
+    0% 18px
+  ) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 auto 8px auto !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease !important;
+  box-shadow: none !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-category-item:hover .dynamic-category-circle,
+.workout-essentials-category-section .dynamic-category-item:hover .dynamic-category-circle {
+  background: #bec4cc !important;
+  transform: scale(1.05) !important;
+}
+
+/* Image inside Octagon - with zoom and hover magnification */
+.dynamic-page-workout-essentials .dynamic-category-circle img,
+.workout-essentials-category-section .dynamic-category-circle img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  transform: scale(1.08) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-category-item:hover .dynamic-category-circle img,
+.workout-essentials-category-section .dynamic-category-item:hover .dynamic-category-circle img {
+  transform: scale(1.18) !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-category-placeholder,
+.workout-essentials-category-section .dynamic-category-placeholder {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #4b5563 !important;
+  text-align: center !important;
+  padding: 8px !important;
+}
+
+/* Category Label */
+.dynamic-page-workout-essentials .dynamic-category-name,
+.workout-essentials-category-section .dynamic-category-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: #111111 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 108px !important;
+  word-wrap: break-word !important;
+  letter-spacing: -0.1px !important;
+}
+
+/* =========================================================
+   SECTION 3: FITNESS WEAR CATEGORIES (PILL / CAPSULE SHAPE)
+   Matches Decathlon Fitness reference image:
+   Vertical rounded pill capsules with centered models
+========================================================= */
+
+.dynamic-page-workout-essentials .workout-essentials-category-section-3,
+.dynamic-page-workout-essentials .workout-essentials-section-3,
+.dynamic-page-workout-essentials .section-fitness-cat,
+.dynamic-page-workout-essentials .section-index-3,
+.dynamic-page-workout-essentials main > section:nth-of-type(3),
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) {
+  width: 100% !important;
+  margin: 28px 0 28px 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Hide Section 3 title to match reference image */
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-title,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-title,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-title,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-title,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-title,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-title {
+  display: none !important;
+}
+
+/* Horizontal row across the container */
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-scroll,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-scroll,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-scroll,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-scroll,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-scroll,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-scroll {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  padding: 4px 0 8px 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Individual Item */
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-item,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-item,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-item,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-item,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-item,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-item {
+  width: 114px !important;
+  max-width: 114px !important;
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-item:hover,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-item:hover,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-item:hover,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-item:hover,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-item:hover,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-item:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* VERTICAL PILL / CAPSULE (REMOVES OCTAGON CLIP-PATH, FULLY ROUNDED ENDS) */
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-circle,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-circle,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-circle,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-circle,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-circle,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-circle {
+  width: 114px !important;
+  height: 144px !important;
+  border-radius: 9999px !important;
+  clip-path: none !important;
+  background: #d8dde3 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 auto 8px auto !important;
+  box-shadow: none !important;
+  border: none !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease !important;
+}
+
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-item:hover .dynamic-category-circle,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-item:hover .dynamic-category-circle,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-item:hover .dynamic-category-circle,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-item:hover .dynamic-category-circle,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-item:hover .dynamic-category-circle,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-item:hover .dynamic-category-circle {
+  background: #ccd2da !important;
+  transform: scale(1.04) !important;
+}
+
+/* IMAGE INSIDE PILL CAPSULE */
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-circle img,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-circle img,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-circle img,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-circle img,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-circle img,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-circle img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  display: block !important;
+  border-radius: 0 !important;
+  transform: scale(1.02) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-item:hover .dynamic-category-circle img,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-item:hover .dynamic-category-circle img,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-item:hover .dynamic-category-circle img,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-item:hover .dynamic-category-circle img,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-item:hover .dynamic-category-circle img,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-item:hover .dynamic-category-circle img {
+  transform: scale(1.1) !important;
+}
+
+/* LABEL BELOW PILL */
+.dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-name,
+.dynamic-page-workout-essentials .workout-essentials-section-3 .dynamic-category-name,
+.dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-name,
+.dynamic-page-workout-essentials .section-index-3 .dynamic-category-name,
+.dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-name,
+.dynamic-page-workout-essentials .dynamic-category-section:nth-of-type(2) .dynamic-category-name {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: #111111 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 112px !important;
+  word-wrap: break-word !important;
+  letter-spacing: -0.1px !important;
+}
+
+/* =========================================================
+   BANNER SECTION
+========================================================= */
+
+.dynamic-page-workout-essentials .dynamic-banner-section,
+.workout-essentials-banner-section {
+  width: 100% !important;
+  margin: 12px 0 28px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* =========================================================
+   PRODUCT CAROUSEL SECTION (ICONIC PRODUCTS)
+   Matches the Decathlon reference image:
+   - Full-width carousel with Top Header (Title on left, Arrows on right)
+   - 5 product cards visible across the desktop row
+   - Clean square image box with object-fit: contain
+   - Bold Brand + Name, 5 orange stars + review count, stacked MRP
+   - Heart wishlist button and black-outlined "Add to cart"
+========================================================= */
+
+.dynamic-page-workout-essentials .dynamic-product-section,
+.workout-essentials-product-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 0 !important;
+  margin: 36px 0 40px 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+/* Header: Title on Left, Arrows on Right */
+.dynamic-page-workout-essentials .dynamic-product-left,
+.workout-essentials-product-section .dynamic-product-left,
+.dynamic-page-workout-essentials .dynamic-product-header,
+.workout-essentials-product-section .dynamic-product-header,
+.dynamic-page-workout-essentials .activewear-product-left,
+.workout-essentials-product-section .activewear-product-left {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  flex: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 0 16px 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-title-group,
+.workout-essentials-product-section .dynamic-product-title-group,
+.dynamic-page-workout-essentials .activewear-product-title-group,
+.workout-essentials-product-section .activewear-product-title-group {
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-section-title,
+.dynamic-page-workout-essentials .dynamic-product-title-main,
+.workout-essentials-product-section .dynamic-product-section-title,
+.workout-essentials-product-section .dynamic-product-title-main {
+  font-family: inherit !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.2px !important;
+  text-transform: none !important;
+  margin: 0 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-title-sub,
+.workout-essentials-product-section .dynamic-product-title-sub,
+.dynamic-page-workout-essentials .dynamic-product-title-tail,
+.workout-essentials-product-section .dynamic-product-title-tail {
+  display: none !important;
+}
+
+/* Arrows in Header */
+.dynamic-page-workout-essentials .dynamic-arrow-group,
+.workout-essentials-product-section .dynamic-arrow-group,
+.dynamic-page-workout-essentials .activewear-arrow-group,
+.workout-essentials-product-section .activewear-arrow-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-arrow-btn,
+.workout-essentials-product-section .dynamic-arrow-btn,
+.dynamic-page-workout-essentials .activewear-arrow-btn,
+.workout-essentials-product-section .activewear-arrow-btn {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: 50% !important;
+  border: 1px solid #d1d5db !important;
+  background: #ffffff !important;
+  color: #374151 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 20px !important;
+  padding: 0 !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-arrow-btn:hover:not(:disabled),
+.workout-essentials-product-section .dynamic-arrow-btn:hover:not(:disabled),
+.dynamic-page-workout-essentials .activewear-arrow-btn:hover:not(:disabled),
+.workout-essentials-product-section .activewear-arrow-btn:hover:not(:disabled) {
+  background: #f9fafb !important;
+  border-color: #111111 !important;
+  color: #111111 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-arrow-btn:disabled,
+.workout-essentials-product-section .dynamic-arrow-btn:disabled,
+.dynamic-page-workout-essentials .activewear-arrow-btn:disabled,
+.workout-essentials-product-section .activewear-arrow-btn:disabled {
+  opacity: 0.3 !important;
+  border-color: #e5e7eb !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+}
+
+/* Slider Wrapper */
+.dynamic-page-workout-essentials .dynamic-product-slider-wrapper,
+.workout-essentials-product-section .dynamic-product-slider-wrapper,
+.dynamic-page-workout-essentials .activewear-product-slider-wrapper,
+.workout-essentials-product-section .activewear-product-slider-wrapper {
+  width: 100% !important;
+  flex: none !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-slider,
+.workout-essentials-product-section .dynamic-product-slider,
+.dynamic-page-workout-essentials .activewear-product-slider,
+.workout-essentials-product-section .activewear-product-slider {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding: 4px 0 12px 0 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-slider::-webkit-scrollbar,
+.workout-essentials-product-section .dynamic-product-slider::-webkit-scrollbar,
+.dynamic-page-workout-essentials .activewear-product-slider::-webkit-scrollbar,
+.workout-essentials-product-section .activewear-product-slider::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Product Card - 5 items per row on desktop */
+.dynamic-page-workout-essentials .dynamic-product-card,
+.workout-essentials-product-section .dynamic-product-card,
+.dynamic-page-workout-essentials .activewear-product-card,
+.workout-essentials-product-section .activewear-product-card {
+  flex: 0 0 calc((100% - 64px) / 5) !important;
+  width: calc((100% - 64px) / 5) !important;
+  min-width: 230px !important;
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+/* Square Image Box */
+.dynamic-page-workout-essentials .dynamic-product-image-box,
+.workout-essentials-product-section .dynamic-product-image-box,
+.dynamic-page-workout-essentials .activewear-product-image-box,
+.workout-essentials-product-section .activewear-product-image-box {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+  height: auto !important;
+  background: #f7f7f8 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-badge,
+.workout-essentials-product-section .dynamic-product-badge,
+.dynamic-product-badge.sale {
+  display: none !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-img-link,
+.workout-essentials-product-section .dynamic-product-img-link {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-img,
+.workout-essentials-product-section .dynamic-product-img,
+.dynamic-page-workout-essentials .activewear-product-img,
+.workout-essentials-product-section .activewear-product-img {
+  width: 82% !important;
+  height: 82% !important;
+  max-width: 82% !important;
+  max-height: 82% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-card:hover .dynamic-product-img,
+.workout-essentials-product-section .dynamic-product-card:hover .dynamic-product-img,
+.dynamic-page-workout-essentials .activewear-product-card:hover .activewear-product-img,
+.workout-essentials-product-section .activewear-product-card:hover .activewear-product-img {
+  transform: scale(1.04) !important;
+}
+
+/* Product Info */
+.dynamic-page-workout-essentials .dynamic-product-info,
+.workout-essentials-product-section .dynamic-product-info,
+.dynamic-page-workout-essentials .activewear-product-info,
+.workout-essentials-product-section .activewear-product-info {
+  padding: 10px 0 0 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-name,
+.workout-essentials-product-section .dynamic-product-name,
+.dynamic-page-workout-essentials .activewear-product-name,
+.workout-essentials-product-section .activewear-product-name {
+  font-size: 13.5px !important;
+  line-height: 1.35 !important;
+  color: #222222 !important;
+  text-decoration: none !important;
+  margin: 0 0 6px 0 !important;
+  min-height: 38px !important;
+  height: 38px !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  letter-spacing: -0.1px !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-product-name strong,
+.workout-essentials-product-section .dynamic-product-name strong {
+  font-weight: 700 !important;
+  color: #111111 !important;
+}
+
+/* Ratings */
+.dynamic-page-workout-essentials .dynamic-product-rating,
+.workout-essentials-product-section .dynamic-product-rating,
+.dynamic-page-workout-essentials .activewear-product-rating,
+.workout-essentials-product-section .activewear-product-rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 0 6px 0 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-rating-stars,
+.workout-essentials-product-section .dynamic-rating-stars,
+.dynamic-page-workout-essentials .activewear-rating-stars,
+.workout-essentials-product-section .activewear-rating-stars {
+  color: #ff8200 !important;
+  font-size: 13.5px !important;
+  letter-spacing: 0.5px !important;
+  line-height: 1 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-review-count,
+.workout-essentials-product-section .dynamic-review-count,
+.dynamic-page-workout-essentials .activewear-review-count,
+.workout-essentials-product-section .activewear-review-count {
+  font-size: 12.5px !important;
+  color: #4b5563 !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+
+/* Pricing: Stacked current price & MRP */
+.dynamic-page-workout-essentials .dynamic-product-pricing,
+.workout-essentials-product-section .dynamic-product-pricing,
+.dynamic-page-workout-essentials .activewear-product-pricing,
+.workout-essentials-product-section .activewear-product-pricing {
+  margin: 0 0 8px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1px !important;
+  min-height: 40px !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-current-price,
+.workout-essentials-product-section .dynamic-current-price,
+.dynamic-page-workout-essentials .activewear-current-price,
+.workout-essentials-product-section .activewear-current-price {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  line-height: 1.2 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-mrp,
+.workout-essentials-product-section .dynamic-mrp,
+.dynamic-page-workout-essentials .activewear-mrp,
+.workout-essentials-product-section .activewear-mrp {
+  font-size: 12px !important;
+  color: #6b7280 !important;
+  line-height: 1.2 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-mrp-strike,
+.workout-essentials-product-section .dynamic-mrp-strike {
+  text-decoration: line-through !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-mrp-only,
+.workout-essentials-product-section .dynamic-mrp-only {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #111111 !important;
+  line-height: 1.2 !important;
+}
+
+/* Card Actions (Bottom Right) */
+.dynamic-page-workout-essentials .dynamic-card-actions,
+.workout-essentials-product-section .dynamic-card-actions,
+.dynamic-page-workout-essentials .activewear-card-actions,
+.workout-essentials-product-section .activewear-card-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  margin-top: auto !important;
+  padding-top: 8px !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-wishlist-btn,
+.workout-essentials-product-section .dynamic-wishlist-btn,
+.dynamic-page-workout-essentials .activewear-wishlist-btn,
+.workout-essentials-product-section .activewear-wishlist-btn {
+  width: 34px !important;
+  height: 32px !important;
+  min-width: 34px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  color: #4b5563 !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-wishlist-btn:hover,
+.workout-essentials-product-section .dynamic-wishlist-btn:hover {
+  border-color: #111111 !important;
+  color: #111111 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-wishlist-btn.active,
+.workout-essentials-product-section .dynamic-wishlist-btn.active {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-cart-btn,
+.workout-essentials-product-section .dynamic-cart-btn,
+.dynamic-page-workout-essentials .activewear-cart-btn,
+.workout-essentials-product-section .activewear-cart-btn {
+  flex: 0 0 auto !important;
+  height: 32px !important;
+  padding: 0 14px !important;
+  border: 1px solid #000000 !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  color: #111111 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  transition: all 0.2s ease !important;
+  text-transform: none !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-cart-btn:hover,
+.workout-essentials-product-section .dynamic-cart-btn:hover {
+  background: #111111 !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   YOUR FAVORITE SPORT EQUIPMENTS (OTHER SECTION)
+   Matches the 4-card square equipment showcase in Decathlon
+========================================================= */
+
+.dynamic-page-workout-essentials .dynamic-other-section,
+.workout-essentials-page .dynamic-other-section,
+.workout-essentials-other-section,
+.dynamic-page-workout-essentials .loved-categories,
+.workout-essentials-page .loved-categories {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 32px 0 36px 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-other-container,
+.workout-essentials-page .dynamic-other-container,
+.dynamic-page-workout-essentials .loved-categories-container,
+.workout-essentials-page .loved-categories-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-other-arrow,
+.workout-essentials-page .dynamic-other-arrow {
+  display: none !important;
+}
+
+/* SECTION HEADING - Matches reference image cleanly */
+.dynamic-page-workout-essentials .dynamic-other-title,
+.workout-essentials-page .dynamic-other-title,
+.dynamic-page-workout-essentials .loved-categories-title,
+.workout-essentials-page .loved-categories-title {
+  display: block !important;
+  font-family: inherit !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.2px !important;
+  color: #111111 !important;
+  text-transform: none !important;
+  margin: 0 0 16px 0 !important;
+  padding: 0 !important;
+}
+
+/* 4-COLUMN GRID CONTAINER */
+.dynamic-page-workout-essentials .dynamic-other-grid,
+.workout-essentials-page .dynamic-other-grid,
+.dynamic-page-workout-essentials .loved-categories-grid,
+.workout-essentials-page .loved-categories-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* BASE CARD */
+.dynamic-page-workout-essentials .dynamic-other-card,
+.workout-essentials-page .dynamic-other-card,
+.dynamic-page-workout-essentials .loved-category-card,
+.workout-essentials-page .loved-category-card {
+  position: relative !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #ebeef2 !important;
+  box-shadow: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transform: none !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease !important;
+  user-select: none !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-other-card:hover,
+.workout-essentials-page .dynamic-other-card:hover,
+.dynamic-page-workout-essentials .loved-category-card:hover,
+.workout-essentials-page .loved-category-card:hover {
+  transform: none !important;
+}
+
+/* STANDARD SQUARE CARD (Row 1: Massagers, Supports, Nutrition, Bags) - Exact Decathlon 400x438 ratio */
+.dynamic-page-workout-essentials .dynamic-other-card.card-standard,
+.workout-essentials-page .dynamic-other-card.card-standard,
+.dynamic-page-workout-essentials .loved-category-card.card-standard,
+.workout-essentials-page .loved-category-card.card-standard {
+  grid-column: span 1 !important;
+  aspect-ratio: 400 / 438 !important;
+  height: auto !important;
+}
+
+/* WIDE HERO CARD (Row 2: Yoga, Boxing) - Exact Decathlon 768x450 ratio */
+.dynamic-page-workout-essentials .dynamic-other-card.card-wide,
+.workout-essentials-page .dynamic-other-card.card-wide,
+.dynamic-page-workout-essentials .loved-category-card.card-wide,
+.workout-essentials-page .loved-category-card.card-wide {
+  grid-column: span 2 !important;
+  aspect-ratio: 768 / 450 !important;
+  height: auto !important;
+}
+
+/* MEDIA WRAPPER */
+.dynamic-page-workout-essentials .dynamic-other-media,
+.workout-essentials-page .dynamic-other-media {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  display: block !important;
+}
+
+/* CARD IMAGE */
+.dynamic-page-workout-essentials .dynamic-other-image,
+.workout-essentials-page .dynamic-other-image,
+.dynamic-page-workout-essentials .loved-category-image,
+.workout-essentials-page .loved-category-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  border-radius: 0 !important;
+  transform: scale(1) !important;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-workout-essentials .dynamic-other-card:hover .dynamic-other-image,
+.workout-essentials-page .dynamic-other-card:hover .dynamic-other-image,
+.dynamic-page-workout-essentials .loved-category-card:hover .loved-category-image,
+.workout-essentials-page .loved-category-card:hover .loved-category-image {
+  transform: scale(1.045) !important;
+}
+
+/* NO IMAGE FALLBACK */
+.dynamic-page-workout-essentials .dynamic-other-no-image,
+.workout-essentials-page .dynamic-other-no-image,
+.dynamic-page-workout-essentials .loved-category-no-image,
+.workout-essentials-page .loved-category-no-image {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #e2e8f0 !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 16px !important;
+}
+
+/* GRADIENT & CAPTION OVERLAYS (HIDDEN - TITLES BAKED INTO BANNER IMAGES) */
+.dynamic-page-workout-essentials .dynamic-other-gradient-overlay,
+.workout-essentials-page .dynamic-other-gradient-overlay,
+.dynamic-page-workout-essentials .dynamic-other-caption,
+.workout-essentials-page .dynamic-other-caption {
+  display: none !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1024px) {
+  .dynamic-page-container-workout-essentials,
+  .workout-essentials-container {
+    padding: 0 48px 28px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-category-scroll,
+  .workout-essentials-category-section .dynamic-category-scroll {
+    gap: 10px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-product-section,
+  .workout-essentials-product-section {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-product-card,
+  .workout-essentials-product-section .dynamic-product-card {
+    flex: 0 0 calc((100% - 48px) / 4) !important;
+    width: calc((100% - 48px) / 4) !important;
+    min-width: 210px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-product-left,
+  .workout-essentials-product-section .dynamic-product-left {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding-top: 0 !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .dynamic-page-workout-essentials .dynamic-category-scroll,
+  .workout-essentials-category-section .dynamic-category-scroll {
+    justify-content: flex-start !important;
+    gap: 14px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-product-card,
+  .workout-essentials-product-section .dynamic-product-card {
+    flex: 0 0 calc((100% - 32px) / 3) !important;
+    width: calc((100% - 32px) / 3) !important;
+    min-width: 195px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-other-grid,
+  .workout-essentials-page .dynamic-other-grid,
+  .dynamic-page-workout-essentials .loved-categories-grid,
+  .workout-essentials-page .loved-categories-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-other-card.card-wide,
+  .workout-essentials-page .dynamic-other-card.card-wide {
+    grid-column: span 2 !important;
+    aspect-ratio: 768 / 450 !important;
+  }
+
+  .dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-scroll,
+  .dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-scroll,
+  .dynamic-page-workout-essentials .section-index-3 .dynamic-category-scroll,
+  .dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-scroll {
+    justify-content: flex-start !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .dynamic-page-container-workout-essentials,
+  .workout-essentials-container {
+    padding: 0 20px 20px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-category-circle,
+  .workout-essentials-category-section .dynamic-category-circle {
+    width: 92px !important;
+    height: 100px !important;
+    clip-path: polygon(
+      14px 0%,
+      calc(100% - 14px) 0%,
+      100% 14px,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      14px 100%,
+      0% calc(100% - 14px),
+      0% 14px
+    ) !important;
+  }
+
+  .dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-circle,
+  .dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-circle,
+  .dynamic-page-workout-essentials .section-index-3 .dynamic-category-circle,
+  .dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-circle {
+    width: 86px !important;
+    height: 114px !important;
+    clip-path: none !important;
+    border-radius: 9999px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-category-item,
+  .workout-essentials-category-section .dynamic-category-item {
+    width: 96px !important;
+    max-width: 96px !important;
+  }
+
+  .dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-item,
+  .dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-item,
+  .dynamic-page-workout-essentials .section-index-3 .dynamic-category-item,
+  .dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-item {
+    width: 88px !important;
+    max-width: 88px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-category-name,
+  .workout-essentials-category-section .dynamic-category-name {
+    font-size: 11px !important;
+    max-width: 96px !important;
+  }
+
+  .dynamic-page-workout-essentials .workout-essentials-category-section-3 .dynamic-category-name,
+  .dynamic-page-workout-essentials .section-fitness-cat .dynamic-category-name,
+  .dynamic-page-workout-essentials .section-index-3 .dynamic-category-name,
+  .dynamic-page-workout-essentials main > section:nth-of-type(3) .dynamic-category-name {
+    font-size: 11px !important;
+    max-width: 88px !important;
+  }
+  .dynamic-page-workout-essentials .dynamic-product-card,
+  .workout-essentials-product-section .dynamic-product-card {
+    flex: 0 0 calc((100% - 14px) / 2) !important;
+    width: calc((100% - 14px) / 2) !important;
+    min-width: 170px !important;
+  }
+}
+
+@media (max-width: 550px) {
+  .dynamic-page-workout-essentials .dynamic-product-card,
+  .workout-essentials-product-section .dynamic-product-card {
+    flex: 0 0 165px !important;
+    width: 165px !important;
+    min-width: 165px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-other-grid,
+  .workout-essentials-page .dynamic-other-grid,
+  .dynamic-page-workout-essentials .loved-categories-grid,
+  .workout-essentials-page .loved-categories-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .dynamic-page-workout-essentials .dynamic-other-title,
+  .workout-essentials-page .dynamic-other-title,
+  .dynamic-page-workout-essentials .loved-categories-title,
+  .workout-essentials-page .loved-categories-title {
+    font-size: 16px !important;
+    margin-bottom: 12px !important;
+  }
+}

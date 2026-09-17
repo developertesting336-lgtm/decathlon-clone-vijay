@@ -1,0 +1,916 @@
+/*OUTDOOR PRODUCTS SECTION*/
+
+.outdoor-products-section {
+  width: 105%;
+
+  max-width: none;
+
+  padding: 18px 0 16px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/*MAIN CONTAINER*/
+
+.outdoor-products-container {
+  width: calc(100% - 108px);
+
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  align-items: stretch;
+
+  gap: 28px;
+
+  box-sizing: border-box;
+}
+
+
+/*LEFT CONTENT*/
+
+.outdoor-products-intro {
+  width: 176px;
+
+  min-width: 176px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+
+/*INTRO SMALL TEXT*/
+
+.outdoor-products-intro p {
+  margin: 0 0 8px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 21px;
+
+  font-weight: 400;
+
+  line-height: 1.2;
+
+  color: #555555;
+}
+
+
+/*INTRO TITLE*/
+
+.outdoor-products-intro h2 {
+  margin: 0;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 36px;
+
+  font-weight: 700;
+
+  line-height: 1.12;
+
+  color: #050505;
+}
+
+
+/*ARROWS*/
+
+.outdoor-slider-buttons {
+  display: flex;
+
+  gap: 9px;
+
+  margin-top: 20px;
+}
+
+
+/*ARROW*/
+
+.outdoor-arrow {
+  width: 38px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: 1px solid #dddddd;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 27px;
+
+  line-height: 1;
+
+  color: #222222;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.outdoor-arrow:hover:not(:disabled) {
+  background: #111111;
+
+  color: #ffffff;
+
+  border-color: #111111;
+}
+
+.outdoor-arrow:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.outdoor-arrow:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/*PRODUCT SLIDER*/
+
+.outdoor-products-slider {
+  flex: 1 1 auto;
+
+  width: 0;
+
+  min-width: 0;
+
+  display: flex;
+
+  gap: 9px;
+
+  overflow-x: auto;
+
+  overflow-y: hidden;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
+
+  box-sizing: border-box;
+}
+
+.outdoor-products-slider::-webkit-scrollbar {
+  display: none;
+}
+
+
+/*PRODUCT CARD*/
+
+.outdoor-product-card {
+  flex: 0 0 216px;
+
+  width: 216px;
+
+  min-width: 216px;
+
+  box-sizing: border-box;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+}
+
+
+/*IMAGE WRAPPER*/
+
+.outdoor-product-image-wrapper {
+  position: relative;
+
+  width: 216px;
+
+  height: 216px;
+
+  overflow: hidden;
+
+  background: #f3f3f3;
+
+  box-sizing: border-box;
+}
+
+
+/*IMAGE*/
+
+.outdoor-product-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform 0.3s ease;
+}
+
+.outdoor-product-card:hover
+.outdoor-product-image {
+  transform: scale(1.03);
+}
+
+
+/*NO IMAGE*/
+
+.outdoor-product-no-image {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #f3f3f3;
+
+  color: #999999;
+
+  font-size: 13px;
+
+  text-align: center;
+}
+
+
+/*BADGE*/
+
+.outdoor-product-badge {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  z-index: 2;
+
+  padding: 3px 5px;
+
+  background: #ffc629;
+
+  color: #111111;
+
+  font-size: 11px;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+/*DETAILS*/
+
+.outdoor-product-details {
+  padding-top: 9px;
+
+  box-sizing: border-box;
+}
+
+
+/*PRODUCT NAME*/
+
+.outdoor-product-name {
+  height: 42px;
+
+  margin: 0;
+
+  overflow: hidden;
+
+  font-size: 15px;
+
+  font-weight: 400;
+
+  line-height: 1.35;
+
+  color: #333333;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+
+  line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+
+  text-overflow: ellipsis;
+}
+
+.outdoor-product-name strong {
+  font-weight: 700;
+
+  color: #222222;
+}
+
+
+/*RATING*/
+
+.outdoor-rating {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 4px;
+}
+
+.stars {
+  color: #ff7900;
+
+  font-size: 17px;
+
+  letter-spacing: -2px;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+.review-count {
+  color: #536170;
+
+  font-size: 14px;
+
+  white-space: nowrap;
+}
+
+
+/* PRICE*/
+
+.outdoor-price {
+  margin-top: 5px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #111111;
+}
+
+.outdoor-discount {
+  padding: 2px 4px;
+
+  background: #ffc629;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  line-height: 1;
+}
+
+
+/*MRP*/
+
+.outdoor-mrp {
+  margin-top: 3px;
+
+  font-size: 12px;
+
+  line-height: 1.2;
+
+  color: #66717e;
+}
+
+
+/*ACTIONS*/
+
+.outdoor-product-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 31px;
+}
+
+
+/*WISHLIST*/
+
+.outdoor-wishlist {
+  width: 27px;
+  height: 27px;
+
+  padding: 0;
+
+  border: 1px solid #aaaaaa;
+
+  border-radius: 5px;
+
+  background: #ffffff;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 20px;
+
+  line-height: 1;
+
+  color: #555555;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.outdoor-wishlist:hover {
+  border-color: #222222;
+
+  color: #222222;
+}
+
+.outdoor-wishlist.active {
+  border-color: #3945bd;
+
+  color: #3945bd;
+
+  background: #f4f6ff;
+}
+
+
+/* CART*/
+
+.outdoor-cart {
+  height: 27px;
+
+  padding: 0 10px;
+
+  border: 1px solid #999999;
+
+  border-radius: 5px;
+
+  background: #ffffff;
+
+  font-size: 11px;
+
+  line-height: 1;
+
+  color: #222222;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.outdoor-cart:hover {
+  background: #f6f6f6;
+
+  border-color: #777777;
+}
+
+
+/*LARGE DESKTOP*/
+
+@media (max-width: 1250px) {
+
+  .outdoor-products-container {
+    width: calc(100% - 70px);
+
+    max-width: none;
+
+    gap: 22px;
+  }
+
+  .outdoor-products-intro {
+    width: 170px;
+
+    min-width: 170px;
+  }
+
+  .outdoor-products-intro h2 {
+    font-size: 33px;
+  }
+
+  .outdoor-product-card {
+    flex: 0 0 205px;
+
+    width: 205px;
+
+    min-width: 205px;
+  }
+
+  .outdoor-product-image-wrapper {
+    width: 205px;
+
+    height: 205px;
+  }
+
+}
+
+
+/*TABLET*/
+
+@media (max-width: 900px) {
+
+  .outdoor-products-section {
+    width: 100%;
+
+    padding: 18px 0;
+  }
+
+  .outdoor-products-container {
+    width: calc(100% - 40px);
+
+    max-width: none;
+
+    margin: 0 auto;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+  }
+
+
+  /*INTRO*/
+
+  .outdoor-products-intro {
+    width: 100%;
+
+    min-width: 0;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: space-between;
+  }
+
+  .outdoor-products-intro p {
+    display: none;
+  }
+
+  .outdoor-products-intro h2 {
+    margin: 0;
+
+    font-size: 28px;
+
+    line-height: 1.1;
+  }
+
+
+  /*ARROWS*/
+
+  .outdoor-slider-buttons {
+    margin-top: 0;
+
+    display: flex;
+
+    gap: 8px;
+  }
+
+
+  /* PRODUCT SLIDER*/
+
+  .outdoor-products-slider {
+    width: 100%;
+
+    min-width: 0;
+
+    flex: none;
+
+    display: flex;
+
+    gap: 9px;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: none;
+  }
+
+  .outdoor-products-slider::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  /* PRODUCT CARD*/
+
+  .outdoor-product-card {
+    flex: 0 0 190px;
+
+    width: 190px;
+
+    min-width: 190px;
+  }
+
+  .outdoor-product-image-wrapper {
+    width: 190px;
+
+    height: 190px;
+  }
+
+}
+
+
+/*MOBILE*/
+
+@media (max-width: 550px) {
+
+  .outdoor-products-section {
+    width: 100%;
+
+    padding: 15px 0;
+  }
+
+
+  /* CONTAINER*/
+
+  .outdoor-products-container {
+    width: calc(100% - 24px);
+
+    max-width: none;
+
+    margin: 0 auto;
+
+    gap: 12px;
+  }
+
+
+  /*INTRO*/
+
+  .outdoor-products-intro {
+    width: 100%;
+
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: row;
+
+    align-items: center;
+
+    justify-content: space-between;
+  }
+
+  .outdoor-products-intro h2 {
+    margin: 0;
+
+    font-size: 24px;
+
+    line-height: 1.1;
+  }
+
+
+  /* ARROWS*/
+
+  .outdoor-slider-buttons {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 0;
+  }
+
+  .outdoor-arrow {
+    width: 34px;
+
+    height: 34px;
+
+    padding: 0;
+
+    font-size: 23px;
+  }
+
+
+  /* PRODUCT SLIDER*/
+
+  .outdoor-products-slider {
+    width: 100%;
+
+    min-width: 0;
+
+    flex: none;
+
+    display: flex;
+
+    gap: 9px;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .outdoor-products-slider::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  /* PRODUCT CARD*/
+
+  .outdoor-product-card {
+    flex: 0 0 170px;
+
+    width: 170px;
+
+    min-width: 170px;
+  }
+
+  .outdoor-product-image-wrapper {
+    width: 170px;
+
+    height: 170px;
+  }
+
+
+  /* PRODUCT TEXT*/
+
+  .outdoor-product-name {
+    height: 38px;
+
+    font-size: 13px;
+
+    line-height: 1.35;
+  }
+
+  .outdoor-rating {
+    margin-top: 3px;
+  }
+
+  .stars {
+    font-size: 15px;
+  }
+
+  .review-count {
+    font-size: 13px;
+  }
+
+  .outdoor-price {
+    font-size: 15px;
+  }
+
+  .outdoor-mrp {
+    font-size: 11px;
+  }
+
+
+  /* ACTIONS */
+
+  .outdoor-product-actions {
+    margin-top: 20px;
+  }
+
+}
+
+
+/* SMALL MOBILE*/
+
+@media (max-width: 400px) {
+
+  .outdoor-products-container {
+    width: calc(100% - 18px);
+  }
+
+  .outdoor-product-card {
+    flex: 0 0 160px;
+
+    width: 160px;
+
+    min-width: 160px;
+  }
+
+  .outdoor-product-image-wrapper {
+    width: 160px;
+
+    height: 160px;
+  }
+
+  .outdoor-products-intro h2 {
+    font-size: 22px;
+  }
+
+  .outdoor-arrow {
+    width: 31px;
+
+    height: 31px;
+
+    font-size: 21px;
+  }
+
+  .outdoor-product-name {
+    height: 36px;
+
+    font-size: 12px;
+  }
+
+  .stars {
+    font-size: 14px;
+  }
+
+  .review-count {
+    font-size: 12px;
+  }
+
+  .outdoor-price {
+    font-size: 14px;
+  }
+
+  .outdoor-mrp {
+    font-size: 10px;
+  }
+
+}
+
+
+/*VERY SMALL MOBILE*/
+
+@media (max-width: 340px) {
+
+  .outdoor-product-card {
+    flex: 0 0 150px;
+
+    width: 150px;
+
+    min-width: 150px;
+  }
+
+  .outdoor-product-image-wrapper {
+    width: 150px;
+
+    height: 150px;
+  }
+
+  .outdoor-products-intro h2 {
+    font-size: 20px;
+  }
+
+  .outdoor-product-name {
+    height: 34px;
+
+    font-size: 11px;
+  }
+
+  .outdoor-price {
+    font-size: 13px;
+  }
+
+  .outdoor-cart {
+    padding: 0 8px;
+
+    font-size: 10px;
+  }
+
+}

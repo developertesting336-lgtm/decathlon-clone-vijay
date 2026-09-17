@@ -1,0 +1,115 @@
+.coupon-banner {
+  width: 100%;
+  margin: 20px 0;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.coupon-banner-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+
+/* =================================
+   Large Desktop
+================================= */
+
+@media (min-width: 1200px) {
+  .coupon-banner {
+    margin: 20px 0;
+  }
+
+  .coupon-banner-image {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+/* =================================
+   Desktop
+================================= */
+
+@media (min-width: 993px) and (max-width: 1199px) {
+  .coupon-banner {
+    margin: 18px 0;
+  }
+
+  .coupon-banner-image {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+/* =================================
+   Tablet
+================================= */
+
+@media (min-width: 769px) and (max-width: 992px) {
+  .coupon-banner {
+    margin: 16px 0;
+  }
+
+  .coupon-banner-image {
+    width: 100%;
+    height: auto;
+  }
+}
+
+
+/* =================================
+   Mobile
+================================= */
+
+@media (max-width: 768px) {
+  .coupon-banner {
+    width: 100%;
+    margin: 14px 0;
+  }
+
+  .coupon-banner-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+
+/* =================================
+   Small Mobile
+================================= */
+
+@media (max-width: 480px) {
+  .coupon-banner {
+    width: 100%;
+    margin: 12px 0;
+  }
+
+  .coupon-banner-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+
+/* =================================
+   Extra Small Mobile
+================================= */
+
+@media (max-width: 360px) {
+  .coupon-banner {
+    margin: 10px 0;
+  }
+
+  .coupon-banner-image {
+    width: 100%;
+    height: auto;
+  }
+}

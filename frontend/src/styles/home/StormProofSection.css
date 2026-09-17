@@ -1,0 +1,1000 @@
+/* ========================================
+   STORM PROOF SECTION
+======================================== */
+
+.storm-proof-section {
+  width: 102%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 18px;
+
+  padding: 0 8px 30px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   LEFT CONTENT
+======================================== */
+
+.storm-proof-left {
+  width: 185px;
+  min-width: 185px;
+
+  flex-shrink: 0;
+
+  padding: 115px 0 0 8px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   LEFT SMALL TITLE
+======================================== */
+
+.storm-proof-left p {
+  margin: 0 0 8px;
+
+  color: #333333;
+
+  font-size: 15px;
+
+  font-weight: 400;
+
+  line-height: 1.2;
+}
+
+
+/* ========================================
+   MAIN TITLE
+======================================== */
+
+.storm-proof-left h2 {
+  margin: 0;
+
+  color: #111111;
+
+  font-size: 34px;
+
+  font-weight: 700;
+
+  line-height: 1.02;
+
+  letter-spacing: -0.5px;
+}
+
+
+/* ========================================
+   ARROWS
+======================================== */
+
+.storm-proof-arrows {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: 20px;
+}
+
+
+/* ========================================
+   ARROW
+======================================== */
+
+.storm-arrow {
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #cfcfcf;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #222222;
+
+  font-size: 24px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* ========================================
+   ARROW HOVER
+======================================== */
+
+.storm-arrow:hover:not(:disabled) {
+  background: #f5f5f5;
+
+  border-color: #999999;
+
+  color: #111111;
+}
+
+
+/* ========================================
+   ARROW ACTIVE
+======================================== */
+
+.storm-arrow:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+
+/* ========================================
+   ARROW DISABLED
+======================================== */
+
+.storm-arrow:disabled {
+  color: #bdbdbd;
+
+  border-color: #dddddd;
+
+  background: #ffffff;
+
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   VIEWPORT
+======================================== */
+
+.storm-proof-viewport {
+  flex: 1;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   PRODUCT TRACK
+======================================== */
+
+.storm-proof-list {
+  display: flex;
+
+  align-items: flex-start;
+
+  transition:
+    transform 0.45s ease-in-out;
+
+  will-change: transform;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   PRODUCT CARD
+======================================== */
+
+.storm-product-card {
+  min-width: 0;
+
+  padding-right: 8px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   PRODUCT IMAGE
+======================================== */
+
+.storm-product-image {
+  position: relative;
+
+  width: 100%;
+
+  height: 215px;
+
+  overflow: hidden;
+
+  background: #f5f5f5;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   PRODUCT IMAGE
+======================================== */
+
+.storm-product-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform 0.3s ease;
+}
+
+
+/* ========================================
+   IMAGE HOVER
+======================================== */
+
+.storm-product-card:hover
+.storm-product-image img {
+  transform: scale(1.025);
+}
+
+
+/* ========================================
+   NO IMAGE
+======================================== */
+
+.storm-product-no-image {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #f5f5f5;
+
+  color: #999999;
+
+  font-size: 13px;
+
+  text-align: center;
+}
+
+
+/* ========================================
+   PRODUCT BADGE
+======================================== */
+
+.storm-product-badge {
+  position: absolute;
+
+  top: 4px;
+  left: 4px;
+
+  z-index: 2;
+
+  padding: 3px 5px;
+
+  background: #fff0ad;
+
+  color: #5d4a00;
+
+  font-size: 10px;
+
+  line-height: 1;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   PRODUCT INFO
+======================================== */
+
+.storm-product-info {
+  width: 100%;
+
+  padding-top: 7px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   PRODUCT NAME
+======================================== */
+
+.storm-product-name {
+  width: 100%;
+
+  height: 40px;
+  min-height: 40px;
+
+  margin: 0;
+
+  color: #333333;
+
+  font-size: 14px;
+
+  font-weight: 400;
+
+  line-height: 20px;
+
+  display: -webkit-box;
+
+  -webkit-line-clamp: 2;
+
+  line-clamp: 2;
+
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+.storm-product-name strong {
+  color: #222222;
+
+  font-weight: 700;
+}
+
+
+/* ========================================
+   RATING
+======================================== */
+
+.storm-product-rating {
+  width: 100%;
+
+  height: 20px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 4px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   STARS
+======================================== */
+
+.storm-stars {
+  color: #ff8200;
+
+  font-size: 14px;
+
+  line-height: 20px;
+
+  letter-spacing: -2px;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   REVIEWS
+======================================== */
+
+.storm-reviews {
+  color: #5d6875;
+
+  font-size: 12px;
+
+  line-height: 20px;
+
+  white-space: nowrap;
+}
+
+
+/* ========================================
+   PRICE
+======================================== */
+
+.storm-product-price {
+  width: 100%;
+
+  height: 39px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  gap: 3px;
+
+  margin-top: 2px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   CURRENT PRICE
+======================================== */
+
+.storm-current-price {
+  color: #111111;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  line-height: 16px;
+}
+
+
+/* ========================================
+   MRP
+======================================== */
+
+.storm-mrp {
+  color: #707070;
+
+  font-size: 11px;
+
+  line-height: 13px;
+}
+
+
+/* ========================================
+   DISCOUNT SPACE
+======================================== */
+
+.storm-discount-wrapper {
+  width: 100%;
+
+  height: 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  margin-top: 3px;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   DISCOUNT
+======================================== */
+
+.storm-discount {
+  height: 19px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 0 7px;
+
+  border-radius: 10px;
+
+  background: #fff0ad;
+
+  color: #5d4a00;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  line-height: 19px;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   ACTIONS
+======================================== */
+
+.storm-product-actions {
+  width: 100%;
+
+  height: 29px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  margin-top: 5px;
+
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   WISHLIST
+======================================== */
+
+.storm-wishlist {
+  width: 28px;
+  height: 28px;
+
+  flex: 0 0 28px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #c5c5c5;
+
+  border-radius: 4px;
+
+  background: #ffffff;
+
+  color: #555555;
+
+  font-size: 17px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.storm-wishlist:hover {
+  border-color: #222222;
+
+  color: #222222;
+
+  background: #fafafa;
+}
+
+.storm-wishlist.active {
+  border-color: #3945bd;
+
+  color: #3945bd;
+
+  background: #f4f6ff;
+}
+
+
+/* ========================================
+   CART
+======================================== */
+
+.storm-cart {
+  height: 28px;
+
+  padding: 0 10px;
+
+  border: 1px solid #aaaaaa;
+
+  border-radius: 4px;
+
+  background: #ffffff;
+
+  color: #222222;
+
+  font-size: 10px;
+
+  font-weight: 500;
+
+  line-height: 1;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.storm-cart:hover {
+  background: #f6f6f6;
+
+  border-color: #888888;
+}
+
+
+/* ========================================
+   LARGE DESKTOP
+======================================== */
+
+@media (max-width: 1250px) {
+
+  .storm-proof-section {
+    gap: 16px;
+  }
+
+  .storm-proof-left {
+    width: 175px;
+
+    min-width: 175px;
+
+    padding-left: 8px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 32px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL DESKTOP
+======================================== */
+
+@media (max-width: 1100px) {
+
+  .storm-proof-left {
+    width: 155px;
+
+    min-width: 155px;
+
+    padding-left: 8px;
+  }
+
+  .storm-proof-left p {
+    font-size: 14px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 29px;
+  }
+
+  .storm-product-image {
+    height: 200px;
+  }
+
+  .storm-product-name {
+    font-size: 13px;
+
+    height: 36px;
+    min-height: 36px;
+
+    line-height: 18px;
+  }
+
+  .storm-stars {
+    font-size: 13px;
+  }
+
+  .storm-reviews {
+    font-size: 11px;
+  }
+
+  .storm-current-price {
+    font-size: 14px;
+  }
+
+  .storm-mrp {
+    font-size: 11px;
+  }
+
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 900px) {
+
+  .storm-proof-section {
+    gap: 12px;
+
+    padding: 10px 6px 25px;
+  }
+
+  .storm-proof-left {
+    width: 140px;
+
+    min-width: 140px;
+
+    padding-left: 8px;
+
+    padding-top: 105px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 26px;
+  }
+
+  .storm-proof-left p {
+    font-size: 13px;
+  }
+
+  .storm-product-image {
+    height: 185px;
+  }
+
+  .storm-product-name {
+    font-size: 12px;
+
+    height: 34px;
+    min-height: 34px;
+
+    line-height: 17px;
+  }
+
+  .storm-product-rating {
+    gap: 4px;
+  }
+
+  .storm-stars {
+    font-size: 12px;
+  }
+
+  .storm-reviews {
+    font-size: 10px;
+  }
+
+  .storm-current-price {
+    font-size: 14px;
+  }
+
+  .storm-mrp {
+    font-size: 10px;
+  }
+
+  .storm-cart {
+    padding: 0 8px;
+
+    font-size: 10px;
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+  .storm-proof-section {
+    flex-direction: column;
+
+    gap: 12px;
+
+    padding: 10px;
+  }
+
+  .storm-proof-left {
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 8px 0 0;
+  }
+
+  .storm-proof-left p {
+    margin-bottom: 6px;
+
+    font-size: 14px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 28px;
+
+    line-height: 1.05;
+  }
+
+  .storm-proof-arrows {
+    margin-top: 12px;
+  }
+
+  .storm-proof-viewport {
+    width: 100%;
+  }
+
+  .storm-product-image {
+    height: 205px;
+  }
+
+  .storm-product-name {
+    font-size: 12px;
+
+    height: 34px;
+    min-height: 34px;
+
+    line-height: 17px;
+  }
+
+  .storm-product-rating {
+    margin-top: 3px;
+  }
+
+  .storm-stars {
+    font-size: 11px;
+  }
+
+  .storm-reviews {
+    font-size: 10px;
+  }
+
+  .storm-current-price {
+    font-size: 13px;
+  }
+
+  .storm-mrp {
+    font-size: 10px;
+  }
+
+  .storm-product-badge {
+    font-size: 9px;
+
+    padding: 3px 4px;
+  }
+
+  .storm-discount {
+    font-size: 9px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 450px) {
+
+  .storm-proof-section {
+    padding: 8px;
+  }
+
+  .storm-proof-left {
+    padding-left: 0;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 25px;
+  }
+
+  .storm-arrow {
+    width: 33px;
+    height: 33px;
+
+    font-size: 21px;
+  }
+
+  .storm-product-image {
+    height: 170px;
+  }
+
+  .storm-product-name {
+    font-size: 11px;
+
+    height: 32px;
+    min-height: 32px;
+
+    line-height: 16px;
+  }
+
+  .storm-stars {
+    font-size: 11px;
+
+    letter-spacing: -2px;
+  }
+
+  .storm-reviews {
+    font-size: 10px;
+  }
+
+  .storm-current-price {
+    font-size: 13px;
+  }
+
+  .storm-mrp {
+    font-size: 10px;
+  }
+
+  .storm-discount {
+    font-size: 8px;
+
+    padding: 0 6px;
+  }
+
+  .storm-wishlist {
+    width: 25px;
+    height: 25px;
+
+    font-size: 16px;
+  }
+
+  .storm-cart {
+    height: 25px;
+
+    padding: 0 7px;
+
+    font-size: 9px;
+  }
+
+}
+
+
+/* ========================================
+   VERY SMALL MOBILE
+======================================== */
+
+@media (max-width: 360px) {
+
+  .storm-proof-section {
+    padding: 7px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 23px;
+  }
+
+  .storm-product-image {
+    height: 155px;
+  }
+
+  .storm-product-name {
+    font-size: 10px;
+
+    line-height: 15px;
+
+    height: 30px;
+    min-height: 30px;
+  }
+
+  .storm-stars {
+    font-size: 10px;
+  }
+
+  .storm-reviews {
+    font-size: 9px;
+  }
+
+  .storm-current-price {
+    font-size: 12px;
+  }
+
+  .storm-mrp {
+    font-size: 9px;
+  }
+
+  .storm-cart {
+    padding: 0 6px;
+
+    font-size: 8px;
+  }
+
+}

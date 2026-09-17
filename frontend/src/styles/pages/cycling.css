@@ -1,0 +1,739 @@
+/* =========================================================
+   CYCLING PAGE - DEDICATED DYNAMIC CSS
+   Matches Decathlon Cycle Store reference design (decathlon.in/shop/Cycle-Store)
+   Features Section 3: Product Carousel with left title & slider
+========================================================= */
+
+/* PAGE BASE */
+.dynamic-page-cycling,
+.cycling-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff !important;
+  color: #111111;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CONTAINER - 48px side padding matching global Decathlon standard */
+.dynamic-page-container-cycling,
+.cycling-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 40px;
+  box-sizing: border-box;
+}
+
+/* LOADING SKELETON */
+.dynamic-page-cycling .dynamic-page-loading,
+.cycling-page .dynamic-page-loading {
+  padding: 60px 48px;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.dynamic-page-cycling .dynamic-skeleton-banner,
+.cycling-page .dynamic-skeleton-banner {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: dynamicShimmerCycling 1.5s infinite;
+}
+
+.dynamic-page-cycling .dynamic-skeleton-row,
+.cycling-page .dynamic-skeleton-row {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%);
+  background-size: 200% 100%;
+  animation: dynamicShimmerCycling 1.5s infinite;
+}
+
+@keyframes dynamicShimmerCycling {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 404 NOT FOUND */
+.dynamic-page-cycling .dynamic-page-not-found,
+.cycling-page .dynamic-page-not-found {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+}
+
+.dynamic-page-cycling .dynamic-page-not-found h1,
+.cycling-page .dynamic-page-not-found h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 12px;
+}
+
+.dynamic-page-cycling .dynamic-page-not-found p,
+.cycling-page .dynamic-page-not-found p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0 0 24px;
+}
+
+.dynamic-page-cycling .dynamic-home-btn,
+.cycling-page .dynamic-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #111111;
+  color: #ffffff;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.dynamic-page-cycling .dynamic-home-btn:hover,
+.cycling-page .dynamic-home-btn:hover {
+  background: #333333;
+}
+
+/* =========================================================
+   BANNER SECTION
+========================================================= */
+.dynamic-page-cycling .dynamic-banner-section,
+.cycling-banner-section {
+  width: 100% !important;
+  margin: 10px 0 20px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-cycling .dynamic-banner-item img,
+.cycling-banner {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================================
+   CATEGORY SECTION
+========================================================= */
+.dynamic-page-cycling .dynamic-category-section,
+.cycling-category-section {
+  width: 100% !important;
+  margin: 12px 0 24px !important;
+  padding: 4px 0 6px !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-cycling .dynamic-category-title,
+.cycling-category-section .dynamic-category-title {
+  display: none !important;
+}
+
+.dynamic-page-cycling .dynamic-category-scroll,
+.cycling-category-section .dynamic-category-scroll {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  padding: 4px 0 8px 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-cycling .dynamic-category-scroll::-webkit-scrollbar,
+.cycling-category-section .dynamic-category-scroll::-webkit-scrollbar {
+  display: none !important;
+}
+
+.dynamic-page-cycling .dynamic-category-item,
+.cycling-category-section .dynamic-category-item {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 112px !important;
+  max-width: 112px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: transform 0.3s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-category-item:hover,
+.cycling-category-section .dynamic-category-item:hover {
+  transform: translateY(-4px) !important;
+}
+
+.dynamic-page-cycling .dynamic-category-circle,
+.cycling-category-section .dynamic-category-circle {
+  width: 100px !important;
+  height: 100px !important;
+  border-radius: 50% !important;
+  background: #f1f3f5 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 auto 8px auto !important;
+  transition: transform 0.3s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-category-circle img,
+.cycling-category-section .dynamic-category-circle img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+.dynamic-page-cycling .dynamic-category-name,
+.cycling-category-section .dynamic-category-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #111111 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  max-width: 104px !important;
+  word-wrap: break-word !important;
+}
+
+/* =========================================================
+   SECTION 3: PRODUCT CAROUSEL SECTION
+   Matches Decathlon Cycle Store reference image:
+   "Cycles, Skates, Waveboards Fresh Combos just dropped!"
+========================================================= */
+
+.dynamic-page-cycling .dynamic-product-section,
+.cycling-product-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  gap: 24px !important;
+  margin: 28px 0 36px 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+/* LEFT COLUMN: TITLE & CIRCULAR NAVIGATION ARROWS */
+.dynamic-page-cycling .dynamic-product-left,
+.cycling-product-section .dynamic-product-left,
+.dynamic-page-cycling .activewear-product-left,
+.cycling-product-section .activewear-product-left {
+  width: 210px !important;
+  min-width: 210px !important;
+  max-width: 210px !important;
+  flex: 0 0 210px !important;
+  padding-top: 10px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-cycling .dynamic-product-title-group,
+.cycling-product-section .dynamic-product-title-group,
+.dynamic-page-cycling .activewear-product-title-group,
+.cycling-product-section .activewear-product-title-group {
+  margin: 0 0 16px 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+}
+
+/* Sub-title: "Cycles, Skates, Waveboards" */
+.dynamic-page-cycling .dynamic-product-title-sub,
+.cycling-product-section .dynamic-product-title-sub,
+.dynamic-page-cycling .activewear-product-title-sub,
+.cycling-product-section .activewear-product-title-sub {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #4b5563 !important;
+  line-height: 1.35 !important;
+  margin: 0 0 8px 0 !important;
+  letter-spacing: -0.1px !important;
+  max-width: 170px !important;
+}
+
+/* Main title: "Fresh Combos just dropped!" */
+.dynamic-page-cycling .dynamic-product-title-main,
+.cycling-product-section .dynamic-product-title-main,
+.dynamic-page-cycling .activewear-product-title-main,
+.cycling-product-section .activewear-product-title-main {
+  font-size: 32px !important;
+  font-weight: 900 !important;
+  color: #111111 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.6px !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.dynamic-page-cycling .dynamic-product-title-lead,
+.cycling-product-section .dynamic-product-title-lead {
+  display: block !important;
+}
+
+/* Tail title: "just dropped!" */
+.dynamic-page-cycling .dynamic-product-title-tail,
+.cycling-product-section .dynamic-product-title-tail,
+.dynamic-page-cycling .activewear-product-title-tail,
+.cycling-product-section .activewear-product-title-tail {
+  font-size: 32px !important;
+  font-weight: 900 !important;
+  color: #111111 !important;
+  line-height: 1.08 !important;
+  letter-spacing: -0.6px !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+/* ARROW BUTTONS (< >) */
+.dynamic-page-cycling .dynamic-arrow-group,
+.cycling-product-section .dynamic-arrow-group,
+.dynamic-page-cycling .activewear-arrow-group,
+.cycling-product-section .activewear-arrow-group {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-top: 16px !important;
+}
+
+.dynamic-page-cycling .dynamic-arrow-btn,
+.cycling-product-section .dynamic-arrow-btn,
+.dynamic-page-cycling .activewear-arrow-btn,
+.cycling-product-section .activewear-arrow-btn {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: 50% !important;
+  border: 1px solid #d5d5d5 !important;
+  background: #ffffff !important;
+  color: #333333 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 20px !important;
+  padding: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-arrow-btn:hover:not(:disabled),
+.cycling-product-section .dynamic-arrow-btn:hover:not(:disabled),
+.dynamic-page-cycling .activewear-arrow-btn:hover:not(:disabled),
+.cycling-product-section .activewear-arrow-btn:hover:not(:disabled) {
+  background: #f9fafb !important;
+  border-color: #111111 !important;
+  color: #111111 !important;
+}
+
+.dynamic-page-cycling .dynamic-arrow-btn:disabled,
+.cycling-product-section .dynamic-arrow-btn:disabled,
+.dynamic-page-cycling .activewear-arrow-btn:disabled,
+.cycling-product-section .activewear-arrow-btn:disabled {
+  opacity: 0.35 !important;
+  border-color: #eeeeee !important;
+  color: #cccccc !important;
+  cursor: not-allowed !important;
+}
+
+/* RIGHT COLUMN: HORIZONTAL PRODUCT SLIDER */
+.dynamic-page-cycling .dynamic-product-slider-wrapper,
+.cycling-product-section .dynamic-product-slider-wrapper,
+.dynamic-page-cycling .activewear-product-slider-wrapper,
+.cycling-product-section .activewear-product-slider-wrapper {
+  flex: 1 !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.dynamic-page-cycling .dynamic-product-slider,
+.cycling-product-section .dynamic-product-slider,
+.dynamic-page-cycling .activewear-product-slider,
+.cycling-product-section .activewear-product-slider {
+  display: flex !important;
+  align-items: stretch !important;
+  gap: 16px !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding: 2px 0 10px 0 !important;
+}
+
+.dynamic-page-cycling .dynamic-product-slider::-webkit-scrollbar,
+.cycling-product-section .dynamic-product-slider::-webkit-scrollbar,
+.dynamic-page-cycling .activewear-product-slider::-webkit-scrollbar,
+.cycling-product-section .activewear-product-slider::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* PRODUCT CARD */
+.dynamic-page-cycling .dynamic-product-card,
+.cycling-product-section .dynamic-product-card,
+.dynamic-page-cycling .activewear-product-card,
+.cycling-product-section .activewear-product-card {
+  flex: 0 0 215px !important;
+  width: 215px !important;
+  min-width: 215px !important;
+  background: #ffffff !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  transform: none !important;
+}
+
+.dynamic-page-cycling .dynamic-product-card:hover,
+.cycling-product-section .dynamic-product-card:hover,
+.dynamic-page-cycling .activewear-product-card:hover,
+.cycling-product-section .activewear-product-card:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* IMAGE BOX */
+.dynamic-page-cycling .dynamic-product-image-box,
+.cycling-product-section .dynamic-product-image-box,
+.dynamic-page-cycling .activewear-product-image-box,
+.cycling-product-section .activewear-product-image-box {
+  position: relative !important;
+  width: 100% !important;
+  height: 220px !important;
+  background: #f7f7f7 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-cycling .dynamic-product-img-link,
+.cycling-product-section .dynamic-product-img-link,
+.dynamic-page-cycling .activewear-product-img-link,
+.cycling-product-section .activewear-product-img-link {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.dynamic-page-cycling .dynamic-product-img,
+.cycling-product-section .dynamic-product-img,
+.dynamic-page-cycling .activewear-product-img,
+.cycling-product-section .activewear-product-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  transition: transform 0.25s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-product-card:hover .dynamic-product-img,
+.cycling-product-section .dynamic-product-card:hover .dynamic-product-img,
+.dynamic-page-cycling .activewear-product-card:hover .activewear-product-img,
+.cycling-product-section .activewear-product-card:hover .activewear-product-img {
+  transform: scale(1.03) !important;
+}
+
+/* RED SALE BADGE ON TOP-LEFT */
+.dynamic-page-cycling .dynamic-product-badge,
+.cycling-product-section .dynamic-product-badge,
+.dynamic-page-cycling .activewear-product-badge,
+.cycling-product-section .activewear-product-badge {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  background: #d9222a !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: capitalize !important;
+  padding: 3px 8px !important;
+  border-radius: 0 0 2px 0 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.2px !important;
+  z-index: 2 !important;
+}
+
+/* PRODUCT INFO */
+.dynamic-page-cycling .dynamic-product-info,
+.cycling-product-section .dynamic-product-info,
+.dynamic-page-cycling .activewear-product-info,
+.cycling-product-section .activewear-product-info {
+  padding: 10px 0 0 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+}
+
+/* NAME & BRAND */
+.dynamic-page-cycling .dynamic-product-name,
+.cycling-product-section .dynamic-product-name,
+.dynamic-page-cycling .activewear-product-name,
+.cycling-product-section .activewear-product-name {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+  color: #222222 !important;
+  text-decoration: none !important;
+  margin: 0 0 4px 0 !important;
+  min-height: 36px !important;
+  height: 36px !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.dynamic-page-cycling .dynamic-product-name strong,
+.cycling-product-section .dynamic-product-name strong,
+.dynamic-page-cycling .activewear-product-name strong,
+.cycling-product-section .activewear-product-name strong {
+  font-weight: 800 !important;
+  color: #111111 !important;
+  text-transform: uppercase !important;
+  margin-right: 4px !important;
+}
+
+/* RATING STARS & COUNT */
+.dynamic-page-cycling .dynamic-product-rating,
+.cycling-product-section .dynamic-product-rating,
+.dynamic-page-cycling .activewear-product-rating,
+.cycling-product-section .activewear-product-rating {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin: 0 0 4px 0 !important;
+}
+
+.dynamic-page-cycling .dynamic-rating-stars,
+.cycling-product-section .dynamic-rating-stars,
+.dynamic-page-cycling .activewear-rating-stars,
+.cycling-product-section .activewear-rating-stars {
+  color: #ff8200 !important;
+  font-size: 13.5px !important;
+  letter-spacing: -1px !important;
+}
+
+.dynamic-page-cycling .dynamic-review-count,
+.cycling-product-section .dynamic-review-count,
+.dynamic-page-cycling .activewear-review-count,
+.cycling-product-section .activewear-review-count {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #4b5563 !important;
+  margin-left: 2px !important;
+}
+
+/* PRICING ROW */
+.dynamic-page-cycling .dynamic-product-pricing,
+.cycling-product-section .dynamic-product-pricing,
+.dynamic-page-cycling .activewear-product-pricing,
+.cycling-product-section .activewear-product-pricing {
+  margin: 0 0 6px 0 !important;
+}
+
+.dynamic-page-cycling .dynamic-price-row,
+.cycling-product-section .dynamic-price-row,
+.dynamic-page-cycling .activewear-price-row,
+.cycling-product-section .activewear-price-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+.dynamic-page-cycling .dynamic-current-price,
+.cycling-product-section .dynamic-current-price,
+.dynamic-page-cycling .activewear-current-price,
+.cycling-product-section .activewear-current-price {
+  font-size: 16.5px !important;
+  font-weight: 800 !important;
+  color: #111111 !important;
+}
+
+/* RED DISCOUNT BADGE (e.g. 45% off) */
+.dynamic-page-cycling .dynamic-discount-badge,
+.cycling-product-section .dynamic-discount-badge,
+.dynamic-page-cycling .activewear-discount-badge,
+.cycling-product-section .activewear-discount-badge {
+  background: #d9222a !important;
+  color: #ffffff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 1px 5px !important;
+  border-radius: 2px !important;
+  line-height: 1.2 !important;
+  display: inline-block !important;
+}
+
+/* STRIKE-THROUGH MRP */
+.dynamic-page-cycling .dynamic-mrp,
+.cycling-product-section .dynamic-mrp,
+.dynamic-page-cycling .activewear-mrp,
+.cycling-product-section .activewear-mrp {
+  font-size: 11.5px !important;
+  color: #71717a !important;
+  text-decoration: line-through !important;
+  margin-top: 2px !important;
+}
+
+/* BOTTOM ACTIONS: WISHLIST & ADD TO CART */
+.dynamic-page-cycling .dynamic-card-actions,
+.cycling-product-section .dynamic-card-actions,
+.dynamic-page-cycling .activewear-card-actions,
+.cycling-product-section .activewear-card-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  margin-top: auto !important;
+  padding-top: 10px !important;
+}
+
+.dynamic-page-cycling .dynamic-wishlist-btn,
+.cycling-product-section .dynamic-wishlist-btn,
+.dynamic-page-cycling .activewear-wishlist-btn,
+.cycling-product-section .activewear-wishlist-btn {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  flex: 0 0 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  color: #4b5563 !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-wishlist-btn:hover,
+.cycling-product-section .dynamic-wishlist-btn:hover {
+  border-color: #111111 !important;
+  color: #111111 !important;
+}
+
+.dynamic-page-cycling .dynamic-wishlist-btn.active,
+.cycling-product-section .dynamic-wishlist-btn.active {
+  color: #e02424 !important;
+  border-color: #e02424 !important;
+}
+
+.dynamic-page-cycling .dynamic-cart-btn,
+.cycling-product-section .dynamic-cart-btn,
+.dynamic-page-cycling .activewear-cart-btn,
+.cycling-product-section .activewear-cart-btn {
+  flex: 0 0 auto !important;
+  height: 32px !important;
+  padding: 0 14px !important;
+  border: 1px solid #71717a !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  color: #111111 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-cart-btn:hover,
+.cycling-product-section .dynamic-cart-btn:hover {
+  border-color: #111111 !important;
+  background: #f9fafb !important;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1024px) {
+  .dynamic-page-container-cycling,
+  .cycling-container {
+    padding: 0 48px 32px !important;
+  }
+
+  .dynamic-page-cycling .dynamic-product-section,
+  .cycling-product-section {
+    flex-direction: column !important;
+    gap: 14px !important;
+  }
+
+  .dynamic-page-cycling .dynamic-product-left,
+  .cycling-product-section .dynamic-product-left {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding-top: 0 !important;
+  }
+
+  .dynamic-page-cycling .dynamic-arrow-group,
+  .cycling-product-section .dynamic-arrow-group {
+    margin-top: 0 !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .dynamic-page-container-cycling,
+  .cycling-container {
+    padding: 0 20px 24px !important;
+  }
+
+  .dynamic-page-cycling .dynamic-product-card,
+  .cycling-product-section .dynamic-product-card {
+    flex: 0 0 180px !important;
+    width: 180px !important;
+    min-width: 180px !important;
+  }
+
+  .dynamic-page-cycling .dynamic-product-image-box,
+  .cycling-product-section .dynamic-product-image-box {
+    height: 180px !important;
+  }
+
+  .dynamic-page-cycling .dynamic-product-title-main,
+  .cycling-product-section .dynamic-product-title-main,
+  .dynamic-page-cycling .dynamic-product-title-tail,
+  .cycling-product-section .dynamic-product-title-tail {
+    font-size: 24px !important;
+  }
+}

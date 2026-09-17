@@ -1,0 +1,641 @@
+/* ========================================
+   VERIFY OTP PAGE
+======================================== */
+
+.verify-otp-page {
+  width: 100%;
+  min-height: 100vh;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  box-sizing: border-box;
+
+  margin-left: 0;
+}
+
+.verify-otp-page *,
+.verify-otp-page *::before,
+.verify-otp-page *::after {
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+.verify-otp-header {
+  position: relative;
+
+  width: 100%;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border-top: 1px solid #dddddd;
+}
+
+
+/* ========================================
+   BACK
+======================================== */
+
+.verify-otp-back {
+  position: absolute;
+
+  left: 64px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  height: 30px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #111111;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.verify-otp-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.verify-otp-back:hover {
+  color: #3048c4;
+}
+
+
+/* ========================================
+   LOGO
+======================================== */
+
+.verify-otp-logo {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: #3048c4;
+
+  font-size: 23px;
+
+  font-weight: 700;
+
+  letter-spacing: -1.2px;
+
+  line-height: 1;
+}
+
+.verify-otp-logo-mark {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #3048c4;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  transform: rotate(-15deg);
+}
+
+
+/* ========================================
+   CONTAINER
+======================================== */
+
+.verify-otp-container {
+  width: 500px;
+
+  max-width: calc(100% - 32px);
+
+  margin: 0 auto;
+
+  padding:
+    8px
+    0
+    35px;
+}
+
+
+/* ========================================
+   TITLE
+======================================== */
+
+.verify-otp-title {
+  margin: 0 0 26px;
+
+  color: #111111;
+
+  font-size: 27px;
+
+  font-weight: 700;
+
+  line-height: 1.25;
+}
+
+
+/* ========================================
+   DESCRIPTION
+======================================== */
+
+.verify-otp-description {
+  margin-bottom: 27px;
+}
+
+.verify-otp-description p {
+  margin: 0 0 13px;
+
+  color: #222222;
+
+  font-size: 15px;
+
+  line-height: 1.4;
+}
+
+
+/* ========================================
+   EMAIL + EDIT
+======================================== */
+
+.verify-otp-email-row {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  width: 100%;
+}
+
+.verify-otp-email-row span {
+  color: #111111;
+
+  font-size: 15px;
+
+  line-height: 1.3;
+
+  word-break: break-word;
+}
+
+.verify-otp-email-row button {
+  flex-shrink: 0;
+
+  padding: 0 0 3px;
+
+  border: none;
+
+  border-bottom: 1px solid #111111;
+
+  background: transparent;
+
+  color: #111111;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.verify-otp-email-row button:hover {
+  color: #3048c4;
+
+  border-color: #3048c4;
+}
+
+
+/* ========================================
+   SUCCESS MESSAGE
+======================================== */
+
+.verify-otp-success {
+  width: 100%;
+
+  min-height: 64px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding:
+    0
+    18px;
+
+  margin-bottom: 31px;
+
+  background: #e8f4f1;
+
+  color: #111111;
+
+  font-size: 15px;
+}
+
+.verify-otp-success svg {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  color: #009879;
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.verify-otp-form {
+  width: 100%;
+}
+
+
+/* ========================================
+   OTP INPUTS
+======================================== */
+
+.verify-otp-inputs {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(6, 1fr);
+
+  margin-bottom: 32px;
+}
+
+.verify-otp-inputs input {
+  width: 100%;
+  height: 68px;
+
+  padding: 0;
+
+  border: 1px solid #999999;
+
+  border-right: none;
+
+  border-radius: 0;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  text-align: center;
+
+  font-size: 24px;
+
+  font-weight: 400;
+}
+
+.verify-otp-inputs input:last-child {
+  border-right: 1px solid #999999;
+}
+
+.verify-otp-inputs input:focus {
+  border: 2px solid #3d4bc5;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+
+/* ========================================
+   NEXT
+======================================== */
+
+.verify-otp-next {
+  width: 100%;
+
+  height: 48px;
+
+  border: none;
+
+  border-radius: 0;
+
+  background: #b7b9ea;
+
+  color: #ffffff;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: not-allowed;
+
+  transition:
+    background 0.2s ease;
+}
+
+.verify-otp-next.enabled {
+  background: #3948c1;
+
+  cursor: pointer;
+}
+
+.verify-otp-next.enabled:hover {
+  background: #2f3eae;
+}
+
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.verify-otp-footer {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 41px;
+
+  font-size: 14px;
+}
+
+.verify-otp-footer a {
+  color: #111111;
+
+  text-decoration: none;
+}
+
+.verify-otp-footer a:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   LANGUAGE
+======================================== */
+
+.verify-otp-language {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 25px;
+
+  font-size: 14px;
+}
+
+.verify-otp-language span:first-child {
+  font-size: 18px;
+}
+
+
+/* ========================================
+   RECAPTCHA
+======================================== */
+
+.verify-otp-recaptcha {
+  margin: 26px 0 0;
+
+  color: #777777;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.verify-otp-recaptcha span {
+  color: #555555;
+
+  text-decoration: underline;
+}
+
+.verify-otp-resend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  margin-top: 18px;
+
+  color: #555;
+
+  font-size: 13px;
+}
+
+.verify-otp-resend button {
+  padding: 0;
+
+  border: none;
+
+  border-bottom: 1px solid #111;
+
+  background: transparent;
+
+  color: #111;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.verify-otp-resend button:hover {
+  color: #3048c4;
+
+  border-color: #3048c4;
+}
+
+.verify-otp-resend button:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   LARGE DESKTOP
+======================================== */
+
+@media (min-width: 1400px) {
+
+  .verify-otp-container {
+    width: 500px;
+  }
+
+  .verify-otp-title {
+    font-size: 28px;
+  }
+
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 900px) {
+
+  .verify-otp-back {
+    left: 35px;
+  }
+
+  .verify-otp-container {
+    width: 460px;
+
+    max-width: calc(100% - 40px);
+  }
+
+}
+
+
+/* ========================================
+   SMALL TABLET
+======================================== */
+
+@media (max-width: 700px) {
+
+  .verify-otp-back {
+    left: 22px;
+  }
+
+  .verify-otp-container {
+    width: 420px;
+
+    max-width: calc(100% - 32px);
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 450px) {
+
+  .verify-otp-header {
+    height: 58px;
+  }
+
+  .verify-otp-back {
+    left: 15px;
+
+    font-size: 12px;
+  }
+
+  .verify-otp-back svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .verify-otp-logo {
+    font-size: 21px;
+  }
+
+  .verify-otp-logo-mark {
+    width: 22px;
+    height: 22px;
+
+    font-size: 16px;
+  }
+
+  .verify-otp-container {
+    width: calc(100% - 30px);
+
+    max-width: 500px;
+
+    padding-top: 15px;
+  }
+
+  .verify-otp-title {
+    font-size: 24px;
+
+    margin-bottom: 23px;
+  }
+
+  .verify-otp-description p {
+    font-size: 13px;
+  }
+
+  .verify-otp-email-row span {
+    font-size: 13px;
+  }
+
+  .verify-otp-email-row button {
+    font-size: 13px;
+  }
+
+  .verify-otp-success {
+    min-height: 58px;
+
+    padding:
+      0
+      14px;
+
+    font-size: 13px;
+  }
+
+  .verify-otp-inputs input {
+    height: 55px;
+
+    font-size: 20px;
+  }
+
+  .verify-otp-next {
+    height: 42px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 350px) {
+
+  .verify-otp-container {
+    width: calc(100% - 22px);
+  }
+
+  .verify-otp-inputs input {
+    height: 50px;
+
+    font-size: 18px;
+  }
+
+  .verify-otp-title {
+    font-size: 22px;
+  }
+
+}

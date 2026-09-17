@@ -1,0 +1,212 @@
+.order-success-page {
+  min-height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.order-success-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.order-success-card {
+  width: 600px;
+  max-width: 100%;
+  background: #fff;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.success-icon {
+  width: 75px;
+  height: 75px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #e8f7f1;
+  color: #008f63;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-icon svg {
+  width: 42px;
+  height: 42px;
+}
+
+.order-success-card h1 {
+  margin: 0 0 10px;
+  font-size: 26px;
+}
+
+.success-message {
+  margin: 0 0 28px;
+  color: #667085;
+  font-size: 14px;
+}
+
+.success-order-box {
+  border: 1px solid #ddd;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: left;
+}
+
+.success-order-item {
+  min-height: 90px;
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-right: 1px solid #ddd;
+}
+
+.success-order-item:last-child {
+  border-right: 0;
+}
+
+.success-order-item > svg {
+  width: 24px;
+  height: 24px;
+  color: #3544c4;
+  flex-shrink: 0;
+}
+
+.success-order-item div {
+  min-width: 0;
+}
+
+.success-order-item span,
+.success-order-item strong {
+  display: block;
+}
+
+.success-order-item span {
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 11px;
+}
+
+.success-order-item strong {
+  font-size: 12px;
+  word-break: break-word;
+}
+
+.success-payment-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #3544c4;
+  color: #fff;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.success-total {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f1f2ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.success-total span {
+  font-size: 14px;
+}
+
+.success-total strong {
+  font-size: 20px;
+}
+
+.success-address {
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.success-address h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.success-address strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.success-address p {
+  margin: 3px 0;
+  color: #555;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.success-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.success-buttons a {
+  flex: 1;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.success-orders-btn {
+  background: #3544c4;
+  color: #fff;
+}
+
+.success-shop-btn {
+  border: 1px solid #3544c4;
+  color: #3544c4;
+  background: #fff;
+}
+
+.success-orders-btn:hover {
+  background: #2f3db5;
+}
+
+@media (max-width: 600px) {
+  .order-success-card {
+    padding: 25px 18px;
+  }
+
+  .success-order-box {
+    grid-template-columns: 1fr;
+  }
+
+  .success-order-item {
+    border-right: 0;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .success-order-item:last-child {
+    border-bottom: 0;
+  }
+
+  .success-buttons {
+    flex-direction: column;
+  }
+}

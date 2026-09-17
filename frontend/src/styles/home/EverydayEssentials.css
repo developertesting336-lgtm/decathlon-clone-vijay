@@ -1,0 +1,121 @@
+/* ========================================
+   EVERYDAY ESSENTIALS (SECTION 9)
+======================================== */
+
+.everyday-essentials-section,
+.rainy-day-section {
+  width: 100% !important;
+  margin: 12px 0 24px 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-sizing: border-box !important;
+}
+
+.everyday-essentials-container,
+.rainy-day-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* TITLE */
+
+.everyday-essentials-title,
+.rainy-day-title {
+  margin: 0 0 14px 0 !important;
+  font-family: inherit !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  color: #111111 !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* GRID */
+
+.everyday-essentials-grid,
+.rainy-day-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  box-sizing: border-box !important;
+}
+
+/* CARD */
+
+.everyday-essentials-card,
+.rainy-day-card {
+  position: relative !important;
+  width: 100% !important;
+  aspect-ratio: 400 / 439 !important;
+  height: auto !important;
+  overflow: hidden !important;
+  background: #f4f5f7 !important;
+  border-radius: 0 !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+  border: none !important;
+  cursor: pointer !important;
+}
+
+/* IMAGE */
+
+.everyday-essentials-image,
+.rainy-day-image {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 0 !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.everyday-essentials-card:hover .everyday-essentials-image,
+.rainy-day-card:hover .rainy-day-image {
+  transform: scale(1.03) !important;
+}
+
+/* NO IMAGE */
+
+.everyday-essentials-no-image,
+.rainy-day-no-image {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f4f5f7 !important;
+  color: #888888 !important;
+  font-size: 13px !important;
+  text-align: center !important;
+}
+
+/* TABLET */
+
+@media (max-width: 900px) {
+  .everyday-essentials-grid,
+  .rainy-day-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+/* MOBILE */
+
+@media (max-width: 550px) {
+  .everyday-essentials-title,
+  .rainy-day-title {
+    font-size: 16px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .everyday-essentials-grid,
+  .rainy-day-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+}

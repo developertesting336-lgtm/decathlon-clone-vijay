@@ -1,0 +1,93 @@
+/* =========================================================
+   HOME PAGE - DEDICATED DYNAMIC CSS
+========================================================= */
+
+.dynamic-page-home,
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #101010;
+}
+
+/* CONTAINER */
+.dynamic-page-container-home,
+.home-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 40px;
+  box-sizing: border-box;
+}
+
+/* BANNER */
+.dynamic-page-home .dynamic-banner-section {
+  margin: 10px 0 24px;
+}
+
+.dynamic-page-home .dynamic-banner-item img {
+  border-radius: 8px;
+}
+
+/* CATEGORY */
+.dynamic-page-home .dynamic-category-section {
+  padding: 16px 0 24px;
+}
+
+.dynamic-page-home .dynamic-category-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #101010;
+}
+
+.dynamic-page-home .dynamic-category-circle {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dynamic-page-home .dynamic-category-circle:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(54, 67, 186, 0.16);
+}
+
+/* PRODUCT */
+.dynamic-page-home .dynamic-product-section {
+  margin: 30px 0;
+}
+
+.dynamic-page-home .dynamic-product-title-sub {
+  color: #3643ba;
+  font-weight: 600;
+}
+
+.dynamic-page-home .dynamic-product-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dynamic-page-home .dynamic-product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* OTHER */
+.dynamic-page-home .dynamic-other-card {
+  border-radius: 12px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dynamic-page-home .dynamic-other-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .dynamic-page-container-home {
+    padding: 0 16px 32px;
+  }
+}
+
+@media (max-width: 550px) {
+  .dynamic-page-container-home {
+    padding: 0 12px 20px;
+  }
+}

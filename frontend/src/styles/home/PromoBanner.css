@@ -1,0 +1,484 @@
+/* ========================================
+   PROMO BANNER
+======================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   MAIN BANNER
+======================================== */
+
+.promo-banner {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 1224 / 300;
+
+  overflow: hidden;
+
+  margin: 15px 0 30px;
+
+  background: #f5f5f5;
+}
+
+
+/* ========================================
+   SLIDER
+======================================== */
+
+.promo-slider {
+  display: flex;
+
+  width: 100%;
+  height: 100%;
+
+  will-change: transform;
+}
+
+
+/* ========================================
+   SLIDE
+======================================== */
+
+.promo-slide {
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+
+  flex: 0 0 100%;
+
+  overflow: hidden;
+}
+
+
+/* ========================================
+   SLIDE LINK
+======================================== */
+
+.promo-slide-link {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  text-decoration: none;
+
+  color: inherit;
+}
+
+
+/* ========================================
+   IMAGE
+======================================== */
+
+.promo-slide img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: fill;
+
+  user-select: none;
+
+  -webkit-user-drag: none;
+}
+
+
+/* ========================================
+   ARROWS
+======================================== */
+
+.promo-arrow {
+  position: absolute;
+
+  top: 50%;
+
+  width: 38px;
+  height: 38px;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #ddd;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  color: #333;
+
+  font-size: 27px;
+
+  line-height: 1;
+
+  cursor: pointer;
+
+  z-index: 20;
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+
+/* ========================================
+   ARROW HOVER
+======================================== */
+
+.promo-arrow:hover:not(:disabled) {
+  background: #f4f4f4;
+
+  border-color: #ccc;
+
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.15);
+
+  transform:
+    translateY(-50%)
+    scale(1.05);
+}
+
+
+/* ========================================
+   ARROW ACTIVE
+======================================== */
+
+.promo-arrow:active:not(:disabled) {
+  transform:
+    translateY(-50%)
+    scale(0.97);
+}
+
+
+/* ========================================
+   ARROW DISABLED
+======================================== */
+
+.promo-arrow:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+
+/* ========================================
+   LEFT ARROW
+======================================== */
+
+.promo-arrow-left {
+  left: 30px;
+}
+
+
+/* ========================================
+   RIGHT ARROW
+======================================== */
+
+.promo-arrow-right {
+  right: 30px;
+}
+
+
+/* ========================================
+   DOTS
+======================================== */
+
+.promo-dots {
+  position: absolute;
+
+  left: 50%;
+  bottom: 12px;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  z-index: 20;
+}
+
+
+/* ========================================
+   DOT
+======================================== */
+
+.promo-dot {
+  width: 8px;
+  height: 8px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+
+/* ========================================
+   DOT HOVER
+======================================== */
+
+.promo-dot:hover {
+  transform: scale(1.1);
+}
+
+
+/* ========================================
+   ACTIVE DOT
+======================================== */
+
+.promo-dot.active {
+  width: 10px;
+  height: 10px;
+
+  background: #3157c8;
+}
+
+
+/* ========================================
+   FOCUS
+======================================== */
+
+.promo-arrow:focus-visible,
+.promo-dot:focus-visible {
+  outline: 2px solid #3157c8;
+
+  outline-offset: 2px;
+}
+
+
+/* ========================================
+   LARGE DESKTOP
+======================================== */
+
+@media (max-width: 1200px) {
+
+  .promo-banner {
+    margin:
+      12px 0 26px;
+  }
+
+  .promo-arrow-left {
+    left: 25px;
+  }
+
+  .promo-arrow-right {
+    right: 25px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL DESKTOP
+======================================== */
+
+@media (max-width: 1000px) {
+
+  .promo-arrow {
+    width: 36px;
+    height: 36px;
+
+    font-size: 25px;
+  }
+
+  .promo-arrow-left {
+    left: 20px;
+  }
+
+  .promo-arrow-right {
+    right: 20px;
+  }
+
+  .promo-dots {
+    bottom: 10px;
+
+    gap: 6px;
+  }
+
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 768px) {
+
+  .promo-banner {
+    aspect-ratio: 1224 / 360;
+
+    margin:
+      10px 0 22px;
+  }
+
+  .promo-arrow {
+    width: 34px;
+    height: 34px;
+
+    font-size: 23px;
+  }
+
+  .promo-arrow-left {
+    left: 12px;
+  }
+
+  .promo-arrow-right {
+    right: 12px;
+  }
+
+  .promo-dots {
+    bottom: 8px;
+
+    gap: 6px;
+  }
+
+  .promo-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .promo-dot.active {
+    width: 9px;
+    height: 9px;
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+  .promo-banner {
+    aspect-ratio: 1224 / 420;
+
+    margin:
+      8px 0 18px;
+  }
+
+  .promo-arrow {
+    width: 32px;
+    height: 32px;
+
+    font-size: 21px;
+  }
+
+  .promo-arrow-left {
+    left: 10px;
+  }
+
+  .promo-arrow-right {
+    right: 10px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 480px) {
+
+  .promo-banner {
+    aspect-ratio: 1224 / 500;
+
+    margin:
+      8px 0 16px;
+  }
+
+  .promo-arrow {
+    width: 30px;
+    height: 30px;
+
+    font-size: 20px;
+  }
+
+  .promo-arrow-left {
+    left: 8px;
+  }
+
+  .promo-arrow-right {
+    right: 8px;
+  }
+
+  .promo-dots {
+    bottom: 6px;
+
+    gap: 5px;
+  }
+
+  .promo-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .promo-dot.active {
+    width: 9px;
+    height: 9px;
+  }
+
+}
+
+
+/* ========================================
+   VERY SMALL MOBILE
+======================================== */
+
+@media (max-width: 360px) {
+
+  .promo-banner {
+    aspect-ratio: 1224 / 540;
+  }
+
+  .promo-arrow {
+    width: 28px;
+    height: 28px;
+
+    font-size: 18px;
+  }
+
+  .promo-arrow-left {
+    left: 6px;
+  }
+
+  .promo-arrow-right {
+    right: 6px;
+  }
+
+  .promo-dots {
+    bottom: 5px;
+
+    gap: 4px;
+  }
+
+}

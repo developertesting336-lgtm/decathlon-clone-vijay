@@ -1,0 +1,841 @@
+/* =========================================================
+   SPORTS ACCESSORIES PAGE - DEDICATED INDEPENDENT STYLESHEET
+   Self-contained with vibrant sports teal accents (#0f766e)
+========================================================= */
+
+/* PAGE BASE */
+.dynamic-page-sports-accessories,
+.sports-accessories-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff !important;
+  color: #111111;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* CONTAINER */
+.dynamic-page-container-sports-accessories,
+.sports-accessories-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 40px;
+  box-sizing: border-box;
+}
+
+/* LOADING SKELETON */
+.dynamic-page-sports-accessories .dynamic-page-loading,
+.sports-accessories-page .dynamic-page-loading {
+  padding: 60px 48px;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.dynamic-page-sports-accessories .dynamic-skeleton-banner,
+.sports-accessories-page .dynamic-skeleton-banner {
+  width: 100%;
+  height: 280px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: dynamicShimmerSports 1.5s infinite;
+}
+
+.dynamic-page-sports-accessories .dynamic-skeleton-row,
+.sports-accessories-page .dynamic-skeleton-row {
+  width: 100%;
+  height: 180px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%);
+  background-size: 200% 100%;
+  animation: dynamicShimmerSports 1.5s infinite;
+}
+
+@keyframes dynamicShimmerSports {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 404 NOT FOUND */
+.dynamic-page-sports-accessories .dynamic-page-not-found,
+.sports-accessories-page .dynamic-page-not-found {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+}
+
+.dynamic-page-sports-accessories .dynamic-page-not-found h1,
+.sports-accessories-page .dynamic-page-not-found h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 12px;
+}
+
+.dynamic-page-sports-accessories .dynamic-page-not-found p,
+.sports-accessories-page .dynamic-page-not-found p {
+  font-size: 16px;
+  color: #64748b;
+  margin: 0 0 24px;
+}
+
+.dynamic-page-sports-accessories .dynamic-home-btn,
+.sports-accessories-page .dynamic-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #0f766e;
+  color: #ffffff;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.dynamic-page-sports-accessories .dynamic-home-btn:hover,
+.sports-accessories-page .dynamic-home-btn:hover {
+  background: #115e59;
+}
+
+/* =========================================================
+   SECTION 1: CATEGORY STRIP (MATCHING DECATHLON REFERENCE)
+========================================================= */
+.dynamic-page-sports-accessories .dynamic-category-section,
+.sports-accessories-category-section {
+  width: 100% !important;
+  margin: 20px 0 36px !important;
+  padding: 0 !important;
+}
+
+/* Category Section Titles (like Urgent Needs) */
+.dynamic-page-sports-accessories .dynamic-category-title,
+.sports-accessories-category-section .dynamic-category-title {
+  display: block !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 16px 0 !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1.2 !important;
+}
+
+/* Hide internal section title on Section 1 top category strip */
+.dynamic-page-sports-accessories .sports-accessories-category-section-1 .dynamic-category-title,
+.dynamic-page-sports-accessories .section-sports-accessories-cat .dynamic-category-title {
+  display: none !important;
+}
+
+/* Section 5: Urgent Needs Section */
+.dynamic-page-sports-accessories .sports-accessories-category-section-5,
+.dynamic-page-sports-accessories .section-urgent-needs {
+  width: 100% !important;
+  margin: 40px 0 44px 0 !important;
+  padding: 0 !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-category-scroll,
+.sports-accessories-category-section .dynamic-category-scroll {
+  display: grid !important;
+  grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 100% !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  margin: 0 !important;
+}
+
+@media (max-width: 1120px) {
+  .dynamic-page-sports-accessories .dynamic-category-scroll,
+  .sports-accessories-category-section .dynamic-category-scroll {
+    display: flex !important;
+    gap: 14px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    padding-bottom: 8px !important;
+  }
+  .dynamic-page-sports-accessories .dynamic-category-scroll::-webkit-scrollbar,
+  .sports-accessories-category-section .dynamic-category-scroll::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
+.dynamic-page-sports-accessories .dynamic-category-item,
+.sports-accessories-category-section .dynamic-category-item {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+@media (max-width: 1120px) {
+  .dynamic-page-sports-accessories .dynamic-category-item,
+  .sports-accessories-category-section .dynamic-category-item {
+    flex: 0 0 135px !important;
+    width: 135px !important;
+  }
+}
+
+.dynamic-page-sports-accessories .dynamic-category-item:hover,
+.sports-accessories-category-section .dynamic-category-item:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* CARD IMAGE CONTAINER - ROUNDED RECTANGLE */
+.dynamic-page-sports-accessories .dynamic-category-circle,
+.sports-accessories-category-section .dynamic-category-circle {
+  width: 100% !important;
+  aspect-ratio: 1 / 1.05 !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #f4f5f7 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 0 10px 0 !important;
+  box-shadow: none !important;
+  position: relative !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-category-item:hover .dynamic-category-circle,
+.sports-accessories-category-section .dynamic-category-item:hover .dynamic-category-circle {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* IMAGE INSIDE CARD */
+.dynamic-page-sports-accessories .dynamic-category-circle img,
+.sports-accessories-category-section .dynamic-category-circle img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  border-radius: 8px !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-category-item:hover .dynamic-category-circle img,
+.sports-accessories-category-section .dynamic-category-item:hover .dynamic-category-circle img {
+  transform: scale(1.05) !important;
+}
+
+/* CATEGORY NAME TEXT */
+.dynamic-page-sports-accessories .dynamic-category-name,
+.sports-accessories-category-section .dynamic-category-name {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: #111111 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.1px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  transition: color 0.2s ease !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-category-item:hover .dynamic-category-name,
+.sports-accessories-category-section .dynamic-category-name {
+  color: #000000 !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-category-placeholder,
+.sports-accessories-category-section .dynamic-category-placeholder {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  text-align: center !important;
+  padding: 8px !important;
+}
+
+/* =========================================================
+   SECTION 2: HERO BANNER CAROUSEL
+========================================================= */
+.dynamic-page-sports-accessories .dynamic-banner-section,
+.sports-accessories-banner-section {
+  width: 100% !important;
+  margin: 12px 0 36px 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner,
+.sports-accessories-banner-section .dynamic-banner {
+  position: relative !important;
+  width: 100% !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  background: #eef2f6 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+  display: block !important;
+  user-select: none !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-img,
+.sports-accessories-banner-section .dynamic-banner-img {
+  width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  object-fit: cover !important;
+  border-radius: 20px !important;
+  transition: opacity 0.3s ease !important;
+}
+
+/* CAROUSEL NAVIGATION ARROWS */
+.dynamic-page-sports-accessories .dynamic-banner-arrow,
+.sports-accessories-banner-section .dynamic-banner-arrow {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16) !important;
+  color: #222222 !important;
+  font-size: 22px !important;
+  z-index: 5 !important;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  outline: none !important;
+  padding: 0 !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-arrow.prev,
+.sports-accessories-banner-section .dynamic-banner-arrow.prev {
+  left: 20px !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-arrow.next,
+.sports-accessories-banner-section .dynamic-banner-arrow.next {
+  right: 20px !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-arrow:hover,
+.sports-accessories-banner-section .dynamic-banner-arrow:hover {
+  background: #ffffff !important;
+  transform: translateY(-50%) scale(1.1) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22) !important;
+  color: #000000 !important;
+}
+
+/* CAROUSEL PAGINATION DOTS */
+.dynamic-page-sports-accessories .dynamic-banner-dots,
+.sports-accessories-banner-section .dynamic-banner-dots {
+  position: absolute !important;
+  bottom: 14px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  z-index: 5 !important;
+  padding: 4px 10px !important;
+  background: transparent !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-dots span,
+.sports-accessories-banner-section .dynamic-banner-dots span {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.85) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  display: inline-block !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-dots span:hover,
+.sports-accessories-banner-section .dynamic-banner-dots span:hover {
+  background: #ffffff !important;
+  transform: scale(1.2) !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-dots span.active,
+.sports-accessories-banner-section .dynamic-banner-dots span.active {
+  background: #2563eb !important;
+  width: 8px !important;
+  height: 8px !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.95), 0 1px 4px rgba(0, 0, 0, 0.25) !important;
+  transform: scale(1.1) !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-banner-placeholder,
+.sports-accessories-banner-section .dynamic-banner-placeholder {
+  min-height: 240px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  border-radius: 20px !important;
+}
+
+/* PRODUCT SECTION */
+.dynamic-page-sports-accessories .dynamic-product-section {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin: 28px 0;
+  box-sizing: border-box;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-left {
+  width: 180px;
+  min-width: 180px;
+  flex-shrink: 0;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-title-sub {
+  margin: 0 0 6px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f766e;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-title-main,
+.dynamic-page-sports-accessories .dynamic-product-title-tail {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #111111;
+  line-height: 1.05;
+  letter-spacing: -0.5px;
+}
+
+.dynamic-page-sports-accessories .dynamic-arrow-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.dynamic-page-sports-accessories .dynamic-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #d5d5d5;
+  background: #ffffff;
+  color: #111111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.2s ease;
+}
+
+.dynamic-page-sports-accessories .dynamic-arrow-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #0f766e;
+  color: #0f766e;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-slider-wrapper {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-slider {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 4px 2px 14px;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-card {
+  flex: 0 0 215px;
+  width: 215px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-card:hover {
+  transform: translateY(-3px);
+}
+
+.dynamic-page-sports-accessories .dynamic-product-image-box {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  background: #f4f4f4;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-card:hover .dynamic-product-img {
+  transform: scale(1.03);
+}
+
+.dynamic-page-sports-accessories .dynamic-product-badge.sale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #e2001a;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-info {
+  padding: 8px 0 4px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-name {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #222222;
+  text-decoration: none;
+  min-height: 36px;
+  height: 36px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0 0 4px;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-name strong {
+  font-weight: 700;
+  color: #111111;
+  margin-right: 3px;
+}
+
+.dynamic-page-sports-accessories .dynamic-product-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.dynamic-page-sports-accessories .dynamic-rating-stars {
+  color: #ff8200;
+  font-size: 13px;
+}
+
+.dynamic-page-sports-accessories .dynamic-review-count {
+  font-size: 11px;
+  color: #666666;
+}
+
+.dynamic-page-sports-accessories .dynamic-price-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.dynamic-page-sports-accessories .dynamic-current-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111111;
+}
+
+.dynamic-page-sports-accessories .dynamic-mrp {
+  font-size: 11.5px;
+  color: #71717a;
+  text-decoration: line-through;
+}
+
+.dynamic-page-sports-accessories .dynamic-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.dynamic-page-sports-accessories .dynamic-wishlist-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #4b5563;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.dynamic-page-sports-accessories .dynamic-wishlist-btn:hover {
+  border-color: #0f766e;
+  color: #0f766e;
+}
+
+.dynamic-page-sports-accessories .dynamic-wishlist-btn.active {
+  color: #e02424;
+  border-color: #e02424;
+}
+
+.dynamic-page-sports-accessories .dynamic-cart-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid #0f766e;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dynamic-page-sports-accessories .dynamic-cart-btn:hover {
+  background: #0f766e;
+  color: #ffffff;
+}
+
+/* OTHER SECTION */
+.dynamic-page-sports-accessories .dynamic-other-section {
+  width: 100%;
+  padding: 12px 0 28px;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 16px;
+}
+
+/* =========================================================
+   OTHER SECTION - MORE ACCESSORIES CAROUSEL
+========================================================= */
+.dynamic-page-sports-accessories .dynamic-other-section,
+.sports-accessories-other-section {
+  width: 100% !important;
+  margin: 36px 0 44px 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-container,
+.sports-accessories-other-section .dynamic-other-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-title,
+.sports-accessories-other-section .dynamic-other-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 16px 0 !important;
+  letter-spacing: -0.2px !important;
+  line-height: 1.2 !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-slider-wrapper {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-grid,
+.sports-accessories-other-section .dynamic-other-grid {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: stretch !important;
+  gap: 14px !important;
+  overflow-x: auto !important;
+  scroll-behavior: smooth !important;
+  scrollbar-width: none !important;
+  width: 100% !important;
+  padding: 2px 0 6px 0 !important;
+  margin: 0 !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-grid::-webkit-scrollbar {
+  display: none !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-card,
+.sports-accessories-other-section .dynamic-other-card {
+  flex: 0 0 calc((100% - 3 * 14px) / 4) !important;
+  width: calc((100% - 3 * 14px) / 4) !important;
+  min-width: calc((100% - 3 * 14px) / 4) !important;
+  aspect-ratio: 400 / 438 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #f1f5f9 !important;
+  position: relative !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: transform 0.25s ease !important;
+}
+
+@media (max-width: 1100px) {
+  .dynamic-page-sports-accessories .dynamic-other-card,
+  .sports-accessories-other-section .dynamic-other-card {
+    flex: 0 0 280px !important;
+    width: 280px !important;
+    min-width: 280px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dynamic-page-sports-accessories .dynamic-other-card,
+  .sports-accessories-other-section .dynamic-other-card {
+    flex: 0 0 220px !important;
+    width: 220px !important;
+    min-width: 220px !important;
+  }
+}
+
+.dynamic-page-sports-accessories .dynamic-other-media {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  display: flex !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-image,
+.sports-accessories-other-section .dynamic-other-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center top !important;
+  display: block !important;
+  border-radius: 0 !important;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-card:hover .dynamic-other-image {
+  transform: scale(1.03) !important;
+}
+
+/* CAROUSEL ARROWS */
+.dynamic-page-sports-accessories .dynamic-other-arrow {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16) !important;
+  color: #111111 !important;
+  font-size: 22px !important;
+  z-index: 10 !important;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
+  outline: none !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-arrow.prev {
+  left: 8px !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-arrow.next {
+  right: 8px !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-arrow:hover:not(:disabled) {
+  background: #ffffff !important;
+  transform: translateY(-50%) scale(1.1) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24) !important;
+}
+
+.dynamic-page-sports-accessories .dynamic-other-arrow:disabled,
+.dynamic-page-sports-accessories .dynamic-other-arrow.disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .dynamic-page-container-sports-accessories,
+  .sports-accessories-container {
+    padding: 0 32px 32px;
+  }
+
+  .dynamic-page-sports-accessories .dynamic-product-section {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .dynamic-page-sports-accessories .dynamic-product-left {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .dynamic-page-sports-accessories .dynamic-other-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 550px) {
+  .dynamic-page-container-sports-accessories,
+  .sports-accessories-container {
+    padding: 0 16px 24px;
+  }
+}

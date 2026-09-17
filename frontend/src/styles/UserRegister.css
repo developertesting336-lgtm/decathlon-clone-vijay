@@ -1,0 +1,752 @@
+/* ========================================
+   USER REGISTER PAGE
+======================================== */
+
+.user-register-page {
+  width: 100%;
+  min-height: 100vh;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  box-sizing: border-box;
+
+  margin-left: 0;
+}
+
+.user-register-page *,
+.user-register-page *::before,
+.user-register-page *::after {
+  box-sizing: border-box;
+}
+
+
+/* ========================================
+   HEADER
+======================================== */
+
+.user-register-header {
+  position: relative;
+
+  width: 100%;
+  height: 64px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+
+  border-top: 1px solid #dddddd;
+}
+
+
+/* ========================================
+   BACK BUTTON
+======================================== */
+
+.user-register-back {
+  position: absolute;
+
+  left: 64px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  height: 30px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #111111;
+
+  font-size: 13px;
+
+  cursor: pointer;
+}
+
+.user-register-back svg {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+}
+
+.user-register-back:hover {
+  color: #3048c4;
+}
+
+
+/* ========================================
+   LOGO
+======================================== */
+
+.user-register-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  color: #3048c4;
+
+  font-size: 23px;
+
+  font-weight: 700;
+
+  letter-spacing: -1.2px;
+
+  line-height: 1;
+}
+
+.user-register-logo-mark {
+  width: 27px;
+  height: 27px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  color: #3048c4;
+
+  font-size: 18px;
+
+  font-weight: 700;
+
+  line-height: 1;
+
+  transform: rotate(-15deg);
+}
+
+
+/* ========================================
+   MAIN CONTAINER
+======================================== */
+
+.user-register-container {
+  width: 500px;
+
+  max-width: calc(100% - 32px);
+
+  margin: 0 auto;
+
+  padding:
+    24px
+    0
+    40px;
+}
+
+
+/* ========================================
+   TITLE
+======================================== */
+
+.user-register-title {
+  margin: 0 0 28px;
+
+  color: #111111;
+
+  font-size: 30px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+}
+
+
+/* ========================================
+   TABS
+======================================== */
+
+.user-register-tabs {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  border-bottom: 3px solid #d9dadd;
+}
+
+.user-register-tabs button {
+  position: relative;
+
+  width: 100%;
+  height: 44px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #78808a;
+
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+.user-register-tabs button.active {
+  color: #111111;
+}
+
+.user-register-tabs button.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -3px;
+
+  height: 3px;
+
+  background: #3d4bc5;
+}
+
+
+/* ========================================
+   FORM
+======================================== */
+
+.user-register-form {
+  width: 100%;
+
+  margin-top: 19px;
+}
+
+
+/* ========================================
+   FIELD
+======================================== */
+
+.user-register-field {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 9px;
+}
+
+.user-register-field label {
+  color: #111111;
+
+  font-size: 15px;
+
+  font-weight: 400;
+
+  line-height: 1.2;
+}
+
+.user-register-field input {
+  width: 100%;
+
+  height: 45px;
+
+  padding:
+    0
+    11px;
+
+  border: 1px solid #999999;
+
+  border-radius: 0;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  font-size: 14px;
+}
+
+.user-register-field input::placeholder {
+  color: #777777;
+}
+
+.user-register-field input:focus {
+  border-color: #3d4bc5;
+
+  box-shadow:
+    0 0 0 1px #3d4bc5;
+}
+
+
+/* ========================================
+   NEXT BUTTON
+======================================== */
+
+.user-register-next {
+  width: 100%;
+
+  height: 46px;
+
+  margin-top: 12px;
+
+  padding: 0;
+
+  border: none;
+
+  border-radius: 0;
+
+  background: #3948c1;
+
+  color: #ffffff;
+
+  font-size: 12px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.user-register-next:hover {
+  background: #2f3eae;
+}
+
+
+/* ========================================
+   SOCIAL LOGIN
+======================================== */
+
+.user-register-social {
+  width: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+
+  margin-top: 30px;
+}
+
+.register-social-btn {
+  position: relative;
+
+  width: 100%;
+
+  height: 45px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #999999;
+
+  border-radius: 0;
+
+  background: #ffffff;
+
+  color: #111111;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease;
+}
+
+.register-social-btn:hover {
+  background: #f8f8f8;
+}
+
+
+/* ========================================
+   SOCIAL ICONS
+======================================== */
+
+.register-google-icon,
+.register-facebook-icon,
+.register-apple-icon {
+  position: absolute;
+
+  left: 13px;
+
+  width: 19px;
+  height: 19px;
+
+  flex-shrink: 0;
+}
+
+.register-facebook-icon {
+  color: #1877f2;
+}
+
+.register-apple-icon {
+  color: #000000;
+}
+
+
+/* ========================================
+   LOGIN LINK
+======================================== */
+
+.user-register-login {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-top: 30px;
+}
+
+.user-register-login strong {
+  color: #111111;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+.user-register-login a {
+  color: #2942c4;
+
+  font-size: 14px;
+
+  text-decoration: none;
+}
+
+.user-register-login a:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   TERMS
+======================================== */
+
+.user-register-terms {
+  margin-top: 36px;
+
+  color: #555555;
+}
+
+.user-register-terms p {
+  margin: 0;
+
+  font-size: 14px;
+
+  line-height: 1.45;
+}
+
+.user-register-terms a {
+  color: #555555;
+
+  text-decoration: underline;
+}
+
+.user-register-terms a:hover {
+  color: #111111;
+}
+
+
+/* ========================================
+   BENEFITS
+======================================== */
+
+.user-register-benefits {
+  margin-top: 32px;
+}
+
+.user-register-benefits h3 {
+  margin: 0 0 16px;
+
+  color: #111111;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+/* ========================================
+   BENEFIT ITEM
+======================================== */
+
+.register-benefit-item {
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 9px;
+
+  color: #111111;
+
+  font-size: 14px;
+
+  line-height: 1.25;
+}
+
+.register-benefit-item svg {
+  width: 17px;
+  height: 17px;
+
+  flex-shrink: 0;
+
+  color: #222222;
+}
+
+
+/* ========================================
+   FOOTER
+======================================== */
+
+.user-register-footer {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  margin-top: 34px;
+
+  color: #111111;
+
+  font-size: 13px;
+}
+
+.user-register-footer a {
+  color: #111111;
+
+  text-decoration: none;
+}
+
+.user-register-footer a:hover {
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   LANGUAGE
+======================================== */
+
+.user-register-language {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  margin-top: 17px;
+
+  color: #111111;
+
+  font-size: 13px;
+}
+
+.register-india-flag {
+  font-size: 17px;
+
+  line-height: 1;
+}
+
+
+/* ========================================
+   RECAPTCHA
+======================================== */
+
+.user-register-recaptcha {
+  margin: 28px 0 0;
+
+  color: #777777;
+
+  font-size: 10px;
+
+  line-height: 1.5;
+}
+
+.user-register-recaptcha span {
+  color: #555555;
+
+  text-decoration: underline;
+}
+
+
+/* ========================================
+   LARGE DESKTOP
+======================================== */
+
+@media (min-width: 1400px) {
+
+  .user-register-container {
+    width: 500px;
+
+    padding-top: 24px;
+  }
+
+}
+
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 900px) {
+
+  .user-register-back {
+    left: 35px;
+  }
+
+  .user-register-container {
+    width: 450px;
+
+    max-width: calc(100% - 40px);
+  }
+
+}
+
+
+/* ========================================
+   SMALL TABLET
+======================================== */
+
+@media (max-width: 700px) {
+
+  .user-register-back {
+    left: 22px;
+  }
+
+  .user-register-container {
+    width: 420px;
+
+    max-width: calc(100% - 32px);
+  }
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 450px) {
+
+  .user-register-header {
+    height: 58px;
+  }
+
+  .user-register-back {
+    left: 15px;
+
+    font-size: 12px;
+  }
+
+  .user-register-back svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .user-register-logo {
+    font-size: 21px;
+  }
+
+  .user-register-logo-mark {
+    width: 22px;
+    height: 22px;
+
+    font-size: 16px;
+  }
+
+  .user-register-container {
+    width: calc(100% - 30px);
+
+    max-width: 500px;
+
+    padding:
+      15px
+      0
+      30px;
+  }
+
+  .user-register-title {
+    font-size: 25px;
+
+    margin-bottom: 23px;
+  }
+
+  .user-register-tabs button {
+    height: 40px;
+
+    font-size: 13px;
+  }
+
+  .user-register-field label {
+    font-size: 13px;
+  }
+
+  .user-register-field input {
+    height: 38px;
+
+    font-size: 13px;
+  }
+
+  .user-register-next {
+    height: 39px;
+  }
+
+  .register-social-btn {
+    height: 39px;
+
+    font-size: 12px;
+  }
+
+  .user-register-terms p {
+    font-size: 12px;
+  }
+
+  .register-benefit-item {
+    font-size: 12px;
+  }
+
+}
+
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 350px) {
+
+  .user-register-container {
+    width: calc(100% - 22px);
+  }
+
+  .register-social-btn {
+    font-size: 11px;
+  }
+
+  .user-register-terms p {
+    font-size: 11px;
+  }
+
+}

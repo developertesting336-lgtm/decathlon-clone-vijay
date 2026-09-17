@@ -1,0 +1,571 @@
+/* =========================================
+   GLOBAL DESIGN SYSTEM & VARIABLES
+========================================= */
+
+:root {
+  --primary-blue: #3643BA;
+  --primary-blue-hover: #293498;
+  --primary-blue-light: #f0f2ff;
+  --accent-yellow: #ffea00;
+  --text-dark: #101010;
+  --text-muted: #707070;
+  --bg-subtle: #f4f5f7;
+  --bg-search: #f2f4f8;
+  --border-light: #e5e7eb;
+  --max-content-width: 1440px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-dark);
+  background-color: #ffffff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f3f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c5cbd3;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3548c4;
+}
+
+/* =========================================
+   APP CONTAINER
+========================================= */
+
+.App {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App > * {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* =========================================
+   GLOBAL CONSISTENT MARGINS & CONTAINERS
+   Guarantees the exact same margin (24px)
+   on BOTH sides (left & right) across ALL screens
+========================================= */
+
+:root {
+  --page-margin-x: 48px;
+  --page-padding-x: 48px;
+}
+
+.navbar,
+.category-nav,
+.home-container,
+.dynamic-page-container,
+.dynamic-page-container-activewear,
+.dynamic-page-container-monsoon-essentials,
+.dynamic-page-container-workout-essentials,
+.dynamic-page-container-sports-accessories,
+.dynamic-page-container-shoes,
+.dynamic-page-container-home,
+.dynamic-page-container-hiking-trekking,
+.dynamic-page-container-cycling,
+.dynamic-page-container-bags-backpacks,
+.activewear-container,
+.monsoon-essentials-container,
+.product-detail-container {
+  width: 100% !important;
+  max-width: var(--max-content-width, 1440px) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: var(--page-padding-x, 48px) !important;
+  padding-right: var(--page-padding-x, 48px) !important;
+  box-sizing: border-box !important;
+}
+
+/* Enforce the exact same side margin on all screens */
+@media (max-width: 1440px), (max-width: 1200px), (max-width: 992px) {
+  .navbar,
+  .category-nav,
+  .home-container,
+  .dynamic-page-container,
+  .dynamic-page-container-activewear,
+  .dynamic-page-container-monsoon-essentials,
+  .dynamic-page-container-workout-essentials,
+  .dynamic-page-container-sports-accessories,
+  .dynamic-page-container-shoes,
+  .dynamic-page-container-home,
+  .dynamic-page-container-hiking-trekking,
+  .dynamic-page-container-cycling,
+  .dynamic-page-container-bags-backpacks,
+  .activewear-container,
+  .monsoon-essentials-container,
+  .product-detail-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: var(--page-padding-x, 48px) !important;
+    padding-right: var(--page-padding-x, 48px) !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 768px), (max-width: 600px), (max-width: 480px) {
+  :root {
+    --page-margin-x: 20px;
+    --page-padding-x: 20px;
+  }
+
+  .navbar,
+  .category-nav,
+  .home-container,
+  .dynamic-page-container,
+  .dynamic-page-container-activewear,
+  .dynamic-page-container-monsoon-essentials,
+  .dynamic-page-container-workout-essentials,
+  .dynamic-page-container-sports-accessories,
+  .dynamic-page-container-shoes,
+  .dynamic-page-container-home,
+  .dynamic-page-container-hiking-trekking,
+  .dynamic-page-container-cycling,
+  .dynamic-page-container-bags-backpacks,
+  .activewear-container,
+  .monsoon-essentials-container,
+  .product-detail-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: var(--page-padding-x, 20px) !important;
+    padding-right: var(--page-padding-x, 20px) !important;
+    box-sizing: border-box !important;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Utility Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* =========================================
+   DYNAMIC BANNER CAROUSEL (GLOBAL COMPONENT)
+   Matches the Decathlon reference:
+   - Full-width hero banner with rounded corners
+   - Floating circular prev/next arrow buttons
+   - Bottom-centered pagination indicator dots
+========================================= */
+
+.dynamic-banner-section {
+  width: 100%;
+  margin: 12px 0 28px 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.dynamic-banner {
+  position: relative;
+  width: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #f1f3f6;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+  display: block;
+  user-select: none;
+}
+
+.dynamic-banner.clickable-banner {
+  cursor: pointer;
+}
+
+.dynamic-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 16px;
+  transition: opacity 0.3s ease;
+}
+
+/* Floating Navigation Arrows */
+.dynamic-banner-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+  color: #1a1a1a;
+  font-size: 24px;
+  z-index: 10;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  outline: none;
+  padding: 0;
+}
+
+.dynamic-banner-arrow svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.dynamic-banner-arrow.prev {
+  left: 18px;
+}
+
+.dynamic-banner-arrow.next {
+  right: 18px;
+}
+
+.dynamic-banner-arrow:hover {
+  background: #ffffff;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+  color: #000000;
+}
+
+.dynamic-banner-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* Bottom Centered Pagination Dots */
+.dynamic-banner-dots {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 10;
+  padding: 4px 12px;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+}
+
+.dynamic-banner-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-block;
+}
+
+.dynamic-banner-dots span:hover {
+  background: #ffffff;
+  transform: scale(1.2);
+}
+
+.dynamic-banner-dots span.active {
+  background: #ffffff;
+  width: 22px;
+  height: 8px;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+/* Fallback Placeholder */
+.dynamic-banner-placeholder {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f3f6;
+  color: #718096;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 16px;
+}
+
+/* Responsive Banner Adjustments */
+@media (max-width: 768px) {
+  .dynamic-banner-section {
+    margin: 8px 0 20px 0;
+  }
+
+  .dynamic-banner,
+  .dynamic-banner-img,
+  .dynamic-banner-placeholder {
+    border-radius: 12px;
+  }
+
+  .dynamic-banner-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+
+  .dynamic-banner-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dynamic-banner-arrow.prev {
+    left: 10px;
+  }
+
+  .dynamic-banner-arrow.next {
+    right: 10px;
+  }
+
+  .dynamic-banner-dots {
+    bottom: 8px;
+    gap: 6px;
+    padding: 3px 8px;
+  }
+
+  .dynamic-banner-dots span {
+    width: 6px;
+    height: 6px;
+  }
+
+  .dynamic-banner-dots span.active {
+    width: 16px;
+    height: 6px;
+  }
+}
+
+/* =========================================
+   DYNAMIC CATEGORY CAROUSEL (GLOBAL COMPONENT)
+   Matches the Decathlon reference:
+   - 8-column clean grid on desktop, horizontal smooth scroll on mobile
+   - Rounded rectangle card (aspect-ratio: 260 / 287)
+   - Crisp object-fit: cover images (no black bars or distortions)
+   - Centered typography with subtle hover elevation
+========================================= */
+
+.dynamic-category-section {
+  width: 100%;
+  padding: 4px 0 10px 0;
+  margin: 6px auto 14px auto;
+  box-sizing: border-box;
+}
+
+.dynamic-category-scroll {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  padding: 0;
+  overflow: visible;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1120px) {
+  .dynamic-category-scroll {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 8px;
+  }
+  .dynamic-category-scroll::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.dynamic-category-item {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@media (max-width: 1120px) {
+  .dynamic-category-item {
+    flex: 0 0 135px;
+    width: 135px;
+  }
+}
+
+.dynamic-category-item:hover {
+  transform: translateY(-4px);
+}
+
+.dynamic-category-circle {
+  width: 100%;
+  aspect-ratio: 260 / 287;
+  height: auto;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f4f5f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 10px 0;
+  box-shadow: none;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+}
+
+.dynamic-category-item:hover .dynamic-category-circle {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.dynamic-category-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.dynamic-category-item:hover .dynamic-category-circle img {
+  transform: scale(1.05);
+}
+
+.dynamic-category-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #111111;
+  margin: 0;
+  text-align: center;
+  line-height: 1.25;
+  letter-spacing: -0.1px;
+  white-space: normal;
+  word-break: break-word;
+  transition: color 0.2s ease;
+}
+
+.dynamic-category-placeholder {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  padding: 8px;
+}
+
+/* =========================================
+   DYNAMIC OTHER / LOVED CATEGORIES SECTION (GLOBAL)
+========================================= */
+.dynamic-other-slider-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dynamic-other-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16);
+  color: #111111;
+  font-size: 22px;
+  z-index: 10;
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  outline: none;
+  padding: 0;
+}
+
+.dynamic-other-arrow svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+
+.dynamic-other-arrow.prev {
+  left: 8px;
+}
+
+.dynamic-other-arrow.next {
+  right: 8px;
+}
+
+.dynamic-other-arrow:hover:not(:disabled) {
+  background: #ffffff;
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
+  color: #000000;
+}
+
+.dynamic-other-arrow:disabled,
+.dynamic-other-arrow.disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Global Responsive Layout */
+@media (max-width: 992px) {
+  .App > * {
+    width: 100%;
+  }
+}

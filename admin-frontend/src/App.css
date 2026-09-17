@@ -1,0 +1,116 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+/* =========================================================
+   DECATHLON ENTERPRISE DESIGN SYSTEM TOKENS & GLOBAL RESET
+   ========================================================= */
+
+:root {
+  --admin-blue: #3548c4;
+  --admin-blue-dark: #24359d;
+  --admin-blue-hover: #2a3aa5;
+  --admin-blue-light: #eef2ff;
+  --admin-blue-glow: rgba(53, 72, 196, 0.22);
+
+  --admin-emerald: #059669;
+  --admin-emerald-light: #ecfdf5;
+  --admin-amber: #d97706;
+  --admin-amber-light: #fffbeb;
+  --admin-rose: #e11d48;
+  --admin-rose-light: #fff1f2;
+  --admin-sky: #0284c7;
+  --admin-sky-light: #f0f9ff;
+  --admin-purple: #7c3aed;
+  --admin-purple-light: #f5f3ff;
+
+  --admin-bg: #f8fafc;
+  --admin-card-bg: #ffffff;
+  --admin-border: #e2e8f0;
+  --admin-border-hover: #cbd5e1;
+
+  --admin-text: #0f172a;
+  --admin-text-secondary: #334155;
+  --admin-text-muted: #64748b;
+  --admin-text-light: #94a3b8;
+
+  --admin-shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.04);
+  --admin-shadow-md: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --admin-shadow-lg: 0 12px 28px -4px rgba(53, 72, 196, 0.12), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+  --admin-radius: 12px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+optgroup,
+table,
+th,
+td,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+body {
+  background-color: var(--admin-bg);
+  color: var(--admin-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+}
+
+/* Custom Admin Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--admin-blue);
+}
+
+.App {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Ensure Toaster notifications are ALWAYS on top */
+div[style*="position: fixed"][style*="inset:"] {
+  z-index: 99999999 !important;
+}
+
+div:has(> [data-toaster-container]),
+div:has(> .react-hot-toast),
+[data-toaster-container],
+.react-hot-toast {
+  z-index: 99999999 !important;
+}
