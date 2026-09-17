@@ -217,8 +217,8 @@ export const handleAIChat = async (req, res) => {
         finalReply = `I understand you would like to connect with a support agent. 🤝\n\nOur customer support team is available **Mon – Sun, 9:00 AM to 8:00 PM IST**.\n\nYou can click the button below to **open an official support ticket**, or we can assist you with your orders, returns, and products right here!`;
         supportContext = "Customer requested human support escalation. Offered ticket creation.";
       } else {
-        finalReply = `Would you like to connect with a support agent? 🤝\n\nPlease **[Log In](/login)** to your Decathlon account so we can automatically pull up your orders and assign a support executive to your request!`;
-        supportContext = "Customer asked for human agent while logged out.";
+        finalReply = `I'd be glad to connect you with our Decathlon Customer Support team! 🤝\n\nOur customer support specialists are available **Mon – Sun, 9:00 AM to 8:00 PM IST**.\n\nYou can fill out the message form below to reach our team immediately, or **[Log In](/login)** to your account for faster order tracking.`;
+        supportContext = "Customer asked for human agent while logged out. Offered direct message form.";
       }
       followUpSuggestions = [
         "Create Support Ticket",

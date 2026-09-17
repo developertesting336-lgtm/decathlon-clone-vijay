@@ -1,6 +1,6 @@
 import React from "react";
 import { FiX } from "react-icons/fi";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const CartSizeModal = ({
   item,
@@ -23,7 +23,12 @@ const CartSizeModal = ({
   }
 
   const handleSizeChart = () => {
-    toast.info("Size chart coming soon");
+    toast("Size chart coming soon", { icon: "📏" });
+  };
+
+  const handleSelectSize = (size) => {
+    setSelectedSize(size);
+    toast.success(`Selected size: ${size}`, { id: "cart-size-select-toast" });
   };
 
   return (
@@ -64,7 +69,14 @@ const CartSizeModal = ({
         </div>
 
         <div className="cart-size-title-row">
-          <h3>Select Size</h3>
+          <h3>
+            Select Size
+            {selectedSize && (
+              <span style={{ fontSize: "14px", fontWeight: "normal", color: "#0082c3", marginLeft: "6px" }}>
+                — {selectedSize}
+              </span>
+            )}
+          </h3>
 
           <button
             type="button"
@@ -82,7 +94,7 @@ const CartSizeModal = ({
               key={size}
               type="button"
               className={selectedSize === size ? "selected" : ""}
-              onClick={() => setSelectedSize(size)}
+              onClick={() => handleSelectSize(size)}
               disabled={updating}
             >
               {size}

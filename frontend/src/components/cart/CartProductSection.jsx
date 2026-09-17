@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiHeart } from "react-icons/fi";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 import "../../styles/cart/CartProductSection.css";
 import ProductSizeModal from "../ProductSizeModal";
@@ -102,12 +102,12 @@ const CartProductSection = ({
     const sizes = convertToArray(selectedProduct?.size);
 
     if (sizes.length > 0 && !selectedSize) {
-      toast.warning("Please select a size");
+      toast.error("Please select a size");
       return;
     }
 
     if (!quantity || Number(quantity) < 1) {
-      toast.warning("Quantity must be at least 1");
+      toast.error("Quantity must be at least 1");
       return;
     }
 

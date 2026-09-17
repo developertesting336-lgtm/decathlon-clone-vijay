@@ -235,7 +235,7 @@ const updateCartQuantity = async (req, res) => {
   try {
     const { productId } = req.params;
 
-    const { quantity, size = "", oldSize, newSize } = req.body;
+    const { quantity, size = "", oldSize, newSize, cartItemId } = req.body;
 
     /* ========================================
          VALIDATION
@@ -280,26 +280,39 @@ const updateCartQuantity = async (req, res) => {
     }
 
     /* ========================================
-         SIZE UPDATE
+         SIZE UPDATE OR QUANTITY UPDATE
       ======================================== */
 
-    if (oldSize !== undefined && newSize !== undefined) {
-      const oldSizeValue = oldSize || "";
+    const isSizeUpdate =
+      (oldSize !== undefined && newSize !== undefined) ||
+      newSize !== undefined ||
+      (oldSize !== undefined && size && oldSize !== size);
 
-      const newSizeValue = newSize || "";
+    if (isSizeUpdate) {
+      const targetOldSize = (
+        oldSize !== undefined
+          ? oldSize
+          : cartItemId
+            ? cart.items.find((item) => item._id?.toString() === cartItemId.toString())?.size
+            : size
+      ) || "";
+
+      const targetNewSize = (newSize !== undefined ? newSize : size) || "";
 
       /*
         ----------------------------------------
         VALIDATE NEW SIZE
         ----------------------------------------
-        */
+      */
 
       const availableSizes = Array.isArray(product.size) ? product.size : [];
 
       if (
-        newSizeValue &&
+        targetNewSize &&
         availableSizes.length > 0 &&
-        !availableSizes.includes(newSizeValue)
+        !availableSizes.some(
+          (s) => s.trim().toLowerCase() === targetNewSize.trim().toLowerCase()
+        )
       ) {
         return res.status(400).json({
           message: "Selected size is not available",
@@ -310,13 +323,32 @@ const updateCartQuantity = async (req, res) => {
         ----------------------------------------
         FIND OLD CART ITEM
         ----------------------------------------
-        */
+      */
 
-      const oldItem = cart.items.find(
-        (item) =>
-          item.product.toString() === productId &&
-          (item.size || "") === oldSizeValue,
-      );
+      let oldItem = null;
+      if (cartItemId) {
+        oldItem = cart.items.find(
+          (item) => item._id?.toString() === cartItemId.toString()
+        );
+      }
+      if (!oldItem) {
+        oldItem = cart.items.find(
+          (item) =>
+            (item.product?.toString() === productId ||
+              item.product?._id?.toString() === productId) &&
+            (item.size || "").trim().toLowerCase() === targetOldSize.trim().toLowerCase()
+        );
+      }
+      if (!oldItem) {
+        const productItems = cart.items.filter(
+          (item) =>
+            item.product?.toString() === productId ||
+            item.product?._id?.toString() === productId
+        );
+        if (productItems.length === 1) {
+          oldItem = productItems[0];
+        }
+      }
 
       if (!oldItem) {
         return res.status(404).json({
@@ -328,24 +360,33 @@ const updateCartQuantity = async (req, res) => {
         ----------------------------------------
         SAME SIZE
         ----------------------------------------
-        */
+      */
 
-      if (oldSizeValue === newSizeValue) {
+      if (
+        (oldItem.size || "").trim().toLowerCase() ===
+        targetNewSize.trim().toLowerCase()
+      ) {
+        if (Number(quantity) > product.stock) {
+          return res.status(400).json({
+            message: `Only ${product.stock} items available`,
+          });
+        }
         oldItem.quantity = Number(quantity);
-
         await cart.save();
       } else {
         /*
           --------------------------------------
           CHECK IF NEW SIZE ALREADY EXISTS
           --------------------------------------
-          */
+        */
 
         const existingNewItem = cart.items.find(
           (item) =>
-            item !== oldItem &&
-            item.product.toString() === productId &&
-            (item.size || "") === newSizeValue,
+            item._id?.toString() !== oldItem._id?.toString() &&
+            (item.product?.toString() === productId ||
+              item.product?._id?.toString() === productId) &&
+            (item.size || "").trim().toLowerCase() ===
+              targetNewSize.trim().toLowerCase()
         );
 
         if (existingNewItem) {
@@ -353,7 +394,7 @@ const updateCartQuantity = async (req, res) => {
             ==============================
             MERGE
             ==============================
-            */
+          */
 
           const totalQuantity =
             Number(existingNewItem.quantity) + Number(quantity);
@@ -366,16 +407,23 @@ const updateCartQuantity = async (req, res) => {
 
           existingNewItem.quantity = totalQuantity;
 
-          cart.items = cart.items.filter((item) => item !== oldItem);
+          cart.items = cart.items.filter(
+            (item) => item._id?.toString() !== oldItem._id?.toString()
+          );
         } else {
           /*
             ==============================
             CHANGE SIZE
             ==============================
-            */
+          */
 
-          oldItem.size = newSizeValue;
+          if (Number(quantity) > product.stock) {
+            return res.status(400).json({
+              message: `Only ${product.stock} items available`,
+            });
+          }
 
+          oldItem.size = targetNewSize;
           oldItem.quantity = Number(quantity);
         }
 
@@ -386,18 +434,16 @@ const updateCartQuantity = async (req, res) => {
         ======================================
         UPDATED CART
         ======================================
-        */
+      */
 
       const updatedCart = await Cart.findById(cart._id).populate({
         path: "items.product",
-
         select:
           "name description price discountPrice images brand stock size color",
       });
 
       return res.status(200).json({
         message: "Cart size updated",
-
         cart: updatedCart,
       });
     }
@@ -406,13 +452,32 @@ const updateCartQuantity = async (req, res) => {
          NORMAL QUANTITY UPDATE
       ======================================== */
 
-    const selectedSize = size || "";
+    const selectedSize = (size || "").trim().toLowerCase();
 
-    const item = cart.items.find(
-      (cartItem) =>
-        cartItem.product.toString() === productId &&
-        (cartItem.size || "") === selectedSize,
-    );
+    let item = null;
+    if (cartItemId) {
+      item = cart.items.find(
+        (cItem) => cItem._id?.toString() === cartItemId.toString()
+      );
+    }
+    if (!item) {
+      item = cart.items.find(
+        (cartItem) =>
+          (cartItem.product?.toString() === productId ||
+            cartItem.product?._id?.toString() === productId) &&
+          (cartItem.size || "").trim().toLowerCase() === selectedSize
+      );
+    }
+    if (!item) {
+      const productItems = cart.items.filter(
+        (cItem) =>
+          cItem.product?.toString() === productId ||
+          cItem.product?._id?.toString() === productId
+      );
+      if (productItems.length === 1) {
+        item = productItems[0];
+      }
+    }
 
     if (!item) {
       return res.status(404).json({
@@ -444,14 +509,12 @@ const updateCartQuantity = async (req, res) => {
 
     const updatedCart = await Cart.findById(cart._id).populate({
       path: "items.product",
-
       select:
         "name description price discountPrice images brand stock size color",
     });
 
     return res.status(200).json({
       message: "Cart quantity updated",
-
       cart: updatedCart,
     });
   } catch (error) {
@@ -462,6 +525,7 @@ const updateCartQuantity = async (req, res) => {
     });
   }
 };
+
 /*
 ========================================
 REMOVE FROM CART
@@ -472,7 +536,7 @@ const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.params;
 
-    const { size = "" } = req.query;
+    const { size = "", cartItemId } = req.query;
 
     if (!productId) {
       return res.status(400).json({
@@ -490,25 +554,42 @@ const removeFromCart = async (req, res) => {
       });
     }
 
-    const itemExists = cart.items.some(
-      (item) =>
-        item.product.toString() === productId &&
-        (item.size || "") === (size || ""),
-    );
+    const targetSize = (size || "").trim().toLowerCase();
 
-    if (!itemExists) {
+    let itemIndex = cart.items.findIndex((item) => {
+      if (cartItemId && item._id?.toString() === cartItemId.toString()) {
+        return true;
+      }
+      const prodMatch =
+        item.product?.toString() === productId ||
+        item.product?._id?.toString() === productId;
+      const sizeMatch =
+        (item.size || "").trim().toLowerCase() === targetSize;
+      return prodMatch && sizeMatch;
+    });
+
+    if (itemIndex === -1) {
+      const productItems = cart.items.filter(
+        (item) =>
+          item.product?.toString() === productId ||
+          item.product?._id?.toString() === productId
+      );
+      if (productItems.length === 1) {
+        itemIndex = cart.items.findIndex(
+          (item) =>
+            item.product?.toString() === productId ||
+            item.product?._id?.toString() === productId
+        );
+      }
+    }
+
+    if (itemIndex === -1) {
       return res.status(404).json({
         message: "Product with selected size not found in cart",
       });
     }
 
-    cart.items = cart.items.filter(
-      (item) =>
-        !(
-          item.product.toString() === productId &&
-          (item.size || "") === (size || "")
-        ),
-    );
+    cart.items.splice(itemIndex, 1);
 
     await cart.save();
 

@@ -21,6 +21,7 @@ import registrationRoutes from "./routes/registrationRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import emailRoutes from "./routes/emailRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 
 /*
@@ -185,6 +186,7 @@ app.use("/api/banners", bannerRoutes);
 
 app.use("/api/pages", pageRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/email", emailRoutes);
 
 /*
 ========================================

@@ -380,7 +380,10 @@ const ProductDetail = () => {
                       key={idx}
                       type="button"
                       className={`pdp-colour-card-btn ${selectedColor === color ? "active" : ""}`}
-                      onClick={() => setSelectedColor(color)}
+                      onClick={() => {
+                        setSelectedColor(color);
+                        toast.success(`Selected color: ${color}`, { id: "pdp-color-toast" });
+                      }}
                       title={color}
                     >
                       <img src={getImageUrl(images[idx % images.length])} alt={color} />
@@ -422,7 +425,10 @@ const ProductDetail = () => {
                       key={idx}
                       type="button"
                       className={`pdp-size-btn-rect ${selectedSize === sz ? "active" : ""}`}
-                      onClick={() => setSelectedSize(sz)}
+                      onClick={() => {
+                        setSelectedSize(sz);
+                        toast.success(`Selected size: ${sz}`, { id: "pdp-size-toast" });
+                      }}
                     >
                       {sz}
                     </button>
@@ -433,7 +439,10 @@ const ProductDetail = () => {
                       key={sz}
                       type="button"
                       className={`pdp-size-btn-rect ${selectedSize === sz || (!selectedSize && idx === 0) ? "active" : ""}`}
-                      onClick={() => setSelectedSize(sz)}
+                      onClick={() => {
+                        setSelectedSize(sz);
+                        toast.success(`Selected size: ${sz}`, { id: "pdp-size-toast" });
+                      }}
                     >
                       {sz}
                     </button>

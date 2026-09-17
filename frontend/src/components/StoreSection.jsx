@@ -16,6 +16,7 @@ import {
 /* =========================================================
    BANNER SECTION
 ========================================================= */
+// eslint-disable-next-line no-unused-vars
 const BannerSection = ({ section, getImageUrl, navigate, pageSlug }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -129,6 +130,7 @@ const BannerSection = ({ section, getImageUrl, navigate, pageSlug }) => {
 /* =========================================================
    CATEGORY SECTION
 ========================================================= */
+// eslint-disable-next-line no-unused-vars
 const CategorySection = ({
   section,
   sectionIndex,
@@ -262,6 +264,7 @@ const CategorySection = ({
 /* =========================================================
    OTHER SECTION
 ========================================================= */
+// eslint-disable-next-line no-unused-vars
 const OtherSection = ({ section, getImageUrl, navigate, pageSlug }) => {
   const sliderRef = useRef(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -404,6 +407,7 @@ const OtherSection = ({ section, getImageUrl, navigate, pageSlug }) => {
 /* =========================================================
    PRODUCT SECTION
 ========================================================= */
+// eslint-disable-next-line no-unused-vars
 const ProductSection = ({
   section,
   getImageUrl,

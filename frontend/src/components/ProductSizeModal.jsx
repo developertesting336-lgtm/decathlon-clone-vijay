@@ -1,6 +1,6 @@
 import React from "react";
 import { FiX, FiMinus, FiPlus } from "react-icons/fi";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 import "../styles/ProductSizeModal.css";
 
@@ -66,6 +66,20 @@ const ProductSizeModal = ({
 
   const mrp = Number(product.price || 0);
 
+  const handleSelectColor = (color) => {
+    if (setSelectedColor) {
+      setSelectedColor(color);
+      // toast.success(`Selected color: ${color}`, { id: "modal-color-toast" });
+    }
+  };
+
+  const handleSelectSize = (size) => {
+    if (setSelectedSize) {
+      setSelectedSize(size);
+      // toast.success(`Selected size: ${size}`, { id: "modal-size-toast" }); 
+    }
+  };
+
   const decreaseQuantity = () => {
     setQuantity((prev) => Math.max(Number(prev) - 1, 1));
   };
@@ -74,7 +88,7 @@ const ProductSizeModal = ({
     const stock = Number(product.stock || 999);
 
     if (Number(quantity) >= stock) {
-      toast.warning("Maximum available quantity reached");
+      toast.error("Maximum available quantity reached", { id: "modal-stock-toast" });
       return;
     }
 
@@ -89,17 +103,17 @@ const ProductSizeModal = ({
 
   const handleAdd = async () => {
     if (sizes.length > 0 && !selectedSize) {
-      toast.warning("Please select a size");
+      toast.error("Please select a size before adding to cart", { id: "modal-need-size" });
       return;
     }
 
     if (colors.length > 0 && !selectedColor) {
-      toast.warning("Please select a colour");
+      toast.error("Please select a colour before adding to cart", { id: "modal-need-color" });
       return;
     }
 
     if (!quantity || Number(quantity) < 1) {
-      toast.warning("Quantity must be at least 1");
+      toast.error("Quantity must be at least 1", { id: "modal-need-qty" });
       return;
     }
 
@@ -181,7 +195,12 @@ const ProductSizeModal = ({
         {colors.length > 0 && (
           <div className="product-size-colour-section">
             <div className="product-size-colour-heading">
-              <h3>Colour Options</h3>
+              <h3>
+                Colour Options
+                {selectedColor && (
+                  <span className="selected-color-name"> — {selectedColor}</span>
+                )}
+              </h3>
 
               <span>
                 {colors.length} {colors.length === 1 ? "colour" : "colours"}
@@ -197,16 +216,19 @@ const ProductSizeModal = ({
                   <button
                     type="button"
                     key={`${color}-${index}`}
-                    className={selectedColor === color ? "selected" : ""}
-                    onClick={() => setSelectedColor(color)}
+                    className={`product-size-colour-card ${selectedColor === color ? "selected" : ""}`}
+                    onClick={() => handleSelectColor(color)}
                     disabled={adding}
                     title={color}
                   >
-                    {image ? (
-                      <img src={getImageUrl(image)} alt={color} />
-                    ) : (
-                      <span>{color}</span>
-                    )}
+                    <div className="product-size-colour-thumb">
+                      {image ? (
+                        <img src={getImageUrl(image)} alt={color} />
+                      ) : (
+                        <span className="colour-letter">{color.charAt(0)}</span>
+                      )}
+                    </div>
+                    <span className="product-size-colour-name">{color}</span>
                   </button>
                 );
               })}
@@ -217,9 +239,18 @@ const ProductSizeModal = ({
         {sizes.length > 0 && (
           <div className="product-size-selector">
             <div className="product-size-title-row">
-              <h3>Select Size</h3>
+              <h3>
+                Select Size
+                {selectedSize && (
+                  <span className="selected-size-name"> — {selectedSize}</span>
+                )}
+              </h3>
 
-              <button type="button" className="product-size-chart">
+              <button
+                type="button"
+                className="product-size-chart"
+                onClick={() => toast("Size chart feature coming soon", { icon: "📏" })}
+              >
                 View size chart
               </button>
             </div>
@@ -230,7 +261,7 @@ const ProductSizeModal = ({
                   type="button"
                   key={size}
                   className={selectedSize === size ? "selected" : ""}
-                  onClick={() => setSelectedSize(size)}
+                  onClick={() => handleSelectSize(size)}
                   disabled={adding}
                 >
                   {size}

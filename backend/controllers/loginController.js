@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import Otp from "../models/Otp.js";
 import jwt from "jsonwebtoken";
 import generateOtp from "../utils/generateOtp.js";
+import { sendEmail } from "../utils/emailService.js";
 
 const sendLoginOtp = async (req, res) => {
   try {
@@ -63,6 +64,30 @@ const sendLoginOtp = async (req, res) => {
     });
 
     console.log(`Login OTP for ${type}: ${otp}`);
+
+    if (type === "email" && normalizedEmail) {
+      try {
+        await sendEmail({
+          to: normalizedEmail,
+          subject: `Your Decathlon Login OTP: ${otp}`,
+          text: `Your Decathlon login OTP is ${otp}. It is valid for 5 minutes. Please do not share this code with anyone.`,
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; color: #111;">
+              <h2 style="color: #0082c3; margin: 0 0 10px;">DECATHLON</h2>
+              <h3>Login Verification Code</h3>
+              <p>Your one-time password (OTP) to sign in to Decathlon is:</p>
+              <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #0082c3; margin: 16px 0;">
+                ${otp}
+              </div>
+              <p style="color: #555; font-size: 13px;">This code is valid for 5 minutes. Do not share this OTP with anyone.</p>
+              <p style="color: #888; font-size: 12px; margin-top: 24px;">Decathlon Sports India</p>
+            </div>
+          `,
+        });
+      } catch (mailErr) {
+        console.error("Failed to send login OTP email:", mailErr.message);
+      }
+    }
 
     return res.status(200).json({
       message: "OTP sent successfully",
@@ -145,6 +170,30 @@ const resendLoginOtp = async (req, res) => {
     });
 
     console.log(`Resent Login OTP for ${type}: ${otp}`);
+
+    if (type === "email" && normalizedEmail) {
+      try {
+        await sendEmail({
+          to: normalizedEmail,
+          subject: `Your Decathlon Login OTP: ${otp}`,
+          text: `Your Decathlon login OTP is ${otp}. It is valid for 5 minutes. Please do not share this code with anyone.`,
+          html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px; color: #111;">
+              <h2 style="color: #0082c3; margin: 0 0 10px;">DECATHLON</h2>
+              <h3>Login Verification Code</h3>
+              <p>Your one-time password (OTP) to sign in to Decathlon is:</p>
+              <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #0082c3; margin: 16px 0;">
+                ${otp}
+              </div>
+              <p style="color: #555; font-size: 13px;">This code is valid for 5 minutes. Do not share this OTP with anyone.</p>
+              <p style="color: #888; font-size: 12px; margin-top: 24px;">Decathlon Sports India</p>
+            </div>
+          `,
+        });
+      } catch (mailErr) {
+        console.error("Failed to resend login OTP email:", mailErr.message);
+      }
+    }
 
     return res.status(200).json({
       message: "OTP resent successfully",
