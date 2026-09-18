@@ -7,11 +7,11 @@ import api, { useWishlist } from "../../api/axios";
 import socket from "../../socket/socket";
 import ProductSizeModal from "../ProductSizeModal";
 
-const ProductSection = ({ customProducts, title }) => {
+const ProductSection = ({ customProducts, title, subtitle, pageSlug }) => {
   const { isWishlisted, handleToggle } = useWishlist();
   const [products, setProducts] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleProducts, setVisibleProducts] = useState(5);
+  const [visibleProducts, setVisibleProducts] = useState(4.3);
   const [loading, setLoading] = useState(true);
 
   // PRODUCT MODAL STATES
@@ -20,6 +20,23 @@ const ProductSection = ({ customProducts, title }) => {
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
+
+  // Extract subtitle and title smartly
+  let displaySubtitle = subtitle || "";
+  let displayTitle = title || "Workout Checklist";
+
+  if (!displaySubtitle) {
+    if (typeof displayTitle === "string" && /^Shop your\s*/i.test(displayTitle)) {
+      displaySubtitle = "Shop your";
+      displayTitle = displayTitle.replace(/^Shop your\s*/i, "").trim();
+    } else {
+      displaySubtitle = "Shop your";
+    }
+  }
+
+  if (typeof displayTitle === "string" && displayTitle === "Workout Checklist") {
+    displayTitle = "Workout\nChecklist";
+  }
 
   const getImageUrl = (image) => {
     if (!image) return "";
@@ -37,19 +54,62 @@ const ProductSection = ({ customProducts, title }) => {
     return `₹${Number(price || 0).toLocaleString("en-IN")}`;
   };
 
+  const getRatingStars = (rating) => {
+    const value = rating ? Math.min(5, Math.max(0, Number(rating))) : 5;
+    const filledStars = Math.round(value);
+    return `${"★".repeat(filledStars)}${"☆".repeat(5 - filledStars)}`;
+  };
+
+  const formatReviewCount = (reviews, reviewCount, numReviews) => {
+    const val = reviews || reviewCount || numReviews;
+    if (val === undefined || val === null || val === "") return "";
+    if (typeof val === "string") return val;
+    const num = Number(val);
+    if (!isNaN(num) && num > 0) {
+      return num >= 1000 ? `${(num / 1000).toFixed(1)}k` : `${num}`;
+    }
+    return "";
+  };
+
+  const getBrandAndTitle = (product) => {
+    const brand = (product.brand || "DOMYOS").trim();
+    let name = (product.name || "").trim();
+    if (brand && name.toLowerCase().startsWith(brand.toLowerCase())) {
+      name = name.slice(brand.length).trim();
+    }
+    return { brand, name };
+  };
+
   const fetchSection = useCallback(async () => {
     try {
       setLoading(true);
-
-      const response = await api.get("/pages/slug/home");
+      const targetSlug = pageSlug || "home";
+      const response = await api.get(`/pages/slug/${targetSlug}`);
       const pageSections = response.data?.page?.sections || [];
 
       const section = pageSections.find(
-        (item) => item.name === "Product Section" || item.name === "ProductSection" || item.type === "product"
+        (item) =>
+          item.name === "Product Section" ||
+          item.name === "ProductSection" ||
+          (item.name && item.name.toLowerCase().includes("checklist")) ||
+          item.type === "product-section" ||
+          item.type === "product"
       );
 
-      const validProds = (section?.products || []).filter(
-        (p) => p && typeof p === "object" && p.name
+      const disabledIds = new Set(
+        (section?.data?.disabledItemIds || section?.disabledItemIds || []).map((id) =>
+          String(id)
+        )
+      );
+
+      const rawProds = section?.data?.products || section?.products || [];
+      const validProds = rawProds.filter(
+        (p) =>
+          p &&
+          typeof p === "object" &&
+          p.name &&
+          p.isActive !== false &&
+          !disabledIds.has(String(p._id))
       );
 
       if (validProds.length > 0) {
@@ -71,7 +131,7 @@ const ProductSection = ({ customProducts, title }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pageSlug]);
 
   useEffect(() => {
     if (customProducts && Array.isArray(customProducts) && customProducts.length > 0) {
@@ -101,7 +161,6 @@ const ProductSection = ({ customProducts, title }) => {
     };
 
     socket.on("homepage_updated", handleHomepageUpdate);
-
     return () => {
       socket.off("homepage_updated", handleHomepageUpdate);
     };
@@ -110,27 +169,25 @@ const ProductSection = ({ customProducts, title }) => {
   useEffect(() => {
     const updateVisibleProducts = () => {
       const width = window.innerWidth;
-
-      if (width <= 600) {
-        setVisibleProducts(2);
-      } else if (width <= 900) {
-        setVisibleProducts(3);
-      } else if (width <= 1100) {
-        setVisibleProducts(4);
+      if (width <= 540) {
+        setVisibleProducts(1.6);
+      } else if (width <= 768) {
+        setVisibleProducts(2.4);
+      } else if (width <= 1024) {
+        setVisibleProducts(3.3);
       } else {
-        setVisibleProducts(5);
+        setVisibleProducts(4.3);
       }
     };
 
     updateVisibleProducts();
     window.addEventListener("resize", updateVisibleProducts);
-
     return () => {
       window.removeEventListener("resize", updateVisibleProducts);
     };
   }, []);
 
-  const maxIndex = Math.max(products.length - visibleProducts, 0);
+  const maxIndex = Math.max(Math.ceil(products.length - visibleProducts), 0);
 
   useEffect(() => {
     if (currentIndex > maxIndex) {
@@ -156,7 +213,6 @@ const ProductSection = ({ customProducts, title }) => {
 
   const handleCloseModal = () => {
     if (adding) return;
-
     setSelectedProduct(null);
     setSelectedSize("");
     setSelectedColor("");
@@ -165,7 +221,6 @@ const ProductSection = ({ customProducts, title }) => {
 
   const handleAddToCart = async () => {
     if (!selectedProduct) return;
-
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -173,10 +228,7 @@ const ProductSection = ({ customProducts, title }) => {
       return;
     }
 
-    const sizes = Array.isArray(selectedProduct.size)
-      ? selectedProduct.size
-      : [];
-
+    const sizes = Array.isArray(selectedProduct.size) ? selectedProduct.size : [];
     if (sizes.length > 0 && !selectedSize) {
       toast.warning("Please select a size");
       return;
@@ -189,7 +241,6 @@ const ProductSection = ({ customProducts, title }) => {
 
     try {
       setAdding(true);
-
       const response = await api.post(
         "/cart",
         {
@@ -201,11 +252,10 @@ const ProductSection = ({ customProducts, title }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
       toast.success(response?.data?.message || "Product added to cart");
-
       window.dispatchEvent(new Event("cartUpdated"));
 
       setSelectedProduct(null);
@@ -214,15 +264,11 @@ const ProductSection = ({ customProducts, title }) => {
       setQuantity(1);
     } catch (error) {
       console.error("ADD TO CART ERROR:", error);
-
       if (error?.response?.status === 401) {
         toast.error("Please login again");
         return;
       }
-
-      toast.error(
-        error?.response?.data?.message || "Failed to add product to cart",
-      );
+      toast.error(error?.response?.data?.message || "Failed to add product to cart");
     } finally {
       setAdding(false);
     }
@@ -233,27 +279,26 @@ const ProductSection = ({ customProducts, title }) => {
   }
 
   const trackWidth = (products.length / visibleProducts) * 100;
-
   const cardWidth = 100 / products.length;
-
   const translateAmount = currentIndex * cardWidth;
 
   return (
     <>
       <section className="product-section">
-        <div className="product-section-left">
-          <p>Shop your</p>
-
-          <h2>
-            Workout
-            <br />
-            Checklist
+        <div className="product-section__sidebar product-section-left">
+          {displaySubtitle && (
+            <div className="product-section__subtitle">
+              {displaySubtitle}
+            </div>
+          )}
+          <h2 className="product-section__title">
+            {displayTitle}
           </h2>
 
-          <div className="product-section-arrows">
+          <div className="product-section__navigation product-section-arrows">
             <button
               type="button"
-              className="product-arrow"
+              className="product-section__nav-btn product-arrow"
               onClick={handlePrev}
               disabled={currentIndex === 0}
               aria-label="Previous product"
@@ -263,9 +308,9 @@ const ProductSection = ({ customProducts, title }) => {
 
             <button
               type="button"
-              className="product-arrow"
+              className="product-section__nav-btn product-arrow"
               onClick={handleNext}
-              disabled={currentIndex === maxIndex}
+              disabled={currentIndex >= maxIndex}
               aria-label="Next product"
             >
               ›
@@ -273,102 +318,143 @@ const ProductSection = ({ customProducts, title }) => {
           </div>
         </div>
 
-        <div className="product-viewport">
+        <div className="product-section__viewport product-viewport">
           <div
-            className="product-list"
+            className="product-section__track product-list"
             style={{
               width: `${trackWidth}%`,
               transform: `translateX(-${translateAmount}%)`,
             }}
           >
-            {products.map((product) => (
-              <div
-                className="product-card"
-                key={product._id}
-                style={{
-                  flex: `0 0 ${cardWidth}%`,
-                }}
-              >
-                <div className="product-card-content">
-                  <Link
-                    to={`/product/${product._id}`}
-                    style={{ textDecoration: "none", color: "inherit", display: "block" }}
-                    className="product-image-wrapper"
-                  >
-                    {product.images?.[0] ? (
-                      <img
-                        src={getImageUrl(product.images[0])}
-                        alt={product.name || "Product"}
-                        className="product-image"
-                      />
-                    ) : (
-                      <div className="product-image-placeholder">No Image</div>
-                    )}
-                  </Link>
+            {products.map((product) => {
+              const { brand, name } = getBrandAndTitle(product);
+              const hasDiscount =
+                product.discountPrice > 0 && product.discountPrice < product.price;
+              const currentPrice = hasDiscount
+                ? product.discountPrice
+                : product.price;
+              const mrp = hasDiscount
+                ? product.price
+                : null;
+              const reviewCount = formatReviewCount(
+                product.reviews,
+                product.reviewCount,
+                product.numReviews
+              );
+              const tag =
+                product.tag ||
+                product.badge ||
+                product.label ||
+                (product.isOnlineExclusive ? "Online exclusive" : "");
 
-                  <div className="product-info">
+              return (
+                <div
+                  className="product-section__card product-card"
+                  key={product._id}
+                  style={{
+                    flex: `0 0 ${cardWidth}%`,
+                  }}
+                >
+                  <div className="product-section__card-inner product-card-content">
                     <Link
                       to={`/product/${product._id}`}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                      className="product-name"
+                      className="product-section__image-wrapper product-image-wrapper"
                     >
-                      <strong>{product.brand || ""}</strong> {product.name}
+                      {tag && (
+                        <span className="product-section__tag">
+                          {tag}
+                        </span>
+                      )}
+                      {product.images?.[0] ? (
+                        <img
+                          src={getImageUrl(product.images[0])}
+                          alt={product.name || "Product"}
+                          className="product-section__image product-image"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="product-section__image-placeholder product-image-placeholder">
+                          No Image
+                        </div>
+                      )}
                     </Link>
 
-                    <div className="product-rating">
-                      <span className="rating-stars">★★★★★</span>
-
-                      <span className="review-count">
-                        {product.reviews || ""}
-                      </span>
-                    </div>
-
-                    <div className="product-price">
-                      <span className="current-price">
-                        {formatPrice(product.discountPrice || product.price)}
-                      </span>
-
-                      <span
-                        className={`mrp ${
-                          !product.price ? "mrp-placeholder" : ""
-                        }`}
+                    <div className="product-section__info product-info">
+                      <Link
+                        to={`/product/${product._id}`}
+                        className="product-section__name-link product-name"
+                        title={`${brand} ${name}`}
                       >
-                        {product.price
-                          ? `MRP ${formatPrice(product.price)}`
-                          : "MRP"}
-                      </span>
-                    </div>
+                        <span className="product-section__brand">{brand}</span>{" "}
+                        <span className="product-section__name">{name}</span>
+                      </Link>
 
-                    <div className="product-offer-wrapper">
-                      {product.offer && (
-                        <div className="product-offer">{product.offer}</div>
-                      )}
-                    </div>
+                      <div className="product-section__rating product-rating">
+                        <span className="product-section__stars rating-stars">
+                          {getRatingStars(product.review || product.rating)}
+                        </span>
+                        {reviewCount && (
+                          <span className="product-section__review-count review-count">
+                            {reviewCount}
+                          </span>
+                        )}
+                      </div>
 
-                    <div className="product-actions">
-                      <button
-                        type="button"
-                        className={`wishlist-button ${
-                          isWishlisted(product._id) ? "active" : ""
-                        }`}
-                        aria-label="Add to wishlist"
-                        onClick={() => handleToggle(product._id)}
-                      >
-                        {isWishlisted(product._id) ? "♥" : "♡"}
-                      </button>
+                      <div className="product-section__pricing product-price">
+                        {hasDiscount ? (
+                          <>
+                            <span className="product-section__current-price current-price">
+                              {formatPrice(currentPrice)}
+                            </span>
+                            <span className="product-section__mrp mrp">
+                              MRP {formatPrice(mrp)}
+                            </span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="product-section__current-price current-price">
+                              {formatPrice(currentPrice)}
+                            </span>
+                            <span className="product-section__mrp mrp mrp-placeholder">
+                              MRP
+                            </span>
+                          </>
+                        )}
+                      </div>
 
-                      <button
-                        type="button"
-                        className="cart-button"
-                        onClick={() => handleOpenModal(product)}
-                      >
-                        Add to cart
-                      </button>
+                      <div className="product-section__offer-wrapper product-offer-wrapper">
+                        {product.offer ? (
+                          <span className="product-section__offer-badge product-offer">
+                            {product.offer}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <div className="product-section__actions product-actions">
+                        <button
+                          type="button"
+                          className={`product-section__wishlist-btn wishlist-button ${
+                            isWishlisted(product._id) ? "active" : ""
+                          }`}
+                          aria-label="Add to wishlist"
+                          onClick={() => handleToggle(product._id)}
+                        >
+                          {isWishlisted(product._id) ? "♥" : "♡"}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="product-section__cart-btn cart-button"
+                          onClick={() => handleOpenModal(product)}
+                        >
+                          Add to cart
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

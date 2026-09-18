@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import api, { useWishlist } from "../api/axios";
 import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
-import Footer from "../components/home/Footer";
+import Footer from "../components/pageSections/Footer/Footer";
 import "../styles/CategoryProducts.css";
 
 const CATEGORY_NAMES = {

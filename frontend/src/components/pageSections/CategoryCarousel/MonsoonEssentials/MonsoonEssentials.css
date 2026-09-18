@@ -1,0 +1,112 @@
+/* =========================================================
+   MONSOON ESSENTIALS - CATEGORY CAROUSEL CSS
+   Preserves visual appearance: horizontal row with smooth
+   pill/circular category cards with subtle water-blue tint.
+   Completely independent from other store pages.
+========================================================= */
+
+.category-carousel-monsoon-essentials {
+  width: 100% !important;
+  margin: 12px 0 24px 0 !important;
+  padding: 4px 0 8px 0 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+.category-carousel-monsoon-essentials .monsoon-category-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 14px 0 !important;
+}
+
+.category-carousel-monsoon-essentials .monsoon-category-track {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding: 4px 0 8px 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.category-carousel-monsoon-essentials .monsoon-category-track::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Individual Category Item */
+.category-carousel-monsoon-essentials .monsoon-category-card {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 112px !important;
+  max-width: 112px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  user-select: none !important;
+  transition: transform 0.3s ease !important;
+}
+
+.category-carousel-monsoon-essentials .monsoon-category-card:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* Category Circle Container */
+.category-carousel-monsoon-essentials .monsoon-category-circle {
+  width: 100px !important;
+  height: 100px !important;
+  border-radius: 50% !important;
+  background: #eef3f8 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 auto 8px auto !important;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.category-carousel-monsoon-essentials .monsoon-category-card:hover .monsoon-category-circle {
+  transform: scale(1.05) !important;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.16) !important;
+}
+
+/* Image inside circle */
+.category-carousel-monsoon-essentials .monsoon-category-circle img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Placeholder when no image */
+.category-carousel-monsoon-essentials .monsoon-category-placeholder {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #3b82f6 !important;
+  text-align: center !important;
+  padding: 6px !important;
+}
+
+/* Category Label */
+.category-carousel-monsoon-essentials .monsoon-category-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #111111 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  max-width: 104px !important;
+  word-wrap: break-word !important;
+  line-height: 1.25 !important;
+}

@@ -201,9 +201,6 @@ const CategoryCarousel = ({ customCategories, customItems, title }) => {
               <div className="category-carousel-no-image">No Image</div>
             )}
 
-            <div className="category-carousel-badge-wrapper">
-              <span className="category-carousel-badge">{category.name}</span>
-            </div>
           </div>
         ))}
       </div>

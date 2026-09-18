@@ -270,22 +270,35 @@
   font-weight: 700;
 }
 
-.type-tag.category {
+.type-tag.category,
+.type-tag.category-carousel,
+.type-tag.category-nav,
+.type-tag.category-showcase,
+.type-tag.sports-categories,
+.type-tag.loved-categories,
+.type-tag.equipping-champions {
   background: #dbeafe;
   color: #1e40af;
 }
 
-.type-tag.product {
+.type-tag.product,
+.type-tag.product-section,
+.type-tag.storm-proof,
+.type-tag.outdoor-products {
   background: #fef3c7;
   color: #92400e;
 }
 
-.type-tag.banner {
+.type-tag.banner,
+.type-tag.promo-banner,
+.type-tag.promo-banner-2,
+.type-tag.coupon-banner {
   background: #f3e8ff;
   color: #6b21a8;
 }
 
-.type-tag.other {
+.type-tag.other,
+.type-tag.everyday-essentials {
   background: #fdf2f8;
   color: #9d174d;
 }
@@ -302,7 +315,8 @@
 }
 
 .edit-sec-btn,
-.delete-sec-btn {
+.delete-sec-btn,
+.duplicate-sec-btn {
   width: 34px;
   height: 34px;
   border-radius: 6px;
@@ -314,6 +328,13 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.duplicate-sec-btn:hover {
+  background: #ede9fe;
+  color: #5b21b6;
+  border-color: #c4b5fd;
 }
 
 .edit-sec-btn:hover {
@@ -973,4 +994,318 @@
   border-color: #64748b;
   color: #0f172a;
 }
+
+/* ========================================
+   VIEW SECTION BUTTON & VIEW MODAL
+======================================== */
+.view-sec-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #93c5fd;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-sec-btn:hover {
+  background: #dbeafe;
+  border-color: #60a5fa;
+  color: #1e40af;
+}
+
+.view-sec-btn svg {
+  font-size: 16px;
+}
+
+.modal-container.view-section-modal {
+  max-width: 720px;
+}
+
+.view-modal-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.view-modal-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.view-modal-title-row h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.view-modal-title-row h3 span {
+  color: #2563eb;
+}
+
+.view-modal-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.view-modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+  max-height: 65vh;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.view-items-stats-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.stats-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+}
+
+.stats-label {
+  font-weight: 500;
+}
+
+.stats-value {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.stats-item.active-stat .stats-value {
+  color: #16a34a;
+}
+
+.stats-item.inactive-stat .stats-value {
+  color: #dc2626;
+}
+
+.stats-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.view-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.view-item-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.view-item-row:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.view-item-row.is-inactive {
+  background: #f8fafc;
+  opacity: 0.72;
+  border-left: 4px solid #cbd5e1;
+}
+
+.view-item-row.is-active {
+  border-left: 4px solid #22c55e;
+}
+
+.view-item-index {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a3b8;
+  min-width: 24px;
+}
+
+.view-item-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.view-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.view-item-thumb-fallback {
+  color: #94a3b8;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.view-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.view-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.view-item-subtitle {
+  font-size: 12px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.view-item-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.view-item-badge.badge-active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.view-item-badge.badge-inactive {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.view-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.item-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.item-status-pill.active {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.item-status-pill.active:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.item-status-pill.inactive {
+  background: #f1f5f9;
+  color: #64748b;
+  border-color: #cbd5e1;
+}
+
+.item-status-pill.inactive:hover {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.item-status-pill svg {
+  font-size: 15px;
+}
+
+.item-status-pill:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.view-items-empty {
+  padding: 40px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+}
+
+.view-empty-icon {
+  font-size: 36px;
+}
+
+.view-items-empty h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #1e293b;
+}
+
+.view-items-empty p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
 

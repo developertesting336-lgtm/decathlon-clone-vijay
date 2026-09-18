@@ -15,7 +15,9 @@ import orderRoutes from "./routes/orderRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import bannerRoutes from "./routes/bannerRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
+import pageSectionRoutes from "./routes/pageSectionRoutes.js";
 import Page from "./models/Page.js";
+import { migratePageSections } from "./services/migratePageSections.js";
 
 import registrationRoutes from "./routes/registrationRoutes.js";
 import loginRoutes from "./routes/loginRoutes.js";
@@ -137,6 +139,7 @@ const connectDB = async () => {
 
   console.log("MongoDB Connected");
   await seedPagesIfEmpty();
+  await migratePageSections();
   await seedAiKnowledge();
 };
 
@@ -185,6 +188,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/banners", bannerRoutes);
 
 app.use("/api/pages", pageRoutes);
+app.use("/api/sections", pageSectionRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/email", emailRoutes);
 

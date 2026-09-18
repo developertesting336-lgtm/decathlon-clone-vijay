@@ -19,6 +19,10 @@ const itemSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { _id: true, timestamps: true }
 );
@@ -28,15 +32,49 @@ const categoryItemSchema = new mongoose.Schema(
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
-      required: true,
+      required: false,
+    },
+    page: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Page",
+      required: false,
+    },
+    linkType: {
+      type: String,
+      enum: ["page", "category"],
+      default: "category",
+    },
+    title: {
+      type: String,
+      default: "",
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+    link: {
+      type: String,
+      default: "",
+    },
+    image: {
+      type: String,
+      default: "",
     },
     customImage: {
       type: String,
       default: "",
     },
+    displayOrder: {
+      type: Number,
+      default: 0,
+    },
     sortOrder: {
       type: Number,
       default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   { _id: true }
@@ -51,8 +89,8 @@ const sectionSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["category", "product", "banner", "other"],
       required: true,
+      trim: true,
     },
     categories: [
       {
@@ -74,6 +112,19 @@ const sectionSchema = new mongoose.Schema(
       },
     ],
     items: [itemSchema],
+    link: {
+      type: String,
+      default: "",
+    },
+    route: {
+      type: String,
+      default: "",
+    },
+    disabledItemIds: [
+      {
+        type: String,
+      },
+    ],
     sortOrder: {
       type: Number,
       default: 0,

@@ -1,26 +1,23 @@
 import React from "react";
 import { Route } from "react-router-dom";
 import CategoryProducts from "../pages/CategoryProducts";
-import MonsoonEssentials from "../pages/MonsoonEssentials";
-import Activewear from "../pages/Activewear";
-import WorkoutEssentials from "../pages/WorkoutEssentials";
-import Cycling from "../pages/Cycling";
-import HikingTrekking from "../pages/HikingTrekking";
-import Shoes from "../pages/Shoes";
-import BagsBackpacks from "../pages/BagsBackpacks";
-import SportsAccessories from "../pages/SportsAccessories";
+import DynamicPage from "../pages/DynamicPage";
 
 const CategoryRoutes = (
   <>
-    {/* Dedicated routes for each store page */}
-    <Route path="/monsoon-essentials" element={<MonsoonEssentials />} />
-    <Route path="/activewear" element={<Activewear />} />
-    <Route path="/workout-essentials" element={<WorkoutEssentials />} />
-    <Route path="/cycling" element={<Cycling />} />
-    <Route path="/hiking-trekking" element={<HikingTrekking />} />
-    <Route path="/shoes" element={<Shoes />} />
-    <Route path="/bags-backpacks" element={<BagsBackpacks />} />
-    <Route path="/sports-accessories" element={<SportsAccessories />} />
+    {/* Dynamic store pages */}
+    <Route path="/monsoon-essentials" element={<DynamicPage slug="monsoon-essentials" />} />
+    <Route path="/activewear" element={<DynamicPage slug="activewear" />} />
+    <Route path="/workout-essentials" element={<DynamicPage slug="workout-essentials" />} />
+    <Route path="/cycling" element={<DynamicPage slug="cycling" />} />
+    <Route path="/hiking-trekking" element={<DynamicPage slug="hiking-trekking" />} />
+    <Route path="/shoes" element={<DynamicPage slug="shoes" />} />
+    <Route path="/bags-backpacks" element={<DynamicPage slug="bags-backpacks" />} />
+    <Route path="/sports-accessories" element={<DynamicPage slug="sports-accessories" />} />
+
+    {/* General dynamic page routes */}
+    <Route path="/pages/:slug" element={<DynamicPage />} />
+    <Route path="/p/:slug" element={<DynamicPage />} />
 
     {/* Product Category Listing routes */}
     <Route path="/products" element={<CategoryProducts />} />

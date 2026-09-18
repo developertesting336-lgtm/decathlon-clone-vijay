@@ -1,4 +1,6 @@
 import Page from "../models/Page.js";
+import PageSection from "../models/PageSection.js";
+import { normalizeSectionType } from "../services/migratePageSections.js";
 import { emitHomepageUpdate } from "../socket/socketManager.js";
 import cloudinary from "../config/cloudinary.js";
 
@@ -29,22 +31,43 @@ const processSectionItems = async (items) => {
 const processCategoryItems = async (categoryItems) => {
   if (!categoryItems || !Array.isArray(categoryItems)) return [];
   const processed = [];
-  const seenIds = new Set();
+  const seenCatIds = new Set();
+  const seenPageIds = new Set();
 
   for (let i = 0; i < categoryItems.length; i++) {
     const item = categoryItems[i];
-    const catId = (item.category && item.category._id ? item.category._id : item.category)?.toString();
-    if (!catId) continue;
+    const linkType = item.linkType === "page" ? "page" : "category";
 
-    if (seenIds.has(catId)) {
-      const err = new Error("Duplicate category inside the same section is not allowed");
-      err.statusCode = 400;
-      throw err;
+    const rawCat =
+      item.category && item.category._id
+        ? item.category._id
+        : item.category || item.categoryId;
+    const catIdStr = rawCat ? String(rawCat) : "";
+    const isCatObjectId = Boolean(
+      catIdStr && /^[0-9a-fA-F]{24}$/.test(catIdStr),
+    );
+
+    const rawPage =
+      item.page && item.page._id ? item.page._id : item.page || item.pageId;
+    const pageIdStr = rawPage ? String(rawPage) : "";
+    const isPageObjectId = Boolean(
+      pageIdStr && /^[0-9a-fA-F]{24}$/.test(pageIdStr),
+    );
+
+    if (linkType === "category" && isCatObjectId) {
+      if (seenCatIds.has(catIdStr)) continue;
+      seenCatIds.add(catIdStr);
+    } else if (linkType === "page" && isPageObjectId) {
+      if (seenPageIds.has(pageIdStr)) continue;
+      seenPageIds.add(pageIdStr);
     }
-    seenIds.add(catId);
 
-    let customImg = item.customImage || "";
-    if (customImg && typeof customImg === "string" && customImg.startsWith("data:image/")) {
+    let customImg = item.customImage || item.image || "";
+    if (
+      customImg &&
+      typeof customImg === "string" &&
+      customImg.startsWith("data:image/")
+    ) {
       try {
         const uploadRes = await cloudinary.uploader.upload(customImg, {
           folder: "pages",
@@ -52,15 +75,44 @@ const processCategoryItems = async (categoryItems) => {
         });
         customImg = uploadRes.secure_url;
       } catch (err) {
-        console.error("Cloudinary base64 upload failed for customImage:", err.message);
+        console.error(
+          "Cloudinary base64 upload failed for customImage:",
+          err.message,
+        );
       }
     }
 
-    processed.push({
-      category: catId,
+    const titleText = (item.title || item.name || "").trim();
+
+    const processedItem = {
+      linkType,
+      category: isCatObjectId ? catIdStr : undefined,
+      page: isPageObjectId ? pageIdStr : undefined,
+      title: titleText,
+      name: titleText,
+      link: item.link ? String(item.link).trim() : "",
+      image: customImg,
       customImage: customImg,
-      sortOrder: item.sortOrder !== undefined ? Number(item.sortOrder) : i,
-    });
+      displayOrder:
+        item.displayOrder !== undefined
+          ? Number(item.displayOrder)
+          : item.sortOrder !== undefined
+          ? Number(item.sortOrder)
+          : i,
+      sortOrder:
+        item.sortOrder !== undefined
+          ? Number(item.sortOrder)
+          : item.displayOrder !== undefined
+          ? Number(item.displayOrder)
+          : i,
+      isActive: item.isActive !== undefined ? Boolean(item.isActive) : true,
+    };
+
+    if (item._id && /^[0-9a-fA-F]{24}$/.test(String(item._id))) {
+      processedItem._id = item._id;
+    }
+
+    processed.push(processedItem);
   }
   return processed;
 };
@@ -115,6 +167,11 @@ export const getPageBySlug = async (req, res) => {
         path: "sections.categoryItems.category",
         model: "Category",
       })
+      .populate({
+        path: "sections.categoryItems.page",
+        model: "Page",
+        select: "name slug",
+      })
       .populate("sections.products")
       .populate("sections.banners");
 
@@ -122,10 +179,82 @@ export const getPageBySlug = async (req, res) => {
       return res.status(404).json({ message: "Page not found" });
     }
 
-    // Filter active sections and sort by sortOrder
-    const activeSections = page.sections
-      .filter((sec) => sec.isActive)
-      .sort((a, b) => a.sortOrder - b.sortOrder);
+    // Try finding dedicated PageSections first
+    const dbSections = await PageSection.find({
+      pageId: page._id,
+      isActive: true,
+    })
+      .sort({ order: 1 })
+      .populate("data.categories")
+      .populate({
+        path: "data.categoryItems.category",
+        model: "Category",
+      })
+      .populate({
+        path: "data.categoryItems.page",
+        model: "Page",
+        select: "name slug",
+      })
+      .populate("data.products")
+      .populate("data.banners");
+
+    let activeSections = [];
+
+    if (dbSections && dbSections.length > 0) {
+      activeSections = dbSections.map((sec) => ({
+        _id: sec._id,
+        pageId: sec.pageId,
+        name: sec.name,
+        type: sec.type,
+        order: sec.order,
+        sortOrder: sec.order,
+        isActive: sec.isActive,
+        data: sec.data || {},
+        style: sec.style || { variant: "default" },
+        // Flat backward compatibility
+        title: sec.data?.title || sec.name,
+        subtitle: sec.data?.subtitle || "",
+        image: sec.data?.image || "",
+        categories: sec.data?.categories || [],
+        categoryItems: sec.data?.categoryItems || [],
+        products: sec.data?.products || [],
+        banners: sec.data?.banners || [],
+        items: sec.data?.items || [],
+        disabledItemIds: sec.data?.disabledItemIds || [],
+      }));
+    } else {
+      // Fall back to embedded sections
+      activeSections = (page.sections || [])
+        .filter((sec) => sec.isActive)
+        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+        .map((sec, idx) => ({
+          _id: sec._id,
+          pageId: page._id,
+          name: sec.name,
+          type: normalizeSectionType(sec.name, sec.type),
+          order: sec.sortOrder !== undefined ? sec.sortOrder : idx,
+          sortOrder: sec.sortOrder !== undefined ? sec.sortOrder : idx,
+          isActive: sec.isActive,
+          data: {
+            title: sec.name || "",
+            subtitle: "",
+            image: "",
+            products: sec.products || [],
+            categories: sec.categories || [],
+            categoryItems: sec.categoryItems || [],
+            banners: sec.banners || [],
+            items: sec.items || [],
+          },
+          style: { variant: "default" },
+          title: sec.name,
+          subtitle: "",
+          categories: sec.categories || [],
+          categoryItems: sec.categoryItems || [],
+          products: sec.products || [],
+          banners: sec.banners || [],
+          items: sec.items || [],
+        }));
+    }
 
     return res.status(200).json({
       success: true,
@@ -159,6 +288,11 @@ export const getPageById = async (req, res) => {
         path: "sections.categoryItems.category",
         model: "Category",
       })
+      .populate({
+        path: "sections.categoryItems.page",
+        model: "Page",
+        select: "name slug",
+      })
       .populate("sections.products")
       .populate("sections.banners");
 
@@ -166,7 +300,81 @@ export const getPageById = async (req, res) => {
       return res.status(404).json({ message: "Page not found" });
     }
 
-    return res.status(200).json({ success: true, page });
+    // Try finding dedicated PageSections
+    const dbSections = await PageSection.find({ pageId: id })
+      .sort({ order: 1 })
+      .populate("data.categories")
+      .populate({
+        path: "data.categoryItems.category",
+        model: "Category",
+      })
+      .populate({
+        path: "data.categoryItems.page",
+        model: "Page",
+        select: "name slug",
+      })
+      .populate("data.products")
+      .populate("data.banners");
+
+    let allSections = [];
+
+    if (dbSections && dbSections.length > 0) {
+      allSections = dbSections.map((sec) => ({
+        _id: sec._id,
+        pageId: sec.pageId,
+        name: sec.name,
+        type: sec.type,
+        order: sec.order,
+        sortOrder: sec.order,
+        isActive: sec.isActive,
+        data: sec.data || {},
+        style: sec.style || { variant: "default" },
+        // Flat backward compatibility
+        title: sec.data?.title || sec.name,
+        subtitle: sec.data?.subtitle || "",
+        categories: sec.data?.categories || [],
+        categoryItems: sec.data?.categoryItems || [],
+        products: sec.data?.products || [],
+        banners: sec.data?.banners || [],
+        items: sec.data?.items || [],
+        disabledItemIds: sec.data?.disabledItemIds || [],
+      }));
+    } else {
+      allSections = (page.sections || [])
+        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+        .map((sec, idx) => ({
+          _id: sec._id,
+          pageId: page._id,
+          name: sec.name,
+          type: normalizeSectionType(sec.name, sec.type),
+          order: sec.sortOrder !== undefined ? sec.sortOrder : idx,
+          sortOrder: sec.sortOrder !== undefined ? sec.sortOrder : idx,
+          isActive: sec.isActive,
+          data: {
+            title: sec.name || "",
+            subtitle: "",
+            image: "",
+            products: sec.products || [],
+            categories: sec.categories || [],
+            categoryItems: sec.categoryItems || [],
+            banners: sec.banners || [],
+            items: sec.items || [],
+          },
+          style: { variant: "default" },
+          title: sec.name,
+          subtitle: "",
+          categories: sec.categories || [],
+          categoryItems: sec.categoryItems || [],
+          products: sec.products || [],
+          banners: sec.banners || [],
+          items: sec.items || [],
+        }));
+    }
+
+    const pageObj = page.toObject();
+    pageObj.sections = allSections;
+
+    return res.status(200).json({ success: true, page: pageObj });
   } catch (error) {
     console.error("Get Page By ID Error:", error);
     return res.status(500).json({ message: error.message });
@@ -289,6 +497,7 @@ export const deletePage = async (req, res) => {
     }
 
     await Page.findByIdAndDelete(id);
+    await PageSection.deleteMany({ pageId: id });
 
     emitHomepageUpdate({ type: "page_deleted", slug: page.slug });
 
@@ -372,6 +581,11 @@ export const addPageSection = async (req, res) => {
       .populate({
         path: "sections.categoryItems.category",
         model: "Category",
+      })
+      .populate({
+        path: "sections.categoryItems.page",
+        model: "Page",
+        select: "name slug",
       })
       .populate("sections.products")
       .populate("sections.banners");
@@ -457,6 +671,11 @@ export const updatePageSection = async (req, res) => {
         path: "sections.categoryItems.category",
         model: "Category",
       })
+      .populate({
+        path: "sections.categoryItems.page",
+        model: "Page",
+        select: "name slug",
+      })
       .populate("sections.products")
       .populate("sections.banners");
 
@@ -500,6 +719,11 @@ export const deletePageSection = async (req, res) => {
       .populate({
         path: "sections.categoryItems.category",
         model: "Category",
+      })
+      .populate({
+        path: "sections.categoryItems.page",
+        model: "Page",
+        select: "name slug",
       })
       .populate("sections.products")
       .populate("sections.banners");

@@ -400,10 +400,11 @@
   background: #fff;
   display: flex;
   flex-direction: column;
+  height: 360px;
 }
 
 .product-image {
-  height: 305px;
+  height: 195px;
   background: #f5f5f5;
   position: relative;
   cursor: pointer;

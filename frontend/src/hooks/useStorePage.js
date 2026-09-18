@@ -88,7 +88,7 @@ export const useStorePage = (pageSlug) => {
       }
       const activeSections = (pageData.sections || [])
         .filter((sec) => sec.isActive !== false)
-        .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+        .sort((a, b) => ((a.order !== undefined ? a.order : a.sortOrder) || 0) - ((b.order !== undefined ? b.order : b.sortOrder) || 0));
 
       setSections(activeSections);
     } catch (error) {

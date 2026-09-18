@@ -1,0 +1,108 @@
+/* =========================================================
+   HIKING & TREKKING - CATEGORY CAROUSEL CSS
+   Preserves visual appearance: 120px circular category cards,
+   subtle green-tinted outdoor shadow, hover lift translateY(-4px).
+   Completely independent from other store pages.
+========================================================= */
+
+.category-carousel-hiking-trekking {
+  width: 100% !important;
+  margin: 12px 0 28px 0 !important;
+  padding: 4px 0 8px 0 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 14px 0 !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-track {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 20px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding: 4px 0 12px 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-track::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Individual Category Item */
+.category-carousel-hiking-trekking .hiking-category-card {
+  flex: 0 0 130px !important;
+  width: 130px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  user-select: none !important;
+  transition: transform 0.25s ease !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-card:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* 120px Circular Container with outdoor green-tinted shadow */
+.category-carousel-hiking-trekking .hiking-category-circle {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #f1f5f9 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 auto 8px auto !important;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.12) !important;
+  transition: box-shadow 0.25s ease !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-card:hover .hiking-category-circle {
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.22) !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-circle img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.category-carousel-hiking-trekking .hiking-category-placeholder {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #1b5e20 !important;
+  text-align: center !important;
+  padding: 6px !important;
+}
+
+/* Category Label */
+.category-carousel-hiking-trekking .hiking-category-name {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #111111 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  max-width: 120px !important;
+  word-wrap: break-word !important;
+  line-height: 1.25 !important;
+}

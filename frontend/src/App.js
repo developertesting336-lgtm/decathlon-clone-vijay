@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 import "./App.css";
 
 import Navbar from "./components/Navbar";
-import CategoryNav from "./components/home/CategoryNav";
+import CategoryNav from "./components/pageSections/CategoryNav/CategoryNav";
 
 import Home from "./pages/Home";
 import UserLogin from "./pages/UserLogin";

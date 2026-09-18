@@ -510,6 +510,7 @@ const PageBuilder = () => {
           sectionType === "category"
             ? categoryItems.map((ci, idx) => ({
                 category: ci.categoryId,
+                link: `/category/${ci.categoryId}`,
                 customImage: ci.customImage || "",
                 sortOrder: idx,
               }))

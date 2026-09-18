@@ -6,17 +6,10 @@ import "../../styles/home/SportsCategories.css";
 import api from "../../api/axios";
 import socket from "../../socket/socket";
 
-const SportsCategories = ({ customCategories }) => {
+const SportsCategories = ({ section, data, customCategories }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-
   const [loading, setLoading] = useState(true);
-
-  /*
-  ========================================
-  IMAGE URL
-  ========================================
-  */
 
   const getImageUrl = (image) => {
     if (!image) return "";
@@ -30,11 +23,145 @@ const SportsCategories = ({ customCategories }) => {
     return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
   };
 
-  /*
-  ========================================
-  FETCH CATEGORIES
-  ========================================
-  */
+  const extractItemsFromSection = useCallback((sec) => {
+    if (!sec || sec.isActive === false) return [];
+
+    const disabledIds = new Set(
+      [
+        ...(sec.data?.disabledItemIds || []),
+        ...(sec.disabledItemIds || []),
+      ].map((id) => String(id))
+    );
+
+    const rawCatItems = sec.data?.categoryItems || sec.categoryItems;
+    if (Array.isArray(rawCatItems) && rawCatItems.length > 0) {
+      const activeItems = rawCatItems
+        .filter((ci) => {
+          if (!ci || ci.isActive === false) return false;
+          const ciId = String(ci._id || "");
+          const catId = String(
+            (typeof ci.category === "object" ? ci.category?._id : ci.category) || ""
+          );
+          const pageId = String(
+            (typeof ci.page === "object" ? ci.page?._id : ci.page) || ""
+          );
+          if (ciId && disabledIds.has(ciId)) return false;
+          if (catId && disabledIds.has(catId)) return false;
+          if (pageId && disabledIds.has(pageId)) return false;
+          return true;
+        })
+        .map((ci, idx) => {
+          const isPage = ci.linkType === "page" || Boolean(ci.page);
+          const catObj = typeof ci.category === "object" && ci.category ? ci.category : {};
+          const pageObj = typeof ci.page === "object" && ci.page ? ci.page : {};
+
+          const name =
+            ci.name ||
+            ci.title ||
+            (isPage ? pageObj.name : catObj.name) ||
+            `Category ${idx + 1}`;
+
+          const image =
+            ci.customImage ||
+            ci.image ||
+            (isPage ? pageObj.image : catObj.image) ||
+            "";
+
+          const slug =
+            (isPage ? pageObj.slug : catObj.slug) ||
+            ci.slug ||
+            name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+          const link =
+            ci.link ||
+            (isPage
+              ? `/${pageObj.slug || ""}`
+              : catObj.slug
+              ? `/${catObj.slug}`
+              : `/category/${encodeURIComponent(slug)}`);
+
+          const _id = ci._id || catObj._id || pageObj._id || `cat-item-${idx}`;
+
+          return {
+            _id,
+            name,
+            image,
+            link,
+            slug,
+            order:
+              ci.sortOrder !== undefined
+                ? ci.sortOrder
+                : ci.displayOrder !== undefined
+                ? ci.displayOrder
+                : idx,
+          };
+        });
+
+      if (activeItems.length > 0) {
+        return activeItems.sort((a, b) => a.order - b.order);
+      }
+    }
+
+    const rawItems = sec.data?.items || sec.items;
+    if (Array.isArray(rawItems) && rawItems.length > 0) {
+      const activeItems = rawItems
+        .filter((it) => {
+          if (!it || it.isActive === false) return false;
+          const itId = String(it._id || "");
+          if (itId && disabledIds.has(itId)) return false;
+          return true;
+        })
+        .map((it, idx) => ({
+          _id: it._id || `item-${idx}`,
+          name: it.name || `Category ${idx + 1}`,
+          image: it.image || "",
+          link: it.link || "",
+          slug:
+            (it.link || "").replace(/^\//, "") ||
+            it.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          order:
+            it.sortOrder !== undefined
+              ? it.sortOrder
+              : it.displayOrder !== undefined
+              ? it.displayOrder
+              : idx,
+        }));
+
+      if (activeItems.length > 0) {
+        return activeItems.sort((a, b) => a.order - b.order);
+      }
+    }
+
+    const rawCats = sec.data?.categories || sec.categories;
+    if (Array.isArray(rawCats) && rawCats.length > 0) {
+      const activeItems = rawCats
+        .filter((c) => {
+          if (!c || typeof c !== "object" || !c.name) return false;
+          if (c.isActive === false) return false;
+          const cId = String(c._id || "");
+          if (cId && disabledIds.has(cId)) return false;
+          return true;
+        })
+        .map((c, idx) => ({
+          _id: c._id || `cat-${idx}`,
+          name: c.name,
+          image: c.image || "",
+          link: c.slug
+            ? `/${c.slug}`
+            : `/category/${encodeURIComponent(
+                c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
+              )}`,
+          slug: c.slug,
+          order: c.sortOrder !== undefined ? c.sortOrder : idx,
+        }));
+
+      if (activeItems.length > 0) {
+        return activeItems.sort((a, b) => a.order - b.order);
+      }
+    }
+
+    return [];
+  }, []);
 
   const fetchSection = useCallback(async () => {
     try {
@@ -43,53 +170,69 @@ const SportsCategories = ({ customCategories }) => {
       const response = await api.get("/pages/slug/home");
       const pageSections = response.data?.page?.sections || [];
 
-      const section = pageSections.find(
-        (item) => item.name === "SportsCategories" || (item.type === "category" && item.name.includes("Sports"))
+      const found = pageSections.find(
+        (item) =>
+          item.name === "SportsCategories" ||
+          item.type === "sports-categories" ||
+          (item.type === "category" && item.name && item.name.includes("Sports"))
       );
 
-      const validCategories = (section?.categories || []).filter(
-        (c) => c && typeof c === "object" && c.name
-      );
+      if (!found || found.isActive === false) {
+        setCategories([]);
+        return;
+      }
 
-      if (validCategories.length > 0) {
-        setCategories(validCategories);
+      const extracted = extractItemsFromSection(found);
+      if (extracted.length > 0) {
+        setCategories(extracted);
       } else {
         const catRes = await api.get("/categories");
-        setCategories(catRes.data.categories || []);
+        setCategories(
+          (catRes.data.categories || []).filter((c) => c.isActive !== false)
+        );
       }
     } catch (error) {
       console.error("Sports Categories Error:", error);
       try {
         const catRes = await api.get("/categories");
-        setCategories(catRes.data.categories || []);
+        setCategories(
+          (catRes.data.categories || []).filter((c) => c.isActive !== false)
+        );
       } catch {
         setCategories([]);
       }
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [extractItemsFromSection]);
 
   useEffect(() => {
-    const valid = (customCategories || []).filter(
-      (c) => c && typeof c === "object" && c.name
-    );
-    if (valid.length > 0) {
-      setCategories(valid);
+    if (section) {
+      if (section.isActive === false) {
+        setCategories([]);
+        setLoading(false);
+        return;
+      }
+      const combinedSec = {
+        ...section,
+        data: { ...(section.data || {}), ...(data || {}) },
+      };
+      const items = extractItemsFromSection(combinedSec);
+      if (items.length > 0) {
+        setCategories(items);
+        setLoading(false);
+        return;
+      }
+    } else if (customCategories && Array.isArray(customCategories) && customCategories.length > 0) {
+      setCategories(customCategories);
       setLoading(false);
       return;
     }
     fetchSection();
-  }, [customCategories, fetchSection]);
-
-  /*
-  ========================================
-  REALTIME UPDATE
-  ========================================
-  */
+  }, [section, data, customCategories, extractItemsFromSection, fetchSection]);
 
   useEffect(() => {
-    const handleHomepageUpdate = (data) => {
+    const handleHomepageUpdate = (updateData) => {
       const sectionEvents = [
         "section_created",
         "section_updated",
@@ -104,49 +247,30 @@ const SportsCategories = ({ customCategories }) => {
         "category_reordered",
       ];
 
-      if (sectionEvents.includes(data?.type)) {
-        fetchSection();
-
-        return;
-      }
-
-      if (categoryEvents.includes(data?.type)) {
+      if (
+        sectionEvents.includes(updateData?.type) ||
+        categoryEvents.includes(updateData?.type)
+      ) {
         fetchSection();
       }
     };
 
     socket.on("homepage_updated", handleHomepageUpdate);
+    socket.on("section_updated", handleHomepageUpdate);
 
     return () => {
       socket.off("homepage_updated", handleHomepageUpdate);
+      socket.off("section_updated", handleHomepageUpdate);
     };
   }, [fetchSection]);
 
-  /*
-  ========================================
-  LOADING
-  ========================================
-  */
-
-  if (loading) {
+  if (section && section.isActive === false) {
     return null;
   }
 
-  /*
-  ========================================
-  EMPTY
-  ========================================
-  */
-
-  if (!categories.length) {
+  if (loading || !categories.length) {
     return null;
   }
-
-  /*
-  ========================================
-  UI
-  ========================================
-  */
 
   const handleCategoryClick = (category) => {
     if (category.link && category.link !== "#") {
@@ -175,26 +299,21 @@ const SportsCategories = ({ customCategories }) => {
   return (
     <section className="sports-categories">
       <div className="sports-categories-list">
-        {categories.map((category) => {
-          return (
-            <div
-              className="sports-category-card"
-              key={category._id}
-              onClick={() => handleCategoryClick(category)}
-              style={{ cursor: "pointer" }}
-            >
-              {category.image ? (
-                <img src={getImageUrl(category.image)} alt={category.name} />
-              ) : (
-                <div className="sports-category-no-image">No Image</div>
-              )}
-
-              <div className="sports-category-overlay">
-                <h3>{category.name}</h3>
-              </div>
-            </div>
-          );
-        })}
+        {categories.map((category) => (
+          <div
+            className="sports-category-card"
+            key={category._id}
+            onClick={() => handleCategoryClick(category)}
+            style={{ cursor: "pointer" }}
+            title={category.name}
+          >
+            {category.image ? (
+              <img src={getImageUrl(category.image)} alt={category.name} />
+            ) : (
+              <div className="sports-category-no-image">{category.name}</div>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   );

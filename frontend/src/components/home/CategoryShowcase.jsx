@@ -199,7 +199,6 @@ const CategoryShowcase = ({ customCategories }) => {
                 <div className="category-showcase-no-image">No Image</div>
               )}
 
-              <div className="category-showcase-title">{category.name}</div>
             </div>
           );
         })}

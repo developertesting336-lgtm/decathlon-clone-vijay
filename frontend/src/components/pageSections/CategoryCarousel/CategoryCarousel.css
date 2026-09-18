@@ -1,0 +1,161 @@
+/* =========================================
+   CATEGORY CAROUSEL
+========================================= */
+
+.category-carousel-section {
+  width: 100% !important;
+  padding: 16px 20px 12px !important;
+  margin: 0 !important;
+  background: #fff !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* =========================================
+   TRACK
+========================================= */
+
+.category-carousel-track {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.category-carousel-card {
+  position: relative !important;
+  flex: 1 1 0 !important;      /* all cards share row equally */
+  min-width: 0 !important;
+  aspect-ratio: 260 / 287 !important;
+  height: 145px;
+  overflow: hidden !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  background: #e0e0e0 !important;
+  box-sizing: border-box !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.category-carousel-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* =========================================
+   IMAGE
+========================================= */
+
+.category-carousel-card img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* =========================================
+   NO IMAGE FALLBACK
+========================================= */
+
+.category-carousel-no-image {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: #eeeeee !important;
+  color: #555 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 8px !important;
+}
+
+/* =========================================
+   LARGE DESKTOP (≥1400px)
+========================================= */
+
+@media (min-width: 1400px) {
+  .category-carousel-section {
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+  }
+
+  .category-carousel-card {
+    aspect-ratio: 260 / 287 !important;
+  }
+}
+
+/* =========================================
+   LAPTOP (≤1200px)
+========================================= */
+
+@media (max-width: 1200px) {
+  .category-carousel-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .category-carousel-card {
+    aspect-ratio: 260 / 287 !important;
+  }
+}
+
+/* =========================================
+   TABLET (≤900px)
+========================================= */
+
+@media (max-width: 900px) {
+  .category-carousel-track {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  .category-carousel-track::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .category-carousel-card {
+    flex: 0 0 140px !important;
+    width: 140px !important;
+    aspect-ratio: 260 / 287 !important;
+  }
+}
+
+/* =========================================
+   MOBILE (≤600px)
+========================================= */
+
+@media (max-width: 600px) {
+  .category-carousel-section {
+    padding: 12px 12px 8px !important;
+  }
+
+  .category-carousel-track {
+    gap: 8px !important;
+  }
+
+  .category-carousel-card {
+    flex: 0 0 120px !important;
+    width: 120px !important;
+    aspect-ratio: 260 / 287 !important;
+  }
+
+  .category-carousel-label span {
+    font-size: 10px !important;
+  }
+}

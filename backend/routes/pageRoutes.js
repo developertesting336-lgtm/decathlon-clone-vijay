@@ -12,6 +12,13 @@ import {
   deletePageSection,
   reorderPageSections,
 } from "../controllers/pageController.js";
+import {
+  getPageSections,
+  createPageSection,
+  updatePageSection as updateDedicatedSection,
+  deletePageSection as deleteDedicatedSection,
+  reorderPageSections as reorderDedicatedSections,
+} from "../controllers/pageSectionController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
@@ -64,9 +71,10 @@ router.put("/:id", authMiddleware, adminMiddleware, updatePage);
 router.delete("/:id", authMiddleware, adminMiddleware, deletePage);
 
 // Page sections management routes
-router.put("/:id/sections/reorder", authMiddleware, adminMiddleware, reorderPageSections);
-router.post("/:id/sections", authMiddleware, adminMiddleware, addPageSection);
-router.put("/:id/sections/:sectionId", authMiddleware, adminMiddleware, updatePageSection);
-router.delete("/:id/sections/:sectionId", authMiddleware, adminMiddleware, deletePageSection);
+router.get("/:id/sections", getPageSections);
+router.put("/:id/sections/reorder", authMiddleware, adminMiddleware, reorderDedicatedSections);
+router.post("/:id/sections", authMiddleware, adminMiddleware, createPageSection);
+router.put("/:id/sections/:sectionId", authMiddleware, adminMiddleware, updateDedicatedSection);
+router.delete("/:id/sections/:sectionId", authMiddleware, adminMiddleware, deleteDedicatedSection);
 
 export default router;

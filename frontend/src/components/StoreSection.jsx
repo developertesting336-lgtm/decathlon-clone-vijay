@@ -12,6 +12,8 @@ import {
   MdFavorite,
   MdFavoriteBorder,
 } from "react-icons/md";
+import CategoryCarousel from "./pageSections/CategoryCarousel/CategoryCarousel";
+
 
 /* =========================================================
    BANNER SECTION
@@ -130,7 +132,6 @@ const BannerSection = ({ section, getImageUrl, navigate, pageSlug }) => {
 /* =========================================================
    CATEGORY SECTION
 ========================================================= */
-// eslint-disable-next-line no-unused-vars
 const CategorySection = ({
   section,
   sectionIndex,
@@ -138,128 +139,17 @@ const CategorySection = ({
   navigate,
   pageSlug,
 }) => {
-  let categories = [];
-
-  if (
-    Array.isArray(section.categoryItems) &&
-    section.categoryItems.length > 0
-  ) {
-    categories = section.categoryItems
-      .filter((ci) => ci && (ci.category || ci.customImage))
-      .map((ci) => {
-        const cat =
-          typeof ci.category === "object"
-            ? ci.category
-            : { _id: ci.category, name: "Category" };
-        const displayImage = ci.customImage || cat.image || "";
-        const slug = cat.slug || "";
-        let name = cat.name || "Category";
-        if (
-          pageSlug === "bags-backpacks" &&
-          name.toLowerCase() === "backpacks"
-        ) {
-          name = "Duffle Bags";
-        }
-        const link = slug
-          ? `/category/${slug}`
-          : `/category/${encodeURIComponent(name.toLowerCase())}`;
-
-        return {
-          id: cat._id || `cat-${name}`,
-          name,
-          image: getImageUrl(displayImage),
-          link,
-        };
-      });
-  } else if (
-    Array.isArray(section.categories) &&
-    section.categories.length > 0
-  ) {
-    categories = section.categories
-      .filter((c) => c && typeof c === "object" && c.name)
-      .map((cat) => {
-        const slug = cat.slug || "";
-        let name = cat.name || "Category";
-        if (
-          pageSlug === "bags-backpacks" &&
-          name.toLowerCase() === "backpacks"
-        ) {
-          name = "Duffle Bags";
-        }
-        const link = slug
-          ? `/category/${slug}`
-          : `/category/${encodeURIComponent(name.toLowerCase())}`;
-
-        return {
-          id: cat._id,
-          name,
-          image: getImageUrl(cat.image || ""),
-          link,
-        };
-      });
-  } else if (Array.isArray(section.items) && section.items.length > 0) {
-    categories = section.items.map((item, idx) => ({
-      id: item._id || `item-${idx}`,
-      name: item.name || item.title || "Category",
-      image: getImageUrl(item.image || ""),
-      link: item.link || "#",
-    }));
-  }
-
-  if (!categories.length) return null;
-
-  const handleCategoryClick = (cat) => {
-    if (!cat.link || cat.link === "#") return;
-    navigate(cat.link, {
-      state: { categoryId: cat.id, categoryName: cat.name },
-    });
-  };
-
-  const title = section?.name || section?.title || "";
-  const sectionNameClass = (title || "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-");
-  const sectionIndexClass =
-    typeof sectionIndex === "number" ? `section-index-${sectionIndex + 1}` : "";
-
   return (
-    <section
-      className={`dynamic-category-section ${
-        pageSlug ? `${pageSlug}-category-section` : ""
-      } ${
-        pageSlug && typeof sectionIndex === "number"
-          ? `${pageSlug}-category-section-${sectionIndex + 1}`
-          : ""
-      } ${sectionNameClass ? `section-${sectionNameClass}` : ""} ${sectionIndexClass}`}
-      data-section-index={sectionIndex}
-    >
-      {title && (
-        <h2 className="dynamic-category-title dynamic-section-heading">
-          {title}
-        </h2>
-      )}
-      <div className="dynamic-category-scroll">
-        {categories.map((cat, idx) => (
-          <div
-            key={cat.id || idx}
-            className="dynamic-category-item"
-            onClick={() => handleCategoryClick(cat)}
-          >
-            <div className="dynamic-category-circle">
-              {cat.image ? (
-                <img src={cat.image} alt={cat.name} loading="lazy" />
-              ) : (
-                <div className="dynamic-category-placeholder">{cat.name}</div>
-              )}
-            </div>
-            <p className="dynamic-category-name">{cat.name}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+    <CategoryCarousel
+      section={section}
+      data={section?.data}
+      sectionIndex={sectionIndex}
+      pageSlug={pageSlug}
+      title={section?.name || section?.title}
+    />
   );
 };
+
 
 /* =========================================================
    OTHER SECTION
@@ -740,6 +630,9 @@ export const StoreSection = ({
   // Banner Section
   if (
     type === "banner" ||
+    type === "promo-banner" ||
+    type === "promo-banner-2" ||
+    type === "coupon-banner" ||
     name.includes("banner") ||
     (Array.isArray(section.banners) && section.banners.length > 0)
   ) {
@@ -756,6 +649,7 @@ export const StoreSection = ({
   // Product Section
   if (
     type === "product" ||
+    type === "product-section" ||
     (Array.isArray(section.products) && section.products.length > 0)
   ) {
     return (
@@ -774,6 +668,9 @@ export const StoreSection = ({
   // Category Section
   if (
     type === "category" ||
+    type === "category-carousel" ||
+    type === "category-nav" ||
+    type === "category-showcase" ||
     (Array.isArray(section.categoryItems) &&
       section.categoryItems.length > 0) ||
     (Array.isArray(section.categories) && section.categories.length > 0)
@@ -792,6 +689,12 @@ export const StoreSection = ({
   // Other / Custom Items Section
   if (
     type === "other" ||
+    type === "everyday-essentials" ||
+    type === "loved-categories" ||
+    type === "outdoor-products" ||
+    type === "equipping-champions" ||
+    type === "storm-proof" ||
+    type === "sports-categories" ||
     (Array.isArray(section.items) && section.items.length > 0)
   ) {
     return (

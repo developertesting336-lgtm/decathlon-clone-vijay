@@ -1,0 +1,125 @@
+/* =========================================================
+   WORKOUT ESSENTIALS - CATEGORY CAROUSEL CSS
+   Preserves visual appearance: striking chamfered / octagon
+   category cards with polygon clip-path and hover zoom.
+   Completely independent from other store pages.
+========================================================= */
+
+.category-carousel-workout-essentials {
+  width: 100% !important;
+  margin: 10px 0 24px 0 !important;
+  padding: 4px 0 8px 0 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+  overflow: hidden !important;
+}
+
+.category-carousel-workout-essentials .workout-category-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 14px 0 !important;
+}
+
+.category-carousel-workout-essentials .workout-category-track {
+  width: 100% !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  padding: 4px 0 8px 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.category-carousel-workout-essentials .workout-category-track::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Individual Category Item */
+.category-carousel-workout-essentials .workout-category-card {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 120px !important;
+  max-width: 120px !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  user-select: none !important;
+  transition: transform 0.3s ease !important;
+}
+
+.category-carousel-workout-essentials .workout-category-card:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* OCTAGON / CHAMFERED BOX */
+.category-carousel-workout-essentials .workout-category-octagon {
+  width: 112px !important;
+  height: 122px !important;
+  border-radius: 0 !important;
+  background: #cbd0d6 !important;
+  clip-path: polygon(
+    18px 0%,
+    calc(100% - 18px) 0%,
+    100% 18px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0% calc(100% - 18px),
+    0% 18px
+  ) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 auto 8px auto !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease !important;
+  box-shadow: none !important;
+}
+
+.category-carousel-workout-essentials .workout-category-card:hover .workout-category-octagon {
+  background: #bec4cc !important;
+  transform: scale(1.05) !important;
+}
+
+/* Image inside Octagon */
+.category-carousel-workout-essentials .workout-category-octagon img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  transform: scale(1) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.category-carousel-workout-essentials .workout-category-card:hover .workout-category-octagon img {
+  transform: scale(1.18) !important;
+}
+
+/* Placeholder */
+.category-carousel-workout-essentials .workout-category-placeholder {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #4b5563 !important;
+  text-align: center !important;
+  padding: 8px !important;
+}
+
+/* Category Label */
+.category-carousel-workout-essentials .workout-category-name {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  color: #111111 !important;
+  text-align: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: 110px !important;
+  word-wrap: break-word !important;
+}

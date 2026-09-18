@@ -1,0 +1,128 @@
+/* =========================================================
+   SPORTS ACCESSORIES - CATEGORY CAROUSEL CSS
+   Preserves visual appearance: 8-column grid with 1/1.05
+   rounded cards, subtle image zoom hover (1.05x),
+   and lift translateY(-4px).
+   Completely independent from other store pages.
+========================================================= */
+
+.category-carousel-sports-accessories {
+  width: 100% !important;
+  margin: 20px 0 36px 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  background: transparent !important;
+}
+
+.category-carousel-sports-accessories .sports-acc-category-title {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.category-carousel-sports-accessories .sports-acc-category-track {
+  display: grid !important;
+  grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  width: 100% !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 1120px) {
+  .category-carousel-sports-accessories .sports-acc-category-track {
+    display: flex !important;
+    gap: 14px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    padding-bottom: 8px !important;
+  }
+  .category-carousel-sports-accessories .sports-acc-category-track::-webkit-scrollbar {
+    display: none !important;
+  }
+}
+
+/* Individual Category Item */
+.category-carousel-sports-accessories .sports-acc-category-card {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+  user-select: none !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+@media (max-width: 1120px) {
+  .category-carousel-sports-accessories .sports-acc-category-card {
+    flex: 0 0 135px !important;
+    width: 135px !important;
+  }
+}
+
+.category-carousel-sports-accessories .sports-acc-category-card:hover {
+  transform: translateY(-4px) !important;
+}
+
+/* Rounded Rectangle Card 1 / 1.05 */
+.category-carousel-sports-accessories .sports-acc-category-image-box {
+  width: 100% !important;
+  aspect-ratio: 1 / 1.05 !important;
+  height: auto !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: #f4f5f7 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 0 10px 0 !important;
+  box-shadow: none !important;
+  position: relative !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease !important;
+}
+
+.category-carousel-sports-accessories .sports-acc-category-card:hover .sports-acc-category-image-box {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Image Inside Card */
+.category-carousel-sports-accessories .sports-acc-category-image-box img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  display: block !important;
+  border-radius: 8px !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.category-carousel-sports-accessories .sports-acc-category-card:hover .sports-acc-category-image-box img {
+  transform: scale(1.05) !important;
+}
+
+.category-carousel-sports-accessories .sports-acc-category-placeholder {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: #64748b !important;
+  text-align: center !important;
+  padding: 8px !important;
+}
+
+/* Category Label */
+.category-carousel-sports-accessories .sports-acc-category-name {
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: #111111 !important;
+  margin: 0 !important;
+  text-align: center !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.1px !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  transition: color 0.2s ease !important;
+}
