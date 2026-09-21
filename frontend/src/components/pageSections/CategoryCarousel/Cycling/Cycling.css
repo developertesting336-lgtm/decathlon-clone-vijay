@@ -1,14 +1,16 @@
 /* =========================================================
-   CYCLING - CATEGORY CAROUSEL CSS
-   Preserves visual appearance: 100px circular category cards,
-   clean horizontal row, hover lift translateY(-4px).
-   Completely independent from other store pages.
+   CYCLING - CATEGORY CAROUSEL CSS (SECTION 1)
+   Matches Decathlon Cycle Store reference image:
+   - Free-standing bike & accessory cutouts with natural floor reflections
+   - Clean transparent/white background (no circular grey cards)
+   - Centered typography below each category item
+   - Evenly spaced horizontal row across the page
 ========================================================= */
 
 .category-carousel-cycling {
   width: 100% !important;
-  margin: 12px 0 24px !important;
-  padding: 4px 0 6px !important;
+  margin: 16px 0 28px !important;
+  padding: 8px 0 16px !important;
   box-sizing: border-box !important;
   background: transparent !important;
   overflow: hidden !important;
@@ -18,7 +20,7 @@
   font-size: 20px !important;
   font-weight: 700 !important;
   color: #111111 !important;
-  margin: 0 0 14px 0 !important;
+  margin: 0 0 16px 0 !important;
 }
 
 .category-carousel-cycling .cycling-category-track {
@@ -26,10 +28,11 @@
   display: flex !important;
   align-items: flex-start !important;
   justify-content: space-between !important;
-  gap: 12px !important;
+  gap: 16px !important;
   overflow-x: auto !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
+  -webkit-overflow-scrolling: touch !important;
   padding: 4px 0 8px 0 !important;
   box-sizing: border-box !important;
 }
@@ -40,64 +43,87 @@
 
 /* Individual Category Item */
 .category-carousel-cycling .cycling-category-card {
-  flex: 0 0 auto !important;
+  flex: 1 1 0 !important;
+  min-width: 105px !important;
+  max-width: 160px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  width: 112px !important;
-  max-width: 112px !important;
   cursor: pointer !important;
   text-decoration: none !important;
   user-select: none !important;
-  transition: transform 0.3s ease !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
 }
 
 .category-carousel-cycling .cycling-category-card:hover {
   transform: translateY(-4px) !important;
 }
 
-/* 100px Circle */
+/* Free-standing product image area with natural floor reflection */
+.category-carousel-cycling .cycling-category-image-wrap,
 .category-carousel-cycling .cycling-category-circle {
-  width: 100px !important;
-  height: 100px !important;
-  border-radius: 50% !important;
-  background: #f1f3f5 !important;
+  width: 100% !important;
+  height: 105px !important;
+  max-height: 105px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  overflow: hidden !important;
-  margin: 0 auto 8px auto !important;
-  transition: transform 0.3s ease !important;
+  overflow: visible !important;
+  margin: 0 auto 10px auto !important;
+  box-shadow: none !important;
+  border: none !important;
+  transition: transform 0.25s ease !important;
 }
 
+.category-carousel-cycling .cycling-category-image-wrap img,
 .category-carousel-cycling .cycling-category-circle img {
   width: 100% !important;
   height: 100% !important;
+  max-height: 105px !important;
   object-fit: contain !important;
+  object-position: center bottom !important;
   display: block !important;
+  background: transparent !important;
+  transition: transform 0.25s ease !important;
+}
+
+.category-carousel-cycling .cycling-category-card:hover .cycling-category-image-wrap img,
+.category-carousel-cycling .cycling-category-card:hover .cycling-category-circle img {
+  transform: scale(1.05) !important;
 }
 
 .category-carousel-cycling .cycling-category-placeholder {
   width: 100% !important;
-  height: 100% !important;
+  height: 100px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   color: #4b5563 !important;
   text-align: center !important;
   padding: 6px !important;
 }
 
-/* Category Label */
+/* Category Label beneath each product image */
 .category-carousel-cycling .cycling-category-name {
-  font-size: 12px !important;
+  display: block !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   color: #111111 !important;
   text-align: center !important;
   margin: 0 !important;
-  max-width: 104px !important;
+  width: 100% !important;
+  max-width: 135px !important;
   word-wrap: break-word !important;
-  line-height: 1.25 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.1px !important;
+  font-family: inherit !important;
+  transition: color 0.2s ease !important;
+}
+
+.category-carousel-cycling .cycling-category-card:hover .cycling-category-name {
+  color: #0082c3 !important;
 }

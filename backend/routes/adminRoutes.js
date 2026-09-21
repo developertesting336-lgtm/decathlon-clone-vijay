@@ -8,6 +8,11 @@ import {
   updateAdminProfile,
   changeAdminPassword,
 } from "../controllers/adminController.js";
+import {
+  googleLogin,
+  confirmGoogleLogin,
+  getMe,
+} from "../controllers/googleAuthController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
 import adminMiddleware from "../middleware/adminMiddleware.js";
@@ -18,6 +23,13 @@ const router = express.Router();
 router.post("/register", registerUser);
 
 router.post("/login", loginUser);
+
+router.post("/google", googleLogin);
+
+router.post("/google/confirm", confirmGoogleLogin);
+
+
+router.get("/me", authMiddleware, getMe);
 
 router.get("/profile", authMiddleware, getAdminProfile);
 

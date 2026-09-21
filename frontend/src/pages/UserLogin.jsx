@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { IoHomeOutline } from "react-icons/io5";
 import { MdCheckCircleOutline } from "react-icons/md";
-import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaApple } from "react-icons/fa";
 
 import toast from "react-hot-toast";
 
 import api from "../api/axios";
+import GoogleAuthButton from "../components/auth/GoogleAuthButton";
 import "../styles/UserLogin.css";
 
 const UserLogin = () => {
@@ -222,17 +222,10 @@ const UserLogin = () => {
 
         <div className="user-login-social">
 
-          <button
-            type="button"
-            className="social-login-btn"
-            disabled={loading}
-          >
-            <FcGoogle className="social-google-icon" />
-
-            <span>
-              Continue with Google
-            </span>
-          </button>
+          <GoogleAuthButton
+            text="Continue with Google"
+            redirectTo="/"
+          />
 
           <button
             type="button"

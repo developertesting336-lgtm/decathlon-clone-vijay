@@ -257,9 +257,21 @@ const Cycling = ({
     data?.name ||
     "";
 
+  const isGenericTitle = (t) => {
+    if (!t) return true;
+    const lower = t.trim().toLowerCase();
+    return [
+      "cycles",
+      "cycling",
+      "category",
+      "categories",
+      "category carousel",
+    ].includes(lower);
+  };
+
   return (
     <section className="category-carousel-cycling">
-      {sectionTitle && sectionTitle !== "Cycles" && (
+      {sectionTitle && !isGenericTitle(sectionTitle) && (
         <h2 className="cycling-category-title">{sectionTitle}</h2>
       )}
       <div className="cycling-category-track">
@@ -269,7 +281,7 @@ const Cycling = ({
             className="cycling-category-card"
             onClick={() => handleCardClick(cat)}
           >
-            <div className="cycling-category-circle">
+            <div className="cycling-category-image-wrap cycling-category-circle">
               {cat.image ? (
                 <img
                   src={getImageUrl(cat.image)}
@@ -282,6 +294,7 @@ const Cycling = ({
                 </div>
               )}
             </div>
+            <span className="cycling-category-name">{cat.name}</span>
           </div>
         ))}
       </div>

@@ -177,9 +177,17 @@ const EverydayEssentials = ({
                 ? item.link
                 : `/category/${encodeURIComponent(resolvedSlug)}`;
 
+            const isWide =
+              (dataItems.length === 6 && index >= 4) ||
+              dataItems.length === 2 ||
+              item.isWide ||
+              item.wide;
+
             return (
               <div
-                className="everyday-essentials-card"
+                className={`everyday-essentials-card ${
+                  isWide ? "card-wide" : "card-standard"
+                }`}
                 key={item._id || index}
                 onClick={() =>
                   navigate(targetLink, {

@@ -540,29 +540,64 @@
   border-color: #111111 !important;
 }
 
-/* OTHER / STYLE THAT WORKS HARD (LOVED CATEGORIES GRID) */
+/* OTHER / STYLE THAT WORKS HARD (EVERYDAY ESSENTIALS) */
+.dynamic-page-activewear .everyday-essentials-section,
+.activewear-page .everyday-essentials-section,
 .dynamic-page-activewear .dynamic-other-section {
-  margin: 12px 0 20px !important;
-  padding: 12px 0 20px !important;
+  margin: 16px 0 32px 0 !important;
+  padding: 0 !important;
 }
 
+.dynamic-page-activewear .everyday-essentials-title,
+.activewear-page .everyday-essentials-title,
 .dynamic-page-activewear .dynamic-other-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #101010;
-  margin-bottom: 12px;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  margin: 0 0 16px 0 !important;
+  letter-spacing: -0.2px !important;
 }
 
+.dynamic-page-activewear .everyday-essentials-grid,
+.activewear-page .everyday-essentials-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.dynamic-page-activewear .everyday-essentials-card,
+.activewear-page .everyday-essentials-card,
 .dynamic-page-activewear .dynamic-other-card {
-  border-radius: 15px;
-  background: #e5e5e5;
-  overflow: hidden;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 16px !important;
+  aspect-ratio: 1 / 1.05 !important;
+  background: #f4f5f7 !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  border: none !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
+.dynamic-page-activewear .everyday-essentials-card:hover,
+.activewear-page .everyday-essentials-card:hover,
 .dynamic-page-activewear .dynamic-other-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.dynamic-page-activewear .everyday-essentials-image,
+.activewear-page .everyday-essentials-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  border-radius: 16px !important;
+  display: block !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.dynamic-page-activewear .everyday-essentials-card:hover .everyday-essentials-image,
+.activewear-page .everyday-essentials-card:hover .everyday-essentials-image {
+  transform: scale(1.03) !important;
 }
 
 /* RESPONSIVE */

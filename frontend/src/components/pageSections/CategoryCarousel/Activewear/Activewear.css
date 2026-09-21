@@ -1,112 +1,377 @@
 /* =========================================================
    ACTIVEWEAR - CATEGORY CAROUSEL CSS
-   Preserves visual appearance: horizontal row with clean
-   circular category cards, responsive scroll, and hover lift.
-   Completely independent from other store pages.
+   Matches Decathlon Men's & Women's Collection visual styling:
+   Clean circular item avatars with centered typography labels
+   and responsive horizontal layout.
 ========================================================= */
 
 .category-carousel-activewear {
-  width: 100% !important;
-  margin: 10px 0 22px 0 !important;
-  padding: 4px 0 8px 0 !important;
-  box-sizing: border-box !important;
-  background: transparent !important;
-  overflow: hidden !important;
+  width: 100%;
+  margin: 14px 0 28px 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: transparent;
+  position: relative;
+  overflow: visible;
 }
 
+/* Section Title (e.g. "Men's Collection", "Women's Collection") */
 .category-carousel-activewear .activewear-category-title {
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  color: #111111 !important;
-  margin: 0 0 14px 0 !important;
+  font-size: 19px;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.2px;
+  line-height: 1.2;
+  margin: 0 0 18px 0;
 }
 
+/* Category Track: 8-column grid on desktop, smooth horizontal scroll on smaller viewports */
 .category-carousel-activewear .activewear-category-track {
-  width: 100% !important;
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 12px !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
-  padding: 4px 0 8px 0 !important;
-  margin: 0 !important;
-  box-sizing: border-box !important;
-}
-
-.category-carousel-activewear .activewear-category-track::-webkit-scrollbar {
-  display: none !important;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 4px 0 10px 0;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
 /* Individual Category Item */
 .category-carousel-activewear .activewear-category-card {
-  flex: 0 0 auto !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  width: 112px !important;
-  max-width: 112px !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-  user-select: none !important;
-  transition: transform 0.3s ease !important;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .category-carousel-activewear .activewear-category-card:hover {
-  transform: translateY(-4px) !important;
+  transform: translateY(-4px);
 }
 
-/* Category Circle Container */
+.category-carousel-activewear .activewear-category-card:focus-visible {
+  outline: 2px solid #0082c3;
+  outline-offset: 4px;
+  border-radius: 50%;
+}
+
+/* Circular Avatar Container */
 .category-carousel-activewear .activewear-category-circle {
-  width: 100px !important;
-  height: 100px !important;
-  border-radius: 50% !important;
-  background: #f1f3f5 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  overflow: hidden !important;
-  margin: 0 auto 8px auto !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
-  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+  width: 114px;
+  height: 114px;
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background: #f2f4f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0 auto 10px auto;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-sizing: border-box;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s ease;
+  will-change: transform;
 }
 
 .category-carousel-activewear .activewear-category-card:hover .activewear-category-circle {
-  transform: scale(1.05) !important;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+  transform: scale(1.04);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
-/* Image inside circle */
+/* Image Inside Circle */
 .category-carousel-activewear .activewear-category-circle img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: contain !important;
-  display: block !important;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+}
+
+.category-carousel-activewear .activewear-category-card:hover .activewear-category-circle img {
+  transform: scale(1.03);
 }
 
 /* Placeholder when no image */
 .category-carousel-activewear .activewear-category-placeholder {
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  color: #4b5563 !important;
-  text-align: center !important;
-  padding: 6px !important;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4b5563;
+  text-align: center;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: #f1f3f5;
+  word-break: break-word;
 }
 
 /* Category Label */
 .category-carousel-activewear .activewear-category-name {
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  color: #111111 !important;
-  text-align: center !important;
-  margin: 0 !important;
-  max-width: 104px !important;
-  word-wrap: break-word !important;
-  line-height: 1.25 !important;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #111111;
+  text-align: center;
+  margin: 0;
+  max-width: 100%;
+  line-height: 1.25;
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
 }
+
+.category-carousel-activewear .activewear-category-card:hover .activewear-category-name {
+  color: #0082c3;
+}
+
+/* =========================================================
+   RESPONSIVE BREAKPOINTS
+========================================================= */
+
+/* Ultra-Wide Desktop (>= 1600px) */
+@media (min-width: 1600px) {
+  .category-carousel-activewear {
+    margin: 18px 0 32px 0;
+  }
+
+  .category-carousel-activewear .activewear-category-track {
+    gap: 18px;
+  }
+
+  .category-carousel-activewear .activewear-category-circle {
+    width: 124px;
+    height: 124px;
+    margin-bottom: 12px;
+  }
+
+  .category-carousel-activewear .activewear-category-name {
+    font-size: 14px;
+  }
+}
+
+/* Standard / Large Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .category-carousel-activewear .activewear-category-circle {
+    width: 114px;
+    height: 114px;
+  }
+}
+
+/* Small Desktop / Laptop (1025px - 1199px) */
+@media (min-width: 1025px) and (max-width: 1199px) {
+  .category-carousel-activewear .activewear-category-track {
+    gap: 12px;
+  }
+
+  .category-carousel-activewear .activewear-category-circle {
+    width: 102px;
+    height: 102px;
+    margin-bottom: 8px;
+  }
+
+  .category-carousel-activewear .activewear-category-name {
+    font-size: 13px;
+  }
+}
+
+/* Tablets (601px - 1024px) - Smooth Horizontal Scroll */
+@media (max-width: 1024px) {
+  .category-carousel-activewear {
+    margin: 12px 0 22px 0;
+  }
+
+  .category-carousel-activewear .activewear-category-title {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+
+  .category-carousel-activewear .activewear-category-track {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+  }
+
+  .category-carousel-activewear .activewear-category-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-carousel-activewear .activewear-category-card {
+    flex: 0 0 102px;
+    width: 102px;
+    scroll-snap-align: start;
+  }
+
+  .category-carousel-activewear .activewear-category-circle {
+    width: 96px;
+    height: 96px;
+    margin-bottom: 8px;
+  }
+
+  .category-carousel-activewear .activewear-category-card:hover {
+    transform: none;
+  }
+
+  .category-carousel-activewear .activewear-category-card:hover .activewear-category-circle {
+    transform: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Standard Mobile (401px - 600px) */
+@media (max-width: 600px) {
+  .category-carousel-activewear {
+    margin: 10px 0 18px 0;
+  }
+
+  .category-carousel-activewear .activewear-category-title {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+
+  .category-carousel-activewear .activewear-category-track {
+    gap: 12px;
+    padding-bottom: 6px;
+  }
+
+  .category-carousel-activewear .activewear-category-card {
+    flex: 0 0 88px;
+    width: 88px;
+  }
+
+  .category-carousel-activewear .activewear-category-circle {
+    width: 84px;
+    height: 84px;
+    margin-bottom: 6px;
+  }
+
+  .category-carousel-activewear .activewear-category-name {
+    font-size: 12px;
+  }
+}
+
+/* Small Mobile (<= 400px) */
+@media (max-width: 400px) {
+  .category-carousel-activewear .activewear-category-track {
+    gap: 10px;
+  }
+
+  .category-carousel-activewear .activewear-category-card {
+    flex: 0 0 80px;
+    width: 80px;
+  }
+
+  .category-carousel-activewear .activewear-category-circle {
+    width: 76px;
+    height: 76px;
+  }
+
+  .category-carousel-activewear .activewear-category-name {
+    font-size: 11.5px;
+  }
+}
+
+/* Touch devices: disable persistent hover transforms */
+@media (hover: none) {
+  .category-carousel-activewear .activewear-category-card:hover {
+    transform: none;
+  }
+
+  .category-carousel-activewear .activewear-category-card:hover .activewear-category-circle {
+    transform: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .category-carousel-activewear .activewear-category-card:hover .activewear-category-circle img {
+    transform: none;
+  }
+
+  .category-carousel-activewear .activewear-category-card:hover .activewear-category-name {
+    color: #111111;
+  }
+}
+
+/* =========================================================
+   STYLE THAT WORKS HARD (COLLECTION GRID)
+========================================================= */
+
+.everyday-essentials-section {
+  width: 100%;
+  margin: 16px 0 32px 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.everyday-essentials-title {
+  font-size: 19px;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+  margin: 0 0 16px 0;
+}
+
+.everyday-essentials-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.everyday-essentials-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  overflow: hidden;
+  background: #f4f5f7;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.everyday-essentials-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.everyday-essentials-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 16px;
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.everyday-essentials-card:hover .everyday-essentials-image {
+  transform: scale(1.03);
+}
+

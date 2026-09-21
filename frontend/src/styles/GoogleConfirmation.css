@@ -1,0 +1,331 @@
+/* GOOGLE CONFIRMATION PAGE (MATCHING DECATHLON SPEC & SCREENSHOT) */
+
+.google-confirm-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #111111;
+  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.google-confirm-page *,
+.google-confirm-page *::before,
+.google-confirm-page *::after {
+  box-sizing: border-box;
+}
+
+/* HEADER */
+.google-confirm-header {
+  position: relative;
+  width: 100%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-top: 1px solid #dddddd;
+}
+
+.google-confirm-back {
+  position: absolute;
+  left: 64px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #111111;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.google-confirm-back svg {
+  width: 18px;
+  height: 18px;
+}
+
+.google-confirm-back:hover {
+  color: #3048c4;
+}
+
+/* DECATHLON LOGO */
+.google-confirm-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #3048c4;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.google-confirm-logo-mark {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid #3048c4;
+  color: #3048c4;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(-12deg);
+}
+
+/* MAIN CONTAINER */
+.google-confirm-container {
+  width: 500px;
+  max-width: calc(100% - 32px);
+  margin: 0 auto;
+  padding: 36px 0 50px;
+  flex: 1;
+}
+
+/* TITLE */
+.google-confirm-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111111;
+  margin: 0 0 16px;
+}
+
+/* DYNAMIC SUBTITLE MESSAGE */
+.google-confirm-message {
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: #222222;
+  margin: 0 0 28px;
+  max-width: 440px;
+}
+
+/* FORM WRAPPER */
+.google-confirm-form {
+  width: 100%;
+}
+
+/* FIELD */
+.google-confirm-field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.google-confirm-field label {
+  color: #111111;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* VERIFIED INPUT BOX WITH GREEN BORDER */
+.google-confirm-input-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.google-confirm-input {
+  width: 100%;
+  height: 46px;
+  padding: 0 42px 0 14px;
+  border: 1.5px solid #00823b;
+  border-radius: 2px;
+  outline: none;
+  background: #ffffff;
+  color: #111111;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14.5px;
+  line-height: 1;
+  cursor: default;
+}
+
+.google-confirm-input:focus {
+  border-color: #00823b;
+  box-shadow: 0 0 0 1px #00823b;
+}
+
+/* GREEN CHECKMARK ICON */
+.google-confirm-check-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #00823b;
+  font-size: 20px;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* NEXT BUTTON */
+.google-confirm-next-btn {
+  width: 100%;
+  height: 46px;
+  margin-top: 4px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 2px;
+  background: #3048c4;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.google-confirm-next-btn:hover:not(:disabled) {
+  background: #273ba5;
+}
+
+.google-confirm-next-btn:active:not(:disabled) {
+  background: #1f308a;
+}
+
+.google-confirm-next-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.google-confirm-btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: confirmSpin 0.7s linear infinite;
+}
+
+@keyframes confirmSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* FOOTER SECTION */
+.google-confirm-footer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 60px;
+  color: #111111;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.google-confirm-footer a {
+  color: #111111;
+  text-decoration: none;
+}
+
+.google-confirm-footer a:hover {
+  text-decoration: underline;
+}
+
+/* LANGUAGE */
+.google-confirm-language {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: #111111;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.google-confirm-india-flag {
+  font-size: 17px;
+  line-height: 1;
+}
+
+/* RECAPTCHA NOTICE */
+.google-confirm-recaptcha {
+  margin: 28px 0 0;
+  color: #777777;
+  font-size: 10.5px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.google-confirm-recaptcha span,
+.google-confirm-recaptcha a {
+  color: #555555;
+  text-decoration: underline;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 900px) {
+  .google-confirm-back {
+    left: 32px;
+  }
+
+  .google-confirm-container {
+    width: 450px;
+  }
+}
+
+@media (max-width: 600px) {
+  .google-confirm-header {
+    height: 58px;
+  }
+
+  .google-confirm-back {
+    left: 16px;
+  }
+
+  .google-confirm-container {
+    width: calc(100% - 32px);
+    padding: 24px 0 40px;
+  }
+
+  .google-confirm-title {
+    font-size: 24px;
+    margin-bottom: 14px;
+  }
+
+  .google-confirm-message {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .google-confirm-input {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  .google-confirm-next-btn {
+    height: 42px;
+    font-size: 13px;
+  }
+
+  .google-confirm-footer {
+    margin-top: 40px;
+  }
+}

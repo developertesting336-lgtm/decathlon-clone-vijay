@@ -170,6 +170,7 @@ API ROUTES
 */
 
 app.use("/api/auth", adminRoutes);
+app.use("/auth", adminRoutes);
 
 app.use("/api/categories", categoryRoutes);
 

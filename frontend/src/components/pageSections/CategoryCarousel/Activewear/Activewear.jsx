@@ -259,7 +259,7 @@ const Activewear = ({
 
   return (
     <section className="category-carousel-activewear">
-      {sectionTitle && sectionTitle !== "Men's Collection" && (
+      {sectionTitle && (
         <h2 className="activewear-category-title">{sectionTitle}</h2>
       )}
       <div className="activewear-category-track">
@@ -282,6 +282,9 @@ const Activewear = ({
                 </div>
               )}
             </div>
+            {cat.name && (
+              <span className="activewear-category-name">{cat.name}</span>
+            )}
           </div>
         ))}
       </div>

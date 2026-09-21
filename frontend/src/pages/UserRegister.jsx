@@ -3,12 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { IoHomeOutline } from "react-icons/io5";
 import { MdCheckCircleOutline } from "react-icons/md";
-import { FcGoogle } from "react-icons/fc";
 import { FaFacebook, FaApple } from "react-icons/fa";
 
 import toast from "react-hot-toast";
 
 import api from "../api/axios";
+import GoogleAuthButton from "../components/auth/GoogleAuthButton";
 import "../styles/UserRegister.css";
 
 const UserRegister = () => {
@@ -154,10 +154,10 @@ const UserRegister = () => {
         </div>
 
         <div className="user-register-social">
-          <button type="button" className="register-social-btn">
-            <FcGoogle className="register-google-icon" />
-            <span>Continue with Google</span>
-          </button>
+          <GoogleAuthButton
+            text="Continue with Google"
+            redirectTo="/"
+          />
 
           <button type="button" className="register-social-btn">
             <FaFacebook className="register-facebook-icon" />

@@ -9,6 +9,7 @@ const WorkoutEssentials = ({
   customCategories,
   customItems,
   title,
+  sectionIndex = 0,
 }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -249,27 +250,54 @@ const WorkoutEssentials = ({
     return null;
   }
 
-  const sectionTitle =
+  const rawTitle =
     title ||
     section?.title ||
     section?.name ||
     data?.title ||
     data?.name ||
     "";
+  const sectionTitle = typeof rawTitle === "string" ? rawTitle.trim() : "";
+
+  const isPillSection =
+    section?.name === "fitness-cat" ||
+    section?.variant === "pill" ||
+    sectionTitle.toLowerCase().includes("fitness-cat") ||
+    sectionIndex === 2;
+
+  // Section 1 (Workout categories) should NEVER show a title, matching the screenshot
+  const hideTitle =
+    !sectionTitle ||
+    sectionIndex === 0 ||
+    sectionTitle.toLowerCase().includes("workout") ||
+    sectionTitle.toLowerCase().includes("categor") ||
+    sectionTitle.toLowerCase() === "fitness-cat";
 
   return (
-    <section className="category-carousel-workout-essentials">
-      {sectionTitle && sectionTitle !== "Workout categories" && (
+    <section
+      className={`category-carousel-workout-essentials ${
+        isPillSection ? "workout-carousel-pills" : "workout-carousel-octagons"
+      }`}
+    >
+      {!hideTitle && (
         <h2 className="workout-category-title">{sectionTitle}</h2>
       )}
       <div className="workout-category-track">
         {categories.map((cat, idx) => (
           <div
             key={cat._id || idx}
-            className="workout-category-card"
+            className={`workout-category-card ${
+              isPillSection ? "card-pill" : "card-octagon"
+            }`}
             onClick={() => handleCardClick(cat)}
           >
-            <div className="workout-category-octagon">
+            <div
+              className={
+                isPillSection
+                  ? "workout-category-pill"
+                  : "workout-category-octagon"
+              }
+            >
               {cat.image ? (
                 <img
                   src={getImageUrl(cat.image)}
@@ -282,6 +310,9 @@ const WorkoutEssentials = ({
                 </div>
               )}
             </div>
+            {cat.name && (
+              <span className="workout-category-name">{cat.name}</span>
+            )}
           </div>
         ))}
       </div>

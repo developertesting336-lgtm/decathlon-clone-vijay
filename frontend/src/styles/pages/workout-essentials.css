@@ -168,19 +168,19 @@
 /* OCTAGON / CHAMFERED BOX (ZOOMED & PROMINENT) */
 .dynamic-page-workout-essentials .dynamic-category-circle,
 .workout-essentials-category-section .dynamic-category-circle {
-  width: 112px !important;
-  height: 122px !important;
+  width: 114px !important;
+  height: 114px !important;
   border-radius: 0 !important;
-  background: #cbd0d6 !important;
+  background: #c5c7c6 !important;
   clip-path: polygon(
-    18px 0%,
-    calc(100% - 18px) 0%,
-    100% 18px,
-    100% calc(100% - 18px),
-    calc(100% - 18px) 100%,
-    18px 100%,
-    0% calc(100% - 18px),
-    0% 18px
+    19px 0%,
+    calc(100% - 19px) 0%,
+    100% 19px,
+    100% calc(100% - 19px),
+    calc(100% - 19px) 100%,
+    19px 100%,
+    0% calc(100% - 19px),
+    0% 19px
   ) !important;
   display: flex !important;
   align-items: center !important;
@@ -193,8 +193,8 @@
 
 .dynamic-page-workout-essentials .dynamic-category-item:hover .dynamic-category-circle,
 .workout-essentials-category-section .dynamic-category-item:hover .dynamic-category-circle {
-  background: #bec4cc !important;
-  transform: scale(1.05) !important;
+  background: #b8bab9 !important;
+  transform: scale(1.04) !important;
 }
 
 /* Image inside Octagon - with zoom and hover magnification */
@@ -205,13 +205,13 @@
   object-fit: cover !important;
   object-position: center !important;
   display: block !important;
-  transform: scale(1.08) !important;
+  transform: scale(1.06) !important;
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 .dynamic-page-workout-essentials .dynamic-category-item:hover .dynamic-category-circle img,
 .workout-essentials-category-section .dynamic-category-item:hover .dynamic-category-circle img {
-  transform: scale(1.18) !important;
+  transform: scale(1.15) !important;
 }
 
 .dynamic-page-workout-essentials .dynamic-category-placeholder,
@@ -819,15 +819,17 @@
 }
 
 /* =========================================================
-   YOUR FAVORITE SPORT EQUIPMENTS (OTHER SECTION)
-   Matches the 4-card square equipment showcase in Decathlon
+   YOUR FAVORITE SPORT EQUIPMENTS & FITNESS ESSENTIALS (SECTION 4)
+   Matches the 4+2 showcase (4 square cards row 1, 2 wide cards row 2)
 ========================================================= */
 
 .dynamic-page-workout-essentials .dynamic-other-section,
 .workout-essentials-page .dynamic-other-section,
 .workout-essentials-other-section,
 .dynamic-page-workout-essentials .loved-categories,
-.workout-essentials-page .loved-categories {
+.workout-essentials-page .loved-categories,
+.dynamic-page-workout-essentials .everyday-essentials-section,
+.workout-essentials-page .everyday-essentials-section {
   width: 100% !important;
   max-width: 100% !important;
   margin: 32px 0 36px 0 !important;
@@ -839,7 +841,9 @@
 .dynamic-page-workout-essentials .dynamic-other-container,
 .workout-essentials-page .dynamic-other-container,
 .dynamic-page-workout-essentials .loved-categories-container,
-.workout-essentials-page .loved-categories-container {
+.workout-essentials-page .loved-categories-container,
+.dynamic-page-workout-essentials .everyday-essentials-container,
+.workout-essentials-page .everyday-essentials-container {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
@@ -856,7 +860,9 @@
 .dynamic-page-workout-essentials .dynamic-other-title,
 .workout-essentials-page .dynamic-other-title,
 .dynamic-page-workout-essentials .loved-categories-title,
-.workout-essentials-page .loved-categories-title {
+.workout-essentials-page .loved-categories-title,
+.dynamic-page-workout-essentials .everyday-essentials-title,
+.workout-essentials-page .everyday-essentials-title {
   display: block !important;
   font-family: inherit !important;
   font-size: 20px !important;
@@ -873,7 +879,9 @@
 .dynamic-page-workout-essentials .dynamic-other-grid,
 .workout-essentials-page .dynamic-other-grid,
 .dynamic-page-workout-essentials .loved-categories-grid,
-.workout-essentials-page .loved-categories-grid {
+.workout-essentials-page .loved-categories-grid,
+.dynamic-page-workout-essentials .everyday-essentials-grid,
+.workout-essentials-page .everyday-essentials-grid {
   width: 100% !important;
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
@@ -887,7 +895,9 @@
 .dynamic-page-workout-essentials .dynamic-other-card,
 .workout-essentials-page .dynamic-other-card,
 .dynamic-page-workout-essentials .loved-category-card,
-.workout-essentials-page .loved-category-card {
+.workout-essentials-page .loved-category-card,
+.dynamic-page-workout-essentials .everyday-essentials-card,
+.workout-essentials-page .everyday-essentials-card {
   position: relative !important;
   width: 100% !important;
   border-radius: 0 !important;
@@ -908,7 +918,9 @@
 .dynamic-page-workout-essentials .dynamic-other-card:hover,
 .workout-essentials-page .dynamic-other-card:hover,
 .dynamic-page-workout-essentials .loved-category-card:hover,
-.workout-essentials-page .loved-category-card:hover {
+.workout-essentials-page .loved-category-card:hover,
+.dynamic-page-workout-essentials .everyday-essentials-card:hover,
+.workout-essentials-page .everyday-essentials-card:hover {
   transform: none !important;
 }
 
@@ -916,7 +928,9 @@
 .dynamic-page-workout-essentials .dynamic-other-card.card-standard,
 .workout-essentials-page .dynamic-other-card.card-standard,
 .dynamic-page-workout-essentials .loved-category-card.card-standard,
-.workout-essentials-page .loved-category-card.card-standard {
+.workout-essentials-page .loved-category-card.card-standard,
+.dynamic-page-workout-essentials .everyday-essentials-card.card-standard,
+.workout-essentials-page .everyday-essentials-card.card-standard {
   grid-column: span 1 !important;
   aspect-ratio: 400 / 438 !important;
   height: auto !important;
@@ -926,7 +940,9 @@
 .dynamic-page-workout-essentials .dynamic-other-card.card-wide,
 .workout-essentials-page .dynamic-other-card.card-wide,
 .dynamic-page-workout-essentials .loved-category-card.card-wide,
-.workout-essentials-page .loved-category-card.card-wide {
+.workout-essentials-page .loved-category-card.card-wide,
+.dynamic-page-workout-essentials .everyday-essentials-card.card-wide,
+.workout-essentials-page .everyday-essentials-card.card-wide {
   grid-column: span 2 !important;
   aspect-ratio: 768 / 450 !important;
   height: auto !important;
@@ -946,7 +962,9 @@
 .dynamic-page-workout-essentials .dynamic-other-image,
 .workout-essentials-page .dynamic-other-image,
 .dynamic-page-workout-essentials .loved-category-image,
-.workout-essentials-page .loved-category-image {
+.workout-essentials-page .loved-category-image,
+.dynamic-page-workout-essentials .everyday-essentials-image,
+.workout-essentials-page .everyday-essentials-image {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
@@ -960,7 +978,9 @@
 .dynamic-page-workout-essentials .dynamic-other-card:hover .dynamic-other-image,
 .workout-essentials-page .dynamic-other-card:hover .dynamic-other-image,
 .dynamic-page-workout-essentials .loved-category-card:hover .loved-category-image,
-.workout-essentials-page .loved-category-card:hover .loved-category-image {
+.workout-essentials-page .loved-category-card:hover .loved-category-image,
+.dynamic-page-workout-essentials .everyday-essentials-card:hover .everyday-essentials-image,
+.workout-essentials-page .everyday-essentials-card:hover .everyday-essentials-image {
   transform: scale(1.045) !important;
 }
 
@@ -1047,13 +1067,17 @@
   .dynamic-page-workout-essentials .dynamic-other-grid,
   .workout-essentials-page .dynamic-other-grid,
   .dynamic-page-workout-essentials .loved-categories-grid,
-  .workout-essentials-page .loved-categories-grid {
+  .workout-essentials-page .loved-categories-grid,
+  .dynamic-page-workout-essentials .everyday-essentials-grid,
+  .workout-essentials-page .everyday-essentials-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 14px !important;
   }
 
   .dynamic-page-workout-essentials .dynamic-other-card.card-wide,
-  .workout-essentials-page .dynamic-other-card.card-wide {
+  .workout-essentials-page .dynamic-other-card.card-wide,
+  .dynamic-page-workout-essentials .everyday-essentials-card.card-wide,
+  .workout-essentials-page .everyday-essentials-card.card-wide {
     grid-column: span 2 !important;
     aspect-ratio: 768 / 450 !important;
   }
@@ -1145,7 +1169,9 @@
   .dynamic-page-workout-essentials .dynamic-other-grid,
   .workout-essentials-page .dynamic-other-grid,
   .dynamic-page-workout-essentials .loved-categories-grid,
-  .workout-essentials-page .loved-categories-grid {
+  .workout-essentials-page .loved-categories-grid,
+  .dynamic-page-workout-essentials .everyday-essentials-grid,
+  .workout-essentials-page .everyday-essentials-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 10px !important;
   }
@@ -1153,7 +1179,9 @@
   .dynamic-page-workout-essentials .dynamic-other-title,
   .workout-essentials-page .dynamic-other-title,
   .dynamic-page-workout-essentials .loved-categories-title,
-  .workout-essentials-page .loved-categories-title {
+  .workout-essentials-page .loved-categories-title,
+  .dynamic-page-workout-essentials .everyday-essentials-title,
+  .workout-essentials-page .everyday-essentials-title {
     font-size: 16px !important;
     margin-bottom: 12px !important;
   }

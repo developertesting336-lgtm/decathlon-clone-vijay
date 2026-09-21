@@ -1,105 +1,108 @@
 /* =========================================================
    WORKOUT ESSENTIALS - CATEGORY CAROUSEL CSS
-   Preserves visual appearance: striking chamfered / octagon
-   category cards with polygon clip-path and hover zoom.
-   Completely independent from other store pages.
+   Section 1: Octagon Chamfered Category Row (Matches Reference Image)
+   - Exactly 8 items in a horizontal row across container
+   - Chamfered 45-degree polygon clip-path corners (19px chamfer cuts)
+   - Sampled light silver-grey background (#c5c7c6)
+   - Isolated product cutout images scaled to fill octagon cleanly
+   - Centered 12px bold dark labels directly below (#111111)
+   - Clean 2-line wrapping for multi-word categories
+   - No section title (matches screenshot)
+   - Responsive horizontal scrolling on tablet and mobile
 ========================================================= */
 
+/* Main Section Wrapper */
 .category-carousel-workout-essentials {
   width: 100% !important;
   margin: 10px 0 24px 0 !important;
   padding: 4px 0 8px 0 !important;
   box-sizing: border-box !important;
   background: transparent !important;
-  overflow: hidden !important;
 }
 
+/* Hide Section Title to match screenshot */
 .category-carousel-workout-essentials .workout-category-title {
-  font-size: 20px !important;
-  font-weight: 700 !important;
-  color: #111111 !important;
-  margin: 0 0 14px 0 !important;
+  display: none !important;
 }
 
+/* 8-Item Track: Desktop Grid */
 .category-carousel-workout-essentials .workout-category-track {
   width: 100% !important;
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 8px !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-  -ms-overflow-style: none !important;
+  display: grid !important;
+  grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  align-items: start !important;
+  justify-items: center !important;
   padding: 4px 0 8px 0 !important;
   margin: 0 !important;
   box-sizing: border-box !important;
 }
 
-.category-carousel-workout-essentials .workout-category-track::-webkit-scrollbar {
-  display: none !important;
-}
-
-/* Individual Category Item */
+/* Individual Category Card */
 .category-carousel-workout-essentials .workout-category-card {
-  flex: 0 0 auto !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  width: 120px !important;
-  max-width: 120px !important;
+  width: 100% !important;
+  max-width: 116px !important;
   cursor: pointer !important;
   text-decoration: none !important;
   user-select: none !important;
-  transition: transform 0.3s ease !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 .category-carousel-workout-essentials .workout-category-card:hover {
   transform: translateY(-4px) !important;
 }
 
-/* OCTAGON / CHAMFERED BOX */
+/* =========================================================
+   OCTAGON / CHAMFERED BOX (SECTION 1)
+   Matches screenshot: 114px x 114px square octagon with
+   19px 45-degree corner cuts and #c5c7c6 background.
+========================================================= */
 .category-carousel-workout-essentials .workout-category-octagon {
-  width: 112px !important;
-  height: 122px !important;
+  width: 114px !important;
+  height: 114px !important;
+  max-width: 100% !important;
+  aspect-ratio: 1 / 1 !important;
   border-radius: 0 !important;
-  background: #cbd0d6 !important;
+  background: #c5c7c6 !important;
   clip-path: polygon(
-    18px 0%,
-    calc(100% - 18px) 0%,
-    100% 18px,
-    100% calc(100% - 18px),
-    calc(100% - 18px) 100%,
-    18px 100%,
-    0% calc(100% - 18px),
-    0% 18px
+    19px 0%,
+    calc(100% - 19px) 0%,
+    100% 19px,
+    100% calc(100% - 19px),
+    calc(100% - 19px) 100%,
+    19px 100%,
+    0% calc(100% - 19px),
+    0% 19px
   ) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   overflow: hidden !important;
   margin: 0 auto 8px auto !important;
-  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease !important;
+  transition: background 0.3s ease, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
   box-shadow: none !important;
 }
 
 .category-carousel-workout-essentials .workout-category-card:hover .workout-category-octagon {
-  background: #bec4cc !important;
-  transform: scale(1.05) !important;
+  background: #b8bab9 !important;
 }
 
-/* Image inside Octagon */
+/* Image inside Octagon - scaled slightly to cleanly fill without corner artifacts */
 .category-carousel-workout-essentials .workout-category-octagon img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: contain !important;
+  object-fit: cover !important;
   object-position: center !important;
   display: block !important;
-  transform: scale(1) !important;
+  transform: scale(1.06) !important;
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
 .category-carousel-workout-essentials .workout-category-card:hover .workout-category-octagon img {
-  transform: scale(1.18) !important;
+  transform: scale(1.15) !important;
 }
 
 /* Placeholder */
@@ -111,15 +114,256 @@
   padding: 8px !important;
 }
 
-/* Category Label */
+/* Category Text Label directly below octagon */
 .category-carousel-workout-essentials .workout-category-name {
+  font-family: inherit !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   line-height: 1.25 !important;
   color: #111111 !important;
   text-align: center !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   padding: 0 !important;
-  max-width: 110px !important;
+  max-width: 114px !important;
+  width: 100% !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
   word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  letter-spacing: -0.1px !important;
+}
+
+/* =========================================================
+   SECTION 2 / PILLS SUPPORT (fitness-cat)
+   If rendered via WorkoutEssentials component, styles as
+   smooth vertical pill capsules.
+========================================================= */
+.workout-carousel-pills .workout-category-track {
+  gap: 14px !important;
+}
+
+.workout-carousel-pills .workout-category-card {
+  max-width: 114px !important;
+}
+
+.workout-carousel-pills .workout-category-pill {
+  width: 114px !important;
+  height: 144px !important;
+  border-radius: 9999px !important;
+  clip-path: none !important;
+  background: #d8dde3 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  margin: 0 auto 8px auto !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease !important;
+}
+
+.workout-carousel-pills .workout-category-card:hover .workout-category-pill {
+  background: #ccd2da !important;
+}
+
+.workout-carousel-pills .workout-category-pill img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  display: block !important;
+  transform: scale(1.02) !important;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.workout-carousel-pills .workout-category-card:hover .workout-category-pill img {
+  transform: scale(1.1) !important;
+}
+
+.workout-carousel-pills .workout-category-name {
+  font-size: 12.5px !important;
+  max-width: 112px !important;
+}
+
+/* =========================================================
+   RESPONSIVE BREAKPOINTS FOR SECTION 1
+========================================================= */
+
+/* Tablet (681px to 1024px) */
+@media (max-width: 1024px) {
+  .category-carousel-workout-essentials .workout-category-track {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    padding: 4px 4px 10px 4px !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-track::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-card {
+    flex: 0 0 106px !important;
+    width: 106px !important;
+    max-width: 106px !important;
+    scroll-snap-align: start !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-octagon {
+    width: 104px !important;
+    height: 104px !important;
+    clip-path: polygon(
+      17px 0%,
+      calc(100% - 17px) 0%,
+      100% 17px,
+      100% calc(100% - 17px),
+      calc(100% - 17px) 100%,
+      17px 100%,
+      0% calc(100% - 17px),
+      0% 17px
+    ) !important;
+  }
+
+  .workout-carousel-pills .workout-category-card {
+    flex: 0 0 106px !important;
+    width: 106px !important;
+  }
+
+  .workout-carousel-pills .workout-category-pill {
+    width: 104px !important;
+    height: 134px !important;
+  }
+}
+
+/* Mobile (<= 680px) */
+@media (max-width: 680px) {
+  .category-carousel-workout-essentials {
+    margin: 8px 0 18px 0 !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-track {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 2px 2px 8px 2px !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-card {
+    flex: 0 0 94px !important;
+    width: 94px !important;
+    max-width: 94px !important;
+    scroll-snap-align: start !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-octagon {
+    width: 92px !important;
+    height: 92px !important;
+    clip-path: polygon(
+      15px 0%,
+      calc(100% - 15px) 0%,
+      100% 15px,
+      100% calc(100% - 15px),
+      calc(100% - 15px) 100%,
+      15px 100%,
+      0% calc(100% - 15px),
+      0% 15px
+    ) !important;
+    margin-bottom: 6px !important;
+  }
+
+  .category-carousel-workout-essentials .workout-category-name {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    max-width: 92px !important;
+  }
+
+  .workout-carousel-pills .workout-category-card {
+    flex: 0 0 94px !important;
+    width: 94px !important;
+  }
+
+  .workout-carousel-pills .workout-category-pill {
+    width: 92px !important;
+    height: 120px !important;
+  }
+}
+
+/* =========================================================
+   FITNESS ESSENTIALS (SECTION 4 - 4+2 SHOWCASE GRID)
+   Row 1: 4 standard cards (Massagers, Supports, Nutrition, Bags)
+   Row 2: 2 wide hero cards (Yoga, Boxing)
+========================================================= */
+
+.everyday-essentials-section {
+  width: 100% !important;
+  margin: 32px 0 36px 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.everyday-essentials-title {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  color: #111111 !important;
+  letter-spacing: -0.2px !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.everyday-essentials-grid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 16px !important;
+  box-sizing: border-box !important;
+}
+
+.everyday-essentials-card {
+  position: relative !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #ebeef2 !important;
+  box-shadow: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease !important;
+}
+
+.everyday-essentials-card.card-standard {
+  grid-column: span 1 !important;
+  aspect-ratio: 400 / 438 !important;
+}
+
+.everyday-essentials-card.card-wide {
+  grid-column: span 2 !important;
+  aspect-ratio: 768 / 450 !important;
+}
+
+.everyday-essentials-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  display: block !important;
+  border-radius: 0 !important;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.everyday-essentials-card:hover .everyday-essentials-image {
+  transform: scale(1.04) !important;
 }

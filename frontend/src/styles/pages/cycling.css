@@ -132,9 +132,10 @@
 .dynamic-page-cycling .dynamic-category-section,
 .cycling-category-section {
   width: 100% !important;
-  margin: 12px 0 24px !important;
-  padding: 4px 0 6px !important;
+  margin: 16px 0 28px !important;
+  padding: 8px 0 16px !important;
   box-sizing: border-box !important;
+  background: transparent !important;
 }
 
 .dynamic-page-cycling .dynamic-category-title,
@@ -148,9 +149,11 @@
   display: flex !important;
   align-items: flex-start !important;
   justify-content: space-between !important;
-  gap: 12px !important;
+  gap: 16px !important;
   overflow-x: auto !important;
   scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+  -webkit-overflow-scrolling: touch !important;
   padding: 4px 0 8px 0 !important;
   box-sizing: border-box !important;
 }
@@ -162,15 +165,16 @@
 
 .dynamic-page-cycling .dynamic-category-item,
 .cycling-category-section .dynamic-category-item {
-  flex: 0 0 auto !important;
+  flex: 1 1 0 !important;
+  min-width: 105px !important;
+  max-width: 160px !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  width: 112px !important;
-  max-width: 112px !important;
   cursor: pointer !important;
   text-decoration: none !important;
-  transition: transform 0.3s ease !important;
+  user-select: none !important;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
 }
 
 .dynamic-page-cycling .dynamic-category-item:hover,
@@ -180,35 +184,58 @@
 
 .dynamic-page-cycling .dynamic-category-circle,
 .cycling-category-section .dynamic-category-circle {
-  width: 100px !important;
-  height: 100px !important;
-  border-radius: 50% !important;
-  background: #f1f3f5 !important;
+  width: 100% !important;
+  height: 105px !important;
+  max-height: 105px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  overflow: hidden !important;
-  margin: 0 auto 8px auto !important;
-  transition: transform 0.3s ease !important;
+  overflow: visible !important;
+  margin: 0 auto 10px auto !important;
+  box-shadow: none !important;
+  border: none !important;
+  transition: transform 0.25s ease !important;
 }
 
 .dynamic-page-cycling .dynamic-category-circle img,
 .cycling-category-section .dynamic-category-circle img {
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
+  max-height: 105px !important;
+  object-fit: contain !important;
+  object-position: center bottom !important;
   display: block !important;
+  background: transparent !important;
+  transition: transform 0.25s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-category-item:hover .dynamic-category-circle img,
+.cycling-category-section .dynamic-category-item:hover .dynamic-category-circle img {
+  transform: scale(1.05) !important;
 }
 
 .dynamic-page-cycling .dynamic-category-name,
 .cycling-category-section .dynamic-category-name {
-  font-size: 12px !important;
+  display: block !important;
+  font-size: 13px !important;
   font-weight: 600 !important;
   color: #111111 !important;
   text-align: center !important;
   margin: 0 !important;
-  max-width: 104px !important;
+  width: 100% !important;
+  max-width: 135px !important;
   word-wrap: break-word !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.1px !important;
+  font-family: inherit !important;
+  transition: color 0.2s ease !important;
+}
+
+.dynamic-page-cycling .dynamic-category-item:hover .dynamic-category-name,
+.cycling-category-section .dynamic-category-item:hover .dynamic-category-name {
+  color: #0082c3 !important;
 }
 
 /* =========================================================

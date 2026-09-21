@@ -50,15 +50,36 @@
 .rainy-day-card {
   position: relative !important;
   width: 100% !important;
-  aspect-ratio: 400 / 439 !important;
+  aspect-ratio: 1 / 1.05 !important;
   height: auto !important;
   overflow: hidden !important;
   background: #f4f5f7 !important;
-  border-radius: 0 !important;
+  border-radius: 16px !important;
   box-sizing: border-box !important;
-  box-shadow: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
   border: none !important;
   cursor: pointer !important;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* STANDARD CARD (1 column) */
+.everyday-essentials-card.card-standard,
+.rainy-day-card.card-standard {
+  grid-column: span 1 !important;
+  aspect-ratio: 1 / 1.05 !important;
+}
+
+/* WIDE CARD (2 columns for 6-item layouts like Yoga & Boxing) */
+.everyday-essentials-card.card-wide,
+.rainy-day-card.card-wide {
+  grid-column: span 2 !important;
+  aspect-ratio: 768 / 450 !important;
+}
+
+.everyday-essentials-card:hover,
+.rainy-day-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
 }
 
 /* IMAGE */
@@ -70,7 +91,7 @@
   display: block !important;
   object-fit: cover !important;
   object-position: center !important;
-  border-radius: 0 !important;
+  border-radius: 16px !important;
   transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
 }
 
