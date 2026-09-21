@@ -11,7 +11,10 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
 
   const getImageUrl = (image) => {
     if (!image) return "";
-    if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
+    if (
+      typeof image === "string" &&
+      (image.startsWith("http://") || image.startsWith("https://"))
+    ) {
       return image;
     }
     const apiBaseUrl = api.defaults.baseURL || "";
@@ -21,7 +24,11 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
     return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
   };
 
-  const normalizeCategories = (rawCategories, rawCategoryItems, disabledIds) => {
+  const normalizeCategories = (
+    rawCategories,
+    rawCategoryItems,
+    disabledIds,
+  ) => {
     const categories = Array.isArray(rawCategories) ? rawCategories : [];
     const categoryById = new Map(
       categories
@@ -41,7 +48,8 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
             (item.category && typeof item.category === "object"
               ? item.category
               : categoryById.get(categoryId)) || {};
-          const page = item.page && typeof item.page === "object" ? item.page : {};
+          const page =
+            item.page && typeof item.page === "object" ? item.page : {};
           const isPage = item.linkType === "page" || Boolean(pageId);
           return {
             ...(isPage ? page : category),
@@ -68,8 +76,8 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
               item.displayOrder !== undefined
                 ? Number(item.displayOrder)
                 : item.sortOrder !== undefined
-                ? Number(item.sortOrder)
-                : index,
+                  ? Number(item.sortOrder)
+                  : index,
           };
         })
         .filter(
@@ -102,12 +110,12 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
         (item) =>
           item.type === "category-showcase" ||
           item.name === "CategoryShowcase" ||
-          (item.name && item.name.toLowerCase().includes("showcase"))
+          (item.name && item.name.toLowerCase().includes("showcase")),
       );
 
       const disabledIds = new Set(
-        (found?.data?.disabledItemIds || found?.disabledItemIds || []).map((id) =>
-          String(id),
+        (found?.data?.disabledItemIds || found?.disabledItemIds || []).map(
+          (id) => String(id),
         ),
       );
 
@@ -137,14 +145,13 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
   }, []);
 
   useEffect(() => {
-    const rawList =
-      data?.categories?.length
-        ? data.categories
-        : section?.data?.categories?.length
+    const rawList = data?.categories?.length
+      ? data.categories
+      : section?.data?.categories?.length
         ? section.data.categories
         : section?.categories?.length
-        ? section.categories
-        : customCategories;
+          ? section.categories
+          : customCategories;
 
     const disabledIds = new Set(
       (
@@ -174,7 +181,11 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
   }, [data, section, customCategories, fetchSection]);
 
   useEffect(() => {
-    if (data?.categories?.length || section?.data?.categories?.length || customCategories?.length) {
+    if (
+      data?.categories?.length ||
+      section?.data?.categories?.length ||
+      customCategories?.length
+    ) {
       return;
     }
 
@@ -204,46 +215,83 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
     return null;
   }
 
-  const handleCategoryClick = (category) => {
-    if (category.link && category.link !== "#") {
-      const link = category.link.trim();
-      const normalizedLink = link.startsWith("/") ? link : `/${link}`;
-      navigate(normalizedLink);
-      return;
+  const handleCategoryClick = (e, category) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
     }
+    if (!category) return;
 
-    if (category.linkType === "page" && category.slug) {
-      navigate(`/pages/${encodeURIComponent(category.slug)}`);
-      return;
-    }
+    const categoryName = category.name || category.title || "Category";
 
-    const slug = (
+    const categoryId =
+      category.categoryId ||
+      (category._id && /^[0-9a-fA-F]{24}$/.test(String(category._id))
+        ? String(category._id)
+        : null);
+
+    let slug = (
       category.slug ||
-      
-      category.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ||
+      categoryName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") ||
       ""
     ).toLowerCase();
 
-    const dedicatedRoutes = {
-      shoes: "/shoes",
-      cycling: "/cycling",
-      activewear: "/activewear",
-      "monsoon-essentials": "/monsoon-essentials",
-      "workout-essentials": "/workout-essentials",
-      "hiking-trekking": "/hiking-trekking",
-      "bags-backpacks": "/bags-backpacks",
-      "sports-accessories": "/sports-accessories",
-    };
+    // If an explicit category/product route link exists, preserve it
+    if (category.link && category.link !== "#") {
+      const link = category.link.trim();
+      if (
+        link.startsWith("/category/") ||
+        link.startsWith("/c/") ||
+        link.startsWith("/sports/") ||
+        link.startsWith("/products")
+      ) {
+        navigate(link, {
+          state: {
+            categoryId: categoryId || category._id,
+            categoryName: categoryName,
+          },
+        });
+        return;
+      }
 
-    if (dedicatedRoutes[slug]) {
-      navigate(dedicatedRoutes[slug], {
-        state: { categoryId: category._id, categoryName: category.name },
-      });
-      return;
+      // Check for recognized store dynamic pages
+      const dedicatedStoreRoutes = [
+        "/monsoon-essentials",
+        "/activewear",
+        "/workout-essentials",
+        "/cycling",
+        "/hiking-trekking",
+        "/shoes",
+        "/bags-backpacks",
+        "/sports-accessories",
+      ];
+      if (dedicatedStoreRoutes.includes(link)) {
+        navigate(link, {
+          state: {
+            categoryId: categoryId || category._id,
+            categoryName: categoryName,
+          },
+        });
+        return;
+      }
+
+      // If link is a bare path like "/running-shoes" or "running-shoes", extract slug
+      const cleanSlug = link.replace(/^\/+/, "");
+      if (cleanSlug && !cleanSlug.includes("/")) {
+        slug = cleanSlug.toLowerCase();
+      }
     }
 
-    navigate(`/category/${encodeURIComponent(category._id || slug)}`, {
-      state: { categoryId: category._id, categoryName: category.name },
+    // Always navigate to category-based product page
+    const targetSlug = slug || categoryId || "products";
+    navigate(`/category/${encodeURIComponent(targetSlug)}`, {
+      state: {
+        categoryId: categoryId || category._id,
+        categoryName: categoryName,
+      },
     });
   };
 
@@ -254,13 +302,20 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
           <div
             className="category-showcase-card"
             key={category._id}
-            onClick={() => handleCategoryClick(category)}
+            onClick={(e) => handleCategoryClick(e, category)}
             style={{ cursor: "pointer" }}
+            title={category.name || "Category"}
           >
             {category.image ? (
-              <img src={getImageUrl(category.image)} alt={category.name} />
+              <img
+                src={getImageUrl(category.image)}
+                alt={category.name || "Category"}
+                loading="lazy"
+              />
             ) : (
-              <div className="category-showcase-no-image">No Image</div>
+              <div className="category-showcase-no-image">
+                {category.name || "Category"}
+              </div>
             )}
           </div>
         ))}

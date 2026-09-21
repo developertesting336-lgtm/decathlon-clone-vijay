@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./EverydayEssentials.css";
 import api from "../../../api/axios";
@@ -16,7 +16,7 @@ const EverydayEssentials = ({
   const [dataItems, setDataItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const sectionData = data || section?.data || {};
+  const sectionData = useMemo(() => data || section?.data || {}, [data, section?.data]);
   const displayTitle =
     propTitle ||
     sectionData.title ||
@@ -104,6 +104,7 @@ const EverydayEssentials = ({
     }
 
     fetchSection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionData, customCategories, customItems, section, fetchSection]);
 
   useEffect(() => {
@@ -131,6 +132,7 @@ const EverydayEssentials = ({
     return () => {
       socket.off("homepage_updated", handleHomepageUpdate);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionData, customCategories, customItems, fetchSection]);
 
   if (loading || !dataItems.length) {

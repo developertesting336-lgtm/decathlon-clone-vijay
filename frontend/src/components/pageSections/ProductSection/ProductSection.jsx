@@ -197,7 +197,14 @@ const ProductSection = ({
     }
 
     fetchSection();
-  }, [customProducts, sectionData.products, section, fetchSection]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    customProducts,
+    sectionData.products,
+    sectionData?.disabledItemIds,
+    section,
+    fetchSection,
+  ]);
 
   useEffect(() => {
     if (customProducts?.length || sectionData.products?.length || section?.products?.length) {
@@ -225,18 +232,26 @@ const ProductSection = ({
     };
   }, [customProducts, sectionData.products, section, fetchSection]);
 
+  // TOUCH SWIPE FOR MOBILE
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+
   useEffect(() => {
     const updateVisibleProducts = () => {
       const width = window.innerWidth;
-      if (width <= 540) {
-        setVisibleProducts(1.6);
+      if (width <= 420) {
+        setVisibleProducts(1.4);
+      } else if (width <= 600) {
+        setVisibleProducts(1.8);
       } else if (width <= 768) {
         setVisibleProducts(2.4);
       } else if (width <= 1024) {
-        setVisibleProducts(3.3);
+        setVisibleProducts(3.2);
+      } else if (width <= 1400) {
+        setVisibleProducts(4.2);
       } else {
-        // Desktop: ~4.3 visible products (4 full cards + ~35% of the 5th card peeking)
-        setVisibleProducts(4.3);
+        // Desktop: ~4.5 visible products
+        setVisibleProducts(4.5);
       }
     };
 
@@ -261,6 +276,27 @@ const ProductSection = ({
 
   const handleNext = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+  };
+
+  const handleTouchStart = (e) => {
+    setTouchEndX(null);
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX || !touchEndX) return;
+    const distance = touchStartX - touchEndX;
+    const isLeftSwipe = distance > 40;
+    const isRightSwipe = distance < -40;
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
   };
 
   const handleOpenModal = (product) => {
@@ -347,14 +383,16 @@ const ProductSection = ({
     <>
       <section className={`product-section ${variantClass}`}>
         <div className="product-section__sidebar product-section-left">
-          {displaySubtitle && (
-            <div className="product-section__subtitle">
-              {displaySubtitle}
-            </div>
-          )}
-          <h2 className="product-section__title">
-            {displayTitle}
-          </h2>
+          <div className="product-section__header-text">
+            {displaySubtitle && (
+              <div className="product-section__subtitle">
+                {displaySubtitle}
+              </div>
+            )}
+            <h2 className="product-section__title">
+              {displayTitle}
+            </h2>
+          </div>
 
           <div className="product-section__navigation product-section-arrows">
             <button
@@ -379,7 +417,12 @@ const ProductSection = ({
           </div>
         </div>
 
-        <div className="product-section__viewport product-viewport">
+        <div
+          className="product-section__viewport product-viewport"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div
             className="product-section__track product-list"
             style={{

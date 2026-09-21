@@ -1,36 +1,64 @@
 /* ========================================
-   CATEGORY SHOWCASE
+   CATEGORY SHOWCASE SECTION
 ======================================== */
 
 .category-showcase {
   width: 100%;
-  padding: 8px 10px 0;
+  padding: 4px 0 8px;
+  margin: 0;
   box-sizing: border-box;
+  position: relative;
 }
 
 /* ========================================
-   CATEGORY LIST
+   CATEGORY SHOWCASE GRID
 ======================================== */
 
 .category-showcase-list {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 /* ========================================
-   CATEGORY CARD
+   CATEGORY SHOWCASE CARD
 ======================================== */
 
 .category-showcase-card {
   position: relative;
   width: 100%;
-  height: 146px;
+  aspect-ratio: 1 / 1;
+  height: auto;
   overflow: hidden;
-  background: #eeeeee;
+  border-radius: 8px;
+  background: #f2f3f7;
   cursor: pointer;
   box-sizing: border-box;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Desktop Hover with fine pointer */
+@media (hover: hover) and (pointer: fine) {
+  .category-showcase-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  }
+
+  .category-showcase-card:hover img {
+    transform: scale(1.05);
+  }
+}
+
+/* Touch Active State */
+.category-showcase-card:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
 }
 
 /* ========================================
@@ -38,40 +66,42 @@
 ======================================== */
 
 .category-showcase-card img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* ========================================
-   IMAGE HOVER
-======================================== */
-
-.category-showcase-card:hover img {
-  transform: scale(1.04);
-}
-
-/* ========================================
-   NO IMAGE
+   NO IMAGE FALLBACK
 ======================================== */
 
 .category-showcase-no-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eeeeee;
-  color: #888;
+  background: #f0f1f5;
+  color: #333333;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
+  padding: 8px;
+  box-sizing: border-box;
+  word-break: break-word;
 }
 
 /* ========================================
-   TITLE OVER IMAGE
+   TITLE OVERLAY (Optional Fallback)
 ======================================== */
 
 .category-showcase-title {
@@ -84,45 +114,96 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  min-height: 58px;
-  padding: 30px 5px 7px;
+  min-height: 40px;
+  padding: 18px 6px 6px;
   box-sizing: border-box;
   background: linear-gradient(
     to top,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.72) 35%,
-    rgba(255, 255, 255, 0) 100%
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.25) 60%,
+    rgba(0, 0, 0, 0) 100%
   );
-  color: #070707;
-  font-size: 14px;
+  color: #ffffff;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.15;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   pointer-events: none;
 }
 
 /* ========================================
-   LARGE DESKTOP
+   RESPONSIVE BREAKPOINTS
 ======================================== */
 
-@media (max-width: 1250px) {
+/* Ultra-Wide Desktop (>= 1600px) */
+@media (min-width: 1600px) {
+  .category-showcase {
+    padding: 6px 0 10px;
+  }
+
   .category-showcase-list {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 12px;
   }
 
   .category-showcase-card {
-    height: 145px;
+    border-radius: 8px;
   }
 }
 
-/* ========================================
-   TABLET
-======================================== */
-
-@media (max-width: 1100px) {
+/* Standard Large Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
   .category-showcase {
-    padding: 8px 10px 0;
+    padding: 5px 0 8px;
+  }
+
+  .category-showcase-list {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .category-showcase-card {
+    border-radius: 8px;
+  }
+}
+
+/* Small Laptops / Medium Desktops (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .category-showcase {
+    padding: 4px 0 8px;
+  }
+
+  .category-showcase-list {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .category-showcase-card {
+    border-radius: 7px;
+  }
+}
+
+/* Tablets (768px - 991px) - Clean 4 Columns x 2 Rows */
+@media (min-width: 768px) and (max-width: 991px) {
+  .category-showcase {
+    padding: 4px 0 6px;
+  }
+
+  .category-showcase-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .category-showcase-card {
+    border-radius: 7px;
+  }
+}
+
+/* Phablets / Large Phones (576px - 767px) - 4 Columns x 2 Rows */
+@media (min-width: 576px) and (max-width: 767px) {
+  .category-showcase {
+    padding: 3px 0 6px;
   }
 
   .category-showcase-list {
@@ -131,98 +212,71 @@
   }
 
   .category-showcase-card {
-    height: 146px;
-  }
-}
-
-/* ========================================
-   SMALL TABLET
-======================================== */
-
-@media (max-width: 850px) {
-  .category-showcase-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .category-showcase-card {
-    height: 145px;
-  }
-
-  .category-showcase-title {
-    font-size: 13px;
-    padding: 27px 5px 6px;
-  }
-}
-
-/* ========================================
-   MOBILE
-======================================== */
-
-@media (max-width: 700px) {
-  .category-showcase {
-    padding: 6px;
-  }
-
-  .category-showcase-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .category-showcase-card {
-    height: 175px;
     border-radius: 6px;
   }
-
-  .category-showcase-title {
-    min-height: 60px;
-    padding: 30px 10px 10px;
-    font-size: 13.5px;
-    font-weight: 700;
-    line-height: 1.25;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.75) 0%,
-      rgba(0, 0, 0, 0.4) 50%,
-      rgba(0, 0, 0, 0) 100%
-    );
-    color: #ffffff;
-  }
 }
 
-/* ========================================
-   SMALL MOBILE
-======================================== */
-
-@media (max-width: 450px) {
+/* Mobile Phones (361px - 575px) - 4 Columns x 2 Rows */
+@media (max-width: 575px) {
   .category-showcase {
-    padding: 6px;
+    padding: 2px 0 5px;
   }
 
   .category-showcase-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
   }
 
   .category-showcase-card {
-    height: 165px;
+    border-radius: 6px;
+  }
+
+  .category-showcase-no-image {
+    font-size: 11px;
+    padding: 4px;
   }
 
   .category-showcase-title {
-    min-height: 55px;
-    padding: 25px 8px 8px;
-    font-size: 13px;
+    font-size: 11px;
+    padding: 14px 4px 4px;
+    min-height: 32px;
   }
 }
 
-/* ========================================
-   VERY SMALL MOBILE
-======================================== */
-
+/* Small / Narrow Phones (<= 360px) */
 @media (max-width: 360px) {
+  .category-showcase {
+    padding: 2px 0 4px;
+  }
+
+  .category-showcase-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+
   .category-showcase-card {
-    height: 150px;
+    border-radius: 5px;
+  }
+
+  .category-showcase-no-image {
+    font-size: 10px;
+    padding: 2px;
   }
 
   .category-showcase-title {
-    font-size: 12px;
+    font-size: 10px;
+    padding: 10px 2px 2px;
+    min-height: 26px;
+  }
+}
+
+/* Ultra Small Screens (<= 280px) */
+@media (max-width: 280px) {
+  .category-showcase-list {
+    gap: 4px;
+  }
+
+  .category-showcase-card {
+    border-radius: 4px;
   }
 }

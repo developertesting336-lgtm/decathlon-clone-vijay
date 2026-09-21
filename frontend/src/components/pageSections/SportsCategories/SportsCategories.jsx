@@ -81,13 +81,14 @@ const SportsCategories = ({ section, data, customCategories }) => {
             (isPage
               ? `/${pageObj.slug || ""}`
               : catObj.slug
-              ? `/${catObj.slug}`
+              ? `/category/${catObj.slug}`
               : `/category/${encodeURIComponent(slug)}`);
 
           const _id = ci._id || catObj._id || pageObj._id || `cat-item-${idx}`;
 
           return {
             _id,
+            categoryId: String(catObj._id || (typeof ci.category === "string" ? ci.category : "") || ""),
             name,
             image,
             link,
@@ -153,10 +154,11 @@ const SportsCategories = ({ section, data, customCategories }) => {
         })
         .map((c, idx) => ({
           _id: c._id || `cat-${idx}`,
+          categoryId: String(c._id || ""),
           name: c.name,
           image: c.image || "",
           link: c.slug
-            ? `/${c.slug}`
+            ? `/category/${c.slug}`
             : `/category/${encodeURIComponent(
                 c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")
               )}`,
@@ -276,12 +278,80 @@ const SportsCategories = ({ section, data, customCategories }) => {
     return null;
   }
 
-  const handleCategoryClick = (category) => {
+  const handleCategoryClick = (e, category) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (!category) return;
+
+    const categoryName = category.name || category.title || "Sports";
+
+    const categoryId =
+      category.categoryId ||
+      (category._id && /^[0-9a-fA-F]{24}$/.test(String(category._id))
+        ? String(category._id)
+        : null);
+
+    let slug = (
+      category.slug ||
+      categoryName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "") ||
+      ""
+    ).toLowerCase();
+
+    // If explicit category/product route link exists, preserve it
     if (category.link && category.link !== "#") {
       const link = category.link.trim();
-      const normalizedLink = link.startsWith("/") ? link : `/${link}`;
-      navigate(normalizedLink);
-      return;
+      if (
+        link.startsWith("/category/") ||
+        link.startsWith("/c/") ||
+        link.startsWith("/sports/") ||
+        link.startsWith("/products")
+      ) {
+        navigate(link, {
+          state: {
+            categoryId: categoryId || category._id,
+            categoryName,
+          },
+        });
+        return;
+      }
+
+      // Check for recognized store dynamic pages
+      const dedicatedStoreRoutes = [
+        "/monsoon-essentials",
+        "/activewear",
+        "/workout-essentials",
+        "/cycling",
+        "/hiking-trekking",
+        "/shoes",
+        "/bags-backpacks",
+        "/sports-accessories",
+      ];
+      if (dedicatedStoreRoutes.includes(link)) {
+        navigate(link, {
+          state: {
+            categoryId: categoryId || category._id,
+            categoryName,
+          },
+        });
+        return;
+      }
+
+      // If dynamic page link
+      if (link.startsWith("/pages/") || link.startsWith("/p/")) {
+        navigate(link);
+        return;
+      }
+
+      // If link is a bare path like "/yoga" or "yoga", extract slug
+      const cleanSlug = link.replace(/^\/+/, "");
+      if (cleanSlug && !cleanSlug.includes("/")) {
+        slug = cleanSlug.toLowerCase();
+      }
     }
 
     if (category.linkType === "page" && category.pageSlug) {
@@ -289,21 +359,20 @@ const SportsCategories = ({ section, data, customCategories }) => {
       return;
     }
 
-    const slug = (
-      category.slug ||
-      category.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") ||
-      ""
-    ).toLowerCase();
-
     if (slug === "all-sports" || slug === "all") {
       navigate("/category/all-sports", {
-        state: { categoryId: category._id, categoryName: "All Sports" },
+        state: { categoryId: categoryId || category._id, categoryName: "All Sports" },
       });
       return;
     }
 
-    navigate(`/category/${encodeURIComponent(category._id || slug)}`, {
-      state: { categoryId: category._id, categoryName: category.name },
+    // Always navigate to category-based product page
+    const targetSlug = slug || categoryId || "products";
+    navigate(`/category/${encodeURIComponent(targetSlug)}`, {
+      state: {
+        categoryId: categoryId || category._id,
+        categoryName,
+      },
     });
   };
 
@@ -314,12 +383,16 @@ const SportsCategories = ({ section, data, customCategories }) => {
           <div
             className="sports-category-card"
             key={category._id}
-            onClick={() => handleCategoryClick(category)}
+            onClick={(e) => handleCategoryClick(e, category)}
             style={{ cursor: "pointer" }}
             title={category.name}
           >
             {category.image ? (
-              <img src={getImageUrl(category.image)} alt={category.name} />
+              <img
+                src={getImageUrl(category.image)}
+                alt={category.name}
+                loading="lazy"
+              />
             ) : (
               <div className="sports-category-no-image">{category.name}</div>
             )}

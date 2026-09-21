@@ -1,78 +1,108 @@
 /* ========================================
-   SPORTS CATEGORIES
+   SPORTS CATEGORIES SECTION
 ======================================== */
 
 .sports-categories {
   width: 100%;
-  padding: 8px 10px 0;
+  padding: 4px 0 8px;
+  margin: 0;
   box-sizing: border-box;
-  background: #fff;
+  background: transparent;
+  position: relative;
 }
 
 /* ========================================
-   SPORTS LIST
+   SPORTS LIST (8-COLUMN GRID)
 ======================================== */
 
 .sports-categories-list {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 /* ========================================
-   SPORTS CARD
+   SPORTS CARD (TRUE 1:1 SQUARE ASPECT RATIO)
 ======================================== */
 
 .sports-category-card {
   position: relative;
   width: 100%;
-  height: 146px;
+  aspect-ratio: 1 / 1;
+  height: auto;
   overflow: hidden;
-  background: #eeeeee;
+  border-radius: 8px;
+  background: #f2f3f7;
   cursor: pointer;
   box-sizing: border-box;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Desktop Hover */
+@media (hover: hover) and (pointer: fine) {
+  .sports-category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  }
+
+  .sports-category-card:hover img {
+    transform: scale(1.05);
+  }
+}
+
+/* Touch Active State */
+.sports-category-card:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
 }
 
 /* ========================================
-   IMAGE
+   SPORTS CARD IMAGE
 ======================================== */
 
 .sports-category-card img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
 }
 
 /* ========================================
-   HOVER
-======================================== */
-
-.sports-category-card:hover img {
-  transform: scale(1.04);
-}
-
-/* ========================================
-   NO IMAGE
+   NO IMAGE FALLBACK
 ======================================== */
 
 .sports-category-no-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #eeeeee;
-  color: #888;
+  background: #f0f1f5;
+  color: #333333;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
+  padding: 8px;
+  box-sizing: border-box;
+  word-break: break-word;
 }
 
 /* ========================================
-   OVERLAY
+   TITLE OVERLAY (Optional Fallback)
 ======================================== */
 
 .sports-category-overlay {
@@ -82,128 +112,183 @@
   bottom: 0;
   z-index: 2;
   width: 100%;
-  min-height: 58px;
+  min-height: 40px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 30px 5px 7px;
+  padding: 18px 6px 6px;
   box-sizing: border-box;
   background: linear-gradient(
     to top,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.72) 35%,
-    rgba(255, 255, 255, 0) 100%
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.25) 60%,
+    rgba(0, 0, 0, 0) 100%
   );
   pointer-events: none;
 }
 
-/* ========================================
-   TITLE
-======================================== */
-
 .sports-category-overlay h3 {
   width: 100%;
   margin: 0;
-  color: #111;
-  font-size: 14px;
+  color: #ffffff;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.15;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* ========================================
-   LARGE DESKTOP
+   RESPONSIVE BREAKPOINTS
 ======================================== */
 
-@media (max-width: 1250px) {
-  .sports-categories-list {
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-  .sports-category-card {
-    height: 145px;
-  }
-}
-
-/* ========================================
-   TABLET
-======================================== */
-
-@media (max-width: 1100px) {
+/* Ultra-Wide Desktop (>= 1600px) */
+@media (min-width: 1600px) {
   .sports-categories {
-    padding: 8px 10px 0;
+    padding: 6px 0 10px;
   }
+
+  .sports-categories-list {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .sports-category-card {
+    border-radius: 8px;
+  }
+}
+
+/* Standard Large Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .sports-categories {
+    padding: 5px 0 8px;
+  }
+
+  .sports-categories-list {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .sports-category-card {
+    border-radius: 8px;
+  }
+}
+
+/* Small Laptops / Medium Desktops (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .sports-categories {
+    padding: 4px 0 8px;
+  }
+
+  .sports-categories-list {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .sports-category-card {
+    border-radius: 7px;
+  }
+}
+
+/* Tablets (768px - 991px) - Clean 4 Columns x 2 Rows */
+@media (min-width: 768px) and (max-width: 991px) {
+  .sports-categories {
+    padding: 4px 0 6px;
+  }
+
+  .sports-categories-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .sports-category-card {
+    border-radius: 7px;
+  }
+}
+
+/* Phablets / Large Phones (576px - 767px) - 4 Columns x 2 Rows */
+@media (min-width: 576px) and (max-width: 767px) {
+  .sports-categories {
+    padding: 3px 0 6px;
+  }
+
   .sports-categories-list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
+
   .sports-category-card {
-    height: 146px;
+    border-radius: 6px;
   }
 }
 
-/* ========================================
-   SMALL TABLET
-======================================== */
-
-@media (max-width: 850px) {
-  .sports-categories-list {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .sports-category-card {
-    height: 145px;
-  }
-  .sports-category-overlay h3 {
-    font-size: 13px;
-  }
-}
-
-/* ========================================
-   MOBILE
-======================================== */
-
-@media (max-width: 700px) {
+/* Mobile Phones (361px - 575px) - 4 Columns x 2 Rows */
+@media (max-width: 575px) {
   .sports-categories {
-    padding: 6px;
+    padding: 2px 0 5px;
   }
+
   .sports-categories-list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 6px;
   }
+
   .sports-category-card {
-    height: 102px;
     border-radius: 6px;
   }
-  .sports-category-overlay {
-    min-height: auto;
-    background: transparent;
-    padding: 0 4px 5px;
+
+  .sports-category-no-image {
+    font-size: 11px;
+    padding: 4px;
   }
+
+  .sports-category-overlay {
+    min-height: 32px;
+    padding: 12px 4px 4px;
+  }
+
   .sports-category-overlay h3 {
-    font-size: 9.5px;
-    font-weight: 700;
-    line-height: 1.2;
-    background: rgba(17, 17, 17, 0.9);
-    color: #ffffff;
-    padding: 2px 5px;
-    border-radius: 3px;
-    white-space: nowrap;
-    max-width: 92%;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 11px;
   }
 }
 
-/* ========================================
-   SMALL MOBILE
-======================================== */
-
-@media (max-width: 400px) {
-  .sports-category-card {
-    height: 92px;
+/* Small / Narrow Phones (<= 360px) */
+@media (max-width: 360px) {
+  .sports-categories {
+    padding: 2px 0 4px;
   }
+
+  .sports-categories-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .sports-category-card {
+    border-radius: 5px;
+  }
+
+  .sports-category-no-image {
+    font-size: 10px;
+    padding: 2px;
+  }
+
+  .sports-category-overlay {
+    min-height: 26px;
+    padding: 10px 2px 2px;
+  }
+
   .sports-category-overlay h3 {
-    font-size: 8.5px;
-    padding: 2px 4px;
+    font-size: 10px;
+  }
+}
+
+/* Ultra Small Screens (<= 280px) */
+@media (max-width: 280px) {
+  .sports-categories-list {
+    gap: 4px;
+  }
+
+  .sports-category-card {
+    border-radius: 4px;
   }
 }

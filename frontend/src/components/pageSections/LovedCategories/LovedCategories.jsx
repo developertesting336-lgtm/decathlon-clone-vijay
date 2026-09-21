@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LovedCategories.css";
 import api from "../../../api/axios";
@@ -9,7 +9,7 @@ const LovedCategories = ({ section, data, style, customCategories, title: propTi
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const sectionData = data || section?.data || {};
+  const sectionData = useMemo(() => data || section?.data || {}, [data, section?.data]);
   const displayTitle =
     propTitle ||
     sectionData.title ||
@@ -83,6 +83,7 @@ const LovedCategories = ({ section, data, style, customCategories, title: propTi
     }
 
     fetchSection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionData, customCategories, section, fetchSection]);
 
   useEffect(() => {
@@ -110,6 +111,7 @@ const LovedCategories = ({ section, data, style, customCategories, title: propTi
     return () => {
       socket.off("homepage_updated", handleHomepageUpdate);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionData, customCategories, fetchSection]);
 
   if (loading || !categories.length) {

@@ -123,13 +123,36 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
     };
   }, [customProducts, sectionData.products, section, fetchSection]);
 
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const checkScrollability = useCallback(() => {
+    if (!sliderRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+    setCanScrollLeft(scrollLeft > 5);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+  }, []);
+
+  useEffect(() => {
+    checkScrollability();
+    const slider = sliderRef.current;
+    if (slider) {
+      slider.addEventListener("scroll", checkScrollability, { passive: true });
+      window.addEventListener("resize", checkScrollability);
+      return () => {
+        slider.removeEventListener("scroll", checkScrollability);
+        window.removeEventListener("resize", checkScrollability);
+      };
+    }
+  }, [products, checkScrollability]);
+
   const scrollLeft = () => {
     if (!sliderRef.current) return;
     const card = sliderRef.current.querySelector(".outdoor-product-card");
     if (!card) return;
     const cardWidth = card.offsetWidth;
     const styles = window.getComputedStyle(sliderRef.current);
-    const gap = parseFloat(styles.columnGap) || 0;
+    const gap = parseFloat(styles.columnGap || styles.gap) || 12;
     sliderRef.current.scrollBy({
       left: -(cardWidth + gap),
       behavior: "smooth",
@@ -142,7 +165,7 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
     if (!card) return;
     const cardWidth = card.offsetWidth;
     const styles = window.getComputedStyle(sliderRef.current);
-    const gap = parseFloat(styles.columnGap) || 0;
+    const gap = parseFloat(styles.columnGap || styles.gap) || 12;
     sliderRef.current.scrollBy({
       left: cardWidth + gap,
       behavior: "smooth",
@@ -231,27 +254,30 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
       <section className={`outdoor-products-section ${variantClass}`}>
         <div className="outdoor-products-container">
           <div className="outdoor-products-intro">
-            <Link to="/shoes" style={{ textDecoration: "none", color: "inherit" }}>
-              {displaySubtitle && <p>{displaySubtitle}</p>}
-              <h2>
-                {displayTitle.includes("\n") ? (
-                  displayTitle.split("\n").map((line, i) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < displayTitle.split("\n").length - 1 && <br />}
-                    </React.Fragment>
-                  ))
-                ) : (
-                  displayTitle
-                )}
-              </h2>
-            </Link>
+            <div className="outdoor-products-intro-text">
+              <Link to="/shoes" style={{ textDecoration: "none", color: "inherit" }}>
+                {displaySubtitle && <p>{displaySubtitle}</p>}
+                <h2>
+                  {displayTitle.includes("\n") ? (
+                    displayTitle.split("\n").map((line, i) => (
+                      <React.Fragment key={i}>
+                        {line}
+                        {i < displayTitle.split("\n").length - 1 && <br />}
+                      </React.Fragment>
+                    ))
+                  ) : (
+                    displayTitle
+                  )}
+                </h2>
+              </Link>
+            </div>
 
             <div className="outdoor-slider-buttons">
               <button
                 type="button"
                 className="outdoor-arrow"
                 onClick={scrollLeft}
+                disabled={!canScrollLeft}
                 aria-label="Previous product"
               >
                 ‹
@@ -261,6 +287,7 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
                 type="button"
                 className="outdoor-arrow"
                 onClick={scrollRight}
+                disabled={!canScrollRight}
                 aria-label="Next product"
               >
                 ›
@@ -287,6 +314,7 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
                         src={getImageUrl(product.images[0])}
                         alt={product.name || "Product"}
                         className="outdoor-product-image"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="outdoor-product-no-image">No Image</div>

@@ -17,6 +17,20 @@ const CATEGORY_NAMES = {
   cycling: "Cycling",
   swimming: "Swimming",
   monsoon: "Monsoon Essentials",
+  shorts: "Shorts",
+  pants: "Pants",
+  "t-shirts": "T-Shirts",
+  "fitness-equipments": "Fitness Equipments",
+  "trekking-shoes": "Trekking Shoes",
+  "nutrition-care": "Nutrition & Care",
+  yoga: "Yoga",
+  camping: "Camping",
+  cricket: "Cricket",
+  badminton: "Badminton",
+  skating: "Skating",
+  tennis: "Tennis",
+  safari: "Safari",
+  "all-sports": "All Sports",
 };
 
 const GENDER_OPTIONS = ["Men", "Women", "Kids", "Unisex"];

@@ -65,6 +65,63 @@ const PageBuilder = () => {
 
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedBanners, setSelectedBanners] = useState([]);
+  const [sectionSubtitle, setSectionSubtitle] = useState("");
+  const [bannerImage, setBannerImage] = useState("");
+  const [bannerLink, setBannerLink] = useState("");
+  const [productSearch, setProductSearch] = useState("");
+  const [bannerSearch, setBannerSearch] = useState("");
+
+  const getSectionBaseType = (type, sec = null) => {
+    const t = (type || "").toLowerCase().trim();
+
+    // Banner types
+    if (
+      t === "banner" ||
+      t === "coupon-banner" ||
+      t === "promo-banner" ||
+      t === "promo-banner-2" ||
+      t === "hero-banner"
+    ) {
+      return "banner";
+    }
+
+    // Product types
+    if (
+      t === "product" ||
+      t === "product-section" ||
+      t === "storm-proof" ||
+      t === "outdoor-products"
+    ) {
+      return "product";
+    }
+
+    // Category types
+    if (
+      t === "category" ||
+      t === "category-carousel" ||
+      t === "category-showcase" ||
+      t === "sports-categories" ||
+      t === "loved-categories" ||
+      t === "equipping-champions" ||
+      t === "category-nav"
+    ) {
+      return "category";
+    }
+
+    // Everyday essentials can be category or custom items
+    if (t === "everyday-essentials") {
+      if (
+        sec &&
+        ((sec.items && sec.items.length > 0) ||
+          (sec.data?.items && sec.data.items.length > 0))
+      ) {
+        return "other";
+      }
+      return "category";
+    }
+
+    return "other";
+  };
 
   /* ========================================
      CATEGORY SECTION ITEMS (WITH CUSTOM IMAGE)
@@ -190,11 +247,16 @@ const PageBuilder = () => {
     setEditingSection(null);
 
     setSectionName("");
-    setSectionType("category");
+    setSectionSubtitle("");
+    setSectionType("category-showcase");
 
     setCategoryItems([]);
     setSelectedProducts([]);
     setSelectedBanners([]);
+    setBannerImage("");
+    setBannerLink("");
+    setProductSearch("");
+    setBannerSearch("");
 
     setItems([]);
     setShowQuickCreateCategory(false);
@@ -212,41 +274,93 @@ const PageBuilder = () => {
     setEditingSection(sec);
 
     setSectionName(sec.name || "");
+    setSectionSubtitle(sec.data?.subtitle || sec.subtitle || "");
     setSectionType(sec.type || "category");
+    setProductSearch("");
+    setBannerSearch("");
 
-    if (sec.categoryItems && sec.categoryItems.length > 0) {
+    const rawCategoryItems =
+      sec.categoryItems && sec.categoryItems.length > 0
+        ? sec.categoryItems
+        : sec.data?.categoryItems && sec.data.categoryItems.length > 0
+        ? sec.data.categoryItems
+        : [];
+
+    const rawCategories =
+      sec.categories && sec.categories.length > 0
+        ? sec.categories
+        : sec.data?.categories && sec.data.categories.length > 0
+        ? sec.data.categories
+        : [];
+
+    if (rawCategoryItems.length > 0) {
       setCategoryItems(
-        sec.categoryItems.map((ci) => ({
-          categoryId: typeof ci.category === "object" ? ci.category?._id : ci.category,
-          customImage: ci.customImage || "",
-        }))
+        rawCategoryItems
+          .map((ci) => {
+            const catId =
+              typeof ci.category === "object"
+                ? ci.category?._id
+                : ci.category || ci.categoryId;
+            const pageId =
+              typeof ci.page === "object"
+                ? ci.page?._id
+                : ci.page || ci.pageId;
+            return {
+              categoryId: catId || pageId || ci._id,
+              customImage: ci.customImage || ci.image || "",
+              name: ci.name || ci.title || "",
+              linkType: ci.linkType || (pageId ? "page" : "category"),
+              pageId: pageId,
+            };
+          })
+          .filter((ci) => Boolean(ci.categoryId))
+      );
+    } else if (rawCategories.length > 0) {
+      setCategoryItems(
+        rawCategories
+          .map((c) => ({
+            categoryId: typeof c === "object" ? c?._id : c,
+            customImage: "",
+          }))
+          .filter((ci) => Boolean(ci.categoryId))
       );
     } else {
-      setCategoryItems(
-        (sec.categories || []).map((c) => ({
-          categoryId: typeof c === "object" ? c?._id : c,
-          customImage: "",
-        }))
-      );
+      setCategoryItems([]);
     }
 
-    const prodIds = (sec.products || []).map((p) =>
-      typeof p === "string" ? p : p._id
-    );
+    const rawProducts =
+      sec.products && sec.products.length > 0
+        ? sec.products
+        : sec.data?.products && sec.data.products.length > 0
+        ? sec.data.products
+        : [];
+    const prodIds = rawProducts
+      .map((p) => (typeof p === "string" ? p : p?._id))
+      .filter(Boolean);
 
-    const banIds = (sec.banners || []).map((b) =>
-      typeof b === "string" ? b : b._id
-    );
+    const rawBanners =
+      sec.banners && sec.banners.length > 0
+        ? sec.banners
+        : sec.data?.banners && sec.data.banners.length > 0
+        ? sec.data.banners
+        : [];
+    const banIds = rawBanners
+      .map((b) => (typeof b === "string" ? b : b?._id))
+      .filter(Boolean);
 
     setSelectedProducts(prodIds);
     setSelectedBanners(banIds);
+    setBannerImage(sec.data?.image || sec.image || "");
+    setBannerLink(sec.data?.link || sec.link || sec.data?.route || sec.route || "");
 
-    /*
-      IMPORTANT:
-      Other Section uses "items"
-    */
+    const rawItems =
+      Array.isArray(sec.items) && sec.items.length > 0
+        ? sec.items
+        : Array.isArray(sec.data?.items) && sec.data.items.length > 0
+        ? sec.data.items
+        : [];
+    setItems(rawItems);
 
-    setItems(Array.isArray(sec.items) ? sec.items : []);
     setShowQuickCreateCategory(false);
     setQuickCatName("");
     setQuickCatImage(null);
@@ -457,10 +571,12 @@ const PageBuilder = () => {
       return;
     }
 
+    const currentBaseType = getSectionBaseType(sectionType, editingSection);
+
     /*
       Validate Category Section
     */
-    if (sectionType === "category") {
+    if (currentBaseType === "category") {
       if (categoryItems.length === 0) {
         toast.error("Please add at least one category to this section");
         return;
@@ -475,8 +591,7 @@ const PageBuilder = () => {
     /*
       Validate Other Section
     */
-
-    if (sectionType === "other") {
+    if (currentBaseType === "other") {
       if (items.length === 0) {
         toast.error("Please add at least one item");
         return;
@@ -503,11 +618,13 @@ const PageBuilder = () => {
 
       const payload = {
         name: sectionName.trim(),
-
         type: sectionType,
+        subtitle: sectionSubtitle.trim(),
+        image: currentBaseType === "banner" ? bannerImage : "",
+        link: currentBaseType === "banner" ? bannerLink : "",
 
         categoryItems:
-          sectionType === "category"
+          currentBaseType === "category"
             ? categoryItems.map((ci, idx) => ({
                 category: ci.categoryId,
                 link: `/category/${ci.categoryId}`,
@@ -517,26 +634,54 @@ const PageBuilder = () => {
             : [],
 
         categories:
-          sectionType === "category" ? categoryItems.map((ci) => ci.categoryId) : [],
+          currentBaseType === "category"
+            ? categoryItems.map((ci) => ci.categoryId)
+            : [],
 
         products:
-          sectionType === "product" ? selectedProducts : [],
+          currentBaseType === "product" ? selectedProducts : [],
 
         banners:
-          sectionType === "banner" ? selectedBanners : [],
-
-        /*
-          OTHER SECTION
-        */
+          currentBaseType === "banner" ? selectedBanners : [],
 
         items:
-          sectionType === "other"
+          currentBaseType === "other"
             ? items.map((item) => ({
                 name: item.name.trim(),
                 image: item.image,
                 link: item.link?.trim() || "",
               }))
             : [],
+
+        data: {
+          title: sectionName.trim(),
+          subtitle: sectionSubtitle.trim(),
+          image: currentBaseType === "banner" ? bannerImage : "",
+          link: currentBaseType === "banner" ? bannerLink : "",
+          products: currentBaseType === "product" ? selectedProducts : [],
+          banners: currentBaseType === "banner" ? selectedBanners : [],
+          categories:
+            currentBaseType === "category"
+              ? categoryItems.map((ci) => ci.categoryId)
+              : [],
+          categoryItems:
+            currentBaseType === "category"
+              ? categoryItems.map((ci, idx) => ({
+                  category: ci.categoryId,
+                  link: `/category/${ci.categoryId}`,
+                  customImage: ci.customImage || "",
+                  sortOrder: idx,
+                }))
+              : [],
+          items:
+            currentBaseType === "other"
+              ? items.map((item) => ({
+                  name: item.name.trim(),
+                  image: item.image,
+                  link: item.link?.trim() || "",
+                }))
+              : [],
+        },
       };
 
       if (editingSection) {
@@ -749,6 +894,8 @@ const PageBuilder = () => {
     );
   };
 
+  const currentBaseType = getSectionBaseType(sectionType, editingSection);
+
   /* ========================================
      LOADING
   ======================================== */
@@ -900,67 +1047,58 @@ const PageBuilder = () => {
                       {sec.name}
                     </h4>
 
-                    <span
-                      className={`type-tag ${sec.type}`}
-                    >
-
-                      {sec.type === "category" && (
-                        <MdCategory />
-                      )}
-
-                      {sec.type === "product" && (
-                        <MdInventory2 />
-                      )}
-
-                      {sec.type === "banner" && (
-                        <MdImage />
-                      )}
-
-                      {sec.type === "other" && (
-                        <MdLink />
-                      )}
-
-                      <span>
-                        {sec.type.toUpperCase()}
-                      </span>
-
-                    </span>
+                    {(() => {
+                      const base = getSectionBaseType(sec.type, sec);
+                      return (
+                        <span className={`type-tag ${sec.type} ${base}`}>
+                          {base === "category" && <MdCategory />}
+                          {base === "product" && <MdInventory2 />}
+                          {base === "banner" && <MdImage />}
+                          {base === "other" && <MdLink />}
+                          <span>
+                            {(sec.type || "section").replace(/-/g, " ").toUpperCase()}
+                          </span>
+                        </span>
+                      );
+                    })()}
 
                   </div>
 
                   <div className="section-items-summary">
-
-                    {sec.type === "category" && (
-                      <span>
-                        {sec.categoryItems?.length || sec.categories?.length || 0}{" "}
-                        Categories selected
-                      </span>
-                    )}
-
-                    {sec.type === "product" && (
-                      <span>
-                        {sec.products?.length || 0}
-                        {" "}
-                        Products selected
-                      </span>
-                    )}
-
-                    {sec.type === "banner" && (
-                      <span>
-                        {sec.banners?.length || 0}
-                        {" "}
-                        Banners selected
-                      </span>
-                    )}
-
-                    {sec.type === "other" && (
-                      <span>
-                        {sec.items?.length || 0}
-                        {" "}
-                        Custom items added
-                      </span>
-                    )}
-
+                    {(() => {
+                      const base = getSectionBaseType(sec.type, sec);
+                      if (base === "category") {
+                        const count =
+                          sec.categoryItems?.length ||
+                          sec.categories?.length ||
+                          sec.data?.categoryItems?.length ||
+                          sec.data?.categories?.length ||
+                          0;
+                        return <span>{count} Categories selected</span>;
+                      }
+                      if (base === "product") {
+                        const count =
+                          sec.products?.length ||
+                          sec.data?.products?.length ||
+                          0;
+                        return <span>{count} Products selected</span>;
+                      }
+                      if (base === "banner") {
+                        const count =
+                          sec.banners?.length ||
+                          sec.data?.banners?.length ||
+                          (sec.data?.image || sec.image ? 1 : 0);
+                        return <span>{count} Banners selected</span>;
+                      }
+                      if (base === "other") {
+                        const count =
+                          sec.items?.length ||
+                          sec.data?.items?.length ||
+                          0;
+                        return <span>{count} Custom items added</span>;
+                      }
+                      return null;
+                    })()}
                   </div>
 
                 </div>
@@ -1078,61 +1216,81 @@ const PageBuilder = () => {
               {/* SECTION NAME */}
 
               <div className="form-group">
-
-                <label>
-                  Section Name *
-                </label>
-
+                <label>Section Name *</label>
                 <input
                   type="text"
                   placeholder="e.g. Popular Categories, Hero Banner"
                   value={sectionName}
-                  onChange={(e) =>
-                    setSectionName(e.target.value)
-                  }
+                  onChange={(e) => setSectionName(e.target.value)}
                   required
                 />
+              </div>
 
+              {/* SECTION SUBTITLE */}
+              <div className="form-group">
+                <label>Section Subtitle / Tagline (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Style Approved, Explore best of..."
+                  value={sectionSubtitle}
+                  onChange={(e) => setSectionSubtitle(e.target.value)}
+                />
               </div>
 
               {/* SECTION TYPE */}
-
               <div className="form-group">
-
-                <label>
-                  Section Type *
-                </label>
-
+                <label>Section Type *</label>
                 <select
                   value={sectionType}
-                  onChange={(e) =>
-                    setSectionType(e.target.value)
-                  }
+                  onChange={(e) => setSectionType(e.target.value)}
                 >
-                  <option value="category">
-                    Category Section
-                  </option>
+                  <optgroup label="Banner Sections">
+                    <option value="coupon-banner">Coupon Banner</option>
+                    <option value="promo-banner">Promo Banner</option>
+                    <option value="promo-banner-2">Promo Banner 2</option>
+                    <option value="hero-banner">Hero Banner</option>
+                    <option value="banner">Generic Banner Section</option>
+                  </optgroup>
 
-                  <option value="product">
-                    Product Section
-                  </option>
+                  <optgroup label="Category Sections">
+                    <option value="category-carousel">Category Carousel</option>
+                    <option value="category-showcase">Category Showcase</option>
+                    <option value="sports-categories">Sports Categories</option>
+                    <option value="loved-categories">Loved Categories</option>
+                    <option value="equipping-champions">Equipping Champions</option>
+                    <option value="category-nav">Category Navigation</option>
+                    <option value="category">Generic Category Section</option>
+                  </optgroup>
 
-                  <option value="banner">
-                    Banner Section
-                  </option>
+                  <optgroup label="Product Sections">
+                    <option value="product-section">Product Grid Section</option>
+                    <option value="storm-proof">Storm Proof Products</option>
+                    <option value="outdoor-products">Outdoor Products</option>
+                    <option value="product">Generic Product Section</option>
+                  </optgroup>
 
-                  <option value="other">
-                    Other Section
-                  </option>
+                  <optgroup label="Custom / Other Sections">
+                    <option value="everyday-essentials">Everyday Essentials</option>
+                    <option value="other">Other / Custom Items</option>
+                  </optgroup>
+
+                  {/* Fallback for unknown or legacy types */}
+                  {![
+                    "coupon-banner", "promo-banner", "promo-banner-2", "hero-banner", "banner",
+                    "category-carousel", "category-showcase", "sports-categories", "loved-categories",
+                    "equipping-champions", "category-nav", "category", "product-section", "storm-proof",
+                    "outdoor-products", "product", "everyday-essentials", "other"
+                  ].includes(sectionType) && (
+                    <option value={sectionType}>{sectionType}</option>
+                  )}
                 </select>
-
               </div>
 
               {/* ========================================
                   CATEGORY PICKER
               ======================================== */}
 
-              {sectionType === "category" && (
+              {currentBaseType === "category" && (
                 <div className="resource-picker-group">
                   <div
                     style={{
@@ -1659,20 +1817,48 @@ const PageBuilder = () => {
                   PRODUCT PICKER
               ======================================== */}
 
-              {sectionType === "product" && (
+              {currentBaseType === "product" && (
 
                 <div className="resource-picker-group">
 
-                  <label>
-                    Select Products (
-                    {selectedProducts.length}
-                    {" "}selected)
-                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "10px",
+                      flexWrap: "wrap",
+                      gap: "8px",
+                    }}
+                  >
+                    <label style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}>
+                      Select Products ({selectedProducts.length} selected)
+                    </label>
+                    {availableProducts.length > 4 && (
+                      <input
+                        type="text"
+                        placeholder="Search products..."
+                        value={productSearch}
+                        onChange={(e) => setProductSearch(e.target.value)}
+                        style={{
+                          padding: "4px 10px",
+                          fontSize: "12px",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: "6px",
+                          width: "180px",
+                        }}
+                      />
+                    )}
+                  </div>
 
                   <div className="resource-picker-grid">
 
-                    {availableProducts.map(
-                      (prod) => (
+                    {availableProducts
+                      .filter((prod) =>
+                        !productSearch ||
+                        prod.name?.toLowerCase().includes(productSearch.toLowerCase())
+                      )
+                      .map((prod) => (
 
                         <div
                           key={prod._id}
@@ -1723,65 +1909,241 @@ const PageBuilder = () => {
                   BANNER PICKER
               ======================================== */}
 
-              {sectionType === "banner" && (
+              {currentBaseType === "banner" && (
 
                 <div className="resource-picker-group">
 
-                  <label>
-                    Select Banners (
-                    {selectedBanners.length}
-                    {" "}selected)
-                  </label>
-
-                  <div className="resource-picker-grid">
-
-                    {availableBanners.map(
-                      (ban) => (
-
-                        <div
-                          key={ban._id}
-                          className={`picker-card ${
-                            selectedBanners.includes(
-                              ban._id
-                            )
-                              ? "selected"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            toggleBannerSelection(
-                              ban._id
-                            )
-                          }
-                        >
-
-                          <div className="picker-img">
-
-                            {ban.image ? (
-                              <img
-                                src={getImageUrl(
-                                  ban.image
-                                )}
-                                alt={
-                                  ban.title ||
-                                  "Banner"
-                                }
-                              />
-                            ) : (
-                              <MdImage />
-                            )}
-
-                          </div>
-
-                          <span>
-                            {ban.title ||
-                              "Banner"}
-                          </span>
-
-                        </div>
-
-                      )
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "10px",
+                      flexWrap: "wrap",
+                      gap: "8px",
+                    }}
+                  >
+                    <label style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}>
+                      Select Banners ({selectedBanners.length} selected)
+                    </label>
+                    {availableBanners.length > 3 && (
+                      <input
+                        type="text"
+                        placeholder="Search banners..."
+                        value={bannerSearch}
+                        onChange={(e) => setBannerSearch(e.target.value)}
+                        style={{
+                          padding: "4px 10px",
+                          fontSize: "12px",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: "6px",
+                          width: "180px",
+                        }}
+                      />
                     )}
+                  </div>
 
+                  {availableBanners.length === 0 ? (
+                    <div
+                      style={{
+                        padding: "16px",
+                        textAlign: "center",
+                        background: "#f8fafc",
+                        border: "1px dashed #cbd5e1",
+                        borderRadius: "8px",
+                        color: "#64748b",
+                        fontSize: "13px",
+                      }}
+                    >
+                      No saved banners available yet. You can upload a direct banner image below.
+                    </div>
+                  ) : (
+                    <div className="resource-picker-grid">
+                      {availableBanners
+                        .filter((ban) =>
+                          !bannerSearch ||
+                          ban.title?.toLowerCase().includes(bannerSearch.toLowerCase())
+                        )
+                        .map((ban) => (
+                          <div
+                            key={ban._id}
+                            className={`picker-card ${
+                              selectedBanners.includes(ban._id) ? "selected" : ""
+                            }`}
+                            onClick={() => toggleBannerSelection(ban._id)}
+                          >
+                            <div className="picker-img">
+                              {ban.image ? (
+                                <img
+                                  src={getImageUrl(ban.image)}
+                                  alt={ban.title || "Banner"}
+                                />
+                              ) : (
+                                <MdImage />
+                              )}
+                            </div>
+                            <span>
+                              {ban.title || "Banner"} {selectedBanners.includes(ban._id) ? "✓" : ""}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+
+                  {/* DIRECT BANNER IMAGE & LINK FALLBACK */}
+                  <div
+                    style={{
+                      marginTop: "16px",
+                      padding: "14px",
+                      background: "#f8fafc",
+                      borderRadius: "8px",
+                      border: "1px solid #e2e8f0",
+                    }}
+                  >
+                    <label
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "700",
+                        color: "#334155",
+                        display: "block",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      Direct Banner Image & Target Link (Optional / Fallback):
+                    </label>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: "12px",
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            fontSize: "12px",
+                            color: "#64748b",
+                            display: "block",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Image URL or Upload:
+                        </label>
+                        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                          <input
+                            type="text"
+                            placeholder="e.g. /uploads/... or https://..."
+                            value={bannerImage}
+                            onChange={(e) => setBannerImage(e.target.value)}
+                            style={{
+                              flex: 1,
+                              padding: "8px 10px",
+                              fontSize: "13px",
+                              border: "1px solid #cbd5e1",
+                              borderRadius: "6px",
+                            }}
+                          />
+                          <label
+                            style={{
+                              cursor: "pointer",
+                              padding: "8px 12px",
+                              background: "#e2e8f0",
+                              borderRadius: "6px",
+                              fontSize: "12px",
+                              fontWeight: "600",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            Upload
+                            <input
+                              type="file"
+                              accept="image/*"
+                              hidden
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                try {
+                                  const formData = new FormData();
+                                  formData.append("image", file);
+                                  const token = localStorage.getItem("adminToken");
+                                  const res = await api.post("/pages/upload", formData, {
+                                    headers: {
+                                      Authorization: `Bearer ${token}`,
+                                      "Content-Type": "multipart/form-data",
+                                    },
+                                  });
+                                  setBannerImage(res.data.url);
+                                  toast.success("Banner image uploaded");
+                                } catch (err) {
+                                  toast.error("Failed to upload banner image");
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          style={{
+                            fontSize: "12px",
+                            color: "#64748b",
+                            display: "block",
+                            marginBottom: "4px",
+                          }}
+                        >
+                          Target Link / Route:
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. /category/running or /products"
+                          value={bannerLink}
+                          onChange={(e) => setBannerLink(e.target.value)}
+                          style={{
+                            width: "100%",
+                            padding: "8px 10px",
+                            fontSize: "13px",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "6px",
+                          }}
+                        />
+                      </div>
+                    </div>
+                    {bannerImage && (
+                      <div
+                        style={{
+                          marginTop: "10px",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                        }}
+                      >
+                        <img
+                          src={getImageUrl(bannerImage)}
+                          alt="Banner Preview"
+                          style={{
+                            maxHeight: "70px",
+                            borderRadius: "6px",
+                            objectFit: "contain",
+                            border: "1px solid #cbd5e1",
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setBannerImage("")}
+                          style={{
+                            padding: "4px 8px",
+                            fontSize: "11px",
+                            color: "#ef4444",
+                            border: "1px solid #fca5a5",
+                            background: "#fef2f2",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Remove Direct Image
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                 </div>
@@ -1791,7 +2153,7 @@ const PageBuilder = () => {
                   OTHER SECTION
               ======================================== */}
 
-              {sectionType === "other" && (
+              {currentBaseType === "other" && (
 
                 <div className="other-section-builder">
 

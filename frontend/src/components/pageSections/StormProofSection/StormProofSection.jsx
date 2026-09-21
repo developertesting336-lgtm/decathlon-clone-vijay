@@ -155,12 +155,40 @@ const StormProofSection = ({ section, data, style, customProducts, title, subtit
     }
   }, [currentIndex, maxIndex]);
 
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+
   const handlePrev = () => {
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+  };
+
+  const handleTouchStart = (e) => {
+    if (e.targetTouches && e.targetTouches[0]) {
+      setTouchStartX(e.targetTouches[0].clientX);
+      setTouchEndX(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.targetTouches && e.targetTouches[0]) {
+      setTouchEndX(e.targetTouches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const diff = touchStartX - touchEndX;
+    if (diff > 45) {
+      handleNext();
+    } else if (diff < -45) {
+      handlePrev();
+    }
+    setTouchStartX(null);
+    setTouchEndX(null);
   };
 
   const handleOpenModal = (product) => {
@@ -247,21 +275,23 @@ const StormProofSection = ({ section, data, style, customProducts, title, subtit
     <>
       <section className={`storm-proof-section ${variantClass}`}>
         <div className="storm-proof-left">
-          <Link to="/monsoon-essentials" style={{ textDecoration: "none", color: "inherit" }}>
-            {displaySubtitle && <p>{displaySubtitle}</p>}
-            <h2>
-              {displayTitle.includes("\n") ? (
-                displayTitle.split("\n").map((line, i) => (
-                  <React.Fragment key={i}>
-                    {line}
-                    {i < displayTitle.split("\n").length - 1 && <br />}
-                  </React.Fragment>
-                ))
-              ) : (
-                displayTitle
-              )}
-            </h2>
-          </Link>
+          <div className="storm-proof-header-text">
+            <Link to="/monsoon-essentials" style={{ textDecoration: "none", color: "inherit" }}>
+              {displaySubtitle && <p>{displaySubtitle}</p>}
+              <h2>
+                {displayTitle.includes("\n") ? (
+                  displayTitle.split("\n").map((line, i) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i < displayTitle.split("\n").length - 1 && <br />}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  displayTitle
+                )}
+              </h2>
+            </Link>
+          </div>
 
           <div className="storm-proof-arrows">
             <button
@@ -286,7 +316,12 @@ const StormProofSection = ({ section, data, style, customProducts, title, subtit
           </div>
         </div>
 
-        <div className="storm-proof-viewport">
+        <div
+          className="storm-proof-viewport"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div
             className="storm-proof-list"
             style={{
@@ -311,6 +346,7 @@ const StormProofSection = ({ section, data, style, customProducts, title, subtit
                     <img
                       src={getImageUrl(product.images[0])}
                       alt={product.name || "Product"}
+                      loading="lazy"
                     />
                   ) : (
                     <div className="storm-product-no-image">No Image</div>

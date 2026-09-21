@@ -3,74 +3,57 @@
 ======================================== */
 
 .storm-proof-section {
-  width: 102%;
-
+  width: 100%;
   display: flex;
-  align-items: flex-start;
-
-  gap: 18px;
-
-  padding: 0 8px 30px;
-
+  align-items: center;
+  gap: 20px;
+  padding: 12px 0 20px;
+  margin: 0;
   background: #ffffff;
-
   overflow: hidden;
-
   box-sizing: border-box;
+  position: relative;
 }
 
-
 /* ========================================
-   LEFT CONTENT
+   LEFT CONTENT / SIDEBAR
 ======================================== */
 
 .storm-proof-left {
-  width: 185px;
-  min-width: 185px;
-
+  width: 190px;
+  min-width: 190px;
   flex-shrink: 0;
-
-  padding: 115px 0 0 8px;
-
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 4px 0 0;
   box-sizing: border-box;
 }
 
-
-/* ========================================
-   LEFT SMALL TITLE
-======================================== */
-
-.storm-proof-left p {
-  margin: 0 0 8px;
-
-  color: #333333;
-
-  font-size: 15px;
-
-  font-weight: 400;
-
-  line-height: 1.2;
+.storm-proof-header-text {
+  display: flex;
+  flex-direction: column;
 }
 
-
-/* ========================================
-   MAIN TITLE
-======================================== */
+.storm-proof-left p {
+  margin: 0 0 6px;
+  color: #4b5563;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.2px;
+}
 
 .storm-proof-left h2 {
   margin: 0;
-
   color: #111111;
-
-  font-size: 34px;
-
-  font-weight: 700;
-
-  line-height: 1.02;
-
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.08;
   letter-spacing: -0.5px;
+  white-space: pre-line;
+  word-break: break-word;
 }
-
 
 /* ========================================
    ARROWS
@@ -78,121 +61,71 @@
 
 .storm-proof-arrows {
   display: flex;
-
   align-items: center;
-
   gap: 8px;
-
   margin-top: 20px;
 }
-
-
-/* ========================================
-   ARROW
-======================================== */
 
 .storm-arrow {
   width: 36px;
   height: 36px;
-
   padding: 0;
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
-  border: 1px solid #cfcfcf;
-
+  border: 1px solid #d1d5db;
   border-radius: 50%;
-
   background: #ffffff;
-
-  color: #222222;
-
-  font-size: 24px;
-
+  color: #374151;
+  font-size: 20px;
+  font-weight: 400;
   line-height: 1;
-
   cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-
-/* ========================================
-   ARROW HOVER
-======================================== */
-
-.storm-arrow:hover:not(:disabled) {
-  background: #f5f5f5;
-
-  border-color: #999999;
-
-  color: #111111;
+@media (hover: hover) and (pointer: fine) {
+  .storm-arrow:hover:not(:disabled) {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: #111827;
+  }
 }
-
-
-/* ========================================
-   ARROW ACTIVE
-======================================== */
 
 .storm-arrow:active:not(:disabled) {
-  transform: scale(0.95);
+  transform: scale(0.92);
 }
-
-
-/* ========================================
-   ARROW DISABLED
-======================================== */
 
 .storm-arrow:disabled {
-  color: #bdbdbd;
-
-  border-color: #dddddd;
-
-  background: #ffffff;
-
+  color: #d1d5db;
+  border-color: #e5e7eb;
+  background: #f9fafb;
   cursor: not-allowed;
+  opacity: 0.5;
 }
 
-
 /* ========================================
-   VIEWPORT
+   VIEWPORT & TRACK
 ======================================== */
 
 .storm-proof-viewport {
   flex: 1;
-
   min-width: 0;
-
   overflow: hidden;
-
   box-sizing: border-box;
+  position: relative;
+  touch-action: pan-y;
 }
-
-
-/* ========================================
-   PRODUCT TRACK
-======================================== */
 
 .storm-proof-list {
   display: flex;
-
-  align-items: flex-start;
-
-  transition:
-    transform 0.45s ease-in-out;
-
+  align-items: stretch;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   will-change: transform;
-
   box-sizing: border-box;
 }
-
 
 /* ========================================
    PRODUCT CARD
@@ -200,107 +133,91 @@
 
 .storm-product-card {
   min-width: 0;
-
-  padding-right: 8px;
-
+  padding-right: 12px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
+.storm-product-card-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .storm-product-card:hover .storm-product-card-inner {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+}
 
 /* ========================================
-   PRODUCT IMAGE
+   PRODUCT IMAGE CONTAINER (TRUE 1:1 SQUARE)
 ======================================== */
 
 .storm-product-image {
   position: relative;
-
   width: 100%;
-
-  height: 215px;
-
+  aspect-ratio: 1 / 1;
+  height: auto;
   overflow: hidden;
-
-  background: #f5f5f5;
-
+  background: #f9fafb;
+  border-radius: 6px;
   box-sizing: border-box;
+  display: block;
 }
 
-
-/* ========================================
-   PRODUCT IMAGE
-======================================== */
-
 .storm-product-image img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-
   display: block;
-
   object-fit: cover;
-
-  transition:
-    transform 0.3s ease;
+  object-position: center;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
 }
 
-
-/* ========================================
-   IMAGE HOVER
-======================================== */
-
-.storm-product-card:hover
-.storm-product-image img {
-  transform: scale(1.025);
+@media (hover: hover) and (pointer: fine) {
+  .storm-product-card:hover .storm-product-image img {
+    transform: scale(1.05);
+  }
 }
-
-
-/* ========================================
-   NO IMAGE
-======================================== */
 
 .storm-product-no-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
-  background: #f5f5f5;
-
-  color: #999999;
-
+  background: #f1f3f5;
+  color: #9ca3af;
   font-size: 13px;
-
-  text-align: center;
+  font-weight: 500;
 }
 
-
-/* ========================================
-   PRODUCT BADGE
-======================================== */
-
+/* Badge */
 .storm-product-badge {
   position: absolute;
-
-  top: 4px;
-  left: 4px;
-
+  top: 8px;
+  left: 8px;
   z-index: 2;
-
-  padding: 3px 5px;
-
+  padding: 3px 7px;
   background: #fff0ad;
-
   color: #5d4a00;
-
   font-size: 10px;
-
-  line-height: 1;
-
-  white-space: nowrap;
+  font-weight: 600;
+  border-radius: 4px;
+  line-height: 1.2;
+  letter-spacing: 0.2px;
 }
-
 
 /* ========================================
    PRODUCT INFO
@@ -308,695 +225,364 @@
 
 .storm-product-info {
   width: 100%;
-
-  padding-top: 7px;
-
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 2px 4px;
   box-sizing: border-box;
 }
-
-
-/* ========================================
-   PRODUCT NAME
-======================================== */
 
 .storm-product-name {
   width: 100%;
-
-  height: 40px;
-  min-height: 40px;
-
-  margin: 0;
-
-  color: #333333;
-
-  font-size: 14px;
-
+  height: 34px;
+  margin: 0 0 4px;
+  color: #111827;
+  font-size: 13px;
   font-weight: 400;
-
-  line-height: 20px;
-
+  line-height: 17px;
   display: -webkit-box;
-
   -webkit-line-clamp: 2;
-
-  line-clamp: 2;
-
   -webkit-box-orient: vertical;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
+  text-decoration: none;
 }
 
 .storm-product-name strong {
-  color: #222222;
-
+  color: #111111;
   font-weight: 700;
 }
 
-
-/* ========================================
-   RATING
-======================================== */
-
+/* Rating */
 .storm-product-rating {
   width: 100%;
-
-  height: 20px;
-
+  height: 18px;
   display: flex;
-
   align-items: center;
-
-  gap: 5px;
-
-  margin-top: 4px;
-
+  gap: 4px;
+  margin-bottom: 4px;
   box-sizing: border-box;
 }
-
-
-/* ========================================
-   STARS
-======================================== */
 
 .storm-stars {
-  color: #ff8200;
-
-  font-size: 14px;
-
-  line-height: 20px;
-
-  letter-spacing: -2px;
-
+  color: #f59e0b;
+  font-size: 11.5px;
+  letter-spacing: 0.5px;
   white-space: nowrap;
+  line-height: 1;
 }
-
-
-/* ========================================
-   REVIEWS
-======================================== */
 
 .storm-reviews {
-  color: #5d6875;
-
-  font-size: 12px;
-
-  line-height: 20px;
-
+  color: #6b7280;
+  font-size: 11.5px;
+  line-height: 1;
   white-space: nowrap;
 }
 
-
-/* ========================================
-   PRICE
-======================================== */
-
+/* Price */
 .storm-product-price {
   width: 100%;
-
-  height: 39px;
-
+  min-height: 38px;
   display: flex;
-
   flex-direction: column;
-
-  justify-content: center;
-
-  gap: 3px;
-
-  margin-top: 2px;
-
+  gap: 1px;
+  margin-bottom: 4px;
   box-sizing: border-box;
 }
-
-
-/* ========================================
-   CURRENT PRICE
-======================================== */
 
 .storm-current-price {
   color: #111111;
-
-  font-size: 15px;
-
+  font-size: 16px;
   font-weight: 700;
-
-  line-height: 16px;
+  line-height: 1.2;
 }
-
-
-/* ========================================
-   MRP
-======================================== */
 
 .storm-mrp {
-  color: #707070;
-
-  font-size: 11px;
-
-  line-height: 13px;
+  color: #9ca3af;
+  font-size: 12px;
+  line-height: 1.2;
+  text-decoration: line-through;
 }
 
-
-/* ========================================
-   DISCOUNT SPACE
-======================================== */
-
+/* Discount Pill */
 .storm-discount-wrapper {
   width: 100%;
-
-  height: 25px;
-
+  min-height: 22px;
   display: flex;
-
   align-items: center;
-
-  margin-top: 3px;
-
+  margin-bottom: 6px;
   overflow: hidden;
-
   box-sizing: border-box;
 }
-
-
-/* ========================================
-   DISCOUNT
-======================================== */
 
 .storm-discount {
-  height: 19px;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  padding: 0 7px;
-
-  border-radius: 10px;
-
-  background: #fff0ad;
-
-  color: #5d4a00;
-
-  font-size: 10px;
-
+  display: inline-block;
+  max-width: 100%;
+  font-size: 10.5px;
   font-weight: 600;
-
-  line-height: 19px;
-
+  color: #065f46;
+  background: #d1fae5;
+  padding: 2px 8px;
+  border-radius: 9999px;
   white-space: nowrap;
-
   overflow: hidden;
-
   text-overflow: ellipsis;
-
-  box-sizing: border-box;
+  line-height: 1.3;
 }
 
-
-/* ========================================
-   ACTIONS
-======================================== */
-
+/* Actions */
 .storm-product-actions {
   width: 100%;
-
-  height: 29px;
-
   display: flex;
-
   align-items: center;
-
   gap: 6px;
-
-  margin-top: 5px;
-
+  margin-top: auto;
+  padding-top: 6px;
   box-sizing: border-box;
-
-  margin-left: 96px;
 }
-
-
-/* ========================================
-   WISHLIST
-======================================== */
 
 .storm-wishlist {
-  width: 28px;
-  height: 28px;
-
-  flex: 0 0 28px;
-
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
   padding: 0;
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
-  border: 1px solid #c5c5c5;
-
-  border-radius: 4px;
-
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
   background: #ffffff;
-
-  color: #555555;
-
-  font-size: 17px;
-
-  line-height: 1;
-
+  color: #4b5563;
+  font-size: 16px;
   cursor: pointer;
-
-  transition:
-    border-color 0.2s ease,
-    color 0.2s ease,
-    background 0.2s ease;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-.storm-wishlist:hover {
-  border-color: #222222;
-
-  color: #222222;
-
-  background: #fafafa;
+@media (hover: hover) and (pointer: fine) {
+  .storm-wishlist:hover {
+    border-color: #9ca3af;
+    color: #ef4444;
+  }
 }
 
 .storm-wishlist.active {
-  border-color: #3945bd;
-
-  color: #3945bd;
-
-  background: #f4f6ff;
+  color: #ef4444;
+  background: #fef2f2;
+  border-color: #fca5a5;
 }
-
-
-/* ========================================
-   CART
-======================================== */
 
 .storm-cart {
-  height: 28px;
-
+  flex: 1;
+  height: 32px;
   padding: 0 10px;
-
-  border: 1px solid #aaaaaa;
-
-  border-radius: 4px;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #111827;
+  border-radius: 6px;
   background: #ffffff;
-
-  color: #222222;
-
-  font-size: 10px;
-
-  font-weight: 500;
-
-  line-height: 1;
-
-  white-space: nowrap;
-
+  color: #111827;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
-.storm-cart:hover {
-  background: #f6f6f6;
-
-  border-color: #888888;
+@media (hover: hover) and (pointer: fine) {
+  .storm-cart:hover {
+    background: #111827;
+    color: #ffffff;
+  }
 }
 
+.storm-cart:active {
+  transform: scale(0.98);
+}
 
 /* ========================================
-   LARGE DESKTOP
+   RESPONSIVE BREAKPOINTS (Fluid 1:1 Images)
 ======================================== */
 
-@media (max-width: 1250px) {
-
+/* Ultra-Wide Desktop (>= 1600px) */
+@media (min-width: 1600px) {
   .storm-proof-section {
-    gap: 16px;
+    gap: 24px;
+    padding: 16px 0 24px;
   }
 
   .storm-proof-left {
-    width: 175px;
+    width: 210px;
+    min-width: 210px;
+  }
 
-    min-width: 175px;
+  .storm-proof-left h2 {
+    font-size: 36px;
+  }
+}
 
-    padding-left: 8px;
+/* Large Desktop (1200px - 1599px) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .storm-proof-section {
+    gap: 20px;
+    padding: 12px 0 20px;
+  }
+
+  .storm-proof-left {
+    width: 190px;
+    min-width: 190px;
   }
 
   .storm-proof-left h2 {
     font-size: 32px;
   }
-
 }
 
-
-/* ========================================
-   SMALL DESKTOP
-======================================== */
-
-@media (max-width: 1100px) {
-
-  .storm-proof-left {
-    width: 155px;
-
-    min-width: 155px;
-
-    padding-left: 8px;
-  }
-
-  .storm-proof-left p {
-    font-size: 14px;
-  }
-
-  .storm-proof-left h2 {
-    font-size: 29px;
-  }
-
-  .storm-product-image {
-    height: 200px;
-  }
-
-  .storm-product-name {
-    font-size: 13px;
-
-    height: 36px;
-    min-height: 36px;
-
-    line-height: 18px;
-  }
-
-  .storm-stars {
-    font-size: 13px;
-  }
-
-  .storm-reviews {
-    font-size: 11px;
-  }
-
-  .storm-current-price {
-    font-size: 14px;
-  }
-
-  .storm-mrp {
-    font-size: 11px;
-  }
-
-}
-
-
-/* ========================================
-   TABLET
-======================================== */
-
-@media (max-width: 900px) {
-
+/* Small Laptop / Medium Desktop (992px - 1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
   .storm-proof-section {
-    gap: 12px;
-
-    padding: 10px 6px 25px;
+    gap: 16px;
+    padding: 10px 0 18px;
   }
 
   .storm-proof-left {
-    width: 140px;
-
-    min-width: 140px;
-
-    padding-left: 8px;
-
-    padding-top: 105px;
-  }
-
-  .storm-proof-left h2 {
-    font-size: 26px;
-  }
-
-  .storm-proof-left p {
-    font-size: 13px;
-  }
-
-  .storm-product-image {
-    height: 185px;
-  }
-
-  .storm-product-name {
-    font-size: 12px;
-
-    height: 34px;
-    min-height: 34px;
-
-    line-height: 17px;
-  }
-
-  .storm-product-rating {
-    gap: 4px;
-  }
-
-  .storm-stars {
-    font-size: 12px;
-  }
-
-  .storm-reviews {
-    font-size: 10px;
-  }
-
-  .storm-current-price {
-    font-size: 14px;
-  }
-
-  .storm-mrp {
-    font-size: 10px;
-  }
-
-  .storm-cart {
-    padding: 0 8px;
-
-    font-size: 10px;
-  }
-
-}
-
-
-/* ========================================
-   MOBILE
-======================================== */
-
-@media (max-width: 600px) {
-
-  .storm-proof-section {
-    flex-direction: column;
-
-    gap: 12px;
-
-    padding: 10px;
-  }
-
-  .storm-proof-left {
-    width: 100%;
-
-    min-width: 0;
-
-    padding: 8px 0 0;
-  }
-
-  .storm-proof-left p {
-    margin-bottom: 6px;
-
-    font-size: 14px;
+    width: 165px;
+    min-width: 165px;
   }
 
   .storm-proof-left h2 {
     font-size: 28px;
+  }
+}
 
-    line-height: 1.05;
+/* Tablet (769px - 991px) */
+@media (min-width: 769px) and (max-width: 991px) {
+  .storm-proof-section {
+    gap: 14px;
+    padding: 10px 0 16px;
+  }
+
+  .storm-proof-left {
+    width: 145px;
+    min-width: 145px;
+  }
+
+  .storm-proof-left p {
+    font-size: 13.5px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 24px;
+  }
+
+  .storm-product-card {
+    padding-right: 10px;
+  }
+}
+
+/* Phablets & Mobile (<= 768px) */
+@media (max-width: 768px) {
+  .storm-proof-section {
+    flex-direction: column;
+    padding: 10px 0 16px;
+    gap: 12px;
+  }
+
+  .storm-proof-left {
+    width: 100%;
+    min-width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0;
+  }
+
+  .storm-proof-header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .storm-proof-left p {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .storm-proof-left h2 {
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    white-space: normal;
   }
 
   .storm-proof-arrows {
-    margin-top: 12px;
+    margin-top: 0;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .storm-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
   }
 
   .storm-proof-viewport {
     width: 100%;
   }
 
-  .storm-product-image {
-    height: 205px;
+  .storm-product-card {
+    padding-right: 10px;
   }
-
-  .storm-product-name {
-    font-size: 12px;
-
-    height: 34px;
-    min-height: 34px;
-
-    line-height: 17px;
-  }
-
-  .storm-product-rating {
-    margin-top: 3px;
-  }
-
-  .storm-stars {
-    font-size: 11px;
-  }
-
-  .storm-reviews {
-    font-size: 10px;
-  }
-
-  .storm-current-price {
-    font-size: 13px;
-  }
-
-  .storm-mrp {
-    font-size: 10px;
-  }
-
-  .storm-product-badge {
-    font-size: 9px;
-
-    padding: 3px 4px;
-  }
-
-  .storm-discount {
-    font-size: 9px;
-  }
-
 }
 
-
-/* ========================================
-   SMALL MOBILE
-======================================== */
-
-@media (max-width: 450px) {
-
+/* Standard Mobile (<= 540px) */
+@media (max-width: 540px) {
   .storm-proof-section {
-    padding: 8px;
-  }
-
-  .storm-proof-left {
-    padding-left: 0;
+    padding: 8px 0 14px;
+    gap: 10px;
   }
 
   .storm-proof-left h2 {
-    font-size: 25px;
+    font-size: 20px;
   }
 
-  .storm-arrow {
-    width: 33px;
-    height: 33px;
-
-    font-size: 21px;
-  }
-
-  .storm-product-image {
-    height: 170px;
-  }
-
-  .storm-product-name {
-    font-size: 11px;
-
-    height: 32px;
-    min-height: 32px;
-
-    line-height: 16px;
-  }
-
-  .storm-stars {
-    font-size: 11px;
-
-    letter-spacing: -2px;
-  }
-
-  .storm-reviews {
-    font-size: 10px;
+  .storm-product-card {
+    padding-right: 8px;
   }
 
   .storm-current-price {
-    font-size: 13px;
+    font-size: 15px;
   }
 
-  .storm-mrp {
-    font-size: 10px;
-  }
-
-  .storm-discount {
-    font-size: 8px;
-
-    padding: 0 6px;
+  .storm-cart {
+    height: 30px;
+    font-size: 11.5px;
+    padding: 0 8px;
   }
 
   .storm-wishlist {
-    width: 25px;
-    height: 25px;
-
-    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
   }
-
-  .storm-cart {
-    height: 25px;
-
-    padding: 0 7px;
-
-    font-size: 9px;
-  }
-
 }
 
-
-/* ========================================
-   VERY SMALL MOBILE
-======================================== */
-
-@media (max-width: 360px) {
-
-  .storm-proof-section {
-    padding: 7px;
-  }
-
+/* Small / Narrow Mobile (<= 380px) */
+@media (max-width: 380px) {
   .storm-proof-left h2 {
-    font-size: 23px;
+    font-size: 18px;
   }
 
-  .storm-product-image {
-    height: 155px;
-  }
-
-  .storm-product-name {
-    font-size: 10px;
-
-    line-height: 15px;
-
-    height: 30px;
-    min-height: 30px;
-  }
-
-  .storm-stars {
-    font-size: 10px;
-  }
-
-  .storm-reviews {
-    font-size: 9px;
-  }
-
-  .storm-current-price {
+  .storm-proof-left p {
     font-size: 12px;
   }
 
-  .storm-mrp {
-    font-size: 9px;
+  .storm-product-name {
+    font-size: 12px;
+    line-height: 16px;
+    height: 32px;
   }
-
-  .storm-cart {
-    padding: 0 6px;
-
-    font-size: 8px;
-  }
-
 }
