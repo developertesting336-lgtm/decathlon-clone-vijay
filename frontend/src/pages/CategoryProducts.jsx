@@ -130,13 +130,37 @@ function CategoryProducts() {
     (category && category.match(/^[0-9a-fA-F]{24}$/) ? category : null) ||
     (queryCategory && queryCategory.match(/^[0-9a-fA-F]{24}$/) ? queryCategory : null);
 
+  const [fetchedCategoryName, setFetchedCategoryName] = useState("");
+
+  const formatTitle = (slug) => {
+    if (!slug) return "";
+    return slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  };
+
+  useEffect(() => {
+    if (category && !location.state?.categoryName) {
+      api
+        .get(`/categories/${encodeURIComponent(category)}`)
+        .then((res) => {
+          if (res.data?.category?.name) {
+            setFetchedCategoryName(res.data.category.name);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [category, location.state?.categoryName]);
+
   const categoryName =
     location.state?.categoryName ||
+    fetchedCategoryName ||
     CATEGORY_NAMES[category] ||
     CATEGORY_NAMES[queryCategory] ||
     (searchQuery ? `Search: "${searchQuery}"` : null) ||
-    (category ? category.replaceAll("-", " ") : null) ||
-    (queryCategory ? queryCategory.replaceAll("-", " ") : null) ||
+    (category ? formatTitle(category) : null) ||
+    (queryCategory ? formatTitle(queryCategory) : null) ||
     "Products";
 
   useEffect(() => {
@@ -933,25 +957,47 @@ function CategoryProducts() {
             <div className="category-tabs">
               <span>Explore all our collections</span>
 
+              {availableCategories
+                .filter((cat) => cat.toLowerCase() !== categoryName.toLowerCase())
+                .slice(0, 4)
+                .map((cat) => {
+                  const active = selectedCategories.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      className={active ? "active" : ""}
+                      onClick={() => {
+                        toggleArrayFilter(setSelectedCategories, cat);
+                        setOpenFilters((prev) => ({ ...prev, Category: true }));
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
+
               <button
+                className={selectedGenders.includes("Men") ? "active" : ""}
                 onClick={() => {
-                  setSelectedGenders(["Men"]);
+                  toggleArrayFilter(setSelectedGenders, "Men");
                   setOpenFilters((prev) => ({ ...prev, Gender: true }));
                 }}
               >
                 Men {categoryName}
               </button>
               <button
+                className={selectedGenders.includes("Women") ? "active" : ""}
                 onClick={() => {
-                  setSelectedGenders(["Women"]);
+                  toggleArrayFilter(setSelectedGenders, "Women");
                   setOpenFilters((prev) => ({ ...prev, Gender: true }));
                 }}
               >
                 Women {categoryName}
               </button>
               <button
+                className={selectedGenders.includes("Kids") ? "active" : ""}
                 onClick={() => {
-                  setSelectedGenders(["Kids"]);
+                  toggleArrayFilter(setSelectedGenders, "Kids");
                   setOpenFilters((prev) => ({ ...prev, Gender: true }));
                 }}
               >

@@ -24,7 +24,7 @@ const itemSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { _id: true, timestamps: true }
+  { _id: true, timestamps: true },
 );
 
 const categoryItemSchema = new mongoose.Schema(
@@ -64,6 +64,18 @@ const categoryItemSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    destinationType: {
+      type: String,
+      default: "category-page",
+    },
+    destinationId: {
+      type: String,
+      default: "",
+    },
+    destinationSlug: {
+      type: String,
+      default: "",
+    },
     displayOrder: {
       type: Number,
       default: 0,
@@ -77,7 +89,7 @@ const categoryItemSchema = new mongoose.Schema(
       default: true,
     },
   },
-  { _id: true }
+  { _id: true },
 );
 
 const pageSectionSchema = new mongoose.Schema(
@@ -165,7 +177,7 @@ const pageSectionSchema = new mongoose.Schema(
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const PageSection = mongoose.model("PageSection", pageSectionSchema);

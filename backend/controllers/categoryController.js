@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
 import Page from "../models/Page.js";
@@ -66,7 +67,19 @@ const getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const category = await Category.findById(id);
+    let category = null;
+    if (mongoose.Types.ObjectId.isValid(id) && /^[0-9a-fA-F]{24}$/.test(id)) {
+      category = await Category.findById(id);
+    } else {
+      const cleanSlug = String(id).toLowerCase().trim();
+      const cleanName = cleanSlug.replace(/-/g, " ");
+      category = await Category.findOne({
+        $or: [
+          { slug: cleanSlug },
+          { name: { $regex: `^${cleanName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" } },
+        ],
+      });
+    }
 
     if (!category) {
       return res.status(404).json({

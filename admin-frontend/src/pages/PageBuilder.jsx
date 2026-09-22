@@ -16,11 +16,101 @@ import {
   MdUploadFile,
   MdKeyboardArrowUp,
   MdKeyboardArrowDown,
+  MdVisibility,
+  MdClose,
+  MdLayers,
 } from "react-icons/md";
 
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import "../styles/PageBuilder.css";
+
+const MAIN_SECTION_TYPES = [
+  {
+    type: "banner",
+    title: "Banner Section",
+    badge: "Hero & Promos",
+    icon: <MdImage />,
+    desc: "Hero banners, promo strips & discount deals",
+    color: "#2563eb",
+    bgSoft: "#eff6ff",
+    presets: [
+      { name: "Hero Banner Showcase", subtitle: "Style Approved, Explore Best Of Decathlon" },
+      { name: "Seasonal Promotion", subtitle: "Limited Period Deals & Offers" },
+      { name: "Exclusive Deals", subtitle: "Save Big on Top Rated Gear" },
+      { name: "Flash Clearance", subtitle: "Up to 50% Off On Selected Products" },
+    ],
+    templates: [
+      { id: "hero-banner", name: "Hero Banner", desc: "Full-width primary slider banner", icon: "🌟" },
+      { id: "promo-banner", name: "Promo Banner", desc: "Single promotional highlight banner", icon: "📢" },
+      { id: "promo-banner-2", name: "Promo Banner 2", desc: "Dual-split modern promo strips", icon: "🔥" },
+      { id: "coupon-banner", name: "Coupon Banner", desc: "Discount codes, vouchers & offers", icon: "🎟️" },
+      { id: "banner", name: "Standard Banner", desc: "Versatile responsive custom banner", icon: "🖼️" },
+    ],
+  },
+  {
+    type: "category",
+    title: "Category Section",
+    badge: "Navigation & Grids",
+    icon: <MdCategory />,
+    desc: "Carousels & showcase cards with custom destinations",
+    color: "#059669",
+    bgSoft: "#ecfdf5",
+    presets: [
+      { name: "Popular Categories", subtitle: "Explore our most loved sports & categories" },
+      { name: "Explore All Sports", subtitle: "Choose your favorite sports category" },
+      { name: "Featured Collections", subtitle: "Curated gear for every sportsperson" },
+      { name: "Trending Gear", subtitle: "Top trending categories this season" },
+    ],
+    templates: [
+      { id: "category-carousel", name: "Category Carousel", desc: "Horizontal swipeable circular category cards", icon: "🎠" },
+      { id: "category-showcase", name: "Category Showcase", desc: "Featured category cards with direct destination links", icon: "✨" },
+      { id: "sports-categories", name: "Sports Categories", desc: "Multi-sport visual navigation grid", icon: "⚽" },
+      { id: "category-nav", name: "Category Navigation", desc: "Compact top category navigation pill bar", icon: "🧭" },
+      { id: "loved-categories", name: "Loved Categories", desc: "Trending and customer-favorite categories", icon: "❤️" },
+      { id: "equipping-champions", name: "Equipping Champions", desc: "Performance & athletics category showcase", icon: "🏆" },
+    ],
+  },
+  {
+    type: "product",
+    title: "Product Section",
+    badge: "Catalog & Grids",
+    icon: <MdInventory2 />,
+    desc: "Curated product grids, bestsellers & gear showcases",
+    color: "#d97706",
+    bgSoft: "#fffbeb",
+    presets: [
+      { name: "Best Sellers", subtitle: "Top rated by athletes and adventurers" },
+      { name: "New Arrivals", subtitle: "Fresh styles and upgraded sports tech" },
+      { name: "Trending Products", subtitle: "Customer favorites this week" },
+      { name: "Workout Essentials", subtitle: "Essential equipment for every training session" },
+    ],
+    templates: [
+      { id: "product-section", name: "Product Grid", desc: "Responsive high-density e-commerce product grid", icon: "🛍️" },
+      { id: "storm-proof", name: "Storm Proof Collection", desc: "Curated all-weather gear & apparel showcase", icon: "🌧️" },
+      { id: "outdoor-products", name: "Outdoor Products", desc: "Adventure, hiking & trekking equipment grid", icon: "🏕️" },
+    ],
+  },
+  {
+    type: "other",
+    title: "Custom Section",
+    badge: "Flexible Multi-Card",
+    icon: <MdLayers />,
+    desc: "Freeform collections with custom cards, images & links",
+    color: "#7c3aed",
+    bgSoft: "#f5f3ff",
+    presets: [
+      { name: "Everyday Essentials", subtitle: "Essential daily picks for active living" },
+      { name: "Featured Highlights", subtitle: "Hand-picked highlights from our catalog" },
+      { name: "Why Choose Us", subtitle: "Our commitment to sports innovation & value" },
+      { name: "Special Services", subtitle: "Repair, warranty, and member benefits" },
+    ],
+    templates: [
+      { id: "other", name: "Custom Cards Section", desc: "Custom card layout with images & links", icon: "🧩" },
+      { id: "everyday-essentials", name: "Everyday Essentials", desc: "Daily essentials collection cards", icon: "🎒" },
+    ],
+  },
+];
 
 const PageBuilder = () => {
   const { id } = useParams();
@@ -52,6 +142,7 @@ const PageBuilder = () => {
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [availableBanners, setAvailableBanners] = useState([]);
+  const [availablePages, setAvailablePages] = useState([]);
 
   /* ========================================
      SECTION MODAL
@@ -61,7 +152,8 @@ const PageBuilder = () => {
   const [editingSection, setEditingSection] = useState(null);
 
   const [sectionName, setSectionName] = useState("");
-  const [sectionType, setSectionType] = useState("category");
+  const [mainSectionType, setMainSectionType] = useState("banner");
+  const [sectionType, setSectionType] = useState("hero-banner");
 
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedBanners, setSelectedBanners] = useState([]);
@@ -70,6 +162,604 @@ const PageBuilder = () => {
   const [bannerLink, setBannerLink] = useState("");
   const [productSearch, setProductSearch] = useState("");
   const [bannerSearch, setBannerSearch] = useState("");
+
+  const [draggedCatCardIndex, setDraggedCatCardIndex] = useState(null);
+  const [inlineEditingCatIndex, setInlineEditingCatIndex] = useState(null);
+
+  /* ========================================
+     VIEW SECTION PREVIEW MODAL
+  ======================================== */
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewingSection, setViewingSection] = useState(null);
+
+  // Category Carousel Management View state
+  const [carouselCategories, setCarouselCategories] = useState([]);
+  const [draggedCatIndex, setDraggedCatIndex] = useState(null);
+
+  // Category Item Quick Edit sub-modal state
+  const [showCategoryEditModal, setShowCategoryEditModal] = useState(false);
+  const [editingCatItem, setEditingCatItem] = useState(null);
+  const [editingCatIndex, setEditingCatIndex] = useState(null);
+  const [catEditTitle, setCatEditTitle] = useState("");
+  const [catEditCustomImage, setCatEditCustomImage] = useState("");
+  const [savingCategoryEdit, setSavingCategoryEdit] = useState(false);
+
+  // Universal helper — extracts a normalised item list from ANY section type
+  const extractSectionItems = (sec) => {
+    if (!sec) return [];
+
+    const disabledSet = new Set(
+      (sec.disabledItemIds || sec.data?.disabledItemIds || []).map(String),
+    );
+
+    // 1. categoryItems (Category Carousel and all category-type sections)
+    const rawCategoryItems =
+      sec.categoryItems && sec.categoryItems.length > 0
+        ? sec.categoryItems
+        : sec.data?.categoryItems && sec.data.categoryItems.length > 0
+          ? sec.data.categoryItems
+          : [];
+
+    if (rawCategoryItems.length > 0) {
+      return rawCategoryItems.map((ci, idx) => {
+        const catObj = typeof ci.category === "object" ? ci.category : null;
+        const pageObj = typeof ci.page === "object" ? ci.page : null;
+        const name = (
+          ci.name ||
+          ci.title ||
+          catObj?.name ||
+          pageObj?.name ||
+          `Category ${idx + 1}`
+        ).trim();
+        const image = ci.customImage || ci.image || catObj?.image || "";
+        const id = String(ci._id || catObj?._id || pageObj?._id || `ci-${idx}`);
+        const isActive =
+          ci.isActive !== false &&
+          !disabledSet.has(id) &&
+          !disabledSet.has(String(ci._id));
+        return {
+          _id: id,
+          itemId: ci._id,
+          name,
+          image,
+          isActive,
+          linkType: ci.linkType || (pageObj ? "page" : "category"),
+          sortOrder: ci.sortOrder !== undefined ? ci.sortOrder : idx,
+          category: ci.category,
+          page: ci.page,
+          sourceField: "categoryItems",
+          raw: ci,
+        };
+      });
+    }
+
+    // 2. products (Product-type sections)
+    const rawProducts =
+      sec.products && sec.products.length > 0
+        ? sec.products
+        : sec.data?.products && sec.data.products.length > 0
+          ? sec.data.products
+          : [];
+
+    if (rawProducts.length > 0) {
+      return rawProducts
+        .map((p, idx) => {
+          if (!p || (typeof p !== "object" && typeof p !== "string"))
+            return null;
+          const obj = typeof p === "object" ? p : null;
+          const id = String(obj?._id || p || `prod-${idx}`);
+          const isActive = obj?.isActive !== false && !disabledSet.has(id);
+          return {
+            _id: id,
+            itemId: id,
+            name: obj?.name || obj?.title || `Product ${idx + 1}`,
+            image: obj?.image || obj?.thumbnail || "",
+            isActive,
+            linkType: "product",
+            sortOrder: obj?.sortOrder !== undefined ? obj.sortOrder : idx,
+            sourceField: "products",
+            raw: p,
+          };
+        })
+        .filter(Boolean);
+    }
+
+    // 3. banners (Banner-type sections)
+    const rawBanners =
+      sec.banners && sec.banners.length > 0
+        ? sec.banners
+        : sec.data?.banners && sec.data.banners.length > 0
+          ? sec.data.banners
+          : [];
+
+    if (rawBanners.length > 0) {
+      return rawBanners
+        .map((b, idx) => {
+          if (!b || (typeof b !== "object" && typeof b !== "string"))
+            return null;
+          const obj = typeof b === "object" ? b : null;
+          const id = String(obj?._id || b || `ban-${idx}`);
+          const isActive = obj?.isActive !== false && !disabledSet.has(id);
+          return {
+            _id: id,
+            itemId: id,
+            name: obj?.title || obj?.name || obj?.alt || `Banner ${idx + 1}`,
+            image: obj?.image || obj?.imageUrl || obj?.url || "",
+            isActive,
+            linkType: "banner",
+            sortOrder: obj?.sortOrder !== undefined ? obj.sortOrder : idx,
+            sourceField: "banners",
+            raw: b,
+          };
+        })
+        .filter(Boolean);
+    }
+
+    // 4. generic items array (Other / everyday-essentials sections)
+    const rawItems =
+      sec.items && sec.items.length > 0
+        ? sec.items
+        : sec.data?.items && sec.data.items.length > 0
+          ? sec.data.items
+          : [];
+
+    if (rawItems.length > 0) {
+      return rawItems.map((item, idx) => {
+        const id = String(item._id || `item-${idx}`);
+        const isActive = item.isActive !== false && !disabledSet.has(id);
+        return {
+          _id: id,
+          itemId: item._id,
+          name: item.name || item.title || `Item ${idx + 1}`,
+          image: item.image || "",
+          isActive,
+          linkType: item.linkType || "item",
+          sortOrder: item.sortOrder !== undefined ? item.sortOrder : idx,
+          sourceField: "items",
+          raw: item,
+        };
+      });
+    }
+
+    // 5. plain categories array fallback
+    const rawCategories =
+      sec.categories && sec.categories.length > 0
+        ? sec.categories
+        : sec.data?.categories && sec.data.categories.length > 0
+          ? sec.data.categories
+          : [];
+
+    if (rawCategories.length > 0) {
+      return rawCategories.map((c, idx) => {
+        const catObj = typeof c === "object" ? c : null;
+        const id = String(catObj?._id || c || `cat-${idx}`);
+        const isActive = catObj?.isActive !== false && !disabledSet.has(id);
+        return {
+          _id: id,
+          itemId: id,
+          name: catObj?.name || `Category ${idx + 1}`,
+          image: catObj?.image || "",
+          isActive,
+          linkType: "category",
+          sortOrder: idx,
+          sourceField: "categories",
+          raw: c,
+        };
+      });
+    }
+
+    return [];
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        if (showCategoryEditModal) {
+          setShowCategoryEditModal(false);
+        } else if (showViewModal) {
+          handleCloseViewModal();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showViewModal, showCategoryEditModal]);
+
+  const handleOpenViewModal = (sec) => {
+    setViewingSection(sec);
+    setCarouselCategories(extractSectionItems(sec));
+    setShowViewModal(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false);
+    setViewingSection(null);
+    setCarouselCategories([]);
+    setShowCategoryEditModal(false);
+    setEditingCatItem(null);
+    setEditingCatIndex(null);
+  };
+
+  // Generic helper — builds updated raw array and API payload for any section type
+  const buildUpdatedSectionPayload = (
+    sec,
+    updatedRawItems,
+    sourceField,
+    extraFields = {},
+  ) => {
+    const fieldMap = {
+      categoryItems: {
+        normalize: (arr) =>
+          arr.map((ci) => ({
+            ...ci,
+            category:
+              typeof ci.category === "object" ? ci.category?._id : ci.category,
+            page: typeof ci.page === "object" ? ci.page?._id : ci.page,
+          })),
+      },
+      products: {
+        normalize: (arr) =>
+          arr
+            .map((p) => (typeof p === "object" ? p?._id || p : p))
+            .filter(Boolean),
+      },
+      banners: {
+        normalize: (arr) =>
+          arr
+            .map((b) => (typeof b === "object" ? b?._id || b : b))
+            .filter(Boolean),
+      },
+      items: { normalize: (arr) => arr },
+      categories: {
+        normalize: (arr) =>
+          arr
+            .map((c) => (typeof c === "object" ? c?._id || c : c))
+            .filter(Boolean),
+      },
+    };
+
+    const { normalize } = fieldMap[sourceField] || { normalize: (arr) => arr };
+    const normalizedItems = normalize(updatedRawItems);
+
+    return {
+      ...sec,
+      [sourceField]: normalizedItems,
+      ...extraFields,
+      data: {
+        ...(sec.data || {}),
+        [sourceField]: normalizedItems,
+        ...extraFields,
+      },
+    };
+  };
+
+  // Generic: get the raw source array from a section by sourceField
+  const getRawSourceArray = (sec, sourceField) => {
+    const top = sec[sourceField];
+    const nested = sec.data?.[sourceField];
+    if (Array.isArray(top) && top.length > 0) return [...top];
+    if (Array.isArray(nested) && nested.length > 0) return [...nested];
+    return [];
+  };
+
+  // Toggle active/inactive for any section item
+  const handleToggleCategoryActive = async (index) => {
+    if (!viewingSection) return;
+    const currentCat = carouselCategories[index];
+    if (!currentCat) return;
+
+    const sourceField = currentCat.sourceField || "categoryItems";
+    const newIsActive = !currentCat.isActive;
+
+    // 1. Optimistic UI
+    const updatedCategories = carouselCategories.map((c, i) =>
+      i === index ? { ...c, isActive: newIsActive } : c,
+    );
+    setCarouselCategories(updatedCategories);
+
+    // 2. Mutate the raw array at the right index
+    const rawArr = getRawSourceArray(viewingSection, sourceField);
+    const updatedRaw = rawArr.map((item, i) => {
+      if (i !== index) return item;
+      return typeof item === "object"
+        ? { ...item, isActive: newIsActive }
+        : item;
+    });
+
+    // 3. Also update disabledItemIds for categoryItems sections
+    const extraFields = {};
+    if (sourceField === "categoryItems") {
+      const updatedDisabledIds = updatedCategories
+        .filter((c) => !c.isActive)
+        .map((c) => String(c.itemId || c._id));
+      extraFields.disabledItemIds = updatedDisabledIds;
+    }
+
+    const payload = buildUpdatedSectionPayload(
+      viewingSection,
+      updatedRaw,
+      sourceField,
+      extraFields,
+    );
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      await api.put(`/pages/${id}/sections/${viewingSection._id}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success(
+        `"${currentCat.name}" is now ${newIsActive ? "ACTIVE" : "INACTIVE"}`,
+      );
+      setViewingSection(payload);
+      setPage((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sections: (prev.sections || []).map((s) =>
+            s._id === viewingSection._id ? payload : s,
+          ),
+        };
+      });
+      fetchPageDetails(false);
+    } catch (err) {
+      console.error("Failed to toggle active:", err);
+      toast.error(err?.response?.data?.message || "Failed to update status");
+      setCarouselCategories(carouselCategories);
+    }
+  };
+
+  // Drag and drop reordering for any section type
+  const handleCategoryDragStart = (e, index) => {
+    setDraggedCatIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleCategoryDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleCategoryDrop = async (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedCatIndex === null || draggedCatIndex === targetIndex) return;
+
+    const categoriesCopy = [...carouselCategories];
+    const [moved] = categoriesCopy.splice(draggedCatIndex, 1);
+    categoriesCopy.splice(targetIndex, 0, moved);
+    setDraggedCatIndex(null);
+    setCarouselCategories(categoriesCopy);
+
+    const sourceField =
+      carouselCategories[draggedCatIndex]?.sourceField || "categoryItems";
+    const rawArr = getRawSourceArray(viewingSection, sourceField);
+
+    if (rawArr.length > 0) {
+      const [movedItem] = rawArr.splice(draggedCatIndex, 1);
+      rawArr.splice(targetIndex, 0, movedItem);
+      const reordered = rawArr.map((item, idx) =>
+        typeof item === "object"
+          ? { ...item, sortOrder: idx, displayOrder: idx }
+          : item,
+      );
+
+      // For categoryItems also denormalize refs
+      const finalItems =
+        sourceField === "categoryItems"
+          ? reordered.map((ci) => ({
+              ...ci,
+              category:
+                typeof ci.category === "object"
+                  ? ci.category?._id
+                  : ci.category,
+              page: typeof ci.page === "object" ? ci.page?._id : ci.page,
+            }))
+          : reordered;
+
+      const payload = buildUpdatedSectionPayload(
+        viewingSection,
+        finalItems,
+        sourceField,
+      );
+
+      try {
+        const token = localStorage.getItem("adminToken");
+        await api.put(`/pages/${id}/sections/${viewingSection._id}`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        toast.success("Order updated");
+        setViewingSection(payload);
+        setPage((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            sections: (prev.sections || []).map((s) =>
+              s._id === viewingSection._id ? payload : s,
+            ),
+          };
+        });
+        fetchPageDetails(false);
+      } catch (err) {
+        console.error("Failed to reorder:", err);
+        toast.error("Failed to save order");
+        setCarouselCategories(carouselCategories);
+      }
+    }
+  };
+
+  // Delete item from THIS section only (never from global DB)
+  const handleDeleteCategory = async (index) => {
+    const cat = carouselCategories[index];
+    if (!cat) return;
+
+    if (
+      !window.confirm(
+        `Remove "${cat.name}" from this section?\n\n(The item will only be removed from this section, not deleted globally.)`,
+      )
+    ) {
+      return;
+    }
+
+    const sourceField = cat.sourceField || "categoryItems";
+    const updatedCategories = carouselCategories.filter((_, i) => i !== index);
+    setCarouselCategories(updatedCategories);
+
+    const rawArr = getRawSourceArray(viewingSection, sourceField)
+      .filter((_, i) => i !== index)
+      .map((item, idx) =>
+        typeof item === "object"
+          ? { ...item, sortOrder: idx, displayOrder: idx }
+          : item,
+      );
+
+    const finalItems =
+      sourceField === "categoryItems"
+        ? rawArr.map((ci) => ({
+            ...ci,
+            category:
+              typeof ci.category === "object" ? ci.category?._id : ci.category,
+            page: typeof ci.page === "object" ? ci.page?._id : ci.page,
+          }))
+        : rawArr;
+
+    const payload = buildUpdatedSectionPayload(
+      viewingSection,
+      finalItems,
+      sourceField,
+    );
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      await api.put(`/pages/${id}/sections/${viewingSection._id}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success(`Removed "${cat.name}" from this section`);
+      setViewingSection(payload);
+      setPage((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sections: (prev.sections || []).map((s) =>
+            s._id === viewingSection._id ? payload : s,
+          ),
+        };
+      });
+      fetchPageDetails(false);
+    } catch (err) {
+      console.error("Failed to delete from section:", err);
+      toast.error("Failed to remove item from section");
+      setCarouselCategories(carouselCategories);
+    }
+  };
+
+  // Edit category in section
+  const handleOpenCategoryItemEdit = (cat, index) => {
+    setEditingCatIndex(index);
+    setEditingCatItem(cat);
+    setCatEditTitle(cat.name || "");
+    setCatEditCustomImage(cat.image || "");
+    setShowCategoryEditModal(true);
+  };
+
+  const handleCatEditImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCatEditCustomImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Save item edits (name + image) for any section type
+  const handleSaveCategoryItemEdit = async () => {
+    if (editingCatIndex === null || !editingCatItem) return;
+
+    try {
+      setSavingCategoryEdit(true);
+
+      const trimmedName = catEditTitle.trim() || editingCatItem.name;
+      const sourceField = editingCatItem.sourceField || "categoryItems";
+
+      // Update display list
+      const updatedCategories = carouselCategories.map((c, i) =>
+        i === editingCatIndex
+          ? { ...c, name: trimmedName, image: catEditCustomImage }
+          : c,
+      );
+      setCarouselCategories(updatedCategories);
+
+      // Mutate raw source array
+      const rawArr = getRawSourceArray(viewingSection, sourceField).map(
+        (item, i) => {
+          if (i !== editingCatIndex) {
+            return sourceField === "categoryItems"
+              ? {
+                  ...item,
+                  category:
+                    typeof item.category === "object"
+                      ? item.category?._id
+                      : item.category,
+                  page:
+                    typeof item.page === "object" ? item.page?._id : item.page,
+                }
+              : item;
+          }
+          if (typeof item !== "object") return item;
+          const updated = {
+            ...item,
+            name: trimmedName,
+            title: trimmedName,
+            image: catEditCustomImage,
+            customImage: catEditCustomImage,
+          };
+          if (sourceField === "categoryItems") {
+            updated.category =
+              typeof item.category === "object"
+                ? item.category?._id
+                : item.category;
+            updated.page =
+              typeof item.page === "object" ? item.page?._id : item.page;
+          }
+          return updated;
+        },
+      );
+
+      const payload = buildUpdatedSectionPayload(
+        viewingSection,
+        rawArr,
+        sourceField,
+      );
+
+      const token = localStorage.getItem("adminToken");
+      await api.put(`/pages/${id}/sections/${viewingSection._id}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      toast.success(`Category "${trimmedName}" updated`);
+      setShowCategoryEditModal(false);
+      setEditingCatItem(null);
+      setEditingCatIndex(null);
+      toast.success(`"${trimmedName}" updated`);
+
+      setViewingSection(payload);
+      setPage((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sections: (prev.sections || []).map((s) =>
+            s._id === viewingSection._id ? payload : s,
+          ),
+        };
+      });
+
+      fetchPageDetails(false);
+    } catch (err) {
+      console.error("Failed to save item edit:", err);
+      toast.error("Failed to update item");
+    } finally {
+      setSavingCategoryEdit(false);
+    }
+  };
 
   const getSectionBaseType = (type, sec = null) => {
     const t = (type || "").toLowerCase().trim();
@@ -191,7 +881,7 @@ const PageBuilder = () => {
       try {
         sessionStorage.setItem(
           `cached_admin_page_${id}`,
-          JSON.stringify(pageData)
+          JSON.stringify(pageData),
         );
       } catch (e) {}
     } catch (error) {
@@ -214,15 +904,17 @@ const PageBuilder = () => {
         Authorization: `Bearer ${token}`,
       };
 
-      const [catRes, prodRes, banRes] = await Promise.all([
+      const [catRes, prodRes, banRes, pagesRes] = await Promise.all([
         api.get("/categories", { headers }),
         api.get("/products?limit=100", { headers }),
         api.get("/banners", { headers }),
+        api.get("/pages", { headers }),
       ]);
 
       setAvailableCategories(catRes.data.categories || []);
       setAvailableProducts(prodRes.data.products || []);
       setAvailableBanners(banRes.data.banners || []);
+      setAvailablePages(pagesRes.data?.pages || []);
     } catch (error) {
       console.error("Fetch Resources Error:", error);
     }
@@ -248,7 +940,8 @@ const PageBuilder = () => {
 
     setSectionName("");
     setSectionSubtitle("");
-    setSectionType("category-showcase");
+    setMainSectionType("banner");
+    setSectionType("hero-banner");
 
     setCategoryItems([]);
     setSelectedProducts([]);
@@ -262,6 +955,7 @@ const PageBuilder = () => {
     setShowQuickCreateCategory(false);
     setQuickCatName("");
     setQuickCatImage(null);
+    setInlineEditingCatIndex(null);
 
     setShowSectionModal(true);
   };
@@ -275,7 +969,10 @@ const PageBuilder = () => {
 
     setSectionName(sec.name || "");
     setSectionSubtitle(sec.data?.subtitle || sec.subtitle || "");
-    setSectionType(sec.type || "category");
+    
+    const base = getSectionBaseType(sec.type, sec);
+    setMainSectionType(base);
+    setSectionType(sec.type || "banner");
     setProductSearch("");
     setBannerSearch("");
 
@@ -283,15 +980,15 @@ const PageBuilder = () => {
       sec.categoryItems && sec.categoryItems.length > 0
         ? sec.categoryItems
         : sec.data?.categoryItems && sec.data.categoryItems.length > 0
-        ? sec.data.categoryItems
-        : [];
+          ? sec.data.categoryItems
+          : [];
 
     const rawCategories =
       sec.categories && sec.categories.length > 0
         ? sec.categories
         : sec.data?.categories && sec.data.categories.length > 0
-        ? sec.data.categories
-        : [];
+          ? sec.data.categories
+          : [];
 
     if (rawCategoryItems.length > 0) {
       setCategoryItems(
@@ -302,27 +999,54 @@ const PageBuilder = () => {
                 ? ci.category?._id
                 : ci.category || ci.categoryId;
             const pageId =
-              typeof ci.page === "object"
-                ? ci.page?._id
-                : ci.page || ci.pageId;
+              typeof ci.page === "object" ? ci.page?._id : ci.page || ci.pageId;
+            const destType =
+              ci.destinationType ||
+              (ci.linkType === "page" ? "store-page" : "category-page");
+            const destId =
+              ci.destinationId ||
+              (destType === "store-page" ? pageId : catId);
+            
+            const matchedGlobalCat = availableCategories.find(
+              (c) => c._id === catId,
+            );
+            const destSlug =
+              ci.destinationSlug ||
+              (destType === "category-page"
+                ? matchedGlobalCat?.slug || (matchedGlobalCat?.name ? matchedGlobalCat.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-") : "")
+                : "");
+
             return {
               categoryId: catId || pageId || ci._id,
               customImage: ci.customImage || ci.image || "",
-              name: ci.name || ci.title || "",
-              linkType: ci.linkType || (pageId ? "page" : "category"),
-              pageId: pageId,
+              name: ci.name || ci.title || matchedGlobalCat?.name || "",
+              isActive: ci.isActive !== false,
+              destinationType: destType,
+              destinationId: destId || "",
+              destinationSlug: destSlug || "",
             };
           })
-          .filter((ci) => Boolean(ci.categoryId))
+          .filter((ci) => Boolean(ci.categoryId)),
       );
     } else if (rawCategories.length > 0) {
       setCategoryItems(
         rawCategories
-          .map((c) => ({
-            categoryId: typeof c === "object" ? c?._id : c,
-            customImage: "",
-          }))
-          .filter((ci) => Boolean(ci.categoryId))
+          .map((c) => {
+            const catId = typeof c === "object" ? c?._id : c;
+            const matchedGlobalCat = availableCategories.find(
+              (cg) => cg._id === catId,
+            );
+            return {
+              categoryId: catId,
+              name: typeof c === "object" ? c.name : matchedGlobalCat?.name || "",
+              customImage: "",
+              isActive: true,
+              destinationType: "category-page",
+              destinationId: catId || "",
+              destinationSlug: matchedGlobalCat?.slug || "",
+            };
+          })
+          .filter((ci) => Boolean(ci.categoryId)),
       );
     } else {
       setCategoryItems([]);
@@ -332,8 +1056,8 @@ const PageBuilder = () => {
       sec.products && sec.products.length > 0
         ? sec.products
         : sec.data?.products && sec.data.products.length > 0
-        ? sec.data.products
-        : [];
+          ? sec.data.products
+          : [];
     const prodIds = rawProducts
       .map((p) => (typeof p === "string" ? p : p?._id))
       .filter(Boolean);
@@ -342,8 +1066,8 @@ const PageBuilder = () => {
       sec.banners && sec.banners.length > 0
         ? sec.banners
         : sec.data?.banners && sec.data.banners.length > 0
-        ? sec.data.banners
-        : [];
+          ? sec.data.banners
+          : [];
     const banIds = rawBanners
       .map((b) => (typeof b === "string" ? b : b?._id))
       .filter(Boolean);
@@ -351,21 +1075,74 @@ const PageBuilder = () => {
     setSelectedProducts(prodIds);
     setSelectedBanners(banIds);
     setBannerImage(sec.data?.image || sec.image || "");
-    setBannerLink(sec.data?.link || sec.link || sec.data?.route || sec.route || "");
+    setBannerLink(
+      sec.data?.link || sec.link || sec.data?.route || sec.route || "",
+    );
 
     const rawItems =
       Array.isArray(sec.items) && sec.items.length > 0
         ? sec.items
         : Array.isArray(sec.data?.items) && sec.data.items.length > 0
-        ? sec.data.items
-        : [];
+          ? sec.data.items
+          : [];
     setItems(rawItems);
 
     setShowQuickCreateCategory(false);
     setQuickCatName("");
     setQuickCatImage(null);
+    setInlineEditingCatIndex(null);
 
     setShowSectionModal(true);
+  };
+
+  /* ========================================
+     MAIN SECTION TYPE CHANGER
+  ======================================== */
+
+  const handleMainSectionTypeChange = (newMainType) => {
+    setMainSectionType(newMainType);
+    if (newMainType === "banner") {
+      if (
+        ![
+          "hero-banner",
+          "promo-banner",
+          "promo-banner-2",
+          "coupon-banner",
+          "banner",
+        ].includes(sectionType)
+      ) {
+        setSectionType("hero-banner");
+      }
+    } else if (newMainType === "category") {
+      if (
+        ![
+          "category-carousel",
+          "category-showcase",
+          "sports-categories",
+          "loved-categories",
+          "equipping-champions",
+          "category-nav",
+          "category",
+        ].includes(sectionType)
+      ) {
+        setSectionType("category-carousel");
+      }
+    } else if (newMainType === "product") {
+      if (
+        ![
+          "product-section",
+          "storm-proof",
+          "outdoor-products",
+          "product",
+        ].includes(sectionType)
+      ) {
+        setSectionType("product-section");
+      }
+    } else if (newMainType === "other") {
+      if (!["other", "everyday-essentials"].includes(sectionType)) {
+        setSectionType("other");
+      }
+    }
   };
 
   /* ========================================
@@ -378,7 +1155,106 @@ const PageBuilder = () => {
       toast.error("Category is already added to this section.");
       return;
     }
-    setCategoryItems((prev) => [...prev, { categoryId: catId, customImage: "" }]);
+    const globalCat = availableCategories.find((c) => c._id === catId);
+    const catSlug =
+      globalCat?.slug ||
+      (globalCat?.name
+        ? globalCat.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-")
+        : "");
+
+    setCategoryItems((prev) => [
+      ...prev,
+      {
+        categoryId: catId,
+        name: globalCat?.name || "",
+        customImage: "",
+        isActive: true,
+        destinationType: "category-page",
+        destinationId: catId,
+        destinationSlug: catSlug,
+      },
+    ]);
+  };
+
+  const handleUpdateCategoryItemField = (index, field, value) => {
+    setCategoryItems((prev) => {
+      const copy = [...prev];
+      const item = { ...copy[index] };
+
+      if (field === "destinationType") {
+        item.destinationType = value;
+        if (value === "store-page") {
+          const globalCat = availableCategories.find(
+            (c) => c._id === item.categoryId,
+          );
+          const matchingPage = availablePages.find(
+            (p) =>
+              p.slug?.toLowerCase() === globalCat?.slug?.toLowerCase() ||
+              p.name?.toLowerCase() === globalCat?.name?.toLowerCase(),
+          );
+          item.destinationId = matchingPage?._id || availablePages[0]?._id || "";
+          item.destinationSlug = matchingPage?.slug || availablePages[0]?.slug || "";
+        } else if (value === "product-page") {
+          const defaultProd = availableProducts[0];
+          item.destinationId = defaultProd?._id || "";
+          item.destinationSlug = "";
+        } else if (value === "category-page") {
+          const globalCat =
+            availableCategories.find((c) => c._id === item.categoryId) ||
+            availableCategories[0];
+          item.destinationId = globalCat?._id || item.categoryId || "";
+          item.destinationSlug =
+            globalCat?.slug ||
+            (globalCat?.name
+              ? globalCat.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-")
+              : "");
+        } else if (value === "none") {
+          item.destinationId = "";
+          item.destinationSlug = "";
+        }
+      } else if (field === "destinationSelect") {
+        item.destinationId = value;
+        if (item.destinationType === "store-page") {
+          const p = availablePages.find((pg) => pg._id === value);
+          item.destinationSlug = p?.slug || "";
+        } else if (item.destinationType === "category-page") {
+          const c = availableCategories.find((cg) => cg._id === value);
+          item.destinationSlug =
+            c?.slug ||
+            (c?.name
+              ? c.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-")
+              : "");
+        }
+      } else {
+        item[field] = value;
+      }
+
+      copy[index] = item;
+      return copy;
+    });
+  };
+
+  const handleCategoryCardDragStart = (e, index) => {
+    setDraggedCatCardIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleCategoryCardDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleCategoryCardDrop = (e, targetIndex) => {
+    e.preventDefault();
+    if (draggedCatCardIndex === null || draggedCatCardIndex === targetIndex)
+      return;
+    setCategoryItems((prev) => {
+      const copy = [...prev];
+      const [moved] = copy.splice(draggedCatCardIndex, 1);
+      copy.splice(targetIndex, 0, moved);
+      return copy;
+    });
+    setDraggedCatCardIndex(null);
   };
 
   const handleRemoveCategoryFromSection = (catId) => {
@@ -402,7 +1278,7 @@ const PageBuilder = () => {
     const isImage =
       file.type.startsWith("image/") ||
       /\.(jpg|jpeg|png|webp|svg|gif|avif|bmp|tiff|ico|heic|heif|jfif)$/i.test(
-        file.name
+        file.name,
       );
     if (!isImage) {
       toast.error("Please select an image file");
@@ -421,8 +1297,8 @@ const PageBuilder = () => {
       const uploadedUrl = res.data.url;
       setCategoryItems((prev) =>
         prev.map((ci) =>
-          ci.categoryId === catId ? { ...ci, customImage: uploadedUrl } : ci
-        )
+          ci.categoryId === catId ? { ...ci, customImage: uploadedUrl } : ci,
+        ),
       );
       toast.success("Section-specific custom image uploaded");
     } catch (err) {
@@ -434,8 +1310,8 @@ const PageBuilder = () => {
   const handleRemoveCustomCategoryImage = (catId) => {
     setCategoryItems((prev) =>
       prev.map((ci) =>
-        ci.categoryId === catId ? { ...ci, customImage: "" } : ci
-      )
+        ci.categoryId === catId ? { ...ci, customImage: "" } : ci,
+      ),
     );
   };
 
@@ -448,7 +1324,7 @@ const PageBuilder = () => {
 
     const trimmed = quickCatName.trim();
     const exists = availableCategories.some(
-      (c) => c.name?.toLowerCase().trim() === trimmed.toLowerCase()
+      (c) => c.name?.toLowerCase().trim() === trimmed.toLowerCase(),
     );
     if (exists) {
       toast.error("Category already exists. Use existing category.");
@@ -536,7 +1412,7 @@ const PageBuilder = () => {
     const isImage =
       file.type.startsWith("image/") ||
       /\.(jpg|jpeg|png|webp|svg|gif|avif|bmp|tiff|ico|heic|heif|jfif)$/i.test(
-        file.name
+        file.name,
       );
     if (!isImage) {
       toast.error("Please select an image file");
@@ -583,7 +1459,9 @@ const PageBuilder = () => {
       }
       const ids = categoryItems.map((ci) => ci.categoryId);
       if (new Set(ids).size !== ids.length) {
-        toast.error("Duplicate categories inside the same section are strictly prohibited.");
+        toast.error(
+          "Duplicate categories inside the same section are strictly prohibited.",
+        );
         return;
       }
     }
@@ -598,7 +1476,7 @@ const PageBuilder = () => {
       }
 
       const invalidItem = items.find(
-        (item) => !item.name?.trim() || !item.image
+        (item) => !item.name?.trim() || !item.image,
       );
 
       if (invalidItem) {
@@ -616,33 +1494,84 @@ const PageBuilder = () => {
         Authorization: `Bearer ${token}`,
       };
 
-      const payload = {
+        const mappedCategoryItems =
+          currentBaseType === "category"
+            ? categoryItems.map((ci, idx) => {
+                const globalCat = availableCategories.find(
+                  (c) => c._id === ci.categoryId,
+                );
+                const destType = ci.destinationType || "category-page";
+                let destId = ci.destinationId || "";
+                let destSlug = (ci.destinationSlug || "").trim();
+
+                if (destType === "category-page") {
+                  if (!destId) destId = ci.categoryId;
+                  if (!destSlug) {
+                    destSlug =
+                      globalCat?.slug ||
+                      (globalCat?.name
+                        ? globalCat.name
+                            .toLowerCase()
+                            .trim()
+                            .replace(/[^a-z0-9]+/g, "-")
+                        : "");
+                  }
+                } else if (destType === "store-page") {
+                  if (!destSlug && destId) {
+                    const pg = availablePages.find((p) => p._id === destId);
+                    if (pg) destSlug = pg.slug;
+                  }
+                }
+
+                let link = "";
+                if (destType === "store-page") {
+                  link = destSlug ? `/${destSlug.replace(/^\//, "")}` : "";
+                } else if (destType === "product-page") {
+                  link = destId ? `/product/${destId}` : "";
+                } else if (destType === "category-page") {
+                  link = destSlug
+                    ? `/category/${destSlug.replace(/^\/category\//, "").replace(/^\//, "")}`
+                    : "";
+                } else if (destType === "none") {
+                  link = "";
+                }
+
+                return {
+                  category: ci.categoryId,
+                  name: ci.name || globalCat?.name || "",
+                  title: ci.name || globalCat?.name || "",
+                  customImage: ci.customImage || "",
+                  image: ci.customImage || "",
+                  isActive: ci.isActive !== false,
+                  destinationType: destType,
+                  destinationId: destId,
+                  destinationSlug: destSlug,
+                  linkType: destType === "store-page" ? "page" : "category",
+                  link,
+                  page: destType === "store-page" ? destId : undefined,
+                  displayOrder: idx,
+                  sortOrder: idx,
+                };
+              })
+            : [];
+
+        const payload = {
         name: sectionName.trim(),
         type: sectionType,
         subtitle: sectionSubtitle.trim(),
         image: currentBaseType === "banner" ? bannerImage : "",
         link: currentBaseType === "banner" ? bannerLink : "",
 
-        categoryItems:
-          currentBaseType === "category"
-            ? categoryItems.map((ci, idx) => ({
-                category: ci.categoryId,
-                link: `/category/${ci.categoryId}`,
-                customImage: ci.customImage || "",
-                sortOrder: idx,
-              }))
-            : [],
+        categoryItems: mappedCategoryItems,
 
         categories:
           currentBaseType === "category"
             ? categoryItems.map((ci) => ci.categoryId)
             : [],
 
-        products:
-          currentBaseType === "product" ? selectedProducts : [],
+        products: currentBaseType === "product" ? selectedProducts : [],
 
-        banners:
-          currentBaseType === "banner" ? selectedBanners : [],
+        banners: currentBaseType === "banner" ? selectedBanners : [],
 
         items:
           currentBaseType === "other"
@@ -664,15 +1593,7 @@ const PageBuilder = () => {
             currentBaseType === "category"
               ? categoryItems.map((ci) => ci.categoryId)
               : [],
-          categoryItems:
-            currentBaseType === "category"
-              ? categoryItems.map((ci, idx) => ({
-                  category: ci.categoryId,
-                  link: `/category/${ci.categoryId}`,
-                  customImage: ci.customImage || "",
-                  sortOrder: idx,
-                }))
-              : [],
+          categoryItems: mappedCategoryItems,
           items:
             currentBaseType === "other"
               ? items.map((item) => ({
@@ -685,11 +1606,9 @@ const PageBuilder = () => {
       };
 
       if (editingSection) {
-        await api.put(
-          `/pages/${id}/sections/${editingSection._id}`,
-          payload,
-          { headers }
-        );
+        await api.put(`/pages/${id}/sections/${editingSection._id}`, payload, {
+          headers,
+        });
 
         toast.success("Section updated successfully");
       } else {
@@ -706,9 +1625,7 @@ const PageBuilder = () => {
     } catch (error) {
       console.error("Save Section Error:", error);
 
-      toast.error(
-        error?.response?.data?.message || "Failed to save section"
-      );
+      toast.error(error?.response?.data?.message || "Failed to save section");
     } finally {
       setSavingSection(false);
     }
@@ -725,7 +1642,7 @@ const PageBuilder = () => {
       return {
         ...prev,
         sections: (prev.sections || []).map((s) =>
-          s._id === sec._id ? { ...s, isActive: !s.isActive } : s
+          s._id === sec._id ? { ...s, isActive: !s.isActive } : s,
         ),
       };
     });
@@ -742,12 +1659,10 @@ const PageBuilder = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      toast.success(
-        `Section ${sec.isActive ? "disabled" : "enabled"}`
-      );
+      toast.success(`Section ${sec.isActive ? "disabled" : "enabled"}`);
 
       fetchPageDetails(false);
     } catch (error) {
@@ -763,9 +1678,7 @@ const PageBuilder = () => {
 
   const handleDeleteSection = async (sec) => {
     if (
-      !window.confirm(
-        `Are you sure you want to delete section '${sec.name}'?`
-      )
+      !window.confirm(`Are you sure you want to delete section '${sec.name}'?`)
     ) {
       return;
     }
@@ -823,7 +1736,7 @@ const PageBuilder = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Section layout order updated");
@@ -852,10 +1765,7 @@ const PageBuilder = () => {
   const handleDrop = (e, targetIndex) => {
     e.preventDefault();
 
-    if (
-      draggedIndex === null ||
-      draggedIndex === targetIndex
-    ) {
+    if (draggedIndex === null || draggedIndex === targetIndex) {
       return;
     }
 
@@ -878,7 +1788,7 @@ const PageBuilder = () => {
     setSelectedProducts((prev) =>
       prev.includes(prodId)
         ? prev.filter((i) => i !== prodId)
-        : [...prev, prodId]
+        : [...prev, prodId],
     );
   };
 
@@ -888,13 +1798,11 @@ const PageBuilder = () => {
 
   const toggleBannerSelection = (banId) => {
     setSelectedBanners((prev) =>
-      prev.includes(banId)
-        ? prev.filter((i) => i !== banId)
-        : [...prev, banId]
+      prev.includes(banId) ? prev.filter((i) => i !== banId) : [...prev, banId],
     );
   };
 
-  const currentBaseType = getSectionBaseType(sectionType, editingSection);
+  const currentBaseType = mainSectionType;
 
   /* ========================================
      LOADING
@@ -914,11 +1822,7 @@ const PageBuilder = () => {
   }
 
   if (!page) {
-    return (
-      <div className="page-builder-error">
-        Page not found
-      </div>
-    );
+    return <div className="page-builder-error">Page not found</div>;
   }
 
   /* ========================================
@@ -927,11 +1831,9 @@ const PageBuilder = () => {
 
   return (
     <div className="page-builder">
-
       {/* HEADER */}
 
       <div className="builder-header">
-
         <button
           type="button"
           className="back-btn"
@@ -946,14 +1848,10 @@ const PageBuilder = () => {
           <h2>
             {page.name}
 
-            <span className="builder-slug">
-              /{page.slug}
-            </span>
+            <span className="builder-slug">/{page.slug}</span>
           </h2>
 
-          <p>
-            Configure sections, content, and order for this page
-          </p>
+          <p>Configure sections, content, and order for this page</p>
         </div>
 
         <button
@@ -965,27 +1863,18 @@ const PageBuilder = () => {
 
           <span>+ Add Section</span>
         </button>
-
       </div>
 
       {/* SECTIONS */}
 
       <div className="builder-sections-container">
-
         {page.sections?.length === 0 ? (
           <div className="sections-empty-state">
+            <div className="empty-icon">🧩</div>
 
-            <div className="empty-icon">
-              🧩
-            </div>
+            <h3>No sections added yet</h3>
 
-            <h3>
-              No sections added yet
-            </h3>
-
-            <p>
-              Click "+ Add Section" to build this page layout
-            </p>
+            <p>Click "+ Add Section" to build this page layout</p>
 
             <button
               type="button"
@@ -994,58 +1883,35 @@ const PageBuilder = () => {
             >
               <MdAdd />
 
-              <span>
-                Add First Section
-              </span>
+              <span>Add First Section</span>
             </button>
-
           </div>
         ) : (
           <div className="sections-list">
-
             {page.sections.map((sec, idx) => (
-
               <div
                 key={sec._id}
                 draggable
-                onDragStart={(e) =>
-                  handleDragStart(e, idx)
-                }
+                onDragStart={(e) => handleDragStart(e, idx)}
                 onDragOver={handleDragOver}
-                onDrop={(e) =>
-                  handleDrop(e, idx)
-                }
+                onDrop={(e) => handleDrop(e, idx)}
                 className={`section-row-card ${
                   sec.isActive ? "" : "disabled"
-                } ${
-                  draggedIndex === idx
-                    ? "dragging"
-                    : ""
-                }`}
+                } ${draggedIndex === idx ? "dragging" : ""}`}
               >
-
                 {/* DRAG */}
 
-                <div
-                  className="section-drag-handle"
-                  title="Drag to reorder"
-                >
+                <div className="section-drag-handle" title="Drag to reorder">
                   <MdDragIndicator />
 
-                  <span className="section-index">
-                    {idx + 1}
-                  </span>
+                  <span className="section-index">{idx + 1}</span>
                 </div>
 
                 {/* INFO */}
 
                 <div className="section-row-info">
-
                   <div className="section-row-header">
-
-                    <h4>
-                      {sec.name}
-                    </h4>
+                    <h4>{sec.name}</h4>
 
                     {(() => {
                       const base = getSectionBaseType(sec.type, sec);
@@ -1056,12 +1922,13 @@ const PageBuilder = () => {
                           {base === "banner" && <MdImage />}
                           {base === "other" && <MdLink />}
                           <span>
-                            {(sec.type || "section").replace(/-/g, " ").toUpperCase()}
+                            {(sec.type || "section")
+                              .replace(/-/g, " ")
+                              .toUpperCase()}
                           </span>
                         </span>
                       );
                     })()}
-
                   </div>
 
                   <div className="section-items-summary">
@@ -1092,51 +1959,42 @@ const PageBuilder = () => {
                       }
                       if (base === "other") {
                         const count =
-                          sec.items?.length ||
-                          sec.data?.items?.length ||
-                          0;
+                          sec.items?.length || sec.data?.items?.length || 0;
                         return <span>{count} Custom items added</span>;
                       }
                       return null;
                     })()}
                   </div>
-
                 </div>
 
                 {/* ACTIONS */}
 
                 <div className="section-row-actions">
-
                   <button
                     type="button"
                     className={`status-pill ${
-                      sec.isActive
-                        ? "active"
-                        : "inactive"
+                      sec.isActive ? "active" : "inactive"
                     }`}
-                    onClick={() =>
-                      handleToggleSectionActive(sec)
-                    }
+                    onClick={() => handleToggleSectionActive(sec)}
                   >
-                    {sec.isActive ? (
-                      <MdCheckCircle />
-                    ) : (
-                      <MdCancel />
-                    )}
+                    {sec.isActive ? <MdCheckCircle /> : <MdCancel />}
 
-                    <span>
-                      {sec.isActive
-                        ? "Active"
-                        : "Disabled"}
-                    </span>
+                    <span>{sec.isActive ? "Active" : "Disabled"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="view-sec-btn"
+                    onClick={() => handleOpenViewModal(sec)}
+                    title="View Section"
+                  >
+                    <MdVisibility />
                   </button>
 
                   <button
                     type="button"
                     className="edit-sec-btn"
-                    onClick={() =>
-                      handleOpenEditModal(sec)
-                    }
+                    onClick={() => handleOpenEditModal(sec)}
                     title="Edit Section"
                   >
                     <MdEdit />
@@ -1145,23 +2003,16 @@ const PageBuilder = () => {
                   <button
                     type="button"
                     className="delete-sec-btn"
-                    onClick={() =>
-                      handleDeleteSection(sec)
-                    }
+                    onClick={() => handleDeleteSection(sec)}
                     title="Delete Section"
                   >
                     <MdDelete />
                   </button>
-
                 </div>
-
               </div>
-
             ))}
-
           </div>
         )}
-
       </div>
 
       {/* ========================================
@@ -1169,121 +2020,75 @@ const PageBuilder = () => {
       ======================================== */}
 
       {showSectionModal && (
-
         <div
           className="modal-overlay"
-          onClick={() =>
-            setShowSectionModal(false)
-          }
+          onClick={() => setShowSectionModal(false)}
         >
-
           <div
             className="modal-container section-modal"
-            onClick={(e) =>
-              e.stopPropagation()
-            }
+            onClick={(e) => e.stopPropagation()}
           >
-
             {/* MODAL HEADER */}
-
             <div className="modal-header">
-
-              <h3>
-                {editingSection
-                  ? "Edit Section"
-                  : `Add Section to ${page.name}`}
+              <h3 className="modal-title">
+                {editingSection ? "Edit Section" : "Add Section"}
               </h3>
-
               <button
                 type="button"
                 className="close-modal-btn"
-                onClick={() =>
-                  setShowSectionModal(false)
-                }
+                onClick={() => setShowSectionModal(false)}
+                title="Close"
               >
                 ✕
               </button>
-
             </div>
 
             {/* FORM */}
-
-            <form
-              onSubmit={handleSaveSection}
-              className="modal-form"
-            >
+            <form onSubmit={handleSaveSection} className="modal-form">
+              {/* SECTION TYPE (CLEAN SEGMENTED TABS) */}
+              <div className="form-group">
+                <label className="form-label">Section Type *</label>
+                <div className="simple-type-tabs">
+                  {MAIN_SECTION_TYPES.map((st) => {
+                    const isSelected = mainSectionType === st.type;
+                    return (
+                      <button
+                        key={st.type}
+                        type="button"
+                        className={`simple-type-tab ${isSelected ? "active" : ""}`}
+                        onClick={() => handleMainSectionTypeChange(st.type)}
+                      >
+                        <span className="simple-type-tab-icon">{st.icon}</span>
+                        <span>{st.title}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
               {/* SECTION NAME */}
-
               <div className="form-group">
-                <label>Section Name *</label>
+                <label className="form-label">Section Name *</label>
                 <input
                   type="text"
                   placeholder="e.g. Popular Categories, Hero Banner"
                   value={sectionName}
                   onChange={(e) => setSectionName(e.target.value)}
                   required
+                  className="form-input"
                 />
               </div>
 
               {/* SECTION SUBTITLE */}
               <div className="form-group">
-                <label>Section Subtitle / Tagline (Optional)</label>
+                <label className="form-label">Section Subtitle (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Style Approved, Explore best of..."
                   value={sectionSubtitle}
                   onChange={(e) => setSectionSubtitle(e.target.value)}
+                  className="form-input"
                 />
-              </div>
-
-              {/* SECTION TYPE */}
-              <div className="form-group">
-                <label>Section Type *</label>
-                <select
-                  value={sectionType}
-                  onChange={(e) => setSectionType(e.target.value)}
-                >
-                  <optgroup label="Banner Sections">
-                    <option value="coupon-banner">Coupon Banner</option>
-                    <option value="promo-banner">Promo Banner</option>
-                    <option value="promo-banner-2">Promo Banner 2</option>
-                    <option value="hero-banner">Hero Banner</option>
-                    <option value="banner">Generic Banner Section</option>
-                  </optgroup>
-
-                  <optgroup label="Category Sections">
-                    <option value="category-carousel">Category Carousel</option>
-                    <option value="category-showcase">Category Showcase</option>
-                    <option value="sports-categories">Sports Categories</option>
-                    <option value="loved-categories">Loved Categories</option>
-                    <option value="equipping-champions">Equipping Champions</option>
-                    <option value="category-nav">Category Navigation</option>
-                    <option value="category">Generic Category Section</option>
-                  </optgroup>
-
-                  <optgroup label="Product Sections">
-                    <option value="product-section">Product Grid Section</option>
-                    <option value="storm-proof">Storm Proof Products</option>
-                    <option value="outdoor-products">Outdoor Products</option>
-                    <option value="product">Generic Product Section</option>
-                  </optgroup>
-
-                  <optgroup label="Custom / Other Sections">
-                    <option value="everyday-essentials">Everyday Essentials</option>
-                    <option value="other">Other / Custom Items</option>
-                  </optgroup>
-
-                  {/* Fallback for unknown or legacy types */}
-                  {![
-                    "coupon-banner", "promo-banner", "promo-banner-2", "hero-banner", "banner",
-                    "category-carousel", "category-showcase", "sports-categories", "loved-categories",
-                    "equipping-champions", "category-nav", "category", "product-section", "storm-proof",
-                    "outdoor-products", "product", "everyday-essentials", "other"
-                  ].includes(sectionType) && (
-                    <option value={sectionType}>{sectionType}</option>
-                  )}
-                </select>
               </div>
 
               {/* ========================================
@@ -1302,7 +2107,9 @@ const PageBuilder = () => {
                       gap: "10px",
                     }}
                   >
-                    <label style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}>
+                    <label
+                      style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}
+                    >
                       Categories in this Section ({categoryItems.length} added)
                     </label>
 
@@ -1469,13 +2276,11 @@ const PageBuilder = () => {
                           key={cat._id}
                           value={cat._id}
                           disabled={categoryItems.some(
-                            (ci) => ci.categoryId === cat._id
+                            (ci) => ci.categoryId === cat._id,
                           )}
                         >
                           {cat.name}{" "}
-                          {categoryItems.some(
-                            (ci) => ci.categoryId === cat._id
-                          )
+                          {categoryItems.some((ci) => ci.categoryId === cat._id)
                             ? "(Already in Section)"
                             : ""}
                         </option>
@@ -1514,7 +2319,7 @@ const PageBuilder = () => {
                     >
                       {categoryItems.map((ci, index) => {
                         const globalCat = availableCategories.find(
-                          (c) => c._id === ci.categoryId
+                          (c) => c._id === ci.categoryId,
                         );
                         const defaultImg = globalCat?.image
                           ? getImageUrl(globalCat.image)
@@ -1522,232 +2327,348 @@ const PageBuilder = () => {
                         const activeImg = ci.customImage
                           ? getImageUrl(ci.customImage)
                           : defaultImg;
+                        const isEditingThis = inlineEditingCatIndex === index;
 
                         return (
                           <div
-                            key={ci.categoryId}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "12px",
-                              padding: "10px 14px",
-                              background: "#ffffff",
-                              border: "1px solid #e2e8f0",
-                              borderRadius: "8px",
-                            }}
+                            key={ci.categoryId || index}
+                            className={`section-cat-card ${
+                              draggedCatCardIndex === index ? "dragging" : ""
+                            }`}
+                            draggable
+                            onDragStart={(e) =>
+                              handleCategoryCardDragStart(e, index)
+                            }
+                            onDragOver={(e) => handleCategoryCardDragOver(e)}
+                            onDrop={(e) => handleCategoryCardDrop(e, index)}
                           >
-                            <span
-                              style={{
-                                fontSize: "13px",
-                                fontWeight: "700",
-                                color: "#64748b",
-                                width: "20px",
-                              }}
-                            >
-                              {index + 1}.
-                            </span>
-
-                            {/* PREVIEW THUMBNAIL */}
-                            <div
-                              style={{
-                                width: "44px",
-                                height: "44px",
-                                borderRadius: "50%",
-                                overflow: "hidden",
-                                border: "1px solid #cbd5e1",
-                                background: "#f1f5f9",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                flexShrink: 0,
-                              }}
-                            >
-                              {activeImg ? (
-                                <img
-                                  src={activeImg}
-                                  alt={globalCat?.name}
-                                  style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                              ) : (
-                                <MdCategory
-                                  style={{
-                                    fontSize: "22px",
-                                    color: "#94a3b8",
-                                  }}
-                                />
-                              )}
-                            </div>
-
-                            {/* INFO */}
-                            <div style={{ flex: 1, minWidth: 0 }}>
+                            <div className="section-cat-card-main">
+                              {/* DRAG HANDLE */}
                               <div
-                                style={{
-                                  fontWeight: "700",
-                                  fontSize: "14px",
-                                  color: "#0f172a",
-                                }}
+                                className="section-cat-drag-handle"
+                                title="Drag to reorder category"
                               >
-                                {globalCat?.name || "Category"}
+                                <MdDragIndicator />
                               </div>
-                              <div
-                                style={{
-                                  fontSize: "12px",
-                                  color: "#64748b",
-                                  marginTop: "2px",
-                                }}
-                              >
-                                {ci.customImage ? (
-                                  <span
-                                    style={{
-                                      color: "#2563eb",
-                                      fontWeight: "600",
-                                    }}
-                                  >
-                                    ★ Section Custom Image Active
-                                  </span>
+
+                              {/* PREVIEW THUMBNAIL */}
+                              <div className="section-cat-thumb">
+                                {activeImg ? (
+                                  <img
+                                    src={activeImg}
+                                    alt={ci.name || globalCat?.name}
+                                  />
                                 ) : (
-                                  <span>Using Global Default Image</span>
+                                  <MdCategory
+                                    style={{
+                                      fontSize: "22px",
+                                      color: "#94a3b8",
+                                    }}
+                                  />
                                 )}
                               </div>
-                            </div>
 
-                            {/* CUSTOM IMAGE BUTTONS */}
-                            <div
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "6px",
-                              }}
-                            >
-                              <label
-                                style={{
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: "4px",
-                                  padding: "6px 10px",
-                                  background: "#f1f5f9",
-                                  border: "1px solid #cbd5e1",
-                                  borderRadius: "6px",
-                                  cursor: "pointer",
-                                  fontSize: "12px",
-                                  fontWeight: "600",
-                                  color: "#334155",
-                                }}
-                                title="Upload a section-specific image without changing the global category image"
-                              >
-                                <MdUploadFile />
-                                <span>
-                                  {ci.customImage
-                                    ? "Change Img"
-                                    : "Custom Img"}
-                                </span>
-                                <input
-                                  type="file"
-                                  accept="image/*"
-                                  style={{ display: "none" }}
-                                  onChange={(e) => {
-                                    if (e.target.files?.[0]) {
-                                      handleCustomCategoryImageUpload(
-                                        ci.categoryId,
-                                        e.target.files[0]
-                                      );
+                              {/* INFO & DESTINATION CONTROLS */}
+                              <div className="section-cat-content">
+                                {/* NAME & ACTIVE TOGGLE ROW */}
+                                <div className="section-cat-top-row">
+                                  <div className="section-cat-name">
+                                    <span>
+                                      {ci.name || globalCat?.name || "Category"}
+                                    </span>
+                                    {ci.customImage && (
+                                      <span
+                                        className="section-cat-custom-badge"
+                                        title="Custom section image override active"
+                                      >
+                                        ★ Custom Img
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <button
+                                    type="button"
+                                    className={`section-cat-status-badge ${
+                                      ci.isActive !== false
+                                        ? "active"
+                                        : "inactive"
+                                    }`}
+                                    onClick={() =>
+                                      handleUpdateCategoryItemField(
+                                        index,
+                                        "isActive",
+                                        ci.isActive === false,
+                                      )
                                     }
-                                  }}
-                                />
-                              </label>
+                                    title="Click to toggle Active / Inactive"
+                                  >
+                                    {ci.isActive !== false
+                                      ? "● Active"
+                                      : "○ Inactive"}
+                                  </button>
+                                </div>
 
-                              {ci.customImage && (
+                                {/* DESTINATION SELECTOR ROW */}
+                                <div className="section-cat-dest-grid">
+                                  <div className="section-cat-dest-field">
+                                    <label className="section-cat-dest-label">
+                                      Destination Type
+                                    </label>
+                                    <select
+                                      value={ci.destinationType || "store-page"}
+                                      onChange={(e) =>
+                                        handleUpdateCategoryItemField(
+                                          index,
+                                          "destinationType",
+                                          e.target.value,
+                                        )
+                                      }
+                                      className="section-cat-select"
+                                    >
+                                      <option value="store-page">
+                                        Store Page
+                                      </option>
+                                      <option value="product-page">
+                                        Product Page
+                                      </option>
+                                      <option value="category-page">
+                                        Category Page
+                                      </option>
+                                      <option value="none">None</option>
+                                    </select>
+                                  </div>
+
+                                  {ci.destinationType === "store-page" && (
+                                    <div className="section-cat-dest-field">
+                                      <label className="section-cat-dest-label">
+                                        Store Page
+                                      </label>
+                                      <select
+                                        value={ci.destinationId || ""}
+                                        onChange={(e) =>
+                                          handleUpdateCategoryItemField(
+                                            index,
+                                            "destinationSelect",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="section-cat-select"
+                                      >
+                                        <option value="" disabled>
+                                          -- Select Store Page --
+                                        </option>
+                                        {availablePages.map((pg) => (
+                                          <option key={pg._id} value={pg._id}>
+                                            {pg.name} (/{pg.slug})
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  )}
+
+                                  {ci.destinationType === "product-page" && (
+                                    <div className="section-cat-dest-field">
+                                      <label className="section-cat-dest-label">
+                                        Product
+                                      </label>
+                                      <select
+                                        value={ci.destinationId || ""}
+                                        onChange={(e) =>
+                                          handleUpdateCategoryItemField(
+                                            index,
+                                            "destinationSelect",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="section-cat-select"
+                                      >
+                                        <option value="" disabled>
+                                          -- Select Product --
+                                        </option>
+                                        {availableProducts.map((p) => (
+                                          <option key={p._id} value={p._id}>
+                                            {p.name}{" "}
+                                            {p.price ? `(₹${p.price})` : ""}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  )}
+
+                                  {ci.destinationType === "category-page" && (
+                                    <div className="section-cat-dest-field">
+                                      <label className="section-cat-dest-label">
+                                        Category
+                                      </label>
+                                      <select
+                                        value={ci.destinationId || ci.categoryId || ""}
+                                        onChange={(e) =>
+                                          handleUpdateCategoryItemField(
+                                            index,
+                                            "destinationSelect",
+                                            e.target.value,
+                                          )
+                                        }
+                                        className="section-cat-select"
+                                      >
+                                        <option value="" disabled>
+                                          -- Select Category --
+                                        </option>
+                                        {availableCategories.map((c) => (
+                                          <option key={c._id} value={c._id}>
+                                            {c.name}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* ACTION BUTTONS */}
+                              <div className="section-cat-actions">
                                 <button
                                   type="button"
+                                  className="section-cat-btn"
                                   onClick={() =>
-                                    handleRemoveCustomCategoryImage(
-                                      ci.categoryId
+                                    setInlineEditingCatIndex(
+                                      isEditingThis ? null : index,
                                     )
                                   }
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    color: "#dc2626",
-                                    fontSize: "11px",
-                                    cursor: "pointer",
-                                    padding: "4px",
-                                  }}
-                                  title="Revert back to default global image"
+                                  title="Edit display name or custom image"
                                 >
-                                  Revert
+                                  <MdEdit />
+                                  <span>Edit</span>
                                 </button>
-                              )}
 
-                              {/* REORDER UP/DOWN */}
-                              <button
-                                type="button"
-                                disabled={index === 0}
-                                onClick={() =>
-                                  handleMoveCategoryItem(index, "up")
-                                }
-                                style={{
-                                  background: "#f8fafc",
-                                  border: "1px solid #e2e8f0",
-                                  borderRadius: "4px",
-                                  padding: "4px",
-                                  cursor:
-                                    index === 0 ? "default" : "pointer",
-                                  opacity: index === 0 ? 0.3 : 1,
-                                }}
-                                title="Move Up"
-                              >
-                                <MdKeyboardArrowUp />
-                              </button>
-                              <button
-                                type="button"
-                                disabled={index === categoryItems.length - 1}
-                                onClick={() =>
-                                  handleMoveCategoryItem(index, "down")
-                                }
-                                style={{
-                                  background: "#f8fafc",
-                                  border: "1px solid #e2e8f0",
-                                  borderRadius: "4px",
-                                  padding: "4px",
-                                  cursor:
-                                    index === categoryItems.length - 1
-                                      ? "default"
-                                      : "pointer",
-                                  opacity:
-                                    index === categoryItems.length - 1
-                                      ? 0.3
-                                      : 1,
-                                }}
-                                title="Move Down"
-                              >
-                                <MdKeyboardArrowDown />
-                              </button>
+                                <button
+                                  type="button"
+                                  className="section-cat-btn delete"
+                                  onClick={() =>
+                                    handleRemoveCategoryFromSection(
+                                      ci.categoryId,
+                                    )
+                                  }
+                                  title="Remove from section"
+                                >
+                                  <MdDelete />
+                                  <span>Delete</span>
+                                </button>
 
-                              {/* REMOVE FROM SECTION */}
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleRemoveCategoryFromSection(ci.categoryId)
-                                }
-                                style={{
-                                  background: "none",
-                                  border: "none",
-                                  color: "#ef4444",
-                                  fontSize: "18px",
-                                  cursor: "pointer",
-                                  padding: "4px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                }}
-                                title="Remove from this section"
-                              >
-                                <MdDelete />
-                              </button>
+                                <div className="section-cat-reorder-group">
+                                  <button
+                                    type="button"
+                                    disabled={index === 0}
+                                    onClick={() =>
+                                      handleMoveCategoryItem(index, "up")
+                                    }
+                                    className="section-cat-reorder-btn"
+                                    title="Move Up"
+                                  >
+                                    <MdKeyboardArrowUp />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={
+                                      index === categoryItems.length - 1
+                                    }
+                                    onClick={() =>
+                                      handleMoveCategoryItem(index, "down")
+                                    }
+                                    className="section-cat-reorder-btn"
+                                    title="Move Down"
+                                  >
+                                    <MdKeyboardArrowDown />
+                                  </button>
+                                </div>
+                              </div>
                             </div>
+
+                            {/* INLINE EDIT PANEL */}
+                            {isEditingThis && (
+                              <div className="section-cat-inline-edit">
+                                <div className="section-cat-inline-row">
+                                  <div className="section-cat-inline-field">
+                                    <label>Display Name</label>
+                                    <input
+                                      type="text"
+                                      placeholder={
+                                        globalCat?.name || "Category Name"
+                                      }
+                                      value={ci.name || ""}
+                                      onChange={(e) =>
+                                        handleUpdateCategoryItemField(
+                                          index,
+                                          "name",
+                                          e.target.value,
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                  <div className="section-cat-inline-field">
+                                    <label>Custom Image Override</label>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        gap: "8px",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      <label className="section-cat-upload-label">
+                                        <MdUploadFile />
+                                        <span>
+                                          {ci.customImage
+                                            ? "Change Image"
+                                            : "Upload Image"}
+                                        </span>
+                                        <input
+                                          type="file"
+                                          accept="image/*"
+                                          style={{ display: "none" }}
+                                          onChange={(e) => {
+                                            if (e.target.files?.[0]) {
+                                              handleCustomCategoryImageUpload(
+                                                ci.categoryId,
+                                                e.target.files[0],
+                                              );
+                                            }
+                                          }}
+                                        />
+                                      </label>
+                                      {ci.customImage && (
+                                        <button
+                                          type="button"
+                                          className="section-cat-revert-btn"
+                                          onClick={() =>
+                                            handleRemoveCustomCategoryImage(
+                                              ci.categoryId,
+                                            )
+                                          }
+                                        >
+                                          Revert
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div
+                                  style={{
+                                    textAlign: "right",
+                                    marginTop: "8px",
+                                  }}
+                                >
+                                  <button
+                                    type="button"
+                                    className="section-cat-done-btn"
+                                    onClick={() =>
+                                      setInlineEditingCatIndex(null)
+                                    }
+                                  >
+                                    Done
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -1770,7 +2691,7 @@ const PageBuilder = () => {
                     <div className="resource-picker-grid">
                       {availableCategories.map((cat) => {
                         const isAdded = categoryItems.some(
-                          (ci) => ci.categoryId === cat._id
+                          (ci) => ci.categoryId === cat._id,
                         );
                         return (
                           <div
@@ -1781,7 +2702,7 @@ const PageBuilder = () => {
                             onClick={() => {
                               if (isAdded) {
                                 toast.error(
-                                  "Category is already added to this section."
+                                  "Category is already added to this section.",
                                 );
                               } else {
                                 handleAddCategoryToSection(cat._id);
@@ -1818,9 +2739,7 @@ const PageBuilder = () => {
               ======================================== */}
 
               {currentBaseType === "product" && (
-
                 <div className="resource-picker-group">
-
                   <div
                     style={{
                       display: "flex",
@@ -1831,7 +2750,9 @@ const PageBuilder = () => {
                       gap: "8px",
                     }}
                   >
-                    <label style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}>
+                    <label
+                      style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}
+                    >
                       Select Products ({selectedProducts.length} selected)
                     </label>
                     {availableProducts.length > 4 && (
@@ -1852,56 +2773,39 @@ const PageBuilder = () => {
                   </div>
 
                   <div className="resource-picker-grid">
-
                     {availableProducts
-                      .filter((prod) =>
-                        !productSearch ||
-                        prod.name?.toLowerCase().includes(productSearch.toLowerCase())
+                      .filter(
+                        (prod) =>
+                          !productSearch ||
+                          prod.name
+                            ?.toLowerCase()
+                            .includes(productSearch.toLowerCase()),
                       )
                       .map((prod) => (
-
                         <div
                           key={prod._id}
                           className={`picker-card ${
-                            selectedProducts.includes(
-                              prod._id
-                            )
+                            selectedProducts.includes(prod._id)
                               ? "selected"
                               : ""
                           }`}
-                          onClick={() =>
-                            toggleProductSelection(
-                              prod._id
-                            )
-                          }
+                          onClick={() => toggleProductSelection(prod._id)}
                         >
-
                           <div className="picker-img">
-
                             {prod.images?.[0] ? (
                               <img
-                                src={getImageUrl(
-                                  prod.images[0]
-                                )}
+                                src={getImageUrl(prod.images[0])}
                                 alt={prod.name}
                               />
                             ) : (
                               <MdInventory2 />
                             )}
-
                           </div>
 
-                          <span>
-                            {prod.name}
-                          </span>
-
+                          <span>{prod.name}</span>
                         </div>
-
-                      )
-                    )}
-
+                      ))}
                   </div>
-
                 </div>
               )}
 
@@ -1910,9 +2814,7 @@ const PageBuilder = () => {
               ======================================== */}
 
               {currentBaseType === "banner" && (
-
                 <div className="resource-picker-group">
-
                   <div
                     style={{
                       display: "flex",
@@ -1923,7 +2825,9 @@ const PageBuilder = () => {
                       gap: "8px",
                     }}
                   >
-                    <label style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}>
+                    <label
+                      style={{ margin: 0, fontWeight: "700", fontSize: "14px" }}
+                    >
                       Select Banners ({selectedBanners.length} selected)
                     </label>
                     {availableBanners.length > 3 && (
@@ -1955,20 +2859,26 @@ const PageBuilder = () => {
                         fontSize: "13px",
                       }}
                     >
-                      No saved banners available yet. You can upload a direct banner image below.
+                      No saved banners available yet. You can upload a direct
+                      banner image below.
                     </div>
                   ) : (
                     <div className="resource-picker-grid">
                       {availableBanners
-                        .filter((ban) =>
-                          !bannerSearch ||
-                          ban.title?.toLowerCase().includes(bannerSearch.toLowerCase())
+                        .filter(
+                          (ban) =>
+                            !bannerSearch ||
+                            ban.title
+                              ?.toLowerCase()
+                              .includes(bannerSearch.toLowerCase()),
                         )
                         .map((ban) => (
                           <div
                             key={ban._id}
                             className={`picker-card ${
-                              selectedBanners.includes(ban._id) ? "selected" : ""
+                              selectedBanners.includes(ban._id)
+                                ? "selected"
+                                : ""
                             }`}
                             onClick={() => toggleBannerSelection(ban._id)}
                           >
@@ -1983,7 +2893,8 @@ const PageBuilder = () => {
                               )}
                             </div>
                             <span>
-                              {ban.title || "Banner"} {selectedBanners.includes(ban._id) ? "✓" : ""}
+                              {ban.title || "Banner"}{" "}
+                              {selectedBanners.includes(ban._id) ? "✓" : ""}
                             </span>
                           </div>
                         ))}
@@ -2029,7 +2940,13 @@ const PageBuilder = () => {
                         >
                           Image URL or Upload:
                         </label>
-                        <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: "6px",
+                            alignItems: "center",
+                          }}
+                        >
                           <input
                             type="text"
                             placeholder="e.g. /uploads/... or https://..."
@@ -2065,13 +2982,18 @@ const PageBuilder = () => {
                                 try {
                                   const formData = new FormData();
                                   formData.append("image", file);
-                                  const token = localStorage.getItem("adminToken");
-                                  const res = await api.post("/pages/upload", formData, {
-                                    headers: {
-                                      Authorization: `Bearer ${token}`,
-                                      "Content-Type": "multipart/form-data",
+                                  const token =
+                                    localStorage.getItem("adminToken");
+                                  const res = await api.post(
+                                    "/pages/upload",
+                                    formData,
+                                    {
+                                      headers: {
+                                        Authorization: `Bearer ${token}`,
+                                        "Content-Type": "multipart/form-data",
+                                      },
                                     },
-                                  });
+                                  );
                                   setBannerImage(res.data.url);
                                   toast.success("Banner image uploaded");
                                 } catch (err) {
@@ -2145,7 +3067,6 @@ const PageBuilder = () => {
                       </div>
                     )}
                   </div>
-
                 </div>
               )}
 
@@ -2154,127 +3075,83 @@ const PageBuilder = () => {
               ======================================== */}
 
               {currentBaseType === "other" && (
-
                 <div className="other-section-builder">
-
                   <p className="other-section-description">
-                    Upload custom images, enter titles,
-                    and optionally add a link for each item.
+                    Upload custom images, enter titles, and optionally add a
+                    link for each item.
                   </p>
 
                   {/* EMPTY */}
 
                   {items.length === 0 && (
-
                     <div className="other-empty-state">
-
                       <MdImage />
 
-                      <p>
-                        No items added yet.
-                      </p>
+                      <p>No items added yet.</p>
 
-                      <span>
-                        Use the button below to add
-                        your first item.
-                      </span>
-
+                      <span>Use the button below to add your first item.</span>
                     </div>
                   )}
 
                   {/* ITEMS */}
 
                   {items.map((item, index) => (
-
-                    <div
-                      className="other-item-builder"
-                      key={index}
-                    >
-
+                    <div className="other-item-builder" key={index}>
                       {/* ITEM HEADER */}
 
                       <div className="other-item-header">
-
-                        <strong>
-                          + Item {index + 1}
-                        </strong>
+                        <strong>+ Item {index + 1}</strong>
 
                         <button
                           type="button"
                           className="remove-other-item"
-                          onClick={() =>
-                            handleRemoveItem(index)
-                          }
+                          onClick={() => handleRemoveItem(index)}
                         >
                           <MdDelete />
                           Remove
                         </button>
-
                       </div>
 
                       {/* NAME */}
 
                       <div className="other-item-fields">
-
                         <div className="other-field">
-
-                          <label>
-                            Item Name *
-                          </label>
+                          <label>Item Name *</label>
 
                           <input
                             type="text"
                             placeholder="e.g. Monsoon Essentials"
                             value={item.name || ""}
                             onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "name",
-                                e.target.value
-                              )
+                              handleItemChange(index, "name", e.target.value)
                             }
                           />
-
                         </div>
 
                         {/* LINK */}
 
                         <div className="other-field">
-
-                          <label>
-                            Link / Category Route
-                            (Optional)
-                          </label>
+                          <label>Link / Category Route (Optional)</label>
 
                           <input
                             type="text"
                             placeholder="/monsoon-essentials"
                             value={item.link || ""}
                             onChange={(e) =>
-                              handleItemChange(
-                                index,
-                                "link",
-                                e.target.value
-                              )
+                              handleItemChange(index, "link", e.target.value)
                             }
                           />
-
                         </div>
-
                       </div>
 
                       {/* IMAGE */}
 
                       <div className="other-image-row">
-
                         <label className="other-upload-box">
-
                           <MdImage />
 
                           <span>
-                            {item.image
-                              ? "Change Image"
-                              : "Upload Image"}
+                            {item.image ? "Change Image" : "Upload Image"}
                           </span>
 
                           <input
@@ -2282,38 +3159,23 @@ const PageBuilder = () => {
                             accept="image/*"
                             hidden
                             onChange={(e) =>
-                              handleItemImageChange(
-                                index,
-                                e.target.files?.[0]
-                              )
+                              handleItemImageChange(index, e.target.files?.[0])
                             }
                           />
-
                         </label>
 
                         {/* PREVIEW */}
 
                         {item.image && (
-
                           <div className="other-image-preview">
-
                             <img
-                              src={getImageUrl(
-                                item.image
-                              )}
-                              alt={
-                                item.name ||
-                                "Preview"
-                              }
+                              src={getImageUrl(item.image)}
+                              alt={item.name || "Preview"}
                             />
-
                           </div>
                         )}
-
                       </div>
-
                     </div>
-
                   ))}
 
                   {/* ADD ITEM */}
@@ -2325,49 +3187,322 @@ const PageBuilder = () => {
                   >
                     <MdAdd />
 
-                    <span>
-                      Add New Item
-                    </span>
+                    <span>Add New Item</span>
                   </button>
-
                 </div>
               )}
 
               {/* ACTIONS */}
 
-              <div className="modal-actions">
-
+              <div className="modal-actions section-modal-sticky-footer">
                 <button
                   type="button"
-                  className="cancel-btn"
-                  onClick={() =>
-                    setShowSectionModal(false)
-                  }
+                  className="cancel-btn section-modal-cancel-btn"
+                  onClick={() => setShowSectionModal(false)}
+                  disabled={savingSection}
                 >
                   Cancel
                 </button>
 
                 <button
                   type="submit"
-                  className="submit-btn"
+                  className="submit-btn section-modal-submit-btn"
                   disabled={savingSection}
                 >
                   {savingSection
                     ? "Saving..."
                     : editingSection
-                    ? "Update Section"
-                    : "Add Section"}
+                      ? "Save Changes"
+                      : "Add Section"}
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
       )}
 
+      {/* VIEW SECTION PREVIEW MODAL */}
+      {showViewModal &&
+        viewingSection &&
+        (() => {
+          return (
+            <div className="modal-overlay" onClick={handleCloseViewModal}>
+              <div
+                className="modal-container view-section-modal-container"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* MODAL HEADER */}
+                <div className="view-modal-header">
+                  <div className="view-modal-header-left">
+                    <div className="view-modal-title-row">
+                      <MdVisibility className="view-modal-icon" />
+                      <h3>{viewingSection.name || "Category Carousel"}</h3>
+                      <span className={`type-tag ${viewingSection.type || ""}`}>
+                        {(viewingSection.type || "CATEGORY CAROUSEL")
+                          .replace(/-/g, " ")
+                          .toUpperCase()}
+                      </span>
+                      <span
+                        className={`view-modal-status-pill ${
+                          viewingSection.isActive !== false
+                            ? "active"
+                            : "inactive"
+                        }`}
+                      >
+                        {viewingSection.isActive !== false
+                          ? "ACTIVE"
+                          : "INACTIVE"}
+                      </span>
+                      <span className="preview-edit-mode-badge">EDIT MODE</span>
+                    </div>
+                    <p className="view-modal-subtitle">
+                      {`Manage items in this section (${page?.name} /${page?.slug})`}
+                    </p>
+                  </div>
+
+                  <div className="view-modal-header-controls">
+                    {/* ONLY CLOSE BUTTON */}
+                    <button
+                      type="button"
+                      className="modal-close-btn"
+                      onClick={handleCloseViewModal}
+                      title="Close Preview (Esc)"
+                    >
+                      <MdClose />
+                    </button>
+                  </div>
+                </div>
+
+                {/* MODAL BODY — management list for ALL section types */}
+                <div className="view-modal-body">
+                  <div className="category-mgmt-container">
+                    {carouselCategories.length === 0 ? (
+                      <div className="category-mgmt-empty">
+                        <MdInventory2 />
+                        <h4>No items in this section</h4>
+                        <p>
+                          Use the Edit Section button to add items to this
+                          section.
+                        </p>
+                      </div>
+                    ) : (
+                      carouselCategories.map((cat, index) => (
+                        <div
+                          key={cat._id || cat.itemId || index}
+                          className={`category-mgmt-row ${
+                            draggedCatIndex === index ? "is-dragging" : ""
+                          } ${cat.isActive ? "is-active" : "is-inactive"}`}
+                          draggable
+                          onDragStart={(e) => handleCategoryDragStart(e, index)}
+                          onDragOver={handleCategoryDragOver}
+                          onDrop={(e) => handleCategoryDrop(e, index)}
+                        >
+                          {/* 1. Drag handle */}
+                          <div
+                            className="cat-drag-handle"
+                            title="Drag to reorder"
+                          >
+                            <MdDragIndicator />
+                          </div>
+
+                          {/* 2. Thumbnail */}
+                          <div className="cat-thumbnail-wrap">
+                            {cat.image ? (
+                              <img
+                                src={getImageUrl(cat.image)}
+                                alt={cat.name}
+                                className="cat-thumbnail-img"
+                                onError={(e) => {
+                                  e.target.style.display = "none";
+                                  if (e.target.nextSibling) {
+                                    e.target.nextSibling.style.display = "flex";
+                                  }
+                                }}
+                              />
+                            ) : null}
+                            <div
+                              className="cat-thumbnail-fallback"
+                              style={{ display: cat.image ? "none" : "flex" }}
+                            >
+                              {cat.linkType === "product" ? (
+                                <MdInventory2 />
+                              ) : cat.linkType === "banner" ? (
+                                <MdImage />
+                              ) : (
+                                <MdCategory />
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 3. Name + type pill */}
+                          <div className="cat-details">
+                            <span className="cat-name">{cat.name}</span>
+                            {cat.linkType && (
+                              <span className="cat-link-type-pill">
+                                {cat.linkType}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* 4+5+6. Actions */}
+                          <div className="cat-row-actions">
+                            <button
+                              type="button"
+                              className={`cat-active-toggle-btn ${
+                                cat.isActive ? "status-on" : "status-off"
+                              }`}
+                              onClick={() => handleToggleCategoryActive(index)}
+                              title={
+                                cat.isActive
+                                  ? "Active on storefront — click to disable"
+                                  : "Disabled — click to enable on storefront"
+                              }
+                            >
+                              <span className="toggle-indicator-dot"></span>
+                              <span className="toggle-text">
+                                {cat.isActive ? "ON" : "OFF"}
+                              </span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="cat-action-btn edit-cat-btn"
+                              onClick={() =>
+                                handleOpenCategoryItemEdit(cat, index)
+                              }
+                              title="Edit item details"
+                            >
+                              <MdEdit />
+                              <span>Edit</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="cat-action-btn delete-cat-btn"
+                              onClick={() => handleDeleteCategory(index)}
+                              title="Remove item from this section"
+                            >
+                              <MdDelete />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                {/* MODAL FOOTER */}
+                <div className="view-modal-footer">
+                  <div className="view-modal-footer-info">
+                    <span>
+                      Changes here will reflect on the storefront immediately.
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    className="view-modal-close-action-btn"
+                    onClick={handleCloseViewModal}
+                  >
+                    Close Preview
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+      {/* QUICK CATEGORY ITEM EDIT SUB-MODAL */}
+      {showCategoryEditModal && editingCatItem && (
+        <div
+          className="modal-overlay"
+          style={{ zIndex: 10000000 }}
+          onClick={() => setShowCategoryEditModal(false)}
+        >
+          <div
+            className="category-edit-submodal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="category-edit-submodal-header">
+              <h4>Edit Category in Section</h4>
+              <button
+                type="button"
+                className="submodal-close-btn"
+                onClick={() => setShowCategoryEditModal(false)}
+              >
+                <MdClose />
+              </button>
+            </div>
+
+            <div className="category-edit-submodal-body">
+              <div className="cat-submodal-field">
+                <label>Category Display Name</label>
+                <input
+                  type="text"
+                  value={catEditTitle}
+                  onChange={(e) => setCatEditTitle(e.target.value)}
+                  placeholder="e.g. New Arrivals"
+                />
+              </div>
+
+              <div className="cat-submodal-field">
+                <label>Custom Image (Optional override)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCatEditImageUpload}
+                  style={{ fontSize: "13px" }}
+                />
+                {catEditCustomImage && (
+                  <div className="cat-edit-preview-thumb">
+                    <img src={getImageUrl(catEditCustomImage)} alt="Preview" />
+                    <button
+                      type="button"
+                      onClick={() => setCatEditCustomImage("")}
+                      className="remove-thumb-btn"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="category-edit-submodal-footer">
+              <button
+                type="button"
+                className="submodal-full-editor-btn"
+                onClick={() => {
+                  setShowCategoryEditModal(false);
+                  handleCloseViewModal();
+                  handleOpenEditModal(viewingSection);
+                }}
+                title="Open main section modal"
+              >
+                Open Full Section Editor
+              </button>
+
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  type="button"
+                  className="submodal-cancel-btn"
+                  onClick={() => setShowCategoryEditModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="submodal-save-btn"
+                  disabled={savingCategoryEdit}
+                  onClick={handleSaveCategoryItemEdit}
+                >
+                  {savingCategoryEdit ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

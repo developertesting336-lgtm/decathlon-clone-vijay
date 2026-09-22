@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  MdChevronLeft,
+  MdChevronRight,
+  MdFavorite,
+  MdFavoriteBorder,
+} from "react-icons/md";
 import "./ProductSection.css";
 import "../../../styles/ProductSizeModal.css";
 import toast from "react-hot-toast";
@@ -55,8 +61,6 @@ const ProductSection = ({
     if (typeof displayTitle === "string" && /^Shop your\s*/i.test(displayTitle)) {
       displaySubtitle = "Shop your";
       displayTitle = displayTitle.replace(/^Shop your\s*/i, "").trim();
-    } else {
-      displaySubtitle = "Shop your";
     }
   }
 
@@ -239,19 +243,15 @@ const ProductSection = ({
   useEffect(() => {
     const updateVisibleProducts = () => {
       const width = window.innerWidth;
-      if (width <= 420) {
-        setVisibleProducts(1.4);
-      } else if (width <= 600) {
-        setVisibleProducts(1.8);
+      if (width <= 480) {
+        setVisibleProducts(2);
       } else if (width <= 768) {
-        setVisibleProducts(2.4);
-      } else if (width <= 1024) {
-        setVisibleProducts(3.2);
-      } else if (width <= 1400) {
-        setVisibleProducts(4.2);
+        setVisibleProducts(3);
+      } else if (width <= 992) {
+        setVisibleProducts(4);
       } else {
-        // Desktop: ~4.5 visible products
-        setVisibleProducts(4.5);
+        // Desktop & laptops: Exactly 5 cards visible
+        setVisibleProducts(5);
       }
     };
 
@@ -402,7 +402,7 @@ const ProductSection = ({
               disabled={currentIndex === 0}
               aria-label="Previous product"
             >
-              ‹
+              <MdChevronLeft size={20} />
             </button>
 
             <button
@@ -412,7 +412,7 @@ const ProductSection = ({
               disabled={currentIndex >= maxIndex}
               aria-label="Next product"
             >
-              ›
+              <MdChevronRight size={20} />
             </button>
           </div>
         </div>
@@ -484,55 +484,54 @@ const ProductSection = ({
                     </Link>
 
                     <div className="product-section__info product-info">
+                      <div className="product-section__brand-row">
+                        <span className="product-section__brand">
+                          {brand && brand.toLowerCase() !== "decathlon" ? brand : "QUECHUA"}
+                        </span>
+                        {product.gender && (
+                          <span className="product-section__gender">{product.gender}</span>
+                        )}
+                      </div>
+
                       <Link
                         to={`/product/${product._id}`}
                         className="product-section__name-link product-name"
                         title={`${brand} ${name}`}
                       >
-                        <span className="product-section__brand">{brand}</span>{" "}
-                        <span className="product-section__name">{name}</span>
+                        {name}
                       </Link>
 
                       <div className="product-section__rating product-rating">
                         <span className="product-section__stars rating-stars">
-                          {getRatingStars(product.review || product.rating)}
+                          {getRatingStars(product.review || product.rating || 4.5)}
                         </span>
-                        {reviewCount && (
-                          <span className="product-section__review-count review-count">
-                            {reviewCount}
-                          </span>
-                        )}
+                        <span className="product-section__review-count review-count">
+                          {reviewCount || `${(product.review || 4.5).toFixed(1)}k`}
+                        </span>
                       </div>
 
                       <div className="product-section__pricing product-price">
-                        {hasDiscount ? (
-                          <>
-                            <span className="product-section__current-price current-price">
-                              {formatPrice(currentPrice)}
-                            </span>
-                            <span className="product-section__mrp mrp">
-                              MRP {formatPrice(mrp)}
-                            </span>
-                          </>
+                        <span className="product-section__current-price current-price">
+                          {formatPrice(currentPrice)}
+                        </span>
+                        {mrp ? (
+                          <span className="product-section__mrp mrp">
+                            MRP {formatPrice(mrp)}
+                          </span>
                         ) : (
-                          <>
-                            <span className="product-section__current-price current-price">
-                              {formatPrice(currentPrice)}
-                            </span>
-                            <span className="product-section__mrp mrp mrp-placeholder">
-                              MRP
-                            </span>
-                          </>
+                          <span className="product-section__mrp mrp mrp-placeholder">
+                            MRP {formatPrice(Math.round(currentPrice * 1.35))}
+                          </span>
                         )}
                       </div>
 
-                      <div className="product-section__offer-wrapper product-offer-wrapper">
-                        {product.offer ? (
+                      {product.offer && (
+                        <div className="product-section__offer-wrapper product-offer-wrapper">
                           <span className="product-section__offer-badge product-offer">
                             {product.offer}
                           </span>
-                        ) : null}
-                      </div>
+                        </div>
+                      )}
 
                       <div className="product-section__actions product-actions">
                         <button
@@ -543,7 +542,11 @@ const ProductSection = ({
                           aria-label="Add to wishlist"
                           onClick={() => handleToggle(product._id)}
                         >
-                          {isWishlisted(product._id) ? "♥" : "♡"}
+                          {isWishlisted(product._id) ? (
+                            <MdFavorite size={16} />
+                          ) : (
+                            <MdFavoriteBorder size={16} />
+                          )}
                         </button>
 
                         <button

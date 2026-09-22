@@ -55,54 +55,53 @@ const HomeCategoryCarousel = ({
   };
 
   const parseItem = (c, i) => {
-    const linkType = c.linkType === "page" ? "page" : "category";
-
-    if (linkType === "page") {
-      const pageObj =
-        typeof c.page === "object" && c.page
-          ? c.page
-          : { _id: c.page, name: c.name || c.title || "Store Page" };
-      const pageName = (c.title || c.name || pageObj.name || "Store Page").trim();
-      const resolvedSlug = (
-        pageObj.slug ||
-        c.slug ||
-        (c.link ? c.link.replace(/^\//, "") : "")
-      ).trim();
-
-      return {
-        _id: pageObj._id || c._id || `page-${i}`,
-        linkType: "page",
-        name: pageName,
-        slug: resolvedSlug,
-        pageSlug: resolvedSlug,
-        link: resolvedSlug ? `/${resolvedSlug}` : "",
-        image: c.customImage || c.image || "",
-      };
-    }
+    const destType =
+      c.destinationType ||
+      (c.linkType === "page" ? "store-page" : "category-page");
+    const destId = c.destinationId || "";
+    const destSlug = (c.destinationSlug || "").trim();
 
     const catObj =
       typeof c.category === "object" && c.category
         ? c.category
         : { _id: c.category, name: c.name || c.title || "Category" };
     const catName = (c.title || c.name || catObj.name || "Category").trim();
-    const isNewArrivals =
-      catName.toLowerCase().includes("new arrival") ||
-      c.link === "/category/new-arrivals" ||
-      catObj.slug === "new-arrivals";
-    const catSlug = isNewArrivals
-      ? "new-arrivals"
-      : catObj.slug ||
-        (c.link ? c.link.replace(/^\/category\//, "").replace(/^\//, "") : "");
+    const fallbackSlug =
+      catObj.slug ||
+      c.slug ||
+      (catName ? catName.toLowerCase().replace(/[^a-z0-9]+/g, "-") : "");
+
+    let resolvedLink = "";
+    if (destType === "none") {
+      resolvedLink = "";
+    } else if (destType === "category-page") {
+      const s = (destSlug || fallbackSlug)
+        .replace(/^\/category\//, "")
+        .replace(/^\//, "");
+      resolvedLink = s ? `/category/${s}` : "";
+    } else if (destType === "store-page") {
+      const pageObj =
+        typeof c.page === "object" && c.page
+          ? c.page
+          : { _id: c.page, name: catName };
+      const s = (destSlug || pageObj.slug || c.slug || "").replace(/^\//, "");
+      resolvedLink = s ? `/${s}` : "";
+    } else if (destType === "product-page") {
+      resolvedLink = destId ? `/product/${destId}` : "";
+    } else {
+      resolvedLink = c.link || "";
+    }
 
     return {
-      _id: catObj._id || c._id || `cat-${i}`,
+      _id: c._id || catObj._id || `item-${i}`,
       categoryId: catObj._id || c.category,
-      linkType: "category",
+      destinationType: destType,
+      destinationId: destId,
+      destinationSlug: destSlug || fallbackSlug,
+      linkType: destType === "store-page" ? "page" : "category",
       name: catName,
-      slug: catSlug,
-      link: isNewArrivals
-        ? "/category/new-arrivals"
-        : c.link || (catSlug ? `/category/${catSlug}` : ""),
+      slug: destSlug || fallbackSlug,
+      link: resolvedLink,
       image: c.customImage || c.image || catObj.image || "",
     };
   };
@@ -120,7 +119,7 @@ const HomeCategoryCarousel = ({
           item.name === "PopularCategories" ||
           item.name === "Category Carousel" ||
           (item.name && item.name.toLowerCase().includes("carousel")) ||
-          item.type === "category"
+          item.type === "category",
       );
 
       let validCategories = [];
@@ -129,8 +128,8 @@ const HomeCategoryCarousel = ({
       const itemsList = found?.data?.items || found?.items;
       const disabledIds = new Set(
         (found?.data?.disabledItemIds || found?.disabledItemIds || []).map(
-          (id) => String(id)
-        )
+          (id) => String(id),
+        ),
       );
 
       if (catItems && Array.isArray(catItems) && catItems.length > 0) {
@@ -143,7 +142,7 @@ const HomeCategoryCarousel = ({
                 ci.page?._id ||
                 ci.page ||
                 ci._id ||
-                ""
+                "",
             );
             return !disabledIds.has(refId) && !disabledIds.has(String(ci._id));
           })
@@ -156,10 +155,14 @@ const HomeCategoryCarousel = ({
               typeof c === "object" &&
               c.name &&
               c.isActive !== false &&
-              !disabledIds.has(String(c._id))
+              !disabledIds.has(String(c._id)),
           )
           .map((cat, idx) => parseItem({ category: cat, ...cat }, idx));
-      } else if (itemsList && Array.isArray(itemsList) && itemsList.length > 0) {
+      } else if (
+        itemsList &&
+        Array.isArray(itemsList) &&
+        itemsList.length > 0
+      ) {
         validCategories = itemsList
           .filter((item, idx) => {
             if (item.isActive === false) return false;
@@ -175,8 +178,8 @@ const HomeCategoryCarousel = ({
         const catRes = await api.get("/categories");
         setCategories(
           (catRes.data.categories || []).map((c, i) =>
-            parseItem({ category: c }, i)
-          )
+            parseItem({ category: c }, i),
+          ),
         );
       }
     } catch (error) {
@@ -185,8 +188,8 @@ const HomeCategoryCarousel = ({
         const catRes = await api.get("/categories");
         setCategories(
           (catRes.data.categories || []).map((c, i) =>
-            parseItem({ category: c }, i)
-          )
+            parseItem({ category: c }, i),
+          ),
         );
       } catch {
         setCategories([]);
@@ -197,28 +200,27 @@ const HomeCategoryCarousel = ({
   }, [pageSlug]);
 
   useEffect(() => {
-    const rawList =
-      customItems?.length
-        ? customItems
-        : customCategories?.length
+    const rawList = customItems?.length
+      ? customItems
+      : customCategories?.length
         ? customCategories
         : data?.categoryItems !== undefined
-        ? data.categoryItems
-        : data?.items !== undefined
-        ? data.items
-        : data?.categories !== undefined
-        ? data.categories
-        : section?.data?.categoryItems !== undefined
-        ? section.data.categoryItems
-        : section?.data?.items !== undefined
-        ? section.data.items
-        : section?.data?.categories !== undefined
-        ? section.data.categories
-        : section?.categoryItems !== undefined
-        ? section.categoryItems
-        : section?.categories !== undefined
-        ? section.categories
-        : null;
+          ? data.categoryItems
+          : data?.items !== undefined
+            ? data.items
+            : data?.categories !== undefined
+              ? data.categories
+              : section?.data?.categoryItems !== undefined
+                ? section.data.categoryItems
+                : section?.data?.items !== undefined
+                  ? section.data.items
+                  : section?.data?.categories !== undefined
+                    ? section.data.categories
+                    : section?.categoryItems !== undefined
+                      ? section.categoryItems
+                      : section?.categories !== undefined
+                        ? section.categories
+                        : null;
 
     const disabledIds = new Set(
       (
@@ -226,7 +228,7 @@ const HomeCategoryCarousel = ({
         section?.data?.disabledItemIds ||
         section?.disabledItemIds ||
         []
-      ).map((id) => String(id))
+      ).map((id) => String(id)),
     );
 
     if (rawList !== null && Array.isArray(rawList)) {
@@ -241,7 +243,7 @@ const HomeCategoryCarousel = ({
               c.category ||
               c.page?._id ||
               c.page ||
-              `cat-${i}`
+              `cat-${i}`,
           );
           if (disabledIds.has(cId)) return false;
           if (c._id && disabledIds.has(String(c._id))) return false;
@@ -300,43 +302,100 @@ const HomeCategoryCarousel = ({
   }
 
   const handleCardClick = (category) => {
-    // 1. Store Page navigation
-    if (category.linkType === "page" || category.pageSlug) {
-      const slug = (category.pageSlug || category.slug || "").replace(
-        /^\//,
+    // 1. None destination
+    if (category.destinationType === "none") {
+      return;
+    }
+
+    // 2. Category Page destination (MUST NOT fall back to store page)
+    if (category.destinationType === "category-page") {
+      const slug = (
+        category.destinationSlug ||
+        category.slug ||
+        (category.name
+          ? String(category.name).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-")
+          : "")
+      )
+        .replace(/^\/category\//, "")
+        .replace(/^\//, "");
+
+      if (slug) {
+        navigate(`/category/${slug}`, {
+          state: {
+            categoryId:
+              category.destinationId ||
+              category.categoryId ||
+              category._id,
+            categoryName: category.name,
+          },
+        });
+        return;
+      }
+    }
+
+    // 3. Product Page destination
+    if (category.destinationType === "product-page") {
+      const prodId = category.destinationId || category.productId;
+      if (prodId) {
+        navigate(`/product/${prodId}`);
+        return;
+      }
+    }
+
+    // 4. Store Page destination
+    if (category.destinationType === "store-page") {
+      const slug = (
+        category.destinationSlug ||
+        category.pageSlug ||
+        category.slug ||
         ""
-      );
-      navigate(`/${slug}`);
-      return;
+      ).replace(/^\//, "");
+      if (slug) {
+        navigate(`/${slug}`);
+        return;
+      }
     }
 
-    // 2. New Arrivals route safety
-    const catName = (category.name || "").trim();
-    if (
-      catName.toLowerCase().includes("new arrival") ||
-      category.slug === "new-arrivals" ||
-      category.link === "/category/new-arrivals"
-    ) {
-      navigate("/category/new-arrivals");
-      return;
-    }
-
-    // 3. If explicit link provided
+    // 5. Explicit route link
     if (category.link && category.link !== "#") {
-      navigate(category.link);
-      return;
+      if (category.link.startsWith("/category/")) {
+        navigate(category.link, {
+          state: {
+            categoryId: category.categoryId || category._id,
+            categoryName: category.name,
+          },
+        });
+        return;
+      }
+      if (category.linkType === "page" || category.pageSlug) {
+        navigate(category.link);
+        return;
+      }
     }
 
-    // 4. Product Category navigation
-    const targetSlug =
-      category.slug || encodeURIComponent(catName.toLowerCase());
+    // 6. Legacy fallback
+    if (category.linkType === "page" || category.pageSlug) {
+      const slug = (category.pageSlug || category.slug || "").replace(/^\//, "");
+      if (slug) {
+        navigate(`/${slug}`);
+        return;
+      }
+    }
 
-    navigate(`/category/${targetSlug}`, {
-      state: {
-        categoryId: category.categoryId || category._id,
-        categoryName: catName,
-      },
-    });
+    // 7. Default to dynamic Category Page
+    const catName = (category.name || "").trim();
+    const targetSlug =
+      category.slug ||
+      (catName ? catName.toLowerCase().replace(/[^a-z0-9]+/g, "-") : "");
+
+    if (targetSlug) {
+      navigate(`/category/${targetSlug}`, {
+        state: {
+          categoryId: category.categoryId || category._id,
+          categoryName: catName,
+        },
+      });
+    }
   };
 
   return (
@@ -349,15 +408,11 @@ const HomeCategoryCarousel = ({
             onClick={() => handleCardClick(category)}
           >
             {category.image ? (
-              <img
-                src={getImageUrl(category.image)}
-                alt={category.name}
-              />
+              <img src={getImageUrl(category.image)} alt={category.name} />
             ) : (
               <div className="category-carousel-no-image">{category.name}</div>
             )}
           </div>
-
         ))}
       </div>
     </section>

@@ -24,6 +24,7 @@ import ProductDetail from "./pages/ProductDetail";
 import CategoryRoutes from "./routes/categoryRoutes";
 import ScrollToTop from "./components/ScrollToTop";
 import AiChatbot from "./components/chat/AiChatbot";
+import SectionPreview from "./pages/SectionPreview";
 import {
   isTokenExpired,
   getTokenRemainingTime,
@@ -146,6 +147,10 @@ function App() {
             <Route path="/account" element={<MyAccount />} />
 
             <Route path="/account/orders-returns" element={<MyAccount />} />
+
+            {/* Standalone Section Preview Route */}
+            <Route path="/preview/section" element={<SectionPreview />} />
+            <Route path="/preview/section/:pageId/:sectionId" element={<SectionPreview />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

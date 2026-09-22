@@ -93,6 +93,9 @@ const SportsCategories = ({ section, data, customCategories }) => {
             image,
             link,
             slug,
+            destinationType: ci.destinationType || (isPage ? "store-page" : "category-page"),
+            destinationId: ci.destinationId || (isPage ? pageObj._id : catObj._id) || "",
+            destinationSlug: ci.destinationSlug || (isPage ? pageObj.slug : catObj.slug) || "",
             linkType: ci.linkType,
             pageSlug: isPage ? pageObj.slug || slug : "",
             order:
@@ -302,6 +305,58 @@ const SportsCategories = ({ section, data, customCategories }) => {
       ""
     ).toLowerCase();
 
+    // 1. None destination
+    if (category.destinationType === "none") {
+      return;
+    }
+
+    // 2. Category Page destination (MUST NOT fall back to store page)
+    if (category.destinationType === "category-page") {
+      const catSlug = (
+        category.destinationSlug ||
+        slug ||
+        "products"
+      )
+        .replace(/^\/category\//, "")
+        .replace(/^\//, "");
+
+      navigate(`/category/${encodeURIComponent(catSlug)}`, {
+        state: {
+          categoryId: category.destinationId || categoryId || category._id,
+          categoryName,
+        },
+      });
+      return;
+    }
+
+    // 3. Product Page destination
+    if (category.destinationType === "product-page") {
+      const prodId = category.destinationId || category.productId;
+      if (prodId) {
+        navigate(`/product/${prodId}`);
+        return;
+      }
+    }
+
+    // 4. Store Page destination
+    if (category.destinationType === "store-page") {
+      const storeSlug = (
+        category.destinationSlug ||
+        category.pageSlug ||
+        slug ||
+        ""
+      ).replace(/^\//, "");
+      if (storeSlug) {
+        navigate(`/${storeSlug}`, {
+          state: {
+            categoryId: categoryId || category._id,
+            categoryName,
+          },
+        });
+        return;
+      }
+    }
+
     // If explicit category/product route link exists, preserve it
     if (category.link && category.link !== "#") {
       const link = category.link.trim();
@@ -320,18 +375,7 @@ const SportsCategories = ({ section, data, customCategories }) => {
         return;
       }
 
-      // Check for recognized store dynamic pages
-      const dedicatedStoreRoutes = [
-        "/monsoon-essentials",
-        "/activewear",
-        "/workout-essentials",
-        "/cycling",
-        "/hiking-trekking",
-        "/shoes",
-        "/bags-backpacks",
-        "/sports-accessories",
-      ];
-      if (dedicatedStoreRoutes.includes(link)) {
+      if (category.linkType === "page") {
         navigate(link, {
           state: {
             categoryId: categoryId || category._id,

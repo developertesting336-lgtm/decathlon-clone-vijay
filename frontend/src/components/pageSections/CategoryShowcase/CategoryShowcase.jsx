@@ -62,7 +62,17 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
             itemId: item._id ? String(item._id) : "",
             categoryId,
             pageId,
-            linkType: item.linkType || "category",
+            destinationType:
+              item.destinationType ||
+              (isPage ? "store-page" : "category-page"),
+            destinationId:
+              item.destinationId ||
+              (isPage ? pageId : categoryId),
+            destinationSlug:
+              item.destinationSlug ||
+              (isPage ? page.slug : category.slug) ||
+              "",
+            linkType: item.linkType || (isPage ? "page" : "category"),
             name: item.name || item.title || category.name || "Category",
             slug: (isPage ? page.slug : category.slug) || "",
             link: item.link || "",
@@ -239,7 +249,58 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
       ""
     ).toLowerCase();
 
-    // If an explicit category/product route link exists, preserve it
+    // 1. None destination
+    if (category.destinationType === "none") {
+      return;
+    }
+
+    // 2. Category Page destination (MUST NOT fall back to store page)
+    if (category.destinationType === "category-page") {
+      const catSlug = (
+        category.destinationSlug ||
+        slug ||
+        "products"
+      )
+        .replace(/^\/category\//, "")
+        .replace(/^\//, "");
+
+      navigate(`/category/${encodeURIComponent(catSlug)}`, {
+        state: {
+          categoryId: category.destinationId || categoryId || category._id,
+          categoryName: categoryName,
+        },
+      });
+      return;
+    }
+
+    // 3. Product Page destination
+    if (category.destinationType === "product-page") {
+      const prodId = category.destinationId || category.productId;
+      if (prodId) {
+        navigate(`/product/${prodId}`);
+        return;
+      }
+    }
+
+    // 4. Store Page destination
+    if (category.destinationType === "store-page") {
+      const storeSlug = (
+        category.destinationSlug ||
+        slug ||
+        ""
+      ).replace(/^\//, "");
+      if (storeSlug) {
+        navigate(`/${storeSlug}`, {
+          state: {
+            categoryId: categoryId || category._id,
+            categoryName: categoryName,
+          },
+        });
+        return;
+      }
+    }
+
+    // 5. If an explicit category/product route link exists, preserve it
     if (category.link && category.link !== "#") {
       const link = category.link.trim();
       if (
@@ -257,18 +318,7 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
         return;
       }
 
-      // Check for recognized store dynamic pages
-      const dedicatedStoreRoutes = [
-        "/monsoon-essentials",
-        "/activewear",
-        "/workout-essentials",
-        "/cycling",
-        "/hiking-trekking",
-        "/shoes",
-        "/bags-backpacks",
-        "/sports-accessories",
-      ];
-      if (dedicatedStoreRoutes.includes(link)) {
+      if (category.linkType === "page") {
         navigate(link, {
           state: {
             categoryId: categoryId || category._id,
@@ -285,7 +335,7 @@ const CategoryShowcase = ({ section, data, customCategories }) => {
       }
     }
 
-    // Always navigate to category-based product page
+    // 6. Default to category-based product page
     const targetSlug = slug || categoryId || "products";
     navigate(`/category/${encodeURIComponent(targetSlug)}`, {
       state: {

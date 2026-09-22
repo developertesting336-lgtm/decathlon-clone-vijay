@@ -1,5 +1,6 @@
 import Page from "../models/Page.js";
 import PageSection from "../models/PageSection.js";
+import Category from "../models/Category.js";
 import { normalizeSectionType } from "../services/migratePageSections.js";
 import { emitHomepageUpdate } from "../socket/socketManager.js";
 import cloudinary from "../config/cloudinary.js";
@@ -83,28 +84,79 @@ const processCategoryItems = async (categoryItems) => {
     }
 
     const titleText = (item.title || item.name || "").trim();
+    const destType =
+      item.destinationType ||
+      (linkType === "page" ? "store-page" : "category-page");
+    const destId =
+      item.destinationId ||
+      (destType === "store-page"
+        ? pageIdStr
+        : destType === "product-page"
+          ? String(item.product || item.productId || "")
+          : isCatObjectId
+            ? catIdStr
+            : "");
+    let destSlug = item.destinationSlug
+      ? String(item.destinationSlug).trim()
+      : "";
+
+    if (destType === "category-page" && !destSlug && isCatObjectId) {
+      try {
+        const catDoc = await Category.findById(catIdStr).select("slug name");
+        if (catDoc) {
+          destSlug =
+            catDoc.slug ||
+            catDoc.name
+              .toLowerCase()
+              .trim()
+              .replace(/[^a-z0-9]+/g, "-");
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    let resolvedLink = item.link ? String(item.link).trim() : "";
+    if (destType === "category-page") {
+      if (destSlug) {
+        resolvedLink = `/category/${destSlug.replace(/^\/category\//, "").replace(/^\//, "")}`;
+      }
+    } else if (destType === "store-page") {
+      if (destSlug) {
+        resolvedLink = `/${destSlug.replace(/^\//, "")}`;
+      }
+    } else if (destType === "product-page") {
+      if (destId) {
+        resolvedLink = `/product/${destId}`;
+      }
+    } else if (destType === "none") {
+      resolvedLink = "";
+    }
 
     const processedItem = {
       linkType,
       category: isCatObjectId ? catIdStr : undefined,
       page: isPageObjectId ? pageIdStr : undefined,
+      destinationType: destType,
+      destinationId: destId,
+      destinationSlug: destSlug,
       title: titleText,
       name: titleText,
-      link: item.link ? String(item.link).trim() : "",
+      link: resolvedLink,
       image: customImg,
       customImage: customImg,
       displayOrder:
         item.displayOrder !== undefined
           ? Number(item.displayOrder)
           : item.sortOrder !== undefined
-          ? Number(item.sortOrder)
-          : i,
+            ? Number(item.sortOrder)
+            : i,
       sortOrder:
         item.sortOrder !== undefined
           ? Number(item.sortOrder)
           : item.displayOrder !== undefined
-          ? Number(item.displayOrder)
-          : i,
+            ? Number(item.displayOrder)
+            : i,
       isActive: item.isActive !== undefined ? Boolean(item.isActive) : true,
     };
 
@@ -451,9 +503,14 @@ export const updatePage = async (req, res) => {
         .trim()
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-+|-+$/g, "");
-      const duplicate = await Page.findOne({ _id: { $ne: id }, slug: formattedSlug });
+      const duplicate = await Page.findOne({
+        _id: { $ne: id },
+        slug: formattedSlug,
+      });
       if (duplicate) {
-        return res.status(400).json({ message: `Page slug '${formattedSlug}' already exists` });
+        return res
+          .status(400)
+          .json({ message: `Page slug '${formattedSlug}' already exists` });
       }
       page.slug = formattedSlug;
     }
@@ -543,14 +600,26 @@ export const addPageSection = async (req, res) => {
     }
 
     let processedCategoryItems = [];
-    if (categoryItems && Array.isArray(categoryItems) && categoryItems.length > 0) {
+    if (
+      categoryItems &&
+      Array.isArray(categoryItems) &&
+      categoryItems.length > 0
+    ) {
       try {
         processedCategoryItems = await processCategoryItems(categoryItems);
       } catch (catErr) {
-        return res.status(catErr.statusCode || 400).json({ message: catErr.message });
+        return res
+          .status(catErr.statusCode || 400)
+          .json({ message: catErr.message });
       }
-    } else if (categories && Array.isArray(categories) && categories.length > 0) {
-      const uniqueCats = [...new Set(categories.map((c) => (c._id || c).toString()))];
+    } else if (
+      categories &&
+      Array.isArray(categories) &&
+      categories.length > 0
+    ) {
+      const uniqueCats = [
+        ...new Set(categories.map((c) => (c._id || c).toString())),
+      ];
       processedCategoryItems = uniqueCats.map((c, i) => ({
         category: c,
         customImage: "",
@@ -559,7 +628,8 @@ export const addPageSection = async (req, res) => {
     }
 
     const finalCategories = processedCategoryItems.map((ci) => ci.category);
-    const processedItems = items !== undefined ? await processSectionItems(items) : [];
+    const processedItems =
+      items !== undefined ? await processSectionItems(items) : [];
 
     const newSection = {
       name,
@@ -569,7 +639,8 @@ export const addPageSection = async (req, res) => {
       products: products || [],
       banners: banners || [],
       items: processedItems,
-      sortOrder: sortOrder !== undefined ? Number(sortOrder) : page.sections.length,
+      sortOrder:
+        sortOrder !== undefined ? Number(sortOrder) : page.sections.length,
       isActive: isActive !== undefined ? Boolean(isActive) : true,
     };
 
@@ -638,17 +709,24 @@ export const updatePageSection = async (req, res) => {
 
     if (categoryItems !== undefined) {
       try {
-        const processedCategoryItems = await processCategoryItems(categoryItems);
+        const processedCategoryItems =
+          await processCategoryItems(categoryItems);
         section.categoryItems = processedCategoryItems;
         section.categories = processedCategoryItems.map((ci) => ci.category);
       } catch (catErr) {
-        return res.status(catErr.statusCode || 400).json({ message: catErr.message });
+        return res
+          .status(catErr.statusCode || 400)
+          .json({ message: catErr.message });
       }
     } else if (categories !== undefined) {
-      const uniqueCats = [...new Set(categories.map((c) => (c._id || c).toString()))];
+      const uniqueCats = [
+        ...new Set(categories.map((c) => (c._id || c).toString())),
+      ];
       section.categories = uniqueCats;
       section.categoryItems = uniqueCats.map((c, i) => {
-        const existing = section.categoryItems?.find((ci) => ci.category?.toString() === c);
+        const existing = section.categoryItems?.find(
+          (ci) => ci.category?.toString() === c,
+        );
         return {
           category: c,
           customImage: existing ? existing.customImage : "",
@@ -781,5 +859,136 @@ export const reorderPageSections = async (req, res) => {
   } catch (error) {
     console.error("Reorder Page Sections Error:", error);
     return res.status(500).json({ message: error.message });
+  }
+};
+
+/*
+========================================
+GET SECTION PREVIEW (READ-ONLY)
+========================================
+*/
+export const getSectionPreview = async (req, res) => {
+  try {
+    const { pageId, sectionId } = req.params;
+
+    let page = null;
+    if (/^[0-9a-fA-F]{24}$/.test(pageId)) {
+      page = await Page.findById(pageId)
+        .populate("sections.categories")
+        .populate({
+          path: "sections.categoryItems.category",
+          model: "Category",
+        })
+        .populate({
+          path: "sections.categoryItems.page",
+          model: "Page",
+          select: "name slug",
+        })
+        .populate("sections.products")
+        .populate("sections.banners");
+    } else {
+      page = await Page.findOne({ slug: pageId })
+        .populate("sections.categories")
+        .populate({
+          path: "sections.categoryItems.category",
+          model: "Category",
+        })
+        .populate({
+          path: "sections.categoryItems.page",
+          model: "Page",
+          select: "name slug",
+        })
+        .populate("sections.products")
+        .populate("sections.banners");
+    }
+
+    // 1. Check dedicated PageSection first
+    if (/^[0-9a-fA-F]{24}$/.test(sectionId)) {
+      const dedicatedSec = await PageSection.findById(sectionId)
+        .populate("data.categories")
+        .populate({
+          path: "data.categoryItems.category",
+          model: "Category",
+        })
+        .populate({
+          path: "data.categoryItems.page",
+          model: "Page",
+          select: "name slug",
+        })
+        .populate("data.products")
+        .populate("data.banners");
+
+      if (dedicatedSec) {
+        return res.status(200).json({
+          success: true,
+          section: {
+            _id: dedicatedSec._id,
+            pageId: dedicatedSec.pageId,
+            name: dedicatedSec.name,
+            type: dedicatedSec.type,
+            order: dedicatedSec.order,
+            isActive: dedicatedSec.isActive,
+            data: dedicatedSec.data || {},
+            style: dedicatedSec.style || { variant: "default" },
+            title: dedicatedSec.data?.title || dedicatedSec.name,
+            subtitle: dedicatedSec.data?.subtitle || "",
+            categories: dedicatedSec.data?.categories || [],
+            categoryItems: dedicatedSec.data?.categoryItems || [],
+            products: dedicatedSec.data?.products || [],
+            banners: dedicatedSec.data?.banners || [],
+            items: dedicatedSec.data?.items || [],
+          },
+          page: page
+            ? { _id: page._id, name: page.name, slug: page.slug }
+            : null,
+        });
+      }
+    }
+
+    // 2. Check embedded page.sections
+    if (page && page.sections && page.sections.length > 0) {
+      const sec = page.sections.find(
+        (s) => String(s._id) === String(sectionId),
+      );
+      if (sec) {
+        return res.status(200).json({
+          success: true,
+          section: {
+            _id: sec._id,
+            pageId: page._id,
+            name: sec.name,
+            type: normalizeSectionType(sec.name, sec.type),
+            order: sec.sortOrder !== undefined ? sec.sortOrder : 0,
+            isActive: sec.isActive,
+            data: {
+              title: sec.name || "",
+              subtitle: "",
+              products: sec.products || [],
+              categories: sec.categories || [],
+              categoryItems: sec.categoryItems || [],
+              banners: sec.banners || [],
+              items: sec.items || [],
+            },
+            style: { variant: "default" },
+            title: sec.name,
+            subtitle: "",
+            categories: sec.categories || [],
+            categoryItems: sec.categoryItems || [],
+            products: sec.products || [],
+            banners: sec.banners || [],
+            items: sec.items || [],
+          },
+          page: { _id: page._id, name: page.name, slug: page.slug },
+        });
+      }
+    }
+
+    return res.status(404).json({
+      success: false,
+      message: "Section not found for preview",
+    });
+  } catch (error) {
+    console.error("Get Section Preview Error:", error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

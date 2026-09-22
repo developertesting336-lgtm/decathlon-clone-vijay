@@ -1,0 +1,214 @@
+/* ========================================
+   SECTION PREVIEW PAGE STYLES
+======================================== */
+
+.section-preview-root {
+  width: 100%;
+  min-height: 100vh;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.section-preview-root.is-embedded {
+  min-height: 100%;
+  background: #ffffff;
+}
+
+/* Standalone Header */
+.section-preview-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.section-preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.preview-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px solid #bfdbfe;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.preview-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2563eb;
+  animation: previewPulse 2s infinite;
+}
+
+@keyframes previewPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.preview-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.preview-type-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.preview-inactive-tag {
+  font-size: 11px;
+  font-weight: 700;
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #fecaca;
+}
+
+.preview-close-window-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preview-close-window-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Canvas & Viewport */
+.section-preview-canvas {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.section-preview-canvas.read-only-locked {
+  cursor: default;
+}
+
+/* Storefront wrapper simulating the real page layout */
+.section-preview-store-wrap {
+  width: 100%;
+  min-height: auto;
+  background: #ffffff;
+  padding-bottom: 40px;
+}
+
+/* Skeleton Loading State */
+.preview-skeleton-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-skeleton-bar {
+  width: 100%;
+  height: 180px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: previewShimmer 1.5s infinite;
+}
+
+.preview-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.preview-skeleton-box {
+  aspect-ratio: 4 / 3;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+  animation: previewShimmer 1.5s infinite;
+}
+
+@keyframes previewShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Error State */
+.preview-error-state {
+  margin: 60px auto;
+  max-width: 480px;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.preview-error-state h3 {
+  margin: 0 0 8px;
+  color: #0f172a;
+}
+
+.preview-error-state p {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.preview-error-state button {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .section-preview-header-bar {
+    padding: 10px 16px;
+  }
+  .preview-skeleton-container {
+    padding: 20px 16px;
+  }
+  .preview-skeleton-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

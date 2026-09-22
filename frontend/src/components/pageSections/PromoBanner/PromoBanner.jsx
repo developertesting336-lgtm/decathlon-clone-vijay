@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./PromoBanner.css";
 import api from "../../../api/axios";
 import socket from "../../../socket/socket";
@@ -254,7 +255,7 @@ const PromoBanner = ({ section, data, customBanners, style }) => {
             onClick={handlePrev}
             aria-label="Previous Banner"
           >
-            ‹
+            <MdChevronLeft size={22} />
           </button>
 
           <button
@@ -263,7 +264,7 @@ const PromoBanner = ({ section, data, customBanners, style }) => {
             onClick={handleNext}
             aria-label="Next Banner"
           >
-            ›
+            <MdChevronRight size={22} />
           </button>
 
           <div className="promo-dots">

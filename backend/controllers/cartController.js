@@ -289,13 +289,14 @@ const updateCartQuantity = async (req, res) => {
       (oldSize !== undefined && size && oldSize !== size);
 
     if (isSizeUpdate) {
-      const targetOldSize = (
-        oldSize !== undefined
+      const targetOldSize =
+        (oldSize !== undefined
           ? oldSize
           : cartItemId
-            ? cart.items.find((item) => item._id?.toString() === cartItemId.toString())?.size
-            : size
-      ) || "";
+            ? cart.items.find(
+                (item) => item._id?.toString() === cartItemId.toString(),
+              )?.size
+            : size) || "";
 
       const targetNewSize = (newSize !== undefined ? newSize : size) || "";
 
@@ -311,7 +312,7 @@ const updateCartQuantity = async (req, res) => {
         targetNewSize &&
         availableSizes.length > 0 &&
         !availableSizes.some(
-          (s) => s.trim().toLowerCase() === targetNewSize.trim().toLowerCase()
+          (s) => s.trim().toLowerCase() === targetNewSize.trim().toLowerCase(),
         )
       ) {
         return res.status(400).json({
@@ -328,7 +329,7 @@ const updateCartQuantity = async (req, res) => {
       let oldItem = null;
       if (cartItemId) {
         oldItem = cart.items.find(
-          (item) => item._id?.toString() === cartItemId.toString()
+          (item) => item._id?.toString() === cartItemId.toString(),
         );
       }
       if (!oldItem) {
@@ -336,14 +337,15 @@ const updateCartQuantity = async (req, res) => {
           (item) =>
             (item.product?.toString() === productId ||
               item.product?._id?.toString() === productId) &&
-            (item.size || "").trim().toLowerCase() === targetOldSize.trim().toLowerCase()
+            (item.size || "").trim().toLowerCase() ===
+              targetOldSize.trim().toLowerCase(),
         );
       }
       if (!oldItem) {
         const productItems = cart.items.filter(
           (item) =>
             item.product?.toString() === productId ||
-            item.product?._id?.toString() === productId
+            item.product?._id?.toString() === productId,
         );
         if (productItems.length === 1) {
           oldItem = productItems[0];
@@ -386,7 +388,7 @@ const updateCartQuantity = async (req, res) => {
             (item.product?.toString() === productId ||
               item.product?._id?.toString() === productId) &&
             (item.size || "").trim().toLowerCase() ===
-              targetNewSize.trim().toLowerCase()
+              targetNewSize.trim().toLowerCase(),
         );
 
         if (existingNewItem) {
@@ -408,7 +410,7 @@ const updateCartQuantity = async (req, res) => {
           existingNewItem.quantity = totalQuantity;
 
           cart.items = cart.items.filter(
-            (item) => item._id?.toString() !== oldItem._id?.toString()
+            (item) => item._id?.toString() !== oldItem._id?.toString(),
           );
         } else {
           /*
@@ -457,7 +459,7 @@ const updateCartQuantity = async (req, res) => {
     let item = null;
     if (cartItemId) {
       item = cart.items.find(
-        (cItem) => cItem._id?.toString() === cartItemId.toString()
+        (cItem) => cItem._id?.toString() === cartItemId.toString(),
       );
     }
     if (!item) {
@@ -465,14 +467,14 @@ const updateCartQuantity = async (req, res) => {
         (cartItem) =>
           (cartItem.product?.toString() === productId ||
             cartItem.product?._id?.toString() === productId) &&
-          (cartItem.size || "").trim().toLowerCase() === selectedSize
+          (cartItem.size || "").trim().toLowerCase() === selectedSize,
       );
     }
     if (!item) {
       const productItems = cart.items.filter(
         (cItem) =>
           cItem.product?.toString() === productId ||
-          cItem.product?._id?.toString() === productId
+          cItem.product?._id?.toString() === productId,
       );
       if (productItems.length === 1) {
         item = productItems[0];
@@ -563,8 +565,7 @@ const removeFromCart = async (req, res) => {
       const prodMatch =
         item.product?.toString() === productId ||
         item.product?._id?.toString() === productId;
-      const sizeMatch =
-        (item.size || "").trim().toLowerCase() === targetSize;
+      const sizeMatch = (item.size || "").trim().toLowerCase() === targetSize;
       return prodMatch && sizeMatch;
     });
 
@@ -572,13 +573,13 @@ const removeFromCart = async (req, res) => {
       const productItems = cart.items.filter(
         (item) =>
           item.product?.toString() === productId ||
-          item.product?._id?.toString() === productId
+          item.product?._id?.toString() === productId,
       );
       if (productItems.length === 1) {
         itemIndex = cart.items.findIndex(
           (item) =>
             item.product?.toString() === productId ||
-            item.product?._id?.toString() === productId
+            item.product?._id?.toString() === productId,
         );
       }
     }

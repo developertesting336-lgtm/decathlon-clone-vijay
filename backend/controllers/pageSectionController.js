@@ -1,5 +1,6 @@
 import Page from "../models/Page.js";
 import PageSection from "../models/PageSection.js";
+import Category from "../models/Category.js";
 import { emitHomepageUpdate } from "../socket/socketManager.js";
 import cloudinary from "../config/cloudinary.js";
 
@@ -82,14 +83,65 @@ const processCategoryItems = async (categoryItems) => {
     }
 
     const titleText = (item.title || item.name || "").trim();
+    const destType =
+      item.destinationType ||
+      (linkType === "page" ? "store-page" : "category-page");
+    const destId =
+      item.destinationId ||
+      (destType === "store-page"
+        ? pageIdStr
+        : destType === "product-page"
+          ? String(item.product || item.productId || "")
+          : isCatObjectId
+            ? catIdStr
+            : "");
+    let destSlug = item.destinationSlug
+      ? String(item.destinationSlug).trim()
+      : "";
+
+    if (destType === "category-page" && !destSlug && isCatObjectId) {
+      try {
+        const catDoc = await Category.findById(catIdStr).select("slug name");
+        if (catDoc) {
+          destSlug =
+            catDoc.slug ||
+            catDoc.name
+              .toLowerCase()
+              .trim()
+              .replace(/[^a-z0-9]+/g, "-");
+        }
+      } catch (err) {
+        // ignore
+      }
+    }
+
+    let resolvedLink = item.link ? String(item.link).trim() : "";
+    if (destType === "category-page") {
+      if (destSlug) {
+        resolvedLink = `/category/${destSlug.replace(/^\/category\//, "").replace(/^\//, "")}`;
+      }
+    } else if (destType === "store-page") {
+      if (destSlug) {
+        resolvedLink = `/${destSlug.replace(/^\//, "")}`;
+      }
+    } else if (destType === "product-page") {
+      if (destId) {
+        resolvedLink = `/product/${destId}`;
+      }
+    } else if (destType === "none") {
+      resolvedLink = "";
+    }
 
     const processedItem = {
       linkType,
       category: isCatObjectId ? catIdStr : undefined,
       page: isPageObjectId ? pageIdStr : undefined,
+      destinationType: destType,
+      destinationId: destId,
+      destinationSlug: destSlug,
       title: titleText,
       name: titleText,
-      link: item.link ? String(item.link).trim() : "",
+      link: resolvedLink,
       image: customImg,
       customImage: customImg,
       displayOrder:

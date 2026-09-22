@@ -78,8 +78,8 @@ const SectionRenderer = ({
 }) => {
   if (!section) return null;
 
-  // Check isActive flag (default to true if undefined)
-  if (section.isActive === false) return null;
+  // Check isActive flag (default to true if undefined; bypassed in preview mode)
+  if (section.isActive === false && !extraProps.isPreview) return null;
 
   // Canonical Section rendering
   const rawType = section.type || "";

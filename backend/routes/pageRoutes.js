@@ -11,6 +11,7 @@ import {
   updatePageSection,
   deletePageSection,
   reorderPageSections,
+  getSectionPreview,
 } from "../controllers/pageController.js";
 import {
   getPageSections,
@@ -51,6 +52,9 @@ router.get("/navigation", getPublicPages);
 router.get("/public", getPublicPages);
 router.get("/slug/:slug", getPageBySlug);
 router.get("/public/:slug", getPageBySlug);
+
+// Standalone or embedded section preview route
+router.get("/preview/:pageId/:sectionId", getSectionPreview);
 
 // Public or Admin by ID/slug
 router.get("/:idOrSlug", (req, res, next) => {

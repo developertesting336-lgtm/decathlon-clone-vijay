@@ -268,9 +268,23 @@
   color: #000000;
 }
 
+.product-section__brand-row {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+
 .product-section__brand {
   font-weight: 700;
   color: #111111;
+  display: inline;
+}
+
+.product-section__gender {
+  font-weight: 400;
+  color: #6b7280;
+  font-size: 13px;
   display: inline;
 }
 

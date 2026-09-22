@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./HikingTrekking.css";
 import api from "../../../../api/axios";
 
@@ -14,13 +15,38 @@ const HikingTrekking = ({
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const trackRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    if (!trackRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = trackRef.current;
+    setCanScrollLeft(scrollLeft > 10);
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
+  }, []);
+
+  const handleScroll = (direction) => {
+    if (!trackRef.current) return;
+    const offset = direction === "left" ? -320 : 320;
+    trackRef.current.scrollBy({ left: offset, behavior: "smooth" });
+  };
+
   const getImageUrl = (image) => {
     if (!image) return "";
     if (
       typeof image === "string" &&
-      (image.startsWith("http://") || image.startsWith("https://"))
+      (image.startsWith("http://") ||
+        image.startsWith("https://") ||
+        image.startsWith("data:"))
     ) {
       return image;
+    }
+    if (
+      typeof image === "string" &&
+      (image.startsWith("/assets/") || image.startsWith("assets/"))
+    ) {
+      return image.startsWith("/") ? image : `/${image}`;
     }
     const apiBaseUrl = api.defaults.baseURL || "";
     const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
@@ -29,16 +55,27 @@ const HikingTrekking = ({
     return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
   };
 
-  const parseItem = (c, i) => {
-    const linkType = c.linkType === "page" ? "page" : "category";
+  const parseItem = useCallback((c, i) => {
+    const destType =
+      c.destinationType ||
+      (c.linkType === "page" ? "store-page" : "category-page");
 
-    if (linkType === "page") {
+    if (destType === "store-page" || c.linkType === "page") {
       const pageObj =
         typeof c.page === "object" && c.page
           ? c.page
-          : { _id: c.page, name: c.name || c.title || "Store Page" };
-      const pageName = (c.title || c.name || pageObj.name || "Store Page").trim();
+          : {
+              _id: c.page || c.destinationId,
+              name: c.name || c.title || "Store Page",
+            };
+      const pageName = (
+        c.title ||
+        c.name ||
+        pageObj.name ||
+        "Store Page"
+      ).trim();
       const resolvedSlug = (
+        c.destinationSlug ||
         pageObj.slug ||
         c.slug ||
         (c.link ? c.link.replace(/^\//, "") : "")
@@ -46,6 +83,7 @@ const HikingTrekking = ({
 
       return {
         _id: pageObj._id || c._id || `page-${i}`,
+        destinationType: "store-page",
         linkType: "page",
         name: pageName,
         slug: resolvedSlug,
@@ -58,7 +96,10 @@ const HikingTrekking = ({
     const catObj =
       typeof c.category === "object" && c.category
         ? c.category
-        : { _id: c.category, name: c.name || c.title || "Category" };
+        : {
+            _id: c.category || c.categoryId || c.destinationId,
+            name: c.name || c.title || "Category",
+          };
     const catName = (c.title || c.name || catObj.name || "Category").trim();
     const isNewArrivals =
       catName.toLowerCase().includes("new arrival") ||
@@ -66,12 +107,14 @@ const HikingTrekking = ({
       catObj.slug === "new-arrivals";
     const catSlug = isNewArrivals
       ? "new-arrivals"
-      : catObj.slug ||
+      : c.destinationSlug ||
+        catObj.slug ||
         (c.link ? c.link.replace(/^\/category\//, "").replace(/^\//, "") : "");
 
     return {
       _id: catObj._id || c._id || `cat-${i}`,
-      categoryId: catObj._id || c.category,
+      categoryId: catObj._id || c.category || c.categoryId,
+      destinationType: "category-page",
       linkType: "category",
       name: catName,
       slug: catSlug,
@@ -80,7 +123,7 @@ const HikingTrekking = ({
         : c.link || (catSlug ? `/category/${catSlug}` : ""),
       image: c.customImage || c.image || catObj.image || "",
     };
-  };
+  }, []);
 
   const fetchSectionData = useCallback(async () => {
     try {
@@ -92,7 +135,7 @@ const HikingTrekking = ({
           s.type === "category-carousel" ||
           s.type === "category" ||
           (s.name && s.name.toLowerCase().includes("carousel")) ||
-          s.name === "hiking-trekking-store"
+          s.name === "hiking-trekking-store",
       );
 
       const catItems = found?.data?.categoryItems || found?.categoryItems;
@@ -100,8 +143,8 @@ const HikingTrekking = ({
       const itemsList = found?.data?.items || found?.items;
       const disabledIds = new Set(
         (found?.data?.disabledItemIds || found?.disabledItemIds || []).map(
-          (id) => String(id)
-        )
+          (id) => String(id),
+        ),
       );
 
       let list = [];
@@ -111,24 +154,25 @@ const HikingTrekking = ({
             (ci) =>
               ci.isActive !== false &&
               !disabledIds.has(String(ci._id)) &&
-              !disabledIds.has(String(ci.category?._id || ci.category || ""))
+              !disabledIds.has(String(ci.category?._id || ci.category || "")),
           )
           .map(parseItem);
       } else if (cats && Array.isArray(cats) && cats.length > 0) {
         list = cats
           .filter(
-            (c) =>
-              c &&
-              c.isActive !== false &&
-              !disabledIds.has(String(c._id))
+            (c) => c && c.isActive !== false && !disabledIds.has(String(c._id)),
           )
           .map((cat, idx) => parseItem({ category: cat, ...cat }, idx));
-      } else if (itemsList && Array.isArray(itemsList) && itemsList.length > 0) {
+      } else if (
+        itemsList &&
+        Array.isArray(itemsList) &&
+        itemsList.length > 0
+      ) {
         list = itemsList
           .filter(
             (item, idx) =>
               item.isActive !== false &&
-              !disabledIds.has(String(item._id || `item-${idx}`))
+              !disabledIds.has(String(item._id || `item-${idx}`)),
           )
           .map((item, idx) => parseItem(item, idx));
       }
@@ -136,12 +180,19 @@ const HikingTrekking = ({
       if (list.length > 0) {
         setCategories(list);
       } else {
-        const catRes = await api.get("/categories");
-        setCategories(
-          (catRes.data.categories || []).slice(0, 8).map((c, i) =>
-            parseItem({ category: c }, i)
-          )
-        );
+        try {
+          const catRes = await api.get("/categories");
+          const fetchedCats = (catRes.data.categories || []).slice(0, 8);
+          if (fetchedCats.length > 0) {
+            setCategories(
+              fetchedCats.map((c, i) => parseItem({ category: c }, i)),
+            );
+          } else {
+            setCategories([]);
+          }
+        } catch {
+          setCategories([]);
+        }
       }
     } catch (err) {
       console.error("HikingTrekking carousel error:", err);
@@ -149,31 +200,30 @@ const HikingTrekking = ({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [parseItem]);
 
   useEffect(() => {
-    const rawList =
-      customItems?.length
-        ? customItems
-        : customCategories?.length
+    const rawList = customItems?.length
+      ? customItems
+      : customCategories?.length
         ? customCategories
         : data?.categoryItems !== undefined
-        ? data.categoryItems
-        : data?.items !== undefined
-        ? data.items
-        : data?.categories !== undefined
-        ? data.categories
-        : section?.data?.categoryItems !== undefined
-        ? section.data.categoryItems
-        : section?.data?.items !== undefined
-        ? section.data.items
-        : section?.data?.categories !== undefined
-        ? section.data.categories
-        : section?.categoryItems !== undefined
-        ? section.categoryItems
-        : section?.categories !== undefined
-        ? section.categories
-        : null;
+          ? data.categoryItems
+          : data?.items !== undefined
+            ? data.items
+            : data?.categories !== undefined
+              ? data.categories
+              : section?.data?.categoryItems !== undefined
+                ? section.data.categoryItems
+                : section?.data?.items !== undefined
+                  ? section.data.items
+                  : section?.data?.categories !== undefined
+                    ? section.data.categories
+                    : section?.categoryItems !== undefined
+                      ? section.categoryItems
+                      : section?.categories !== undefined
+                        ? section.categories
+                        : null;
 
     const disabledIds = new Set(
       (
@@ -181,10 +231,10 @@ const HikingTrekking = ({
         section?.data?.disabledItemIds ||
         section?.disabledItemIds ||
         []
-      ).map((id) => String(id))
+      ).map((id) => String(id)),
     );
 
-    if (rawList !== null && Array.isArray(rawList)) {
+    if (rawList !== null && Array.isArray(rawList) && rawList.length > 0) {
       const parsed = rawList
         .filter((c, i) => {
           if (!c || (typeof c !== "object" && typeof c !== "string"))
@@ -196,7 +246,7 @@ const HikingTrekking = ({
               c.category ||
               c.page?._id ||
               c.page ||
-              `cat-${i}`
+              `cat-${i}`,
           );
           return !disabledIds.has(cId) && !disabledIds.has(String(c._id));
         })
@@ -208,14 +258,38 @@ const HikingTrekking = ({
     }
 
     fetchSectionData();
-  }, [data, section, customCategories, customItems, fetchSectionData]);
+  }, [
+    data,
+    section,
+    customCategories,
+    customItems,
+    fetchSectionData,
+    parseItem,
+  ]);
+
+  useEffect(() => {
+    if (!loading && categories.length > 0) {
+      setTimeout(checkScroll, 100);
+    }
+  }, [loading, categories, checkScroll]);
 
   const handleCardClick = (cat) => {
     // 1. Store Page navigation
-    if (cat.linkType === "page" || cat.pageSlug) {
-      const slug = (cat.pageSlug || cat.slug || "").replace(/^\//, "");
-      navigate(`/${slug}`);
-      return;
+    if (
+      cat.destinationType === "store-page" ||
+      cat.linkType === "page" ||
+      cat.pageSlug
+    ) {
+      const slug = (
+        cat.destinationSlug ||
+        cat.pageSlug ||
+        cat.slug ||
+        ""
+      ).replace(/^\//, "");
+      if (slug) {
+        navigate(`/${slug}`);
+        return;
+      }
     }
 
     // 2. New Arrivals route safety
@@ -236,7 +310,9 @@ const HikingTrekking = ({
     }
 
     // 4. Product Category route
-    const targetSlug = cat.slug || encodeURIComponent(name.toLowerCase());
+    const targetSlug =
+      cat.slug ||
+      encodeURIComponent(name.toLowerCase().replace(/[^a-z0-9]+/g, "-"));
     navigate(`/category/${targetSlug}`, {
       state: {
         categoryId: cat.categoryId || cat._id,
@@ -250,40 +326,71 @@ const HikingTrekking = ({
   }
 
   const sectionTitle =
-    title ||
-    section?.title ||
-    section?.name ||
-    data?.title ||
-    data?.name ||
-    "";
+    title || section?.title || section?.name || data?.title || data?.name || "";
 
   return (
     <section className="category-carousel-hiking-trekking">
       {sectionTitle && sectionTitle !== "hiking-trekking-store" && (
         <h2 className="hiking-category-title">{sectionTitle}</h2>
       )}
-      <div className="hiking-category-track">
-        {categories.map((cat, idx) => (
-          <div
-            key={cat._id || idx}
-            className="hiking-category-card"
-            onClick={() => handleCardClick(cat)}
+
+      <div className="hiking-category-wrapper">
+        {canScrollLeft && (
+          <button
+            type="button"
+            className="hiking-scroll-arrow left"
+            onClick={() => handleScroll("left")}
+            aria-label="Previous categories"
           >
-            <div className="hiking-category-circle">
-              {cat.image ? (
-                <img
-                  src={getImageUrl(cat.image)}
-                  alt={cat.name}
-                  loading="lazy"
-                />
-              ) : (
-                <div className="hiking-category-placeholder">
-                  {cat.name}
-                </div>
-              )}
+            <MdChevronLeft size={24} />
+          </button>
+        )}
+
+        <div
+          className="hiking-category-track"
+          ref={trackRef}
+          onScroll={checkScroll}
+        >
+          {categories.map((cat, idx) => (
+            <div
+              key={cat._id || idx}
+              className="hiking-category-card"
+              onClick={() => handleCardClick(cat)}
+            >
+              <div className="hiking-category-arch">
+                {cat.image ? (
+                  <img
+                    src={getImageUrl(cat.image)}
+                    alt={cat.name}
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      if (e.target.nextSibling) {
+                        e.target.nextSibling.style.display = "flex";
+                      }
+                    }}
+                  />
+                ) : null}
+                <div
+                  className="hiking-category-placeholder"
+                  style={{ display: cat.image ? "none" : "flex" }}
+                ></div>
+              </div>
+              <span className="hiking-category-name">{cat.name}</span>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+        {canScrollRight && (
+          <button
+            type="button"
+            className="hiking-scroll-arrow right"
+            onClick={() => handleScroll("right")}
+            aria-label="Next categories"
+          >
+            <MdChevronRight size={24} />
+          </button>
+        )}
       </div>
     </section>
   );
