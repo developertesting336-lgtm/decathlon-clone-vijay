@@ -3,7 +3,7 @@ import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import SectionRenderer from "../components/pageSections/SectionRenderer";
 import "../styles/SectionPreview.css";
-import "../styles/home/Home.css";
+import "../styles/Home.css";
 
 const SectionPreview = () => {
   const [searchParams] = useSearchParams();

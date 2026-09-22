@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/home/Home.css";
+import "../styles/Home.css";
 import api from "../api/axios";
 import socket from "../socket/socket";
 import SectionRenderer from "../components/pageSections/SectionRenderer";

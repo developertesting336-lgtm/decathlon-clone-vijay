@@ -7,17 +7,9 @@ import ProductSizeModal from "../components/ProductSizeModal";
 import SectionRenderer from "../components/pageSections/SectionRenderer";
 import useStorePage from "../hooks/useStorePage";
 
-// Dedicated CSS files per page
-import "../styles/home/Home.css";
-import "../styles/pages/home.css";
-import "../styles/pages/monsoon-essentials.css";
-import "../styles/pages/activewear.css";
-import "../styles/pages/workout-essentials.css";
-import "../styles/pages/cycling.css";
-import "../styles/pages/hiking-trekking.css";
-import "../styles/pages/shoes.css";
-import "../styles/pages/bags-backpacks.css";
-import "../styles/pages/sports-accessories.css";
+// Base page & container styles
+import "../styles/Home.css";
+import "../styles/DynamicPage.css";
 
 const DynamicPage = ({ slug: propSlug }) => {
   const params = useParams();

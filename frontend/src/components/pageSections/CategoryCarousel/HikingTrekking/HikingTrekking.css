@@ -116,6 +116,7 @@
   line-height: 1.25 !important;
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   transition: color 0.15s ease !important;

@@ -1,1 +1,183 @@
-@import "../../../styles/home/EquippingChampions.css";
+/*EQUIPPING CHAMPIONS*/
+
+.equipping-champions-section {
+  width: 100%;
+
+  padding: 18px 0 16px;
+
+  background: #ffffff;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+
+
+/*CONTAINER*/
+
+.equipping-champions-container {
+  width: calc(100% - 46px);
+
+  max-width: 1400px;
+
+  margin: 0 auto;
+}
+
+
+/*TITLE*/
+
+.equipping-champions-title {
+  margin: 0 0 14px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #111111;
+}
+
+
+/*GRID*/
+
+.equipping-champions-grid {
+  width: 102%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+
+/*CARD*/
+
+.equipping-champion-card {
+  position: relative;
+
+  width: 100%;
+
+  height: 326px;
+
+  overflow: hidden;
+
+  background: #eeeeee;
+
+  cursor: pointer;
+}
+
+
+/*IMAGE*/
+
+.equipping-champion-image {
+  width: 100%;
+
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+
+  transition:
+    transform 0.4s ease;
+}
+
+.equipping-champion-card:hover
+.equipping-champion-image {
+  transform: scale(1.04);
+}
+
+
+/*NO IMAGE*/
+
+.equipping-champion-no-image {
+  width: 100%;
+
+  height: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background: #eeeeee;
+
+  color: #777777;
+
+  font-size: 14px;
+}
+
+
+/* LARGE DESKTOP */
+
+@media (max-width: 1250px) {
+
+  .equipping-champions-container {
+    width: calc(100% - 70px);
+  }
+
+  .equipping-champion-card {
+    height: 300px;
+  }
+}
+
+
+/*  TABLET  */
+
+@media (max-width: 900px) {
+
+  .equipping-champions-container {
+    width: calc(100% - 40px);
+  }
+
+  .equipping-champions-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+
+  .equipping-champion-card {
+    height: 280px;
+  }
+}
+
+
+/*MOBILE */
+
+@media (max-width: 550px) {
+
+  .equipping-champions-section {
+    padding: 15px 0;
+  }
+
+  .equipping-champions-container {
+    width: calc(100% - 24px);
+  }
+
+  .equipping-champions-title {
+    margin-bottom: 10px;
+
+    font-size: 15px;
+  }
+
+  .equipping-champions-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+  }
+
+  .equipping-champion-card {
+    height: 220px;
+  }
+}
