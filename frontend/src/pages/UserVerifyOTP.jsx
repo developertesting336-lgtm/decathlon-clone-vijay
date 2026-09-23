@@ -150,7 +150,11 @@ const UserVerifyOTP = () => {
 
       window.dispatchEvent(new Event("authChanged"));
 
-      toast.success(response.data.message || "Success");
+      toast.success(
+        mode === "register"
+          ? response.data.message || "Account created successfully!"
+          : response.data.message || "Logged in successfully!"
+      );
 
       navigate("/");
     } catch (error) {

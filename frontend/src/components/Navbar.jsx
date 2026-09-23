@@ -227,6 +227,7 @@ const Navbar = () => {
     setCartCount(0);
 
     window.dispatchEvent(new Event("authChanged"));
+    toast.success("Logged out successfully");
     navigate("/");
   };
 

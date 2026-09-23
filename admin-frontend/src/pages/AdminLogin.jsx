@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import api from "../api/axios";
 import "../styles/AdminLogin.css";
 
@@ -10,6 +12,7 @@ import sports5 from "../assets/images/login/sports5.png";
 import sports6 from "../assets/images/login/sports6.png";
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,7 +25,9 @@ const AdminLogin = () => {
     setError("");
 
     if (!email || !password) {
-      setError("Please enter username and password");
+      const msg = "Please enter email and password";
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -37,7 +42,9 @@ const AdminLogin = () => {
       const { token, user } = response.data;
 
       if (user.role !== "admin") {
-        setError("You are not authorized as an admin");
+        const authMsg = "You are not authorized as an admin";
+        setError(authMsg);
+        toast.error(authMsg);
         return;
       }
 
@@ -46,11 +53,13 @@ const AdminLogin = () => {
 
       console.log("Admin Login Successful:", user);
 
-      window.location.href = "/dashboard";
+      toast.success(`Welcome back, ${user.name || "Admin"}!`);
+      navigate("/dashboard");
     } catch (error) {
-      setError(
-        error.response?.data?.message || "Login failed"
-      );
+      const errorMsg =
+        error.response?.data?.message || "Login failed. Please check your credentials.";
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

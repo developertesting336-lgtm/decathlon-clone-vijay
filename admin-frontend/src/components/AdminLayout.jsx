@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   MdDashboard,
   MdInventory2,
@@ -66,6 +67,7 @@ const AdminLayout = ({ children }) => {
     if (typeof window !== "undefined" && window.innerWidth <= 700) {
       setSidebarOpen(false);
     }
+    toast.success("Logged out successfully");
     navigate("/");
   };
 
