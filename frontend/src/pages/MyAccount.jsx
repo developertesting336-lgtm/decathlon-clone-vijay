@@ -85,6 +85,17 @@ const MyAccount = () => {
   const [returnDetails, setReturnDetails] = useState("");
   const [submittingReturn, setSubmittingReturn] = useState(false);
 
+  // Exchange Modal State
+  const [exchangeModalOrder, setExchangeModalOrder] = useState(null);
+  const [exchangeSelectedItem, setExchangeSelectedItem] = useState(null);
+  const [exchangeQty, setExchangeQty] = useState(1);
+  const [exchangeReason, setExchangeReason] = useState("");
+  const [exchangeDetails, setExchangeDetails] = useState("");
+  const [exchangeNewSize, setExchangeNewSize] = useState("");
+  const [productDetailsMap, setProductDetailsMap] = useState({});
+  const [loadingProductDetails, setLoadingProductDetails] = useState(false);
+  const [submittingExchange, setSubmittingExchange] = useState(false);
+
   // Addresses State
   const [addresses, setAddresses] = useState([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
@@ -95,35 +106,37 @@ const MyAccount = () => {
 
   const RETURN_WINDOW_DAYS = 7;
 
-  const isOrderReturnEligible = (order) => {
+  const isOrderDeliveredWithinWindow = (order) => {
     if (!order) return false;
     const status = (order.orderStatus || "").toLowerCase();
-
-    // Cannot return if cancelled, refunded, or failed
-    if (["cancelled", "refunded", "failed"].includes(status)) {
-      return false;
-    }
-
-    // Cannot return if already requested or returned
-    if (
-      (order.returnStatus && order.returnStatus !== "NONE") ||
-      status === "return_requested" ||
-      status === "returned"
-    ) {
-      return false;
-    }
-
-    // Only delivered orders are eligible for return
     if (status !== "delivered") {
       return false;
     }
-
-    // Check return window (strictly 7 days from order date)
     const baseDate = order.deliveredAt
       ? new Date(order.deliveredAt)
       : new Date(order.createdAt);
     const diffDays = (new Date() - baseDate) / (1000 * 60 * 60 * 24);
     return diffDays <= RETURN_WINDOW_DAYS;
+  };
+
+  const isOrderReturnEligible = (order) => {
+    if (!isOrderDeliveredWithinWindow(order)) return false;
+    return (
+      !order.returnStatus ||
+      order.returnStatus === "NONE" ||
+      order.returnStatus === "REJECTED" ||
+      order.returnStatus === "CANCELLED"
+    );
+  };
+
+  const isOrderExchangeEligible = (order) => {
+    if (!isOrderDeliveredWithinWindow(order)) return false;
+    return (
+      !order.exchangeStatus ||
+      order.exchangeStatus === "NONE" ||
+      order.exchangeStatus === "REJECTED" ||
+      order.exchangeStatus === "CANCELLED"
+    );
   };
 
   const handleOpenReturnModal = (order) => {
@@ -138,6 +151,117 @@ const MyAccount = () => {
     setSelectedReturnItems(initialItems);
     setReturnReason("");
     setReturnDetails("");
+  };
+
+  const handleOpenExchangeModal = (order) => {
+    setExchangeModalOrder(order);
+    const firstItem = order.orderItems?.[0] || null;
+    setExchangeSelectedItem(firstItem);
+    setExchangeQty(1);
+    setExchangeReason("");
+    setExchangeDetails("");
+    setExchangeNewSize("");
+
+    if (firstItem) {
+      const pid = (firstItem.product?._id || firstItem.product || "").toString();
+      fetchProductDetails(pid);
+    }
+  };
+
+  const handleCloseExchangeModal = () => {
+    if (submittingExchange) return;
+    setExchangeModalOrder(null);
+    setExchangeSelectedItem(null);
+    setExchangeQty(1);
+    setExchangeReason("");
+    setExchangeDetails("");
+    setExchangeNewSize("");
+  };
+
+  const fetchProductDetails = async (productId) => {
+    if (!productId || productDetailsMap[productId]) return;
+    try {
+      setLoadingProductDetails(true);
+      const res = await api.get(`/products/${productId}`);
+      if (res.data?.product) {
+        setProductDetailsMap((prev) => ({
+          ...prev,
+          [productId]: res.data.product,
+        }));
+      }
+    } catch (err) {
+      console.error("Fetch product for exchange error:", err);
+    } finally {
+      setLoadingProductDetails(false);
+    }
+  };
+
+  const handleSelectExchangeProduct = (item) => {
+    setExchangeSelectedItem(item);
+    setExchangeQty(1);
+    setExchangeNewSize("");
+    const pid = (item.product?._id || item.product || "").toString();
+    fetchProductDetails(pid);
+  };
+
+  const handleSubmitExchange = async (e) => {
+    e.preventDefault();
+    if (!exchangeModalOrder || !exchangeSelectedItem) return;
+
+    if (!exchangeReason) {
+      toast.error("Please select an exchange reason");
+      return;
+    }
+
+    if (!exchangeNewSize) {
+      toast.error("Please select a new size");
+      return;
+    }
+
+    const pid = (
+      exchangeSelectedItem.product?._id ||
+      exchangeSelectedItem.product ||
+      ""
+    ).toString();
+
+    try {
+      setSubmittingExchange(true);
+      const response = await api.post(
+        `/orders/${exchangeModalOrder._id}/exchange`,
+        {
+          productId: pid,
+          quantity: exchangeQty,
+          currentSize: exchangeSelectedItem.size || "",
+          newSize: exchangeNewSize,
+          reason: exchangeReason,
+          details: exchangeDetails,
+        },
+        getAuthConfig()
+      );
+
+      toast.success(
+        response.data?.message || "Exchange request submitted successfully."
+      );
+
+      const updatedOrder = response.data?.order;
+      if (updatedOrder) {
+        setOrders((prev) =>
+          prev.map((o) => (o._id === updatedOrder._id ? updatedOrder : o))
+        );
+      } else {
+        fetchOrders();
+      }
+
+      handleCloseExchangeModal();
+    } catch (error) {
+      console.error("Submit Exchange Error:", error);
+      toast.error(
+        error.response?.data?.message ||
+          "Unable to submit exchange request. Please try again."
+      );
+    } finally {
+      setSubmittingExchange(false);
+    }
   };
 
   const handleCloseReturnModal = () => {
@@ -707,9 +831,23 @@ const MyAccount = () => {
                           </div>
 
                           <div className="order-card-badges">
-                            {order.orderStatus?.toLowerCase() === "refunded" ||
-                            order.paymentStatus?.toLowerCase() === "refunded" ? (
-                              <span className="status-badge refunded">Refunded</span>
+                            {order.orderStatus?.toLowerCase() === "cancelled" ? (
+                              <>
+                                <span className="status-badge cancelled">Cancelled</span>
+                                {order.paymentStatus?.toLowerCase() === "refunded" ? (
+                                  <span className="status-badge refunded">Refunded</span>
+                                ) : (
+                                  <span className="payment-badge pending">
+                                    {order.paymentMethod === "COD" ? "Unpaid (COD)" : "Unpaid"}
+                                  </span>
+                                )}
+                              </>
+                            ) : order.orderStatus?.toLowerCase() === "refunded" ||
+                              order.paymentStatus?.toLowerCase() === "refunded" ? (
+                              <>
+                                <span className="status-badge refunded">Refunded</span>
+                                <span className="payment-badge refunded">Refunded</span>
+                              </>
                             ) : (
                               <>
                                 <span
@@ -801,43 +939,76 @@ const MyAccount = () => {
                               </button>
                             )}
 
+                            {/* RETURN BUTTON / BADGE */}
                             {isOrderReturnEligible(order) ? (
                               <button
                                 type="button"
                                 className="btn-order-action btn-return"
                                 onClick={() => handleOpenReturnModal(order)}
                               >
-                                Return Product
+                                Return
                               </button>
                             ) : order.returnStatus &&
                               order.returnStatus !== "NONE" &&
-                              order.orderStatus !== "refunded" &&
-                              order.paymentStatus !== "refunded" &&
                               order.orderStatus !== "cancelled" ? (
                               <div
                                 className={`return-status-tag ${order.returnStatus.toLowerCase()}`}
                               >
-                                {order.returnStatus === "REQUESTED" &&
-                                order.orderStatus !== "returned" ? (
-                                  <>
-                                    <span>Return Requested</span>
-                                    <span className="return-tag-sub">
-                                      Status: Pending
-                                    </span>
-                                  </>
-                                ) : order.returnStatus === "APPROVED" ||
-                                  order.orderStatus === "returned" ? (
+                                {order.returnStatus === "REQUESTED" ? (
+                                  <span>Return Requested</span>
+                                ) : order.returnStatus === "APPROVED" ? (
                                   <span>Return Approved</span>
-                                ) : order.returnStatus === "REJECTED" ? (
-                                  <span>Return Rejected</span>
                                 ) : order.returnStatus === "PICKUP_SCHEDULED" ? (
                                   <span>Pickup Scheduled</span>
                                 ) : order.returnStatus === "PICKED_UP" ? (
-                                  <span>Product Picked Up</span>
+                                  <span>Picked Up</span>
+                                ) : order.returnStatus === "RETURN_RECEIVED" ? (
+                                  <span>Return Received</span>
+                                ) : order.returnStatus === "REFUND_PROCESSING" ? (
+                                  <span>Refund Processing</span>
+                                ) : order.returnStatus === "REFUNDED" ? (
+                                  <span>Refund Completed</span>
+                                ) : order.returnStatus === "REJECTED" ? (
+                                  <span>Return Rejected</span>
                                 ) : (
-                                  <span>
-                                    {order.returnStatus.replace("_", " ")}
-                                  </span>
+                                  <span>{order.returnStatus.replace("_", " ")}</span>
+                                )}
+                              </div>
+                            ) : null}
+
+                            {/* EXCHANGE BUTTON / BADGE */}
+                            {isOrderExchangeEligible(order) ? (
+                              <button
+                                type="button"
+                                className="btn-order-action btn-exchange"
+                                onClick={() => handleOpenExchangeModal(order)}
+                              >
+                                Exchange
+                              </button>
+                            ) : order.exchangeStatus &&
+                              order.exchangeStatus !== "NONE" &&
+                              order.orderStatus !== "cancelled" ? (
+                              <div
+                                className={`exchange-status-tag ${order.exchangeStatus.toLowerCase()}`}
+                              >
+                                {order.exchangeStatus === "REQUESTED" ? (
+                                  <span>Exchange Requested</span>
+                                ) : order.exchangeStatus === "APPROVED" ? (
+                                  <span>Exchange Approved</span>
+                                ) : order.exchangeStatus === "PICKUP_SCHEDULED" ? (
+                                  <span>Exchange Pickup</span>
+                                ) : order.exchangeStatus === "PICKED_UP" ? (
+                                  <span>Item Picked Up</span>
+                                ) : order.exchangeStatus === "RECEIVED" ? (
+                                  <span>Item Received</span>
+                                ) : order.exchangeStatus === "SHIPPED" ? (
+                                  <span>Replacement Shipped</span>
+                                ) : order.exchangeStatus === "DELIVERED" ? (
+                                  <span>Exchange Delivered</span>
+                                ) : order.exchangeStatus === "REJECTED" ? (
+                                  <span>Exchange Rejected</span>
+                                ) : (
+                                  <span>{order.exchangeStatus.replace("_", " ")}</span>
                                 )}
                               </div>
                             ) : null}
@@ -1000,16 +1171,13 @@ const MyAccount = () => {
                   disabled={submittingReturn}
                   required
                 >
-                  <option value="">Select reason </option>
-                  <option value="Wrong product received">
-                    Wrong product received
-                  </option>
+                  <option value="">Select reason</option>
                   <option value="Product damaged">Product damaged</option>
-                  <option value="Size issue">Size issue</option>
-                  <option value="Product not as expected">
-                    Product not as expected
-                  </option>
-                  <option value="Quality issue">Quality issue</option>
+                  <option value="Wrong product received">Wrong product received</option>
+                  <option value="Product doesn't fit">Product doesn't fit</option>
+                  <option value="Product quality issue">Product quality issue</option>
+                  <option value="Product not as expected">Product not as expected</option>
+                  <option value="Changed my mind">Changed my mind</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
@@ -1079,7 +1247,275 @@ const MyAccount = () => {
         </div>
       )}
 
-      {/* ADDRESS DRAWER / MODAL */}
+      {/* EXCHANGE PRODUCT MODAL */}
+      {exchangeModalOrder && exchangeSelectedItem && (
+        <div
+          className="decathlon-modal-backdrop"
+          onClick={handleCloseExchangeModal}
+        >
+          <div
+            className="decathlon-return-modal decathlon-exchange-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="return-modal-header">
+              <div className="return-modal-title-box">
+                <h3>Exchange Product</h3>
+                <span className="return-modal-subtitle">
+                  Order #{exchangeModalOrder._id.slice(-8).toUpperCase()} • Placed on{" "}
+                  {formatDate(exchangeModalOrder.createdAt)}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="return-modal-close"
+                onClick={handleCloseExchangeModal}
+                disabled={submittingExchange}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitExchange} className="return-modal-body">
+              {/* If multiple items, allow picking which item */}
+              {exchangeModalOrder.orderItems?.length > 1 && (
+                <div className="return-form-section">
+                  <label className="return-section-label">
+                    Select product to exchange:
+                  </label>
+                  <div className="exchange-product-picker">
+                    {exchangeModalOrder.orderItems.map((item, idx) => {
+                      const pid = (
+                        item.product?._id ||
+                        item.product ||
+                        ""
+                      ).toString();
+                      const isCurrent =
+                        (
+                          exchangeSelectedItem.product?._id ||
+                          exchangeSelectedItem.product ||
+                          ""
+                        ).toString() === pid;
+                      return (
+                        <div
+                          key={idx}
+                          className={`exchange-picker-item ${
+                            isCurrent ? "active" : ""
+                          }`}
+                          onClick={() => handleSelectExchangeProduct(item)}
+                        >
+                          <img
+                            src={getImageUrl(item.image)}
+                            alt={item.name}
+                            className="exchange-picker-thumb"
+                          />
+                          <span>{item.name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* CURRENT PRODUCT DISPLAY */}
+              <div className="exchange-current-box">
+                <span className="exchange-section-title">Current Product</span>
+                <div className="exchange-current-row">
+                  <img
+                    src={getImageUrl(exchangeSelectedItem.image)}
+                    alt={exchangeSelectedItem.name}
+                    className="exchange-current-thumb"
+                    onError={(e) => {
+                      e.target.src =
+                        "https://via.placeholder.com/60?text=Product";
+                    }}
+                  />
+                  <div className="exchange-current-info">
+                    <strong>{exchangeSelectedItem.name}</strong>
+                    <div className="exchange-meta-chips">
+                      <span className="exchange-chip">
+                        Current Size: <strong>{exchangeSelectedItem.size || "Standard"}</strong>
+                      </span>
+                      <span className="exchange-chip">
+                        Quantity: <strong>{exchangeQty}</strong>
+                      </span>
+                      <span className="exchange-chip">
+                        Price: <strong>{formatPrice(exchangeSelectedItem.price)}</strong>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* REASON FOR EXCHANGE */}
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Exchange Reason: <span className="required-star">*</span>
+                </label>
+                <select
+                  className="return-reason-select"
+                  value={exchangeReason}
+                  onChange={(e) => setExchangeReason(e.target.value)}
+                  disabled={submittingExchange}
+                  required
+                >
+                  <option value="">Select reason</option>
+                  <option value="Wrong size">Wrong size</option>
+                  <option value="Wrong product">Wrong product</option>
+                  <option value="Damaged product">Damaged product</option>
+                  <option value="Product quality issue">Product quality issue</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              {/* SELECT NEW SIZE */}
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Select New Size: <span className="required-star">*</span>
+                </label>
+                {loadingProductDetails ? (
+                  <div className="exchange-loading-sizes">
+                    Checking available sizes &amp; stock...
+                  </div>
+                ) : (
+                  (() => {
+                    const pid = (
+                      exchangeSelectedItem.product?._id ||
+                      exchangeSelectedItem.product ||
+                      ""
+                    ).toString();
+                    const prod = productDetailsMap[pid];
+                    const availableSizes = Array.isArray(prod?.size)
+                      ? prod.size
+                      : ["S", "M", "L", "XL"];
+                    const inStock = (prod?.stock ?? 1) >= exchangeQty;
+
+                    return (
+                      <div className="exchange-sizes-grid">
+                        {availableSizes.map((s, sIdx) => {
+                          const isSameAsCurrent =
+                            (exchangeSelectedItem.size || "").trim().toLowerCase() ===
+                            s.trim().toLowerCase();
+                          const isSelected = exchangeNewSize === s;
+                          const isOutOfStock = !inStock;
+
+                          return (
+                            <button
+                              type="button"
+                              key={sIdx}
+                              className={`exchange-size-btn ${
+                                isSelected ? "selected" : ""
+                              } ${isOutOfStock ? "out-of-stock" : ""}`}
+                              disabled={isOutOfStock || submittingExchange}
+                              onClick={() => setExchangeNewSize(s)}
+                            >
+                              <span className="size-label">{s}</span>
+                              {isSameAsCurrent && (
+                                <span className="size-current-tag">Current</span>
+                              )}
+                              {isOutOfStock && (
+                                <span className="size-stock-tag">Out of stock</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()
+                )}
+              </div>
+
+              {/* PRICE DIFFERENCE DISPLAY */}
+              {(() => {
+                const pid = (
+                  exchangeSelectedItem.product?._id ||
+                  exchangeSelectedItem.product ||
+                  ""
+                ).toString();
+                const prod = productDetailsMap[pid];
+                const replacementUnitPrice = prod
+                  ? prod.discountPrice > 0
+                    ? prod.discountPrice
+                    : prod.price
+                  : exchangeSelectedItem.price;
+                const origTotal = exchangeSelectedItem.price * exchangeQty;
+                const newTotal = replacementUnitPrice * exchangeQty;
+                const diff = newTotal - origTotal;
+
+                return (
+                  <div className="exchange-price-difference-box">
+                    <div className="exchange-price-row">
+                      <span>Original price ({exchangeQty} item):</span>
+                      <strong>{formatPrice(origTotal)}</strong>
+                    </div>
+                    <div className="exchange-price-row">
+                      <span>Replacement price:</span>
+                      <strong>{formatPrice(newTotal)}</strong>
+                    </div>
+                    {diff > 0 ? (
+                      <div className="exchange-diff-alert additional">
+                        Additional payment required: <strong>{formatPrice(diff)}</strong>
+                        <span className="diff-subtext"> (Will be settled upon delivery)</span>
+                      </div>
+                    ) : diff < 0 ? (
+                      <div className="exchange-diff-alert refund">
+                        Refund difference: <strong>{formatPrice(Math.abs(diff))}</strong>
+                        <span className="diff-subtext"> (Will be credited upon inspection)</span>
+                      </div>
+                    ) : (
+                      <div className="exchange-diff-alert same">
+                        ✓ No price difference
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* ADDITIONAL COMMENTS */}
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Additional Details: <span className="optional-tag">(Optional)</span>
+                </label>
+                <textarea
+                  className="return-details-textarea"
+                  value={exchangeDetails}
+                  onChange={(e) => setExchangeDetails(e.target.value)}
+                  placeholder="Any comments regarding your exchange request..."
+                  rows={2}
+                  disabled={submittingExchange}
+                />
+              </div>
+
+              <div className="return-modal-actions">
+                <button
+                  type="button"
+                  className="btn-return-cancel"
+                  onClick={handleCloseExchangeModal}
+                  disabled={submittingExchange}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-return-submit btn-exchange-submit"
+                  disabled={
+                    submittingExchange ||
+                    !exchangeReason ||
+                    !exchangeNewSize
+                  }
+                >
+                  {submittingExchange ? (
+                    <span className="return-spinner-text">
+                      <span className="return-mini-spinner"></span> Submitting...
+                    </span>
+                  ) : (
+                    "Submit Exchange Request"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       <AddressDrawer
         isOpen={isAddressDrawerOpen}
         onClose={() => setIsAddressDrawerOpen(false)}

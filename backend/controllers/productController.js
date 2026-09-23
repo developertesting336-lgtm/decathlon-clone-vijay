@@ -85,6 +85,140 @@ const toScalar = (value, defaultValue = undefined) => {
 
 /*
 ========================================
+SEARCH HELPERS
+========================================
+*/
+
+const escapeRegex = (str) => {
+  return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+// Common sports / ecommerce synonyms and associations
+const SEARCH_SYNONYMS = {
+  bag: ["backpack", "rucksack", "duffle", "duffel", "tote", "pouch", "bag"],
+  bags: ["backpack", "backpacks", "rucksack", "rucksacks", "duffle", "duffel", "tote", "bag"],
+  backpack: ["bag", "bags", "rucksack", "backpack"],
+  backpacks: ["bag", "bags", "rucksack", "rucksacks", "backpack"],
+  shoe: ["footwear", "sneaker", "boot", "sandal", "shoe"],
+  shoes: ["footwear", "sneakers", "boots", "sandals", "shoes"],
+  cycle: ["bike", "bicycle", "cycling", "cycle"],
+  cycles: ["bikes", "bicycles", "cycling", "cycles"],
+  jacket: ["coat", "windcheater", "fleece", "raincoat", "jacket"],
+  jackets: ["coats", "windcheaters", "fleece", "raincoats", "jackets"],
+  tshirt: ["t-shirt", "tee", "top", "jersey"],
+  "t-shirt": ["tshirt", "tee", "top", "jersey"],
+  "t-shirts": ["tshirts", "tees", "tops", "jerseys"],
+  tshirts: ["t-shirts", "tees", "tops", "jerseys"],
+};
+
+const getWordVariations = (word) => {
+  const clean = String(word).toLowerCase().trim();
+  if (!clean) return [];
+
+  const variants = new Set([clean]);
+
+  // Handle plural / singular
+  if (clean.endsWith("ies") && clean.length > 4) {
+    variants.add(clean.slice(0, -3) + "y");
+  } else if (clean.endsWith("es") && clean.length > 3) {
+    variants.add(clean.slice(0, -2));
+    variants.add(clean.slice(0, -1));
+  } else if (clean.endsWith("s") && clean.length > 3) {
+    variants.add(clean.slice(0, -1));
+  } else if (!clean.endsWith("s") && clean.length >= 2) {
+    variants.add(clean + "s");
+  }
+
+  // Add synonyms if any
+  if (SEARCH_SYNONYMS[clean]) {
+    SEARCH_SYNONYMS[clean].forEach((s) => variants.add(s));
+  }
+
+  return Array.from(variants);
+};
+
+const calculateRelevance = (product, cleanQuery, tokens, matchedCategoryIds) => {
+  let score = 0;
+  const lowerQuery = cleanQuery.toLowerCase();
+  const prodName = (product.name || "").toLowerCase().trim();
+  const prodDesc = (product.description || "").toLowerCase();
+  const prodBrand = (product.brand || "").toLowerCase();
+  const prodGender = (product.gender || "").toLowerCase();
+  const prodColors = Array.isArray(product.color)
+    ? product.color.map((c) => String(c).toLowerCase())
+    : [String(product.color || "").toLowerCase()];
+
+  // 1. Exact name match (Highest: 100)
+  if (prodName === lowerQuery) {
+    score += 100;
+  }
+  // 2. Name starts with query (80)
+  else if (prodName.startsWith(lowerQuery)) {
+    score += 80;
+  }
+  // 3. Name contains full query (60)
+  else if (prodName.includes(lowerQuery)) {
+    score += 60;
+  }
+
+  // 4. Brand match (50)
+  if (prodBrand === lowerQuery || prodBrand.startsWith(lowerQuery)) {
+    score += 50;
+  } else if (prodBrand.includes(lowerQuery)) {
+    score += 40;
+  }
+
+  // 5. Category match (40)
+  const catIdStr = product.category?._id?.toString() || product.category?.toString();
+  const catIdsStrList = Array.isArray(product.categories)
+    ? product.categories.map((c) => (c?._id ? c._id.toString() : c.toString()))
+    : [];
+  const matchesCat = matchedCategoryIds.some(
+    (id) => id.toString() === catIdStr || catIdsStrList.includes(id.toString())
+  );
+  if (matchesCat) {
+    score += 40;
+  }
+
+  // 6. Name contains tokens (up to 30)
+  if (tokens.length > 0) {
+    let tokenMatchesInName = 0;
+    tokens.forEach((t) => {
+      const tLower = t.toLowerCase();
+      const tSingular =
+        tLower.endsWith("s") && tLower.length > 3 ? tLower.slice(0, -1) : tLower;
+      if (prodName.includes(tLower) || prodName.includes(tSingular)) {
+        tokenMatchesInName++;
+      }
+    });
+    score += Math.round((tokenMatchesInName / tokens.length) * 30);
+  }
+
+  // 7. Description contains query or tokens (20)
+  if (prodDesc.includes(lowerQuery)) {
+    score += 20;
+  } else if (tokens.some((t) => prodDesc.includes(t.toLowerCase()))) {
+    score += 10;
+  }
+
+  // 8. Color or Gender match (15)
+  if (
+    prodColors.some(
+      (c) =>
+        c.includes(lowerQuery) || tokens.some((t) => c.includes(t.toLowerCase()))
+    )
+  ) {
+    score += 15;
+  }
+  if (prodGender === lowerQuery) {
+    score += 15;
+  }
+
+  return score;
+};
+
+/*
+========================================
 CREATE PRODUCT
 ========================================
 */
@@ -244,32 +378,202 @@ const getProducts = async (req, res) => {
     }
 
     /*
-    SEARCH
+    SEARCH & QUERY INTERPRETATION
     */
 
-    if (search) {
-      const searchRegex = {
-        $regex: search,
-        $options: "i",
-      };
+    let matchedCategoryIds = [];
+    let matchedCategoryDocs = [];
+    const isSearching = Boolean(search && String(search).trim());
+    let cleanSearch = "";
+    let searchTokens = [];
+    let detectedGender = null;
+    let detectedColor = null;
+    let detectedBrand = null;
+    let remainingQuery = "";
 
-      const searchConditions = [
-        { name: searchRegex },
-        { description: searchRegex },
-        { brand: searchRegex },
+    if (isSearching) {
+      // 1. Normalize input (trim, normalize quotes and apostrophes)
+      cleanSearch = String(search)
+        .trim()
+        .replace(/[’‘`]/g, "'");
+      let normalizedQuery = cleanSearch.toLowerCase();
+
+      // 2. Gender Detection & Extraction (mandatory hard filter)
+      const WOMEN_REGEX = /\b(women's|womens|women|woman|female|ladies)\b/i;
+      const MEN_REGEX = /\b(men's|mens|men|man|male)\b/i;
+      const KIDS_REGEX = /\b(kid's|kids|kid|children's|children|junior|boy's|boys|girl's|girls)\b/i;
+      const UNISEX_REGEX = /\b(unisex)\b/i;
+
+      // Check Women before Men to avoid substring confusion
+      if (WOMEN_REGEX.test(normalizedQuery)) {
+        detectedGender = "Women";
+        normalizedQuery = normalizedQuery.replace(WOMEN_REGEX, " ").replace(/\s+/g, " ").trim();
+      } else if (MEN_REGEX.test(normalizedQuery)) {
+        detectedGender = "Men";
+        normalizedQuery = normalizedQuery.replace(MEN_REGEX, " ").replace(/\s+/g, " ").trim();
+      } else if (KIDS_REGEX.test(normalizedQuery)) {
+        detectedGender = "Kids";
+        normalizedQuery = normalizedQuery.replace(KIDS_REGEX, " ").replace(/\s+/g, " ").trim();
+      } else if (UNISEX_REGEX.test(normalizedQuery)) {
+        detectedGender = "Unisex";
+        normalizedQuery = normalizedQuery.replace(UNISEX_REGEX, " ").replace(/\s+/g, " ").trim();
+      }
+
+      if (detectedGender) {
+        filter.gender = detectedGender;
+      }
+
+      // 3. Color Detection & Extraction
+      const KNOWN_COLORS = [
+        "black", "white", "blue", "red", "green", "grey", "gray",
+        "orange", "yellow", "pink", "purple", "khaki", "brown", "navy", "beige"
       ];
 
-      if (filter.$or) {
-        filter.$and = [{ $or: filter.$or }, { $or: searchConditions }];
-        delete filter.$or;
+      for (const col of KNOWN_COLORS) {
+        const colRegex = new RegExp(`\\b${col}\\b`, "i");
+        if (colRegex.test(normalizedQuery)) {
+          detectedColor = col.charAt(0).toUpperCase() + col.slice(1);
+          const withoutColor = normalizedQuery.replace(colRegex, " ").replace(/\s+/g, " ").trim();
+          if (withoutColor.length > 0 || detectedGender) {
+            normalizedQuery = withoutColor;
+            filter.color = { $regex: `^${col}$`, $options: "i" };
+          }
+          break;
+        }
+      }
+
+      // 4. Brand Detection & Extraction
+      const KNOWN_BRANDS = [
+        "nike", "adidas", "puma", "reebok", "asics", "under armour",
+        "decathlon", "quechua", "domyos", "kiprun", "kipsta", "inesis",
+        "caperlan", "tribord", "corength", "rockrider", "kalenji", "btwin",
+        "nabaiji", "forclaz", "fouganza", "tarmak", "kuikma", "artengo", "simond"
+      ];
+
+      for (const br of KNOWN_BRANDS) {
+        const brRegex = new RegExp(`\\b${escapeRegex(br)}\\b`, "i");
+        if (brRegex.test(normalizedQuery)) {
+          detectedBrand = br.charAt(0).toUpperCase() + br.slice(1);
+          const withoutBrand = normalizedQuery.replace(brRegex, " ").replace(/\s+/g, " ").trim();
+          if (withoutBrand.length > 0 || detectedGender || detectedColor) {
+            normalizedQuery = withoutBrand;
+            filter.brand = { $regex: escapeRegex(br), $options: "i" };
+          } else {
+            filter.brand = { $regex: escapeRegex(br), $options: "i" };
+          }
+          break;
+        }
+      }
+
+      remainingQuery = normalizedQuery.trim();
+
+      // 5. Search on remaining query
+      if (remainingQuery.length > 0) {
+        searchTokens = remainingQuery
+          .split(/\s+/)
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        const allSearchVariants = new Set();
+        getWordVariations(remainingQuery).forEach((v) => allSearchVariants.add(v));
+        searchTokens.forEach((tok) => {
+          getWordVariations(tok).forEach((v) => allSearchVariants.add(v));
+        });
+
+        const variantList = Array.from(allSearchVariants);
+
+        // Dynamic Category Lookup on remaining query & variants
+        const categoryConditions = [];
+        variantList.forEach((variant) => {
+          const esc = escapeRegex(variant);
+          if (variant.length <= 4) {
+            categoryConditions.push({ name: { $regex: `\\b${esc}(s)?\\b`, $options: "i" } });
+            categoryConditions.push({ slug: { $regex: `(^|-)${esc}(s)?(-|$)`, $options: "i" } });
+          } else {
+            categoryConditions.push({ name: { $regex: esc, $options: "i" } });
+            categoryConditions.push({ slug: { $regex: esc, $options: "i" } });
+          }
+        });
+
+        if (categoryConditions.length > 0) {
+          matchedCategoryDocs = await Category.find({
+            $or: categoryConditions,
+            isActive: true,
+          }).select("_id name slug image");
+
+          // Exclude categories of conflicting gender
+          if (detectedGender === "Men") {
+            matchedCategoryDocs = matchedCategoryDocs.filter(
+              (c) => !/\bwomen\b/i.test(c.name)
+            );
+          } else if (detectedGender === "Women") {
+            matchedCategoryDocs = matchedCategoryDocs.filter(
+              (c) => !/\bmen\b/i.test(c.name) || /\bwomen\b/i.test(c.name)
+            );
+          }
+
+          matchedCategoryIds = matchedCategoryDocs.map((c) => c._id);
+        }
+
+        // Construct search conditions for remaining query
+        const searchOrConditions = [];
+        const escapedRemaining = escapeRegex(remainingQuery);
+
+        searchOrConditions.push({ name: { $regex: escapedRemaining, $options: "i" } });
+        searchOrConditions.push({ description: { $regex: escapedRemaining, $options: "i" } });
+
+        if (!filter.brand) {
+          searchOrConditions.push({ brand: { $regex: escapedRemaining, $options: "i" } });
+        }
+
+        variantList.forEach((variant) => {
+          if (variant.length < 2) return;
+          const esc = escapeRegex(variant);
+          searchOrConditions.push({ name: { $regex: esc, $options: "i" } });
+          searchOrConditions.push({ description: { $regex: esc, $options: "i" } });
+          if (!filter.brand) {
+            searchOrConditions.push({ brand: { $regex: esc, $options: "i" } });
+          }
+        });
+
+        if (matchedCategoryIds.length > 0) {
+          searchOrConditions.push({ category: { $in: matchedCategoryIds } });
+          searchOrConditions.push({ categories: { $in: matchedCategoryIds } });
+        }
+
+        if (searchTokens.length > 1) {
+          searchTokens.forEach((tok) => {
+            if (tok.length < 2) return;
+            const escTok = escapeRegex(tok);
+            searchOrConditions.push({ name: { $regex: escTok, $options: "i" } });
+          });
+        }
+
+        if (filter.$or) {
+          filter.$and = [{ $or: filter.$or }, { $or: searchOrConditions }];
+          delete filter.$or;
+        } else {
+          filter.$or = searchOrConditions;
+        }
       } else {
-        filter.$or = searchConditions;
+        // remainingQuery is empty (user searched only e.g. "men", "women", "black", "nike")
+        if (detectedColor && !detectedGender && !filter.brand) {
+          const escCol = escapeRegex(cleanSearch);
+          const colorOrConditions = [
+            { color: { $regex: `^${escCol}$`, $options: "i" } },
+            { color: { $regex: escCol, $options: "i" } },
+            { name: { $regex: escCol, $options: "i" } },
+            { description: { $regex: escCol, $options: "i" } },
+          ];
+          if (filter.$or) {
+            filter.$and = [{ $or: filter.$or }, { $or: colorOrConditions }];
+            delete filter.$or;
+          } else {
+            filter.$or = colorOrConditions;
+          }
+        }
       }
     }
-
-    /*
-    CATEGORY
-    */
 
     /*
     CATEGORY
@@ -440,21 +744,66 @@ const getProducts = async (req, res) => {
     }
 
     /*
-    TOTAL
+    RELEVANCE SCORING VS DIRECT DB SORTING
     */
+    const hasExplicitSort =
+      sort === "price_low" ||
+      sort === "price_high" ||
+      sort === "newest" ||
+      sort === "name_asc" ||
+      sort === "name_desc";
 
-    const totalProducts = await Product.countDocuments(filter);
+    let totalProducts = 0;
+    let products = [];
 
-    /*
-    PRODUCTS
-    */
+    if (isSearching && (!hasExplicitSort || sort === "relevant")) {
+      // Fetch all matching products to score relevance
+      const allMatching = await Product.find(filter)
+        .populate("category", "name image slug")
+        .populate("categories", "name image slug");
 
-    const products = await Product.find(filter)
-      .populate("category", "name image")
-      .populate("categories", "name image")
-      .sort(sortOption)
-      .skip(skip)
-      .limit(limitNumber);
+      const scoringQuery =
+        remainingQuery && remainingQuery.length > 0
+          ? remainingQuery
+          : cleanSearch;
+      const scoringTokens =
+        searchTokens && searchTokens.length > 0
+          ? searchTokens
+          : [scoringQuery];
+
+      // Score and rank
+      const scoredProducts = allMatching.map((p) => {
+        const score = calculateRelevance(
+          p,
+          scoringQuery,
+          scoringTokens,
+          matchedCategoryIds
+        );
+        return { product: p, score };
+      });
+
+      scoredProducts.sort((a, b) => {
+        if (b.score !== a.score) {
+          return b.score - a.score;
+        }
+        return (
+          new Date(b.product.createdAt || 0) - new Date(a.product.createdAt || 0)
+        );
+      });
+
+      totalProducts = scoredProducts.length;
+      products = scoredProducts
+        .slice(skip, skip + limitNumber)
+        .map((item) => item.product);
+    } else {
+      totalProducts = await Product.countDocuments(filter);
+      products = await Product.find(filter)
+        .populate("category", "name image slug")
+        .populate("categories", "name image slug")
+        .sort(sortOption)
+        .skip(skip)
+        .limit(limitNumber);
+    }
 
     /*
     TOTAL PAGES
@@ -472,6 +821,7 @@ const getProducts = async (req, res) => {
       currentPage: pageNumber,
       limit: limitNumber,
       products,
+      categories: matchedCategoryDocs,
     });
   } catch (error) {
     console.error("Get Products Error:", error);

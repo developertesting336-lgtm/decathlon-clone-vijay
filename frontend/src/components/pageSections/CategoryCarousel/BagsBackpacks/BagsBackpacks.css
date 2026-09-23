@@ -8,10 +8,14 @@
 
 .category-carousel-bags-backpacks {
   width: 100% !important;
-  margin: 20px 0 36px 0 !important;
+  margin: 0 !important;
   padding: 0 !important;
   box-sizing: border-box !important;
   background: transparent !important;
+}
+
+.category-carousel-bags-backpacks + .promo-banner {
+  margin-top: 0 !important;
 }
 
 .category-carousel-bags-backpacks .bags-category-title {
@@ -24,7 +28,7 @@
 .category-carousel-bags-backpacks .bags-category-track {
   display: grid !important;
   grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
-  gap: 14px !important;
+  gap: 8px !important;
   width: 100% !important;
   padding: 0 !important;
   overflow: visible !important;
@@ -72,15 +76,16 @@
 /* Rounded Rectangle Portrait Card 260/288 */
 .category-carousel-bags-backpacks .bags-category-image-box {
   width: 100% !important;
-  aspect-ratio: 260 / 288 !important;
+  aspect-ratio: 1 / 1 !important;
   height: auto !important;
+  border: 1px solid #e1e4e8 !important;
   border-radius: 8px !important;
   overflow: hidden !important;
   background: #f4f5f7 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin: 0 0 10px 0 !important;
+  margin: 0 0 6px 0 !important;
   box-shadow: none !important;
   position: relative !important;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease !important;
@@ -115,13 +120,16 @@
 
 /* Category Label */
 .category-carousel-bags-backpacks .bags-category-name {
-  font-size: 13.5px !important;
-  font-weight: 600 !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 32px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
   color: #111111 !important;
   margin: 0 !important;
   text-align: center !important;
   line-height: 1.25 !important;
-  letter-spacing: -0.1px !important;
+  letter-spacing: 0 !important;
   white-space: normal !important;
   word-break: break-word !important;
   transition: color 0.2s ease !important;

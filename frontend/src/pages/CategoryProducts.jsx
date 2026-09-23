@@ -163,6 +163,10 @@ function CategoryProducts() {
     (queryCategory ? formatTitle(queryCategory) : null) ||
     "Products";
 
+  const pageHeading = searchQuery
+    ? `Search results for "${searchQuery}"`
+    : categoryName;
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -186,7 +190,9 @@ function CategoryProducts() {
           : data.products || data.data || [];
 
         setProducts(productList);
-        document.title = `${categoryName} | Decathlon`;
+        document.title = searchQuery
+          ? `Search results for "${searchQuery}" | Decathlon`
+          : `${categoryName} | Decathlon`;
       } catch (err) {
         console.error(err);
         if (axios.isAxiosError(err)) {
@@ -544,12 +550,22 @@ function CategoryProducts() {
         <div className="breadcrumb">
           <span onClick={() => navigate("/")}>Home</span>
           <b>›</b>
-          <span>Sports</span>
-          <b>›</b>
-          <span>{categoryName}</span>
+          {searchQuery ? (
+            <>
+              <span>Search</span>
+              <b>›</b>
+              <span>"{searchQuery}"</span>
+            </>
+          ) : (
+            <>
+              <span>Sports</span>
+              <b>›</b>
+              <span>{categoryName}</span>
+            </>
+          )}
         </div>
 
-        <h1>{categoryName}</h1>
+        <h1>{pageHeading}</h1>
       </div>
 
       {/* MOBILE BACKDROP OVERLAY */}
@@ -954,56 +970,64 @@ function CategoryProducts() {
           </div>
 
           <div className="products-toolbar">
-            <div className="category-tabs">
-              <span>Explore all our collections</span>
+            {searchQuery ? (
+              <div className="search-quick-tags">
+                <span className="search-results-label">
+                  Showing results for <strong>"{searchQuery}"</strong>
+                </span>
+              </div>
+            ) : (
+              <div className="category-tabs">
+                <span>Explore all our collections</span>
 
-              {availableCategories
-                .filter((cat) => cat.toLowerCase() !== categoryName.toLowerCase())
-                .slice(0, 4)
-                .map((cat) => {
-                  const active = selectedCategories.includes(cat);
-                  return (
-                    <button
-                      key={cat}
-                      className={active ? "active" : ""}
-                      onClick={() => {
-                        toggleArrayFilter(setSelectedCategories, cat);
-                        setOpenFilters((prev) => ({ ...prev, Category: true }));
-                      }}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
+                {availableCategories
+                  .filter((cat) => cat.toLowerCase() !== categoryName.toLowerCase())
+                  .slice(0, 4)
+                  .map((cat) => {
+                    const active = selectedCategories.includes(cat);
+                    return (
+                      <button
+                        key={cat}
+                        className={active ? "active" : ""}
+                        onClick={() => {
+                          toggleArrayFilter(setSelectedCategories, cat);
+                          setOpenFilters((prev) => ({ ...prev, Category: true }));
+                        }}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
 
-              <button
-                className={selectedGenders.includes("Men") ? "active" : ""}
-                onClick={() => {
-                  toggleArrayFilter(setSelectedGenders, "Men");
-                  setOpenFilters((prev) => ({ ...prev, Gender: true }));
-                }}
-              >
-                Men {categoryName}
-              </button>
-              <button
-                className={selectedGenders.includes("Women") ? "active" : ""}
-                onClick={() => {
-                  toggleArrayFilter(setSelectedGenders, "Women");
-                  setOpenFilters((prev) => ({ ...prev, Gender: true }));
-                }}
-              >
-                Women {categoryName}
-              </button>
-              <button
-                className={selectedGenders.includes("Kids") ? "active" : ""}
-                onClick={() => {
-                  toggleArrayFilter(setSelectedGenders, "Kids");
-                  setOpenFilters((prev) => ({ ...prev, Gender: true }));
-                }}
-              >
-                Kids {categoryName}
-              </button>
-            </div>
+                <button
+                  className={selectedGenders.includes("Men") ? "active" : ""}
+                  onClick={() => {
+                    toggleArrayFilter(setSelectedGenders, "Men");
+                    setOpenFilters((prev) => ({ ...prev, Gender: true }));
+                  }}
+                >
+                  Men {categoryName}
+                </button>
+                <button
+                  className={selectedGenders.includes("Women") ? "active" : ""}
+                  onClick={() => {
+                    toggleArrayFilter(setSelectedGenders, "Women");
+                    setOpenFilters((prev) => ({ ...prev, Gender: true }));
+                  }}
+                >
+                  Women {categoryName}
+                </button>
+                <button
+                  className={selectedGenders.includes("Kids") ? "active" : ""}
+                  onClick={() => {
+                    toggleArrayFilter(setSelectedGenders, "Kids");
+                    setOpenFilters((prev) => ({ ...prev, Gender: true }));
+                  }}
+                >
+                  Kids {categoryName}
+                </button>
+              </div>
+            )}
 
             <div className="products-sort">
               <strong>{filteredProducts.length} items</strong>
@@ -1030,9 +1054,28 @@ function CategoryProducts() {
           {!loading && !error && (
             <div className="product-grid">
               {filteredProducts.length === 0 ? (
-                <div className="no-products">
-                  No products found matching the selected filters.
-                </div>
+                searchQuery ? (
+                  <div className="no-products search-empty-container">
+                    <div className="search-empty-icon">🔍</div>
+                    <h2>No products found for "{searchQuery}".</h2>
+                    <p>
+                      Check the spelling of your keywords, try using more general search terms, or remove selected filters.
+                    </p>
+                    {activeFiltersCount > 0 && (
+                      <button
+                        type="button"
+                        className="clear-search-filters-btn"
+                        onClick={handleClearAll}
+                      >
+                        Clear all filters
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="no-products">
+                    No products found matching the selected filters.
+                  </div>
+                )
               ) : (
                 filteredProducts.map((product) => {
                   const price = getPrice(product);

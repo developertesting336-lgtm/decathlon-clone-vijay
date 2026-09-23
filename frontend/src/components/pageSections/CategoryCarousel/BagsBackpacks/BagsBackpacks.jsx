@@ -8,7 +8,6 @@ const BagsBackpacks = ({
   data,
   customCategories,
   customItems,
-  title,
 }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
@@ -253,21 +252,8 @@ const BagsBackpacks = ({
     return null;
   }
 
-  const sectionTitle =
-    title ||
-    section?.title ||
-    section?.name ||
-    data?.title ||
-    data?.name ||
-    "";
-
   return (
     <section className="category-carousel-bags-backpacks">
-      {sectionTitle &&
-        sectionTitle !== "Backpacks-cat" &&
-        sectionTitle !== "bags-backpacks" && (
-          <h2 className="bags-category-title">{sectionTitle}</h2>
-        )}
       <div className="bags-category-track">
         {categories.map((cat, idx) => (
           <div
@@ -288,6 +274,7 @@ const BagsBackpacks = ({
                 </div>
               )}
             </div>
+            <p className="bags-category-name">{cat.name}</p>
           </div>
         ))}
       </div>

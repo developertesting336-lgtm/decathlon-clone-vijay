@@ -260,6 +260,14 @@ const Shoes = ({
 
   return (
     <section className="category-carousel-shoes">
+      <nav className="shoes-category-nav" aria-label="Shoe categories">
+        <button type="button" className="shoes-category-nav-link shoes-category-nav-link-active">
+          All Sports
+        </button>
+        <button type="button" className="shoes-category-nav-link">Men</button>
+        <button type="button" className="shoes-category-nav-link">Women</button>
+        <button type="button" className="shoes-category-nav-link">Kids</button>
+      </nav>
       {sectionTitle &&
         sectionTitle !== "sports-footwear" &&
         sectionTitle !== "shoes" && (
@@ -285,6 +293,7 @@ const Shoes = ({
                 </div>
               )}
             </div>
+            <p className="shoes-category-name">{cat.name}</p>
           </div>
         ))}
       </div>

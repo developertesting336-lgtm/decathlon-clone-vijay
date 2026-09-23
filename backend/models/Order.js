@@ -154,6 +154,21 @@ const orderSchema = new mongoose.Schema(
       index: true,
     },
 
+    stripeRefundId: {
+      type: String,
+      default: "",
+    },
+
+    refundedAt: {
+      type: Date,
+    },
+
+    refundAmount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     orderStatus: {
       type: String,
       enum: [
@@ -163,8 +178,6 @@ const orderSchema = new mongoose.Schema(
         "shipped",
         "delivered",
         "cancelled",
-        "refunded",
-        "return_requested",
         "returned",
         "failed",
       ],
@@ -191,7 +204,10 @@ const orderSchema = new mongoose.Schema(
         "REJECTED",
         "PICKUP_SCHEDULED",
         "PICKED_UP",
+        "RETURN_RECEIVED",
+        "REFUND_PROCESSING",
         "REFUNDED",
+        "CANCELLED",
       ],
       default: "NONE",
       index: true,
@@ -250,11 +266,126 @@ const orderSchema = new mongoose.Schema(
           "REJECTED",
           "PICKUP_SCHEDULED",
           "PICKED_UP",
+          "RETURN_RECEIVED",
+          "REFUND_PROCESSING",
           "REFUNDED",
+          "CANCELLED",
         ],
         default: "NONE",
       },
       refundAmount: {
+        type: Number,
+        default: 0,
+      },
+      stripeRefundId: {
+        type: String,
+        default: "",
+      },
+      refundMethod: {
+        type: String,
+        enum: ["STRIPE", "COD_MANUAL", "NONE"],
+        default: "NONE",
+      },
+      adminNote: {
+        type: String,
+        default: "",
+      },
+      processedAt: {
+        type: Date,
+      },
+    },
+
+    exchangeStatus: {
+      type: String,
+      enum: [
+        "NONE",
+        "REQUESTED",
+        "APPROVED",
+        "REJECTED",
+        "PICKUP_SCHEDULED",
+        "PICKED_UP",
+        "RECEIVED",
+        "SHIPPED",
+        "DELIVERED",
+        "CANCELLED",
+      ],
+      default: "NONE",
+      index: true,
+    },
+
+    exchangeRequest: {
+      requestedAt: {
+        type: Date,
+      },
+      reason: {
+        type: String,
+        default: "",
+      },
+      details: {
+        type: String,
+        default: "",
+      },
+      items: [
+        {
+          product: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+          },
+          name: {
+            type: String,
+            default: "",
+          },
+          image: {
+            type: String,
+            default: "",
+          },
+          price: {
+            type: Number,
+            default: 0,
+          },
+          quantity: {
+            type: Number,
+            default: 1,
+          },
+          originalSize: {
+            type: String,
+            default: "",
+          },
+          newSize: {
+            type: String,
+            default: "",
+          },
+          color: {
+            type: String,
+            default: "",
+          },
+          priceDifference: {
+            type: Number,
+            default: 0,
+          },
+        },
+      ],
+      status: {
+        type: String,
+        enum: [
+          "NONE",
+          "REQUESTED",
+          "APPROVED",
+          "REJECTED",
+          "PICKUP_SCHEDULED",
+          "PICKED_UP",
+          "RECEIVED",
+          "SHIPPED",
+          "DELIVERED",
+          "CANCELLED",
+        ],
+        default: "NONE",
+      },
+      additionalPaymentRequired: {
+        type: Number,
+        default: 0,
+      },
+      refundDifference: {
         type: Number,
         default: 0,
       },

@@ -8,10 +8,45 @@
 
 .category-carousel-shoes {
   width: 100% !important;
-  margin: 20px 0 36px 0 !important;
-  padding: 0 !important;
+  margin: 0 0 36px 0 !important;
+  padding: 0 0 0 0 !important;
   box-sizing: border-box !important;
   background: transparent !important;
+}
+
+.category-carousel-shoes .shoes-category-nav {
+  display: flex !important;
+  align-items: center !important;
+  gap: 34px !important;
+  height: 48px !important;
+  margin: 0 0 0 0 !important;
+}
+
+.category-carousel-shoes .shoes-category-nav-link {
+  position: relative !important;
+  border: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  color: #171717 !important;
+  cursor: pointer !important;
+  font: inherit !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.category-carousel-shoes .shoes-category-nav-link-active {
+  font-weight: 600 !important;
+}
+
+.category-carousel-shoes .shoes-category-nav-link-active::after {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: -8px !important;
+  left: 0 !important;
+  height: 2px !important;
+  background: #0875e1 !important;
+  content: "" !important;
 }
 
 .category-carousel-shoes .shoes-category-title {
@@ -24,7 +59,7 @@
 .category-carousel-shoes .shoes-category-track {
   display: grid !important;
   grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
-  gap: 14px !important;
+  gap: 10px !important;
   width: 100% !important;
   padding: 0 !important;
   overflow: visible !important;
@@ -74,13 +109,14 @@
   width: 100% !important;
   aspect-ratio: 260 / 287 !important;
   height: auto !important;
-  border-radius: 8px !important;
+  border: 1px solid #e1e4e8 !important;
+  border-radius: 10px !important;
   overflow: hidden !important;
   background: #f4f5f7 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin: 0 0 10px 0 !important;
+  margin: 0 0 7px 0 !important;
   box-shadow: none !important;
   position: relative !important;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease !important;
@@ -115,8 +151,11 @@
 
 /* Category Label */
 .category-carousel-shoes .shoes-category-name {
-  font-size: 13.5px !important;
-  font-weight: 600 !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 32px !important;
+  font-size: 12.5px !important;
+  font-weight: 500 !important;
   color: #111111 !important;
   margin: 0 !important;
   text-align: center !important;

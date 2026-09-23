@@ -639,3 +639,677 @@
   color: #0f172a;
 }
 
+/* =====================================================
+   ADMIN ORDERS, RETURNS & EXCHANGES TABS
+===================================================== */
+.orders-main-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.orders-main-tab {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #64748b;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orders-main-tab:hover {
+  color: #1e1b4b;
+  background: #f1f5f9;
+}
+
+.orders-main-tab.active {
+  color: #fff;
+  background: #3643ba;
+}
+
+/* Lifecycle workflow action toolbar */
+.admin-lifecycle-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.admin-lifecycle-actions span {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.admin-action-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-action-step {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.btn-action-step.approve,
+.btn-action-step.primary {
+  background: #3643ba;
+  color: #fff;
+}
+
+.btn-action-step.approve:hover,
+.btn-action-step.primary:hover {
+  background: #2a3597;
+}
+
+.btn-action-step.reject {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+
+.btn-action-step.reject:hover {
+  background: #fca5a5;
+  color: #7f1d1d;
+}
+
+.btn-action-step.refund.stripe {
+  background: #0082c3;
+  color: #fff;
+  font-size: 13px;
+  padding: 7px 16px;
+}
+
+.btn-action-step.refund.stripe:hover:not(:disabled) {
+  background: #006da4;
+}
+
+.btn-action-step.refund.cod {
+  background: #059669;
+  color: #fff;
+  font-size: 13px;
+  padding: 7px 16px;
+}
+
+.btn-action-step.refund.cod:hover:not(:disabled) {
+  background: #047857;
+}
+
+.refund-complete-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Exchange detail card in modal */
+.exchange-detail-card {
+  background: #fbfcfe;
+  border: 1px solid #e0e7ff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-left: 4px solid #0082c3;
+}
+
+.exchange-detail-card .return-detail-header h3 {
+  color: #0c4a6e;
+}
+
+.exchange-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Badges for Exchanges */
+.admin-exchange-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.admin-exchange-badge.badge-approved,
+.admin-exchange-badge.badge-delivered {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.admin-exchange-badge.badge-rejected,
+.admin-exchange-badge.badge-cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* Table Pill Elements */
+.diff-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.diff-pill.pay {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.diff-pill.refund {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.diff-pill.same {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.table-reason-text {
+  font-size: 12px;
+  color: #334155;
+}
+
+.table-pay-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.stripe-id-code {
+  font-family: monospace;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #0284c7;
+  font-size: 12px;
+}
+
+.highlight-stripe {
+  background: #f0f9ff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #bae6fd;
+}
+
+/* =========================================================
+   TABLE INLINE ACTION BUTTONS & GROUP
+   ========================================================= */
+.table-action-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-table-action {
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.btn-table-action.approve {
+  background: #0082c3;
+  color: #ffffff;
+}
+
+.btn-table-action.approve:hover {
+  background: #006da4;
+}
+
+.btn-table-action.reject {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.btn-table-action.reject:hover {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.btn-table-action.step {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-color: #cbd5e1;
+}
+
+.btn-table-action.step:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-table-action.step.ship {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.btn-table-action.step.ship:hover {
+  background: #dbeafe;
+}
+
+.btn-table-action.refund.stripe {
+  background: #0082c3;
+  color: #ffffff;
+}
+
+.btn-table-action.refund.stripe:hover:not(:disabled) {
+  background: #006da4;
+}
+
+.btn-table-action.refund.cod {
+  background: #059669;
+  color: #ffffff;
+}
+
+.btn-table-action.refund.cod:hover:not(:disabled) {
+  background: #047857;
+}
+
+.btn-table-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.table-product-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 220px;
+}
+
+.table-product-preview strong {
+  font-size: 13px;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.more-items-count {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.table-size-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.table-size-badge.original {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.table-size-badge.replacement {
+  background: #eff6ff;
+  color: #0082c3;
+  border: 1px solid #bae6fd;
+}
+
+.refund-cell-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.refund-cell-status strong {
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.exchange-delivered-pill {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #047857;
+  background: #ecfdf5;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border: 1px solid #a7f3d0;
+}
+
+/* =========================================================
+   PAYMENT STATUS BADGES (STRIPE VS COD DISTINCTION)
+   ========================================================= */
+.pay-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.pay-badge.paid {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.pay-badge.refunded {
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+}
+
+.pay-badge.pending {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.pay-badge.unpaid {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.pay-badge.failed {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   ORDER STATUS VISUAL TIMELINE
+   ========================================================= */
+.timeline-section {
+  padding-bottom: 22px !important;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.order-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 14px;
+  padding: 10px 4px;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  min-width: 80px;
+}
+
+.timeline-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 2px solid #cbd5e1;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.timeline-step.completed .timeline-dot {
+  background: #0082c3;
+  border-color: #0082c3;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 130, 195, 0.15);
+}
+
+.timeline-step.active .timeline-dot {
+  background: #ffffff;
+  border-color: #0082c3;
+  color: #0082c3;
+  box-shadow: 0 0 0 4px rgba(0, 130, 195, 0.2);
+  animation: pulse-dot 1.8s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 130, 195, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(0, 130, 195, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 130, 195, 0);
+  }
+}
+
+.timeline-step.error .timeline-dot {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #b91c1c;
+}
+
+.timeline-step.refund-step .timeline-dot {
+  background: #059669;
+  border-color: #059669;
+  color: #ffffff;
+}
+
+.timeline-content strong {
+  display: block;
+  font-size: 12.5px;
+  color: #334155;
+  font-weight: 700;
+}
+
+.timeline-step.completed .timeline-content strong,
+.timeline-step.active .timeline-content strong {
+  color: #0f172a;
+}
+
+.timeline-content span {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+  display: block;
+}
+
+.timeline-line {
+  flex: 1;
+  height: 3px;
+  background: #e2e8f0;
+  margin: 0 4px 24px;
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
+.timeline-line.completed-line {
+  background: #0082c3;
+}
+
+.timeline-line.active-line {
+  background: #ef4444;
+}
+
+/* =========================================================
+   DEDICATED REFUND SUMMARY CARD IN MODAL
+   ========================================================= */
+.refund-summary-card {
+  background: #fbfcfe;
+  border: 1px solid #ddd6fe;
+  border-left: 4px solid #7c3aed;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.refund-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.refund-success-icon {
+  font-size: 26px;
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.refund-summary-header h4 {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #4c1d95;
+}
+
+.refund-summary-header p {
+  margin: 0;
+  font-size: 12.5px;
+  color: #6b7280;
+}
+
+.refund-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ede9fe;
+}
+
+.refund-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.refund-meta-item span {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.refund-meta-item strong {
+  font-size: 13.5px;
+  color: #1e293b;
+}
+
+.refund-amount-text {
+  color: #047857 !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+}
+
+.refund-meta-item code {
+  font-family: monospace;
+  background: #f5f3ff;
+  color: #6d28d9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11.5px;
+  word-break: break-all;
+}
+
+/* Modal header badges row */
+.modal-header-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* =========================================================
+   RESPONSIVE REFINEMENTS
+   ========================================================= */
+@media (max-width: 900px) {
+  .orders-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .orders-table {
+    min-width: 850px;
+  }
+
+  .orders-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .orders-search {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .order-timeline {
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .timeline-line {
+    display: none;
+  }
+
+  .timeline-step {
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+  }
+
+  .timeline-dot {
+    margin-bottom: 0;
+  }
+}
+
+
+

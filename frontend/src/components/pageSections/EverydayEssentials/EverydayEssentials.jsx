@@ -1,5 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./EverydayEssentials.css";
 import api from "../../../api/axios";
 import socket from "../../../socket/socket";
@@ -15,6 +16,9 @@ const EverydayEssentials = ({
   const navigate = useNavigate();
   const [dataItems, setDataItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [canScrollPrevious, setCanScrollPrevious] = useState(false);
+  const [canScrollNext, setCanScrollNext] = useState(false);
+  const sliderRef = useRef(null);
 
   const sectionData = useMemo(() => data || section?.data || {}, [data, section?.data]);
   const displayTitle =
@@ -108,6 +112,26 @@ const EverydayEssentials = ({
   }, [sectionData, customCategories, customItems, section, fetchSection]);
 
   useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return undefined;
+
+    const updateArrowState = () => {
+      const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
+      setCanScrollPrevious(slider.scrollLeft > 1);
+      setCanScrollNext(maxScrollLeft - slider.scrollLeft > 1);
+    };
+
+    updateArrowState();
+    slider.addEventListener("scroll", updateArrowState, { passive: true });
+    window.addEventListener("resize", updateArrowState);
+
+    return () => {
+      slider.removeEventListener("scroll", updateArrowState);
+      window.removeEventListener("resize", updateArrowState);
+    };
+  }, [dataItems]);
+
+  useEffect(() => {
     if (sectionData.items?.length || customItems?.length || customCategories?.length) {
       return;
     }
@@ -139,16 +163,47 @@ const EverydayEssentials = ({
     return null;
   }
 
+  const handleNext = () => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const card = slider.querySelector(".everyday-essentials-card");
+    const gap = parseFloat(getComputedStyle(slider).columnGap || "0");
+    slider.scrollBy({
+      left: (card?.getBoundingClientRect().width || slider.clientWidth / 4) + gap,
+      behavior: "smooth",
+    });
+  };
+
+  const handlePrevious = () => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const card = slider.querySelector(".everyday-essentials-card");
+    const gap = parseFloat(getComputedStyle(slider).columnGap || "0");
+    slider.scrollBy({
+      left: -((card?.getBoundingClientRect().width || slider.clientWidth / 4) + gap),
+      behavior: "smooth",
+    });
+  };
+
   const variantClass = style?.variant ? `variant-${style.variant}` : "";
+  const isMoreAccessories = displayTitle === "More Accessories";
+  const isRealLifeSolves = displayTitle === "Real-Life Solves";
 
   return (
-    <section className={`everyday-essentials-section ${variantClass}`}>
+    <section
+      className={`everyday-essentials-section ${variantClass} ${
+        isMoreAccessories ? "more-accessories-section" : ""
+      } ${isRealLifeSolves ? "real-life-solves-section" : ""}
+      }`}
+    >
       <div className="everyday-essentials-container">
         {displayTitle && (
           <h2 className="everyday-essentials-title">{displayTitle}</h2>
         )}
 
-        <div className="everyday-essentials-grid">
+        <div className="everyday-essentials-grid" ref={sliderRef}>
           {dataItems.map((item, index) => {
             const slug =
               item.slug ||
@@ -209,10 +264,35 @@ const EverydayEssentials = ({
                 ) : (
                   <div className="everyday-essentials-no-image">No Image</div>
                 )}
+                {!isMoreAccessories && !isRealLifeSolves && (
+                  <p className="everyday-essentials-card-name">{resolvedName}</p>
+                )}
               </div>
             );
           })}
         </div>
+        {dataItems.length > 4 && (
+          <>
+            <button
+              type="button"
+              className="everyday-essentials-arrow everyday-essentials-previous"
+              onClick={handlePrevious}
+              disabled={!canScrollPrevious}
+              aria-label="Show previous collection"
+            >
+              <MdChevronLeft size={26} />
+            </button>
+            <button
+              type="button"
+              className="everyday-essentials-arrow everyday-essentials-next"
+              onClick={handleNext}
+              disabled={!canScrollNext}
+              aria-label="Show next collection"
+            >
+              <MdChevronRight size={26} />
+            </button>
+          </>
+        )}
       </div>
     </section>
   );

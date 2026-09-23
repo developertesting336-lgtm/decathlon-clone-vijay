@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import {
   FiSearch,
   FiUser,
@@ -327,17 +327,30 @@ const Navbar = () => {
     }
   };
 
-  // SUGGESTIONS LIST DERIVED FROM SEARCH OR QUERY
-  const suggestedQueries = searchQuery.trim()
-    ? [
-        searchQuery.trim(),
-        `Trekking ${searchQuery.trim()}`,
-        `Gym ${searchQuery.trim()}`,
-        `Hiking ${searchQuery.trim()}`,
-        `Duffle ${searchQuery.trim()}`,
-        `Waterproof ${searchQuery.trim()} Cover`,
-      ]
-    : [];
+  // SUGGESTIONS LIST DERIVED DYNAMICALLY FROM MATCHED CATEGORIES AND PRODUCTS
+  const suggestedQueries = useMemo(() => {
+    const q = searchQuery.trim();
+    if (!q) return [];
+
+    const suggestions = new Set();
+    suggestions.add(q);
+
+    // Add matching category names
+    if (Array.isArray(searchResults.categories)) {
+      searchResults.categories.forEach((cat) => {
+        if (cat.name) suggestions.add(cat.name);
+      });
+    }
+
+    // Add matching top product names
+    if (Array.isArray(searchResults.products)) {
+      searchResults.products.slice(0, 3).forEach((prod) => {
+        if (prod.name) suggestions.add(prod.name);
+      });
+    }
+
+    return Array.from(suggestions).slice(0, 6);
+  }, [searchQuery, searchResults]);
 
   const popularVisibleCount = 3;
   const maxPopularSlide = Math.max(popularProducts.length - popularVisibleCount, 0);

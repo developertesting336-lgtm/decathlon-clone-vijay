@@ -260,7 +260,6 @@ const SportsAccessories = ({
   return (
     <section className="category-carousel-sports-accessories">
       {sectionTitle &&
-        sectionTitle !== "Urgent Needs" &&
         sectionTitle !== "sports-accessories" && (
           <h2 className="sports-acc-category-title">{sectionTitle}</h2>
         )}
@@ -284,6 +283,7 @@ const SportsAccessories = ({
                 </div>
               )}
             </div>
+            <p className="sports-acc-category-name">{cat.name}</p>
           </div>
         ))}
       </div>

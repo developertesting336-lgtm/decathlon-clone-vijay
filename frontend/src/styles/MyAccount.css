@@ -1635,3 +1635,281 @@
   }
 }
 
+/* =====================================================
+   EXCHANGE MODAL & BUTTON STYLES
+===================================================== */
+.btn-order-action.btn-exchange {
+  background: #fff;
+  color: #0082c3;
+  border: 1px solid #0082c3;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 13px;
+}
+
+.btn-order-action.btn-exchange:hover {
+  background: #0082c3;
+  color: #fff;
+}
+
+.exchange-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1px solid #c7d2fe;
+}
+
+.exchange-status-tag.approved,
+.exchange-status-tag.delivered {
+  background: #ecfdf5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+
+.exchange-status-tag.rejected,
+.exchange-status-tag.cancelled {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+/* Exchange Product Picker (if multi-item) */
+.exchange-product-picker {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.exchange-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fafafa;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 12px;
+  transition: all 0.15s ease;
+}
+
+.exchange-picker-item.active {
+  border-color: #0082c3;
+  background: #eff6ff;
+  font-weight: 700;
+}
+
+.exchange-picker-thumb {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* Current product display box */
+.exchange-current-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exchange-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.exchange-current-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.exchange-current-thumb {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+}
+
+.exchange-current-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.exchange-current-info strong {
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.exchange-meta-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.exchange-chip {
+  background: #e2e8f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Sizes Grid */
+.exchange-sizes-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.exchange-size-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.exchange-size-btn:hover:not(:disabled) {
+  border-color: #0082c3;
+  color: #0082c3;
+}
+
+.exchange-size-btn.selected {
+  border-color: #0082c3;
+  background: #0082c3;
+  color: #fff;
+}
+
+.exchange-size-btn.out-of-stock {
+  opacity: 0.5;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+  color: #94a3b8;
+}
+
+.size-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.size-current-tag {
+  font-size: 9px;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.exchange-size-btn.selected .size-current-tag {
+  color: #dbeafe;
+}
+
+.size-stock-tag {
+  font-size: 9px;
+  color: #ef4444;
+  margin-top: 2px;
+}
+
+/* Price Difference Box */
+.exchange-price-difference-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.exchange-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #475569;
+}
+
+.exchange-price-row strong {
+  color: #0f172a;
+}
+
+.exchange-diff-alert {
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.exchange-diff-alert.additional {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.exchange-diff-alert.refund {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+}
+
+.exchange-diff-alert.same {
+  background: #f8fafc;
+  color: #475569;
+}
+
+.diff-subtext {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.btn-exchange-submit {
+  background: #0082c3;
+  color: #fff;
+}
+
+.btn-exchange-submit:hover:not(:disabled) {
+  background: #006da4;
+}
+
+.exchange-loading-sizes {
+  font-size: 12px;
+  color: #64748b;
+  padding: 8px 0;
+  font-style: italic;
+}
+

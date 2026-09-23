@@ -431,15 +431,18 @@ const SportsCategories = ({ section, data, customCategories }) => {
             style={{ cursor: "pointer" }}
             title={category.name}
           >
-            {category.image ? (
-              <img
-                src={getImageUrl(category.image)}
-                alt={category.name}
-                loading="lazy"
-              />
-            ) : (
-              <div className="sports-category-no-image">{category.name}</div>
-            )}
+            <div className="sports-category-image-box">
+              {category.image ? (
+                <img
+                  src={getImageUrl(category.image)}
+                  alt={category.name}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="sports-category-no-image">{category.name}</div>
+              )}
+            </div>
+            <p className="sports-category-name">{category.name}</p>
           </div>
         ))}
       </div>

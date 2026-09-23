@@ -62,6 +62,14 @@ const ProductSection = ({
       displaySubtitle = "Shop your";
       displayTitle = displayTitle.replace(/^Shop your\s*/i, "").trim();
     }
+
+    if (
+      typeof displayTitle === "string" &&
+      /\sShoes Steal Deals$/i.test(displayTitle)
+    ) {
+      displaySubtitle = displayTitle.replace(/\sShoes Steal Deals$/i, "").trim();
+      displayTitle = "Shoes\nSteal Deals";
+    }
   }
 
   // Format title for clean 2-line display matching reference image if it's "Workout Checklist"
