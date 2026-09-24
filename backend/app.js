@@ -4,6 +4,10 @@ import express from "express";
 import mongoose from "mongoose";
 import dns from "dns";
 import path from "path";
+import http from "http";
+import { Server } from "socket.io";
+import { initSocket } from "./socket/socketManager.js";
+import jwt from "jsonwebtoken";
 
 import adminRoutes from "./routes/adminRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -224,8 +228,86 @@ app.get("/", (req, res) => {
 
 /*
 ========================================
-EXPORT APP
+SOCKET.IO & HTTP SERVER INTEGRATION
 ========================================
 */
 
+const server = http.createServer(app);
+
+const allowedOrigins = [
+  "https://decathlon-clone-store.vercel.app",
+  "https://decathlon-clone-frontend.vercel.app",
+  "https://decathlon-clone-admin.vercel.app",
+  "https://decathlon-clone-vijay.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+];
+
+const io = new Server(server, {
+  cors: {
+    origin: (origin, callback) => callback(null, true),
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    credentials: true,
+    transports: ["websocket", "polling"],
+  },
+  transports: ["websocket", "polling"],
+  pingTimeout: 60000,
+  pingInterval: 25000,
+  reconnection: true,
+});
+
+initSocket(io);
+
+io.on("connection", (socket) => {
+  console.log("✅ Socket connected:", socket.id);
+
+  socket.on("authenticate", (data) => {
+    try {
+      const token = typeof data === "string" ? data : data?.token;
+      if (!token) return;
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (!decoded?.id) return;
+
+      socket.userId = decoded.id;
+      socket.userRole = decoded.role;
+
+      socket.join(`user_${decoded.id}`);
+
+      if (decoded.role === "admin") {
+        socket.join("admin_room");
+      }
+
+      socket.emit("authenticated", {
+        userId: decoded.id,
+        role: decoded.role,
+      });
+
+      console.log(`🔑 Socket ${socket.id} authenticated as ${decoded.role} (user_${decoded.id})`);
+    } catch (err) {
+      console.warn("⚠️ Socket authentication error:", err.message);
+    }
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log("❌ Socket disconnected:", socket.id, reason);
+  });
+
+  socket.on("error", (error) => {
+    console.error("❌ Socket error:", error);
+  });
+});
+
+// Forward express-level /socket.io requests to io.engine
+app.use("/socket.io", (req, res) => {
+  io.engine.handleRequest(req, res);
+});
+
+/*
+========================================
+EXPORT APP & SERVER
+========================================
+*/
+
+export { server, io };
 export default app;
