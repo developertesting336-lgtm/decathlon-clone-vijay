@@ -234,19 +234,14 @@ SOCKET.IO & HTTP SERVER INTEGRATION
 
 const server = http.createServer(app);
 
-// Vercel serverless functions do NOT support WebSocket upgrades.
-// Clients must use HTTP long-polling transport only in production.
-// Locally (server.js runs server.listen) WebSocket works fine.
+// Render.com supports persistent connections and WebSocket upgrades natively.
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => callback(null, true),
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   },
-  // Allow both transports so local dev keeps WebSocket support.
-  // On Vercel the client forces polling-only, so websocket never gets used.
-  transports: ["polling", "websocket"],
-  allowUpgrades: false, // prevent upgrade attempts on serverless
+  transports: ["websocket", "polling"],
   pingTimeout: 60000,
   pingInterval: 25000,
   reconnection: true,

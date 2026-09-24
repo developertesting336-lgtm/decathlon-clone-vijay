@@ -15,7 +15,7 @@ const getBaseURL = () => {
   ) {
     return process.env.REACT_APP_API_URL;
   }
-  return "https://decathlon-clone-backend.vercel.app/api";
+  return "https://decathlon-clone-backend.onrender.com/api";
 };
 
 const api = axios.create({

@@ -25,13 +25,12 @@ const getSocketURL = () => {
     return process.env.REACT_APP_API_URL.replace(/\/api\/?$/, "");
   }
 
-  return "https://decathlon-clone-backend.vercel.app";
+  return "https://decathlon-clone-backend.onrender.com";
 };
 
-// Vercel serverless does NOT support WebSocket upgrades (returns 400).
-// Use polling-only in production; websocket is fine on localhost.
+// Render.com supports WebSockets natively — use websocket first, polling as fallback.
 const socket = io(getSocketURL(), {
-  transports: isLocalhost ? ["websocket", "polling"] : ["polling"],
+  transports: ["websocket", "polling"],
   autoConnect: true,
   reconnection: true,
   reconnectionAttempts: 15,
