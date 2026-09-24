@@ -26,7 +26,9 @@ ALLOWED FRONTEND ORIGINS
 
 const allowedOrigins = [
   "https://decathlon-clone-store.vercel.app",
+  "https://decathlon-clone-frontend.vercel.app",
   "https://decathlon-clone-admin.vercel.app",
+  "https://decathlon-clone-vijay.vercel.app",
 
   // Local development
   "http://localhost:3000",
@@ -173,6 +175,11 @@ server.on("error", (error) => {
   console.error("❌ HTTP Server Error:", error);
 });
 
+// Forward express-level /socket.io requests to io.engine as fallback
+app.use("/socket.io", (req, res) => {
+  io.engine.handleRequest(req, res);
+});
+
 /*
 ========================================
 START SERVER
@@ -181,14 +188,18 @@ START SERVER
 
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+if (!process.env.VERCEL) {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
 
-  console.log("🔌 Socket.IO server running");
+    console.log("🔌 Socket.IO server running");
 
-  console.log("🌐 Allowed origins:");
+    console.log("🌐 Allowed origins:");
 
-  allowedOrigins.forEach((origin) => {
-    console.log(`   - ${origin}`);
+    allowedOrigins.forEach((origin) => {
+      console.log(`   - ${origin}`);
+    });
   });
-});
+}
+
+export default server;

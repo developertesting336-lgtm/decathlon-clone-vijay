@@ -96,10 +96,13 @@ const getBaseURL = () => {
   ) {
     return `http://${window.location.hostname}:5000/api`;
   }
-  if (process.env.REACT_APP_API_URL) {
+  if (
+    process.env.REACT_APP_API_URL &&
+    !process.env.REACT_APP_API_URL.includes("decathlon-clone-pi")
+  ) {
     return process.env.REACT_APP_API_URL;
   }
-  return "https://decathlon-clone-pi.vercel.app/api";
+  return "https://decathlon-clone-backend.vercel.app/api";
 };
 
 const api = axios.create({

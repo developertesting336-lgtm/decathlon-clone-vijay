@@ -10,19 +10,25 @@ const getSocketURL = () => {
     return `http://${window.location.hostname}:5000`;
   }
 
-  if (process.env.REACT_APP_SOCKET_URL) {
+  if (
+    process.env.REACT_APP_SOCKET_URL &&
+    !process.env.REACT_APP_SOCKET_URL.includes("decathlon-clone-pi")
+  ) {
     return process.env.REACT_APP_SOCKET_URL;
   }
 
-  if (process.env.REACT_APP_API_URL) {
+  if (
+    process.env.REACT_APP_API_URL &&
+    !process.env.REACT_APP_API_URL.includes("decathlon-clone-pi")
+  ) {
     return process.env.REACT_APP_API_URL.replace(/\/api\/?$/, "");
   }
 
-  return "http://localhost:5000";
+  return "https://decathlon-clone-backend.vercel.app";
 };
 
 const socket = io(getSocketURL(), {
-  transports: ["polling", "websocket"],
+  transports: ["websocket", "polling"],
   autoConnect: true,
   reconnection: true,
   reconnectionAttempts: 10,

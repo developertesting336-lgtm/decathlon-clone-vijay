@@ -65,12 +65,19 @@ export const subscribeToPushNotifications = async (apiClient) => {
   const registration = await navigator.serviceWorker.register("/sw.js");
   await navigator.serviceWorker.ready;
 
-  // 3. Fetch VAPID Public Key from backend
-  const vapidRes = await apiClient.get("/notifications/vapid-public-key");
-  const vapidPublicKey = vapidRes.data?.publicKey;
+  // 3. Fetch VAPID Public Key from backend or fallback to environment
+  let vapidPublicKey = process.env.REACT_APP_VAPID_PUBLIC_KEY;
+  try {
+    const vapidRes = await apiClient.get("/notifications/vapid-public-key");
+    if (vapidRes.data?.publicKey) {
+      vapidPublicKey = vapidRes.data.publicKey;
+    }
+  } catch (keyErr) {
+    console.warn("Could not fetch VAPID key dynamically, falling back to configured key:", keyErr.message);
+  }
 
   if (!vapidPublicKey) {
-    throw new Error("VAPID Public Key could not be retrieved from server");
+    vapidPublicKey = "BGiiZyPdJO5Z-I0hm24HoO3dlrlJ-CXMSWOmq91Mi3mJ4HQPfr4AKT2QnMXoXc04P-_Mf53mrgYUKvjKor03OQQ";
   }
 
   // 4. Check for existing subscription or create new
