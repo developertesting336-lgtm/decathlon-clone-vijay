@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import { emitHomepageUpdate, emitProductUpdate } from "../socket/socketManager.js";
+import { checkAndNotifyLowStock } from "../services/notificationService.js";
 
 import { getMultipleImageUrls } from "../utils/uploadToCloudinary.js";
 
@@ -1052,6 +1053,10 @@ const updateProduct = async (req, res) => {
     */
 
     await product.save();
+
+    if (stock !== undefined) {
+      checkAndNotifyLowStock(product);
+    }
 
     /*
     ========================================

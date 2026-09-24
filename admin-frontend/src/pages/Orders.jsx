@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   MdVisibility,
   MdRefresh,
@@ -61,10 +62,27 @@ const EXCHANGE_STATUS_OPTIONS = [
 ];
 
 const Orders = () => {
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [activeTab, setActiveTab] = useState("all_orders"); // 'all_orders' | 'returns' | 'exchanges'
+  const [activeTab, setActiveTab] = useState(() => {
+    if (tabParam === "returns") return "returns";
+    if (tabParam === "exchanges") return "exchanges";
+    return "all_orders";
+  }); // 'all_orders' | 'returns' | 'exchanges'
+
+  useEffect(() => {
+    if (tabParam === "returns") {
+      setActiveTab("returns");
+    } else if (tabParam === "exchanges") {
+      setActiveTab("exchanges");
+    } else if (tabParam === "all_orders") {
+      setActiveTab("all_orders");
+    }
+  }, [tabParam]);
   const [statusFilter, setStatusFilter] = useState("all");
   const [returnFilter, setReturnFilter] = useState("all");
   const [exchangeFilter, setExchangeFilter] = useState("all");

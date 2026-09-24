@@ -6,6 +6,11 @@ import Product from "../models/Product.js";
 import Address from "../models/Address.js";
 import { emitOrderUpdate } from "../socket/socketManager.js";
 import { sendEmail } from "../utils/emailService.js";
+import {
+  sendNotification,
+  sendAdminNotification,
+  checkAndNotifyLowStock,
+} from "../services/notificationService.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder");
 
@@ -141,6 +146,22 @@ const createOrder = async (req, res) => {
 
     emitOrderUpdate("order_created", order);
 
+    const shortId = order._id.toString().slice(-8).toUpperCase();
+    sendAdminNotification({
+      title: "New Order Received",
+      body: `New order #${shortId} received for ₹${order.totalAmount}.`,
+      type: "ORDER",
+      url: "/orders",
+      orderId: order._id,
+    });
+
+    // Check low stock for ordered items
+    for (const item of orderItems) {
+      if (item.product) {
+        checkAndNotifyLowStock(item.product);
+      }
+    }
+
     return res.status(201).json({
       message: "Order created successfully",
       order,
@@ -189,6 +210,16 @@ const confirmCODOrder = async (req, res) => {
 
     emitOrderUpdate("order_confirmed", order);
 
+    const shortId = order._id.toString().slice(-8).toUpperCase();
+    sendNotification({
+      userId: order.user,
+      title: "Order Confirmed",
+      body: `Your order #${shortId} has been confirmed.`,
+      type: "ORDER",
+      url: "/account/orders-returns?tab=order-returns",
+      orderId: order._id,
+    });
+
     return res.status(200).json({
       message: "COD order placed successfully",
       order,
@@ -236,6 +267,16 @@ const confirmOnlineOrder = async (req, res) => {
     await order.save();
 
     emitOrderUpdate("order_confirmed", order);
+
+    const shortId = order._id.toString().slice(-8).toUpperCase();
+    sendNotification({
+      userId: order.user,
+      title: "Order Confirmed",
+      body: `Your order #${shortId} has been confirmed.`,
+      type: "ORDER",
+      url: "/account/orders-returns?tab=order-returns",
+      orderId: order._id,
+    });
 
     return res.status(200).json({
       message: "Order payment confirmed successfully",
@@ -391,6 +432,39 @@ const cancelOrder = async (req, res) => {
 
     emitOrderUpdate("order_cancelled", order);
 
+    const shortId = order._id.toString().slice(-8).toUpperCase();
+
+    // Notify customer about cancellation
+    sendNotification({
+      userId: order.user?._id || order.user,
+      title: "Order Cancelled",
+      body: `Your order #${shortId} has been cancelled.`,
+      type: "ORDER",
+      url: "/account/orders-returns?tab=order-returns",
+      orderId: order._id,
+    });
+
+    // Notify customer if refund was completed
+    if (order.paymentStatus === "refunded") {
+      sendNotification({
+        userId: order.user?._id || order.user,
+        title: "Refund Completed",
+        body: `Your refund for Order #${shortId} has been completed.`,
+        type: "REFUND",
+        url: "/account/orders-returns?tab=order-returns",
+        orderId: order._id,
+      });
+    }
+
+    // Notify Admin of cancelled order
+    sendAdminNotification({
+      title: "Order Cancelled",
+      body: `Order #${shortId} was cancelled by the customer.`,
+      type: "ORDER",
+      url: "/orders",
+      orderId: order._id,
+    });
+
     // Send email notification (non-blocking)
     if (order.user?.email) {
       try {
@@ -499,6 +573,7 @@ const updateOrderStatus = async (req, res) => {
       });
     }
 
+    const oldStatus = order.orderStatus;
     order.orderStatus = status;
 
     // Automatically synchronize returnStatus and returnRequest
@@ -539,6 +614,21 @@ const updateOrderStatus = async (req, res) => {
     await order.save();
 
     emitOrderUpdate("order_status_updated", order);
+
+    // Notify customer only when status changes
+    if (oldStatus !== status) {
+      const shortId = order._id.toString().slice(-8).toUpperCase();
+      const statusTitle = `Order ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+
+      sendNotification({
+        userId: order.user,
+        title: statusTitle,
+        body: `Your order #${shortId} is now ${status}.`,
+        type: "ORDER",
+        url: "/account/orders-returns?tab=order-returns",
+        orderId: order._id,
+      });
+    }
 
     return res.status(200).json({
       message: "Order status updated successfully",
@@ -777,6 +867,15 @@ const requestOrderReturn = async (req, res) => {
 
     emitOrderUpdate("order_return_requested", order);
 
+    const returnShortId = order._id.toString().slice(-8).toUpperCase();
+    sendAdminNotification({
+      title: "New Return Request",
+      body: `Return request received for Order #${returnShortId}.`,
+      type: "RETURN",
+      url: "/orders?tab=returns",
+      orderId: order._id,
+    });
+
     // Send email notification to customer (non-blocking)
     if (order.user?.email) {
       try {
@@ -859,6 +958,7 @@ const updateOrderReturnStatus = async (req, res) => {
       });
     }
 
+    const oldReturnStatus = order.returnStatus;
     order.returnStatus = returnStatus;
 
     if (!order.returnRequest) {
@@ -888,6 +988,32 @@ const updateOrderReturnStatus = async (req, res) => {
     await order.save();
 
     emitOrderUpdate("order_return_status_updated", order);
+
+    // Notify customer only if return status actually changed
+    if (oldReturnStatus !== returnStatus) {
+      const shortId = order._id.toString().slice(-8).toUpperCase();
+      const formattedStatus = returnStatus.replace(/_/g, " ");
+
+      if (returnStatus === "REFUND_PROCESSING") {
+        sendNotification({
+          userId: order.user?._id || order.user,
+          title: "Refund Processing",
+          body: `Your refund for Order #${shortId} is being processed.`,
+          type: "REFUND",
+          url: "/account/orders-returns?tab=order-returns",
+          orderId: order._id,
+        });
+      } else {
+        sendNotification({
+          userId: order.user?._id || order.user,
+          title: `Return ${formattedStatus}`,
+          body: `Your return request for Order #${shortId} is now ${formattedStatus.toLowerCase()}.`,
+          type: "RETURN",
+          url: "/account/orders-returns?tab=order-returns",
+          orderId: order._id,
+        });
+      }
+    }
 
     // Send customer email update (non-blocking)
     if (order.user?.email) {
@@ -1045,6 +1171,16 @@ const processReturnRefund = async (req, res) => {
       await order.save();
       emitOrderUpdate("order_return_status_updated", order);
 
+      const stripeRefundShortId = order._id.toString().slice(-8).toUpperCase();
+      sendNotification({
+        userId: order.user?._id || order.user,
+        title: "Refund Completed",
+        body: `Your refund for Order #${stripeRefundShortId} has been completed.`,
+        type: "REFUND",
+        url: "/account/orders-returns?tab=order-returns",
+        orderId: order._id,
+      });
+
       // Email customer
       if (order.user?.email) {
         try {
@@ -1097,6 +1233,16 @@ const processReturnRefund = async (req, res) => {
 
       await order.save();
       emitOrderUpdate("order_return_status_updated", order);
+
+      const codRefundShortId = order._id.toString().slice(-8).toUpperCase();
+      sendNotification({
+        userId: order.user?._id || order.user,
+        title: "Refund Completed",
+        body: `Your refund for Order #${codRefundShortId} has been completed.`,
+        type: "REFUND",
+        url: "/account/orders-returns?tab=order-returns",
+        orderId: order._id,
+      });
 
       // Email customer
       if (order.user?.email) {
@@ -1298,6 +1444,15 @@ const requestOrderExchange = async (req, res) => {
     await order.save();
     emitOrderUpdate("order_exchange_requested", order);
 
+    const exchangeShortId = order._id.toString().slice(-8).toUpperCase();
+    sendAdminNotification({
+      title: "New Exchange Request",
+      body: `Exchange request received for Order #${exchangeShortId}.`,
+      type: "EXCHANGE",
+      url: "/orders?tab=exchanges",
+      orderId: order._id,
+    });
+
     // Send confirmation email
     if (order.user?.email) {
       try {
@@ -1367,6 +1522,7 @@ const updateOrderExchangeStatus = async (req, res) => {
       });
     }
 
+    const oldExchangeStatus = order.exchangeStatus;
     order.exchangeStatus = exchangeStatus;
 
     if (!order.exchangeRequest) {
@@ -1389,6 +1545,21 @@ const updateOrderExchangeStatus = async (req, res) => {
 
     await order.save();
     emitOrderUpdate("order_exchange_status_updated", order);
+
+    // Notify customer only if exchange status actually changed
+    if (oldExchangeStatus !== exchangeStatus) {
+      const shortId = order._id.toString().slice(-8).toUpperCase();
+      const formattedStatus = exchangeStatus.replace(/_/g, " ");
+
+      sendNotification({
+        userId: order.user?._id || order.user,
+        title: `Exchange ${formattedStatus}`,
+        body: `Your exchange request for Order #${shortId} is now ${formattedStatus.toLowerCase()}.`,
+        type: "EXCHANGE",
+        url: "/account/orders-returns?tab=order-returns",
+        orderId: order._id,
+      });
+    }
 
     // Send email notification to customer
     if (order.user?.email) {

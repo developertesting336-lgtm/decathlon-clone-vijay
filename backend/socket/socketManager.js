@@ -221,6 +221,33 @@ const emitOrderUpdate = (type, data = null) => {
   console.log(`📡 Order update emitted: ${type}`);
 };
 
+/*
+========================================
+NOTIFICATION REALTIME EMITTER
+========================================
+*/
+const emitNotificationToUser = (userId, notification) => {
+  if (!io) {
+    console.log("Socket.IO is not initialized");
+    return;
+  }
+
+  const room = `user_${userId}`;
+  io.to(room).emit("notification", notification);
+  console.log(`📡 Notification emitted to room ${room}: ${notification.title}`);
+};
+
+const emitNotificationToAdmins = (notification) => {
+  if (!io) {
+    console.log("Socket.IO is not initialized");
+    return;
+  }
+
+  // Single broadcast event to prevent duplicate popup delivery
+  io.emit("admin_notification", notification);
+  console.log(`📡 Notification emitted to admins: ${notification.title}`);
+};
+
 export {
   initSocket,
   getIO,
@@ -230,4 +257,7 @@ export {
   emitBannerUpdate,
   emitSupportTicketUpdate,
   emitOrderUpdate,
+  emitNotificationToUser,
+  emitNotificationToAdmins,
 };
+

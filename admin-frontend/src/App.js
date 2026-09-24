@@ -24,6 +24,7 @@ import PageBuilder from "./pages/PageBuilder";
 import AiKnowledgeManager from "./pages/AiKnowledgeManager";
 import SupportTickets from "./pages/SupportTickets";
 import AdminProfile from "./pages/AdminProfile";
+import NotificationInbox from "./pages/NotificationInbox";
 
 import AdminLayout from "./components/AdminLayout";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
@@ -230,6 +231,17 @@ function App() {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AdminProfile />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/notifications"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <NotificationInbox />
               </AdminLayout>
             </AdminProtectedRoute>
           }

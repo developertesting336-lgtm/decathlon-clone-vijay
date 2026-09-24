@@ -24,6 +24,7 @@ import loginRoutes from "./routes/loginRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 
 /*
@@ -192,6 +193,7 @@ app.use("/api/pages", pageRoutes);
 app.use("/api/sections", pageSectionRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/email", emailRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 /*
 ========================================

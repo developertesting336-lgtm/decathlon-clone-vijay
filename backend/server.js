@@ -8,6 +8,7 @@ import app from "./app.js";
 
 import { Server } from "socket.io";
 import { initSocket } from "./socket/socketManager.js";
+import jwt from "jsonwebtoken";
 
 /*
 ========================================
@@ -107,6 +108,39 @@ io.on("connection", (socket) => {
   console.log("✅ Socket connected:", socket.id);
 
   console.log("🌐 Socket origin:", socket.handshake.headers.origin);
+
+  /*
+  ========================================
+  AUTHENTICATE & JOIN ROOMS
+  ========================================
+  */
+  socket.on("authenticate", (data) => {
+    try {
+      const token = typeof data === "string" ? data : data?.token;
+      if (!token) return;
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      if (!decoded?.id) return;
+
+      socket.userId = decoded.id;
+      socket.userRole = decoded.role;
+
+      socket.join(`user_${decoded.id}`);
+
+      if (decoded.role === "admin") {
+        socket.join("admin_room");
+      }
+
+      socket.emit("authenticated", {
+        userId: decoded.id,
+        role: decoded.role,
+      });
+
+      console.log(`🔑 Socket ${socket.id} authenticated as ${decoded.role} (user_${decoded.id})`);
+    } catch (err) {
+      console.warn("⚠️ Socket authentication error:", err.message);
+    }
+  });
 
   /*
   ========================================

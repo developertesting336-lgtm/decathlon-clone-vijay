@@ -102,6 +102,11 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    lowStockNotified: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   {

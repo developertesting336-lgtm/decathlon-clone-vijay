@@ -15,11 +15,14 @@ import {
   MdKeyboardDoubleArrowLeft,
   MdAccountCircle,
   MdStorefront,
-  MdNotificationsNone,
   MdSupportAgent,
+  MdNotifications,
 } from "react-icons/md";
 
+import api from "../api/axios";
+import socket from "../socket/socket";
 import "../styles/AdminLayout.css";
+import AdminNotificationBell from "./AdminNotificationBell";
 
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(
@@ -28,6 +31,8 @@ const AdminLayout = ({ children }) => {
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
   const [adminUser, setAdminUser] = useState(() => {
     try {
@@ -78,7 +83,39 @@ const AdminLayout = ({ children }) => {
     }
   }, [location.pathname]);
 
+  // Fetch unread notification count and listen for updates
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const token = localStorage.getItem("adminToken");
+        if (!token) return;
+        const res = await api.get("/notifications?read=false&limit=1");
+        setUnreadNotifications(Number(res.data?.unreadCount || 0));
+      } catch (e) {}
+    };
+    fetchUnread();
+
+    const handleUnreadSync = (e) => {
+      if (typeof e.detail === "number") {
+        setUnreadNotifications(e.detail);
+      }
+    };
+    window.addEventListener("adminUnreadCountUpdated", handleUnreadSync);
+
+    const handleSocketNotif = (notif) => {
+      if (notif && notif.isTest) return;
+      setUnreadNotifications((prev) => prev + 1);
+    };
+    socket.on("admin_notification", handleSocketNotif);
+
+    return () => {
+      window.removeEventListener("adminUnreadCountUpdated", handleUnreadSync);
+      socket.off("admin_notification", handleSocketNotif);
+    };
+  }, []);
+
   const isActive = (path) => location.pathname === path;
+  const isNotificationsActive = location.pathname.startsWith("/notifications");
   const isProductsActive = location.pathname.startsWith("/products");
   const isCategoriesActive = location.pathname.startsWith("/categories");
   const isOrdersActive = location.pathname.startsWith("/orders");
@@ -154,6 +191,26 @@ const AdminLayout = ({ children }) => {
           >
             <MdDashboard />
             {sidebarOpen && <span>Dashboard</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isNotificationsActive ? "active" : ""}
+            onClick={() => handleNav("/notifications")}
+            title="Notification Inbox"
+          >
+            <div className="sidebar-icon-wrap">
+              <MdNotifications />
+              {unreadNotifications > 0 && <span className="sidebar-dot-badge" />}
+            </div>
+            {sidebarOpen && (
+              <span className="sidebar-label-with-pill">
+                <span>Notifications</span>
+                {unreadNotifications > 0 && (
+                  <span className="sidebar-unread-pill">{unreadNotifications}</span>
+                )}
+              </span>
+            )}
           </button>
 
           {/* SECTION: CATALOG */}
@@ -283,10 +340,7 @@ const AdminLayout = ({ children }) => {
               <span>Storefront</span>
             </a>
 
-            <div className="topbar-notifications" title="System Alerts">
-              <MdNotificationsNone />
-              <span className="notif-badge"></span>
-            </div>
+            <AdminNotificationBell />
 
             <div
               className="admin-user"

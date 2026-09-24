@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 
 import {
   FiCheckCircle,
@@ -478,6 +478,8 @@ const Payment = () => {
 
   const rewardBalance = 0;
 
+  const hasVerifiedRedirectRef = useRef(false);
+
   /* =====================================================
      FETCH ORDER
   ===================================================== */
@@ -546,6 +548,11 @@ const Payment = () => {
       return;
     }
 
+    if (hasVerifiedRedirectRef.current) {
+      return;
+    }
+    hasVerifiedRedirectRef.current = true;
+
     if (!stripePromise) {
       toast.error("Stripe publishable key is missing");
       return;
@@ -599,7 +606,9 @@ const Payment = () => {
       );
 
       if (response.data?.paymentStatus === "paid") {
-        toast.success("Payment verified successfully!");
+        toast.success("Payment verified successfully!", {
+          id: "payment-verified-success",
+        });
         navigate(`/order-success/${orderId}`, {
           replace: true,
         });
