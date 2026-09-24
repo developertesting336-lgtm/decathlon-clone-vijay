@@ -1,12 +1,13 @@
 import { io } from "socket.io-client";
 
+const isLocalhost =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname.startsWith("192.168."));
+
 const getSocketURL = () => {
-  if (
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1" ||
-      window.location.hostname.startsWith("192.168."))
-  ) {
+  if (isLocalhost) {
     return `http://${window.location.hostname}:5000`;
   }
 
@@ -27,12 +28,15 @@ const getSocketURL = () => {
   return "https://decathlon-clone-backend.vercel.app";
 };
 
+// Vercel serverless does NOT support WebSocket upgrades (returns 400).
+// Use polling-only in production; websocket is fine on localhost.
 const socket = io(getSocketURL(), {
-  transports: ["websocket", "polling"],
+  transports: isLocalhost ? ["websocket", "polling"] : ["polling"],
   autoConnect: true,
   reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000,
+  reconnectionAttempts: 15,
+  reconnectionDelay: 2000,
+  timeout: 20000,
 });
 
-export default socket;
+export default socket;
