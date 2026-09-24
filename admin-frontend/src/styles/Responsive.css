@@ -1,0 +1,419 @@
+/* =========================================================
+   DECATHLON ADMIN — GLOBAL RESPONSIVE DESIGN SYSTEM
+   Ensures seamless usability from 320px mobile to 4K displays
+   ========================================================= */
+
+/* =========================================================
+   1. UNIVERSAL TABLE CONTAINMENT & HORIZONTAL SCROLL
+   Prevents tables from ever breaking the page layout on mobile
+   ========================================================= */
+.orders-table-container,
+.products-table-container,
+.categories-table-container,
+.users-table-container,
+.support-table-container,
+.ai-table-container,
+.banners-table-container,
+.pages-table-container,
+.table-responsive {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: 12px;
+  position: relative;
+}
+
+/* Subtle scroll hint scrollbar for tables on touch devices */
+.orders-table-container::-webkit-scrollbar,
+.products-table-container::-webkit-scrollbar,
+.categories-table-container::-webkit-scrollbar,
+.users-table-container::-webkit-scrollbar,
+.support-table-container::-webkit-scrollbar,
+.ai-table-container::-webkit-scrollbar {
+  height: 5px;
+}
+
+.orders-table-container::-webkit-scrollbar-thumb,
+.products-table-container::-webkit-scrollbar-thumb,
+.categories-table-container::-webkit-scrollbar-thumb,
+.users-table-container::-webkit-scrollbar-thumb,
+.support-table-container::-webkit-scrollbar-thumb,
+.ai-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+/* Minimum table widths so content retains elegant column spacing */
+.orders-table {
+  min-width: 860px !important;
+}
+
+.products-table {
+  min-width: 820px !important;
+}
+
+.categories-table {
+  min-width: 760px !important;
+}
+
+.users-table {
+  min-width: 740px !important;
+}
+
+.support-tickets-table {
+  min-width: 800px !important;
+}
+
+.ai-knowledge-table {
+  min-width: 780px !important;
+}
+
+/* =========================================================
+   2. UNIVERSAL MODALS RESPONSIVENESS
+   Ensures modals fit within mobile viewports without overflowing
+   ========================================================= */
+.modal-overlay,
+.support-modal-backdrop,
+.order-modal-overlay,
+.category-modal-overlay {
+  padding: 12px !important;
+}
+
+.modal-content,
+.delete-modal-content,
+.support-modal-window,
+.user-modal,
+.banner-view-modal,
+.banner-delete-modal,
+.category-delete-modal,
+.modal-container,
+.modal-container.section-modal {
+  width: 100% !important;
+  max-width: 600px !important;
+  max-height: 92vh !important;
+  overflow-y: auto !important;
+  border-radius: 14px !important;
+  box-sizing: border-box !important;
+}
+
+/* =========================================================
+   3. NAVIGATION TABS RESPONSIVENESS
+   ========================================================= */
+.orders-main-tabs,
+.inbox-filter-tabs,
+.profile-tabs,
+.admin-tabs {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin-bottom: 20px !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  padding-bottom: 6px !important;
+  scrollbar-width: none !important;
+}
+
+.orders-main-tabs::-webkit-scrollbar,
+.inbox-filter-tabs::-webkit-scrollbar,
+.profile-tabs::-webkit-scrollbar {
+  display: none !important;
+}
+
+.orders-main-tab,
+.inbox-filter-tab,
+.profile-tab {
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.orders-main-tab:hover,
+.inbox-filter-tab:hover,
+.profile-tab:hover {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.orders-main-tab.active,
+.inbox-filter-tab.active,
+.profile-tab.active {
+  background: #3548c4 !important;
+  border-color: #3548c4 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(53, 72, 196, 0.25) !important;
+}
+
+/* =========================================================
+   4. TABLET BREAKPOINTS (max-width: 1024px)
+   ========================================================= */
+@media (max-width: 1024px) {
+  .orders-toolbar,
+  .products-toolbar,
+  .categories-toolbar,
+  .users-toolbar {
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .dash-kpi-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .inbox-stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* =========================================================
+   5. MEDIUM MOBILE & PHABLET BREAKPOINTS (max-width: 768px)
+   ========================================================= */
+@media (max-width: 768px) {
+  /* Page headers stack */
+  .orders-header,
+  .products-header,
+  .categories-header,
+  .users-header,
+  .banners-header,
+  .ai-knowledge-header,
+  .pages-header,
+  .inbox-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    margin-bottom: 18px !important;
+  }
+
+  .orders-header h1,
+  .products-header h1,
+  .categories-header h1,
+  .users-header h1,
+  .banners-header h1,
+  .ai-knowledge-header h1,
+  .inbox-header-left h1 {
+    font-size: 22px !important;
+  }
+
+  .orders-header-actions,
+  .products-header-actions,
+  .categories-header-actions,
+  .banners-header-actions,
+  .ai-knowledge-header-actions,
+  .inbox-header-actions {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .refresh-orders-btn,
+  .refresh-btn,
+  .add-product-btn,
+  .add-category-btn,
+  .refresh-category-btn,
+  .refresh-users-btn,
+  .refresh-banners-btn,
+  .add-banner-btn,
+  .refresh-ai-btn,
+  .add-ai-btn,
+  .inbox-action-btn {
+    flex: 1 !important;
+    min-width: 130px !important;
+    height: 38px !important;
+    font-size: 13px !important;
+    padding: 0 12px !important;
+  }
+
+  /* Toolbars stack vertically */
+  .orders-toolbar,
+  .products-toolbar,
+  .categories-toolbar,
+  .users-toolbar,
+  .pages-controls {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 12px !important;
+  }
+
+  .orders-search,
+  .products-search,
+  .categories-search,
+  .users-search,
+  .pages-search {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  .orders-filter,
+  .orders-date-filter,
+  .orders-status-filter,
+  .products-filter,
+  .categories-filter {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 38px !important;
+    font-size: 13px !important;
+  }
+
+  .orders-count {
+    margin-left: 0 !important;
+    align-self: flex-start !important;
+    font-size: 12px !important;
+  }
+
+  /* Grids */
+  .inbox-stats-grid,
+  .ai-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .operations-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .dash-charts-grid,
+  .dash-middle-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Pagination */
+  .pagination-container,
+  .inbox-pagination,
+  .products-pagination {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+    text-align: center !important;
+    padding: 14px 10px !important;
+  }
+
+  .pagination-controls,
+  .pagination-buttons {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  /* Modal Actions */
+  .delete-modal-actions,
+  .category-delete-modal-actions,
+  .modal-actions,
+  .support-modal-footer {
+    flex-direction: column-reverse !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .cancel-delete-btn,
+  .confirm-delete-btn,
+  .category-modal-cancel,
+  .category-modal-delete,
+  .modal-cancel-btn,
+  .modal-save-btn,
+  .cancel-btn,
+  .save-btn,
+  .submit-btn {
+    width: 100% !important;
+    height: 42px !important;
+    justify-content: center !important;
+  }
+
+  /* Order details modal inside table */
+  .order-details-modal-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .order-timeline {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  .timeline-line {
+    display: none !important;
+  }
+
+  .timeline-step {
+    flex-direction: row !important;
+    gap: 10px !important;
+    align-items: center !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .timeline-dot {
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .refund-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================
+   6. SMALL MOBILE BREAKPOINTS (max-width: 480px)
+   ========================================================= */
+@media (max-width: 480px) {
+  .admin-page-content {
+    padding: 12px 8px !important;
+  }
+
+  .orders-header h1,
+  .products-header h1,
+  .categories-header h1,
+  .users-header h1,
+  .banners-header h1,
+  .ai-knowledge-header h1 {
+    font-size: 20px !important;
+  }
+
+  .dash-hero {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  .dash-hero-info h1 {
+    font-size: 20px !important;
+  }
+
+  .dash-kpi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .modal-content,
+  .delete-modal-content,
+  .support-modal-window,
+  .user-modal,
+  .banner-view-modal {
+    padding: 16px 12px !important;
+  }
+
+  .presets-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .preset-card img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .inbox-filter-tab,
+  .orders-main-tab {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
+}

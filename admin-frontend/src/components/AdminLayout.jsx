@@ -325,19 +325,43 @@ const AdminLayout = ({ children }) => {
 
       <main className="admin-content">
         <header className="admin-topbar">
-          <div className="topbar-left"></div>
+          <div className="topbar-left">
+            <button
+              type="button"
+              className="topbar-menu-btn"
+              onClick={() => setSidebarOpen((prev) => !prev)}
+              title="Toggle Navigation Menu"
+              aria-label="Toggle Navigation Menu"
+            >
+              <MdMenu />
+            </button>
+            <div
+              className="topbar-brand-mobile"
+              onClick={() => handleNav("/dashboard")}
+              title="Decathlon Admin Dashboard"
+            >
+              <span className="brand-logo">DECATHLON</span>
+              <span className="brand-badge">ADMIN</span>
+            </div>
+          </div>
 
           <div className="topbar-right">
-
             <a
-              href="http://localhost:3000"
+              href={
+                typeof window !== "undefined" &&
+                (window.location.hostname === "localhost" ||
+                  window.location.hostname === "127.0.0.1" ||
+                  window.location.hostname.startsWith("192.168."))
+                  ? "http://localhost:3000"
+                  : "https://decathlon-clone-store.vercel.app"
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="topbar-storefront-btn"
               title="Open Decathlon Customer Storefront"
             >
               <MdStorefront />
-              <span>Storefront</span>
+              <span className="storefront-btn-text">Storefront</span>
             </a>
 
             <AdminNotificationBell />
@@ -363,8 +387,8 @@ const AdminLayout = ({ children }) => {
               </div>
 
               <div className="admin-user-info">
-                <strong>{adminUser?.name || "Vijay"}</strong>
-                <span>{adminUser?.role || "admin"} • Profile</span>
+                <strong className="admin-user-name">{adminUser?.name || "Vijay"}</strong>
+                <span className="admin-user-role">{adminUser?.role || "admin"} • Profile</span>
               </div>
             </div>
           </div>
