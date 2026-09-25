@@ -15,6 +15,8 @@ import {
   processReturnRefund,
   requestOrderExchange,
   updateOrderExchangeStatus,
+  getOrderTracking,
+  updateOrderTracking,
 } from "../controllers/orderController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -81,7 +83,18 @@ router.put(
 /* ADMIN - UPDATE ORDER STATUS */
 router.put("/:id/status", authMiddleware, adminMiddleware, updateOrderStatus);
 
+/* USER / ADMIN - GET ORDER TRACKING */
+router.get("/:id/tracking", authMiddleware, getOrderTracking);
+
+/* ADMIN - UPDATE ORDER TRACKING */
+router.put(
+  "/:id/tracking",
+  authMiddleware,
+  adminMiddleware,
+  updateOrderTracking,
+);
+
 /* USER - SINGLE ORDER */
 router.get("/:id", authMiddleware, getOrderById);
 
-export default router;
+export default router;       

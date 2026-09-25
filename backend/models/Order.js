@@ -169,6 +169,27 @@ const orderSchema = new mongoose.Schema(
       min: 0,
     },
 
+    paidAt: {
+      type: Date,
+    },
+
+    paymentReceivedAt: {
+      type: Date,
+    },
+
+    deliveredAt: {
+      type: Date,
+    },
+
+    cancelledAt: {
+      type: Date,
+    },
+
+    cancellationReason: {
+      type: String,
+      default: "",
+    },
+
     orderStatus: {
       type: String,
       enum: [
@@ -194,6 +215,55 @@ const orderSchema = new mongoose.Schema(
       enum: ["standard", "pickup"],
       default: "standard",
     },
+
+    trackingNumber: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
+    carrier: {
+      type: String,
+      default: "Decathlon Demo Logistics",
+    },
+
+    estimatedDeliveryDate: {
+      type: Date,
+    },
+
+    currentLocation: {
+      city: {
+        type: String,
+        default: "",
+      },
+      latitude: {
+        type: Number,
+      },
+      longitude: {
+        type: Number,
+      },
+    },
+
+    trackingHistory: [
+      {
+        status: {
+          type: String,
+          required: true,
+        },
+        location: {
+          type: String,
+          default: "",
+        },
+        description: {
+          type: String,
+          default: "",
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
 
     returnStatus: {
       type: String,
@@ -240,7 +310,7 @@ const orderSchema = new mongoose.Schema(
             default: "",
           },
           price: {
-            type: Number,
+              type: Number,
             default: 0,
           },
           quantity: {
@@ -289,6 +359,17 @@ const orderSchema = new mongoose.Schema(
       adminNote: {
         type: String,
         default: "",
+      },
+      pickupAddress: {
+        type: String,
+        default: "",
+      },
+      pickupDate: {
+        type: Date,
+      },
+      stockRestored: {
+        type: Boolean,
+        default: false,
       },
       processedAt: {
         type: Date,
@@ -381,6 +462,31 @@ const orderSchema = new mongoose.Schema(
         ],
         default: "NONE",
       },
+      replacementTrackingNumber: {
+        type: String,
+        default: "",
+      },
+      replacementCarrier: {
+        type: String,
+        default: "Decathlon Express Logistics",
+      },
+      replacementLocation: {
+        type: String,
+        default: "",
+      },
+      estimatedReplacementDeliveryDate: {
+        type: Date,
+      },
+      replacementDeliveredAt: {
+        type: Date,
+      },
+      pickupAddress: {
+        type: String,
+        default: "",
+      },
+      pickupDate: {
+        type: Date,
+      },
       additionalPaymentRequired: {
         type: Number,
         default: 0,
@@ -388,6 +494,14 @@ const orderSchema = new mongoose.Schema(
       refundDifference: {
         type: Number,
         default: 0,
+      },
+      stockReserved: {
+        type: Boolean,
+        default: false,
+      },
+      originalStockRestored: {
+        type: Boolean,
+        default: false,
       },
       adminNote: {
         type: String,

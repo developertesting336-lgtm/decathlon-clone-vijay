@@ -8,6 +8,12 @@ import {
   FiCreditCard,
   FiTarget,
   FiSliders,
+  FiTruck,
+  FiCheckCircle,
+  FiClock,
+  FiX,
+  FiCopy,
+  FiCheck,
 } from "react-icons/fi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -40,6 +46,19 @@ const formatDate = (dateString) => {
     day: "2-digit",
     month: "short",
     year: "numeric",
+  });
+};
+
+const formatDateTime = (dateString) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   });
 };
 
@@ -96,6 +115,375 @@ const MyAccount = () => {
   const [loadingProductDetails, setLoadingProductDetails] = useState(false);
   const [submittingExchange, setSubmittingExchange] = useState(false);
 
+  // Tracking Modal State
+  const [trackingModalOrder, setTrackingModalOrder] = useState(null);
+  const [trackingData, setTrackingData] = useState(null);
+  const [loadingTracking, setLoadingTracking] = useState(false);
+  const [copiedTracking, setCopiedTracking] = useState(false);
+
+  const TRACKING_STEPS = [
+    {
+      key: "ORDER_PLACED",
+      label: "Order Placed",
+      desc: "Your order has been placed and confirmed.",
+    },
+    {
+      key: "SHIPPED",
+      label: "Shipped",
+      desc: "Package dispatched from Decathlon fulfillment hub.",
+    },
+    {
+      key: "REACHED_HUB",
+      label: "Reached Hub",
+      desc: "Package arrived at regional distribution center.",
+    },
+    {
+      key: "OUT_FOR_DELIVERY",
+      label: "Out For Delivery",
+      desc: "Delivery executive is on the way to your address.",
+    },
+    {
+      key: "DELIVERED",
+      label: "Delivered",
+      desc: "Package handed over and delivered successfully.",
+    },
+  ];
+
+  const RETURN_CUSTOMER_STEPS = [
+    {
+      key: "ORDER_DELIVERED",
+      label: "Order Delivered",
+      desc: "Original item was delivered to your address.",
+    },
+    {
+      key: "REQUESTED",
+      label: "Return Requested",
+      desc: "Return request submitted and under verification.",
+    },
+    {
+      key: "APPROVED",
+      label: "Return Approved",
+      desc: "Decathlon support approved your return request.",
+    },
+    {
+      key: "PICKUP_SCHEDULED",
+      label: "Pickup Scheduled",
+      desc: "Logistics courier partner scheduled to collect item.",
+    },
+    {
+      key: "PICKED_UP",
+      label: "Picked Up",
+      desc: "Return parcel handed over to courier executive.",
+    },
+    {
+      key: "RETURN_RECEIVED",
+      label: "Return Received",
+      desc: "Package safely arrived at Decathlon hub for quality check.",
+    },
+    {
+      key: "REFUND_PROCESSING",
+      label: "Refund Processing",
+      desc: "Quality inspection passed. Refund is being processed.",
+    },
+    {
+      key: "REFUNDED",
+      label: "Refunded",
+      desc: "Refund completed successfully to your account.",
+    },
+  ];
+
+  const EXCHANGE_CUSTOMER_STEPS = [
+    {
+      key: "ORDER_DELIVERED",
+      label: "Order Delivered",
+      desc: "Original item was delivered to your address.",
+    },
+    {
+      key: "REQUESTED",
+      label: "Exchange Requested",
+      desc: "Replacement size request submitted and under review.",
+    },
+    {
+      key: "APPROVED",
+      label: "Exchange Approved",
+      desc: "Exchange request approved by Decathlon.",
+    },
+    {
+      key: "PICKUP_SCHEDULED",
+      label: "Pickup Scheduled",
+      desc: "Courier scheduled to pick up the original item.",
+    },
+    {
+      key: "PICKED_UP",
+      label: "Picked Up",
+      desc: "Original product collected from your address.",
+    },
+    {
+      key: "RECEIVED",
+      label: "Product Received",
+      desc: "Original product received and verified at warehouse.",
+    },
+    {
+      key: "SHIPPED",
+      label: "Replacement Shipped",
+      desc: "Replacement item packed and dispatched to you.",
+    },
+    {
+      key: "DELIVERED",
+      label: "Replacement Delivered",
+      desc: "Replacement product delivered successfully.",
+    },
+  ];
+
+  const getCustomerStepIndex = (status) => {
+    const norm = (status || "").toUpperCase();
+    if (norm === "DELIVERED") return 4;
+    if (norm === "OUT_FOR_DELIVERY") return 3;
+    if (norm === "REACHED_HUB") return 2;
+    if (norm === "SHIPPED") return 1;
+    return 0;
+  };
+
+  const getReturnCustomerStepIndex = (status) => {
+    const norm = (status || "").toUpperCase();
+    const map = {
+      ORDER_DELIVERED: 0,
+      REQUESTED: 1,
+      APPROVED: 2,
+      PICKUP_SCHEDULED: 3,
+      PICKED_UP: 4,
+      RETURN_RECEIVED: 5,
+      REFUND_PROCESSING: 6,
+      REFUNDED: 7,
+    };
+    return map[norm] !== undefined ? map[norm] : 1;
+  };
+
+  const getExchangeCustomerStepIndex = (status) => {
+    const norm = (status || "").toUpperCase();
+    const map = {
+      ORDER_DELIVERED: 0,
+      REQUESTED: 1,
+      APPROVED: 2,
+      PICKUP_SCHEDULED: 3,
+      PICKED_UP: 4,
+      RECEIVED: 5,
+      SHIPPED: 6,
+      DELIVERED: 7,
+    };
+    return map[norm] !== undefined ? map[norm] : 1;
+  };
+
+  const getCustomerStepTimestamp = (stepKey, history, order) => {
+    if (stepKey === "ORDER_PLACED") {
+      const match = (history || []).find(
+        (h) => (h.status || "").toUpperCase() === "ORDER_PLACED"
+      );
+      return match?.timestamp || order?.createdAt;
+    }
+    if (stepKey === "DELIVERED") {
+      const match = (history || []).find(
+        (h) => (h.status || "").toUpperCase() === "DELIVERED"
+      );
+      return match?.timestamp || order?.deliveredAt;
+    }
+    const match = (history || []).find(
+      (h) => (h.status || "").toUpperCase() === stepKey
+    );
+    return match?.timestamp;
+  };
+
+  const getReturnCustomerStepTimestamp = (stepKey, returnReq, history, order) => {
+    if (stepKey === "ORDER_DELIVERED") {
+      const match = (history || []).find(
+        (h) => (h.status || "").toUpperCase() === "DELIVERED"
+      );
+      return match?.timestamp || order?.deliveredAt;
+    }
+    if (stepKey === "REQUESTED") {
+      return returnReq?.requestedAt || returnReq?.createdAt;
+    }
+    if (stepKey === "APPROVED") {
+      return returnReq?.approvedAt;
+    }
+    if (stepKey === "PICKUP_SCHEDULED") {
+      return returnReq?.pickupDate || returnReq?.pickupScheduledAt;
+    }
+    if (stepKey === "PICKED_UP") {
+      return returnReq?.pickedUpAt;
+    }
+    if (stepKey === "RETURN_RECEIVED") {
+      return returnReq?.receivedAt;
+    }
+    if (stepKey === "REFUND_PROCESSING") {
+      return (
+        returnReq?.refundProcessingAt ||
+        (returnReq?.status === "REFUND_PROCESSING" ? returnReq?.updatedAt : null)
+      );
+    }
+    if (stepKey === "REFUNDED") {
+      return returnReq?.refundedAt || order?.refundedAt;
+    }
+    return null;
+  };
+
+  const getExchangeCustomerStepTimestamp = (stepKey, exchangeReq, history, order) => {
+    if (stepKey === "ORDER_DELIVERED") {
+      const match = (history || []).find(
+        (h) => (h.status || "").toUpperCase() === "DELIVERED"
+      );
+      return match?.timestamp || order?.deliveredAt;
+    }
+    if (stepKey === "REQUESTED") {
+      return exchangeReq?.requestedAt || exchangeReq?.createdAt;
+    }
+    if (stepKey === "APPROVED") {
+      return exchangeReq?.approvedAt;
+    }
+    if (stepKey === "PICKUP_SCHEDULED") {
+      return exchangeReq?.pickupDate || exchangeReq?.pickupScheduledAt;
+    }
+    if (stepKey === "PICKED_UP") {
+      return exchangeReq?.pickedUpAt;
+    }
+    if (stepKey === "RECEIVED") {
+      return exchangeReq?.receivedAt;
+    }
+    if (stepKey === "SHIPPED") {
+      return exchangeReq?.shippedAt;
+    }
+    if (stepKey === "DELIVERED") {
+      return exchangeReq?.replacementDeliveredAt || exchangeReq?.deliveredAt;
+    }
+    return null;
+  };
+
+  const formatReturnStatusText = (status) => {
+    const map = {
+      REQUESTED: "Return Requested",
+      APPROVED: "Return Approved",
+      PICKUP_SCHEDULED: "Pickup Scheduled",
+      PICKED_UP: "Item Picked Up",
+      RETURN_RECEIVED: "Return Received",
+      REFUND_PROCESSING: "Refund Processing",
+      REFUNDED: "Refunded",
+      REJECTED: "Return Rejected",
+    };
+    return (
+      map[(status || "").toUpperCase()] ||
+      (status || "Return In Progress").replace(/_/g, " ")
+    );
+  };
+
+  const formatExchangeStatusText = (status) => {
+    const map = {
+      REQUESTED: "Exchange Requested",
+      APPROVED: "Exchange Approved",
+      PICKUP_SCHEDULED: "Pickup Scheduled",
+      PICKED_UP: "Item Picked Up",
+      RECEIVED: "Product Received",
+      SHIPPED: "Replacement Shipped",
+      DELIVERED: "Replacement Delivered",
+      REJECTED: "Exchange Rejected",
+    };
+    return (
+      map[(status || "").toUpperCase()] ||
+      (status || "Exchange In Progress").replace(/_/g, " ")
+    );
+  };
+
+  const handleOpenTrackingModal = async (order) => {
+    setTrackingModalOrder(order);
+    setLoadingTracking(true);
+    setCopiedTracking(false);
+    try {
+      const res = await api.get(`/orders/${order._id}/tracking`, getAuthConfig());
+      if (res.data) {
+        const t = res.data.tracking || res.data;
+        const isCancelled =
+          Boolean(t.isCancelled) ||
+          (t.orderStatus || order.orderStatus || "").toLowerCase() === "cancelled" ||
+          (t.status || "").toUpperCase() === "CANCELLED";
+
+        setTrackingData({
+          orderId: order._id,
+          ...t,
+          isCancelled,
+          status: isCancelled
+            ? "CANCELLED"
+            : t.status || (order.orderStatus === "delivered" ? "DELIVERED" : order.orderStatus),
+          history: t.trackingHistory || t.history || order.trackingHistory || [],
+          orderStatus: t.orderStatus || order.orderStatus,
+          paymentStatus: t.paymentStatus || order.paymentStatus,
+          paymentMethod: t.paymentMethod || order.paymentMethod,
+          returnStatus: t.returnStatus || order.returnStatus || order.returnRequest?.status || "NONE",
+          returnRequest: t.returnRequest || order.returnRequest || null,
+          exchangeStatus: t.exchangeStatus || order.exchangeStatus || order.exchangeRequest?.status || "NONE",
+          exchangeRequest: t.exchangeRequest || order.exchangeRequest || null,
+          deliveredAt: isCancelled ? null : (t.deliveredAt || order.deliveredAt),
+          cancelledAt: t.cancelledAt || order.cancelledAt || (isCancelled ? order.updatedAt : null),
+          cancellationReason:
+            t.cancellationReason || order.cancellationReason || (isCancelled ? "Order cancelled" : ""),
+          paymentReceivedAt: t.paymentReceivedAt || order.paymentReceivedAt,
+          shippingAddress: order.shippingAddress,
+          orderItems: order.orderItems,
+        });
+      }
+    } catch (err) {
+      console.error("Failed to fetch tracking data:", err);
+      const isCancelled = (order.orderStatus || "").toLowerCase() === "cancelled";
+      setTrackingData({
+        orderId: order._id,
+        trackingNumber:
+          order.tracking?.trackingNumber ||
+          order.trackingNumber ||
+          `TRK-${order._id.slice(-8).toUpperCase()}`,
+        carrier: order.tracking?.carrier || order.carrier || "Decathlon Demo Logistics",
+        status: isCancelled
+          ? "CANCELLED"
+          : order.tracking?.status ||
+            (order.orderStatus === "delivered" ? "DELIVERED" : "ORDER_PLACED"),
+        isCancelled,
+        currentLocation: isCancelled
+          ? { city: "Not Applicable" }
+          : order.tracking?.currentLocation || order.currentLocation,
+        estimatedDelivery: isCancelled
+          ? null
+          : order.tracking?.estimatedDelivery || order.estimatedDeliveryDate,
+        deliveredAt: isCancelled ? null : order.deliveredAt,
+        cancelledAt: order.cancelledAt || (isCancelled ? order.updatedAt : null),
+        cancellationReason:
+          order.cancellationReason || (isCancelled ? "Order cancelled" : ""),
+        orderStatus: order.orderStatus,
+        paymentStatus: order.paymentStatus,
+        paymentMethod: order.paymentMethod,
+        returnStatus: order.returnStatus || order.returnRequest?.status || "NONE",
+        returnRequest: order.returnRequest || null,
+        exchangeStatus: order.exchangeStatus || order.exchangeRequest?.status || "NONE",
+        exchangeRequest: order.exchangeRequest || null,
+        paymentReceivedAt: order.paymentReceivedAt,
+        history: order.tracking?.history || order.trackingHistory || [],
+        shippingAddress: order.shippingAddress,
+        orderItems: order.orderItems,
+      });
+    } finally {
+      setLoadingTracking(false);
+    }
+  };
+
+  const handleCloseTrackingModal = () => {
+    setTrackingModalOrder(null);
+    setTrackingData(null);
+  };
+
+  const handleCopyTrackingNumber = (trkNum) => {
+    if (!trkNum) return;
+    navigator.clipboard.writeText(trkNum);
+    setCopiedTracking(true);
+    toast.success("Tracking number copied to clipboard!");
+    setTimeout(() => setCopiedTracking(false), 2500);
+  };
+
   // Addresses State
   const [addresses, setAddresses] = useState([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
@@ -120,23 +508,27 @@ const MyAccount = () => {
   };
 
   const isOrderReturnEligible = (order) => {
+    if (!order || (order.orderStatus || "").toLowerCase() !== "delivered") return false;
     if (!isOrderDeliveredWithinWindow(order)) return false;
-    return (
-      !order.returnStatus ||
-      order.returnStatus === "NONE" ||
-      order.returnStatus === "REJECTED" ||
-      order.returnStatus === "CANCELLED"
-    );
+    const hasActiveReturn =
+      order.returnStatus &&
+      !["NONE", "REJECTED", "CANCELLED"].includes(order.returnStatus);
+    const hasActiveExchange =
+      order.exchangeStatus &&
+      !["NONE", "REJECTED", "CANCELLED"].includes(order.exchangeStatus);
+    return !hasActiveReturn && !hasActiveExchange;
   };
 
   const isOrderExchangeEligible = (order) => {
+    if (!order || (order.orderStatus || "").toLowerCase() !== "delivered") return false;
     if (!isOrderDeliveredWithinWindow(order)) return false;
-    return (
-      !order.exchangeStatus ||
-      order.exchangeStatus === "NONE" ||
-      order.exchangeStatus === "REJECTED" ||
-      order.exchangeStatus === "CANCELLED"
-    );
+    const hasActiveReturn =
+      order.returnStatus &&
+      !["NONE", "REJECTED", "CANCELLED"].includes(order.returnStatus);
+    const hasActiveExchange =
+      order.exchangeStatus &&
+      !["NONE", "REJECTED", "CANCELLED"].includes(order.exchangeStatus);
+    return !hasActiveExchange && !hasActiveReturn;
   };
 
   const handleOpenReturnModal = (order) => {
@@ -430,10 +822,105 @@ const MyAccount = () => {
       }
     };
 
+    const handleTrackingUpdate = (payload) => {
+      if (!payload || !payload.orderId) return;
+
+      setOrders((prevOrders) =>
+        prevOrders.map((o) => {
+          if (o._id === payload.orderId) {
+            const isDelivered = payload.status === "DELIVERED";
+            return {
+              ...o,
+              orderStatus: isDelivered ? "delivered" : o.orderStatus,
+              deliveredAt: isDelivered ? payload.timestamp || new Date() : o.deliveredAt,
+              tracking: {
+                ...o.tracking,
+                status: payload.status,
+                trackingNumber: payload.trackingNumber || o.tracking?.trackingNumber,
+                currentLocation: payload.currentLocation || o.tracking?.currentLocation,
+                history: payload.history || o.tracking?.history,
+              },
+            };
+          }
+          return o;
+        })
+      );
+
+      setTrackingData((prev) => {
+        if (!prev) return prev;
+        const currentId = prev.orderId || prev._id;
+        if (currentId === payload.orderId) {
+          const isDelivered = payload.status === "DELIVERED";
+          const newHistory =
+            payload.history ||
+            (prev.history
+              ? [
+                  ...prev.history,
+                  {
+                    status: payload.status,
+                    timestamp: payload.timestamp || new Date().toISOString(),
+                    location: payload.currentLocation,
+                    description:
+                      payload.description || `Status updated to ${payload.status}`,
+                  },
+                ]
+              : []);
+
+          return {
+            ...prev,
+            status: payload.status,
+            orderStatus: isDelivered ? "delivered" : prev.orderStatus,
+            deliveredAt: isDelivered
+              ? payload.timestamp || new Date().toISOString()
+              : prev.deliveredAt,
+            currentLocation: payload.currentLocation || prev.currentLocation,
+            trackingNumber: payload.trackingNumber || prev.trackingNumber,
+            history: newHistory,
+          };
+        }
+        return prev;
+      });
+    };
+
+    const handlePaymentUpdate = (payload) => {
+      if (!payload || !payload.orderId) return;
+
+      setOrders((prevOrders) =>
+        prevOrders.map((o) => {
+          if (o._id === payload.orderId) {
+            return {
+              ...o,
+              paymentStatus: payload.paymentStatus,
+              paymentReceivedAt: payload.timestamp || new Date(),
+              paidAt: payload.timestamp || new Date(),
+            };
+          }
+          return o;
+        })
+      );
+
+      setTrackingData((prev) => {
+        if (!prev) return prev;
+        const currentId = prev.orderId || prev._id;
+        if (currentId === payload.orderId) {
+          return {
+            ...prev,
+            paymentStatus: payload.paymentStatus,
+            paymentReceivedAt: payload.timestamp || new Date().toISOString(),
+          };
+        }
+        return prev;
+      });
+    };
+
     socket.on("order_updated", handleOrderUpdate);
+    socket.on("order_tracking_updated", handleTrackingUpdate);
+    socket.on("payment_status_updated", handlePaymentUpdate);
 
     return () => {
       socket.off("order_updated", handleOrderUpdate);
+      socket.off("order_tracking_updated", handleTrackingUpdate);
+      socket.off("payment_status_updated", handlePaymentUpdate);
     };
   }, []);
 
@@ -835,10 +1322,14 @@ const MyAccount = () => {
                               <>
                                 <span className="status-badge cancelled">Cancelled</span>
                                 {order.paymentStatus?.toLowerCase() === "refunded" ? (
-                                  <span className="status-badge refunded">Refunded</span>
+                                  <span className="payment-badge refunded">REFUNDED</span>
+                                ) : order.paymentStatus?.toLowerCase() === "paid" ? (
+                                  <span className="payment-badge paid">
+                                    {order.paymentMethod === "COD" ? "PAID (COD)" : "Paid"}
+                                  </span>
                                 ) : (
                                   <span className="payment-badge pending">
-                                    {order.paymentMethod === "COD" ? "Unpaid (COD)" : "Unpaid"}
+                                    {order.paymentMethod === "COD" ? "PENDING (COD)" : "Pending"}
                                   </span>
                                 )}
                               </>
@@ -858,7 +1349,11 @@ const MyAccount = () => {
                                 <span
                                   className={`payment-badge ${order.paymentStatus?.toLowerCase()}`}
                                 >
-                                  {order.paymentStatus === "paid"
+                                  {order.paymentMethod === "COD"
+                                    ? order.paymentStatus === "paid"
+                                      ? "PAID (COD)"
+                                      : "PENDING (COD)"
+                                    : order.paymentStatus === "paid"
                                     ? "Paid"
                                     : order.paymentStatus === "failed"
                                     ? "Failed"
@@ -910,6 +1405,15 @@ const MyAccount = () => {
                           </div>
 
                           <div className="order-actions">
+                            <button
+                              type="button"
+                              className="btn-order-action btn-track"
+                              onClick={() => handleOpenTrackingModal(order)}
+                              title="Track Delivery Status"
+                            >
+                              <FiTruck /> Track Order
+                            </button>
+
                             {order.paymentStatus === "pending" &&
                               !["cancelled", "refunded", "return_requested", "returned", "failed"].includes(
                                 order.orderStatus?.toLowerCase()
@@ -1513,6 +2017,1015 @@ const MyAccount = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* CUSTOMER TRACKING MODAL */}
+      {trackingModalOrder && (
+        <div
+          className="decathlon-tracking-modal-overlay"
+          onClick={handleCloseTrackingModal}
+        >
+          <div
+            className="decathlon-tracking-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="tracking-modal-header">
+              <div className="tracking-modal-title-group">
+                <div className="tracking-header-badge">
+                  <FiTruck className="tracking-header-icon" /> Live Order Tracking
+                </div>
+                <h3 className="tracking-modal-title">
+                  Order #{trackingModalOrder._id.slice(-8).toUpperCase()}
+                </h3>
+                <span className="tracking-modal-subtitle">
+                  Placed on {formatDateTime(trackingModalOrder.createdAt)}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn-tracking-modal-close"
+                onClick={handleCloseTrackingModal}
+                title="Close modal"
+              >
+                <FiX />
+              </button>
+            </div>
+
+            {loadingTracking ? (
+              <div className="tracking-modal-loading">
+                <div className="tracking-spinner"></div>
+                <p>Fetching real-time tracking information...</p>
+              </div>
+            ) : (
+              <div className="tracking-modal-body">
+                {/* 1. Overview Card */}
+                {(() => {
+                  const isOrderCancelled =
+                    Boolean(trackingData?.isCancelled) ||
+                    (trackingData?.orderStatus || trackingModalOrder?.orderStatus || "").toLowerCase() === "cancelled" ||
+                    (trackingData?.status || "").toUpperCase() === "CANCELLED";
+
+                  const retStatus = (
+                    trackingData?.returnStatus ||
+                    trackingModalOrder?.returnStatus ||
+                    trackingModalOrder?.returnRequest?.status ||
+                    "NONE"
+                  ).toUpperCase();
+                  const hasActiveReturn = retStatus !== "NONE" && retStatus !== "";
+                  const returnReq =
+                    trackingData?.returnRequest || trackingModalOrder?.returnRequest;
+
+                  const exchStatus = (
+                    trackingData?.exchangeStatus ||
+                    trackingModalOrder?.exchangeStatus ||
+                    trackingModalOrder?.exchangeRequest?.status ||
+                    "NONE"
+                  ).toUpperCase();
+                  const hasActiveExchange = exchStatus !== "NONE" && exchStatus !== "";
+                  const exchangeReq =
+                    trackingData?.exchangeRequest || trackingModalOrder?.exchangeRequest;
+
+                  const isDelivered =
+                    (trackingData?.status || trackingModalOrder?.orderStatus || "").toUpperCase() ===
+                      "DELIVERED" ||
+                    hasActiveReturn ||
+                    hasActiveExchange;
+
+                  const method =
+                    trackingData?.paymentMethod || trackingModalOrder.paymentMethod;
+                  const payStatus = (
+                    trackingData?.paymentStatus ||
+                    trackingModalOrder.paymentStatus ||
+                    ""
+                  ).toLowerCase();
+
+                  return (
+                    <>
+                      <div className="tracking-summary-card">
+                        <div className="tracking-summary-top">
+                          <div className="summary-status-col">
+                            <span className="summary-label">Current Tracking Status</span>
+                            <div className="summary-status-badge-row">
+                              {isOrderCancelled ? (
+                                <span className="customer-tracking-pill cancelled">
+                                  <span className="cancelled-indicator"></span> ORDER CANCELLED
+                                </span>
+                              ) : hasActiveReturn ? (
+                                <span className="customer-tracking-pill return-pill">
+                                  <span className="pulse-indicator orange"></span>
+                                  {formatReturnStatusText(retStatus).toUpperCase()}
+                                </span>
+                              ) : hasActiveExchange ? (
+                                <span className="customer-tracking-pill exchange-pill">
+                                  <span className="pulse-indicator blue"></span>
+                                  {formatExchangeStatusText(exchStatus).toUpperCase()}
+                                </span>
+                              ) : (
+                                <span
+                                  className={`customer-tracking-pill ${(
+                                    trackingData?.status ||
+                                    trackingModalOrder.orderStatus ||
+                                    ""
+                                  ).toLowerCase()}`}
+                                >
+                                  <span className="pulse-indicator"></span>
+                                  {(
+                                    trackingData?.status ||
+                                    trackingModalOrder.orderStatus ||
+                                    "ORDER_PLACED"
+                                  ).replace(/_/g, " ")}
+                                </span>
+                              )}
+
+                              {/* Separate Payment Badge */}
+                              {(() => {
+                                if (hasActiveReturn) {
+                                  if (method === "COD") {
+                                    if (payStatus === "refunded" || retStatus === "REFUNDED") {
+                                      return (
+                                        <span className="customer-payment-pill refunded">
+                                          Payment: REFUNDED (COD)
+                                        </span>
+                                      );
+                                    }
+                                    if (
+                                      retStatus === "RETURN_RECEIVED" ||
+                                      retStatus === "REFUND_PROCESSING" ||
+                                      retStatus === "PICKED_UP"
+                                    ) {
+                                      return (
+                                        <span className="customer-payment-pill pending">
+                                          Payment: COD REFUND PENDING
+                                        </span>
+                                      );
+                                    }
+                                    return (
+                                      <span className="customer-payment-pill pending">
+                                        Payment: COD REFUND PENDING
+                                      </span>
+                                    );
+                                  } else {
+                                    if (payStatus === "refunded" || retStatus === "REFUNDED") {
+                                      return (
+                                        <span className="customer-payment-pill refunded">
+                                          Payment: REFUNDED
+                                        </span>
+                                      );
+                                    }
+                                    return (
+                                      <span className="customer-payment-pill pending">
+                                        Payment: REFUND PROCESSING
+                                      </span>
+                                    );
+                                  }
+                                }
+
+                                if (hasActiveExchange) {
+                                  if (method === "COD") {
+                                    return (
+                                      <span
+                                        className={`customer-payment-pill ${
+                                          payStatus === "paid" ? "paid" : "pending"
+                                        }`}
+                                      >
+                                        Payment: {payStatus === "paid" ? "PAID (COD)" : "PENDING (COD)"}
+                                      </span>
+                                    );
+                                  }
+                                  return (
+                                    <span className="customer-payment-pill paid">
+                                      Payment: PAID (Online)
+                                    </span>
+                                  );
+                                }
+
+                                if (isOrderCancelled) {
+                                  if (payStatus === "refunded") {
+                                    return (
+                                      <span className="customer-payment-pill refunded">
+                                        Payment: REFUNDED
+                                      </span>
+                                    );
+                                  }
+                                  if (method === "COD") {
+                                    return (
+                                      <span className="customer-payment-pill cancelled">
+                                        Payment: NOT CHARGED
+                                      </span>
+                                    );
+                                  }
+                                  return (
+                                    <span className="customer-payment-pill pending">
+                                      Payment: REFUND IN PROGRESS
+                                    </span>
+                                  );
+                                }
+
+                                if (payStatus === "refunded") {
+                                  return (
+                                    <span className="customer-payment-pill refunded">
+                                      Payment: REFUNDED
+                                    </span>
+                                  );
+                                }
+                                if (method === "COD") {
+                                  if (payStatus === "paid") {
+                                    return (
+                                      <span className="customer-payment-pill paid">
+                                        Payment: PAID (COD)
+                                      </span>
+                                    );
+                                  }
+                                  return (
+                                    <span className="customer-payment-pill pending">
+                                      Payment: PENDING (COD)
+                                    </span>
+                                  );
+                                }
+                                if (payStatus === "paid") {
+                                  return (
+                                    <span className="customer-payment-pill paid">
+                                      Payment: Paid
+                                    </span>
+                                  );
+                                }
+                                if (payStatus === "failed") {
+                                  return (
+                                    <span className="customer-payment-pill failed">
+                                      Payment: Failed
+                                    </span>
+                                  );
+                                }
+                                return (
+                                  <span className="customer-payment-pill pending">
+                                    Payment: Pending
+                                  </span>
+                                );
+                              })()}
+                            </div>
+                          </div>
+
+                          <div className="summary-tracking-num-col">
+                            <span className="summary-label">Tracking Number</span>
+                            <div className="tracking-num-copy-row">
+                              <span className="tracking-number-text">
+                                {trackingData?.trackingNumber ||
+                                  `TRK-${trackingModalOrder._id.slice(-8).toUpperCase()}`}
+                              </span>
+                              <button
+                                type="button"
+                                className="btn-copy-tracking"
+                                onClick={() =>
+                                  handleCopyTrackingNumber(
+                                    trackingData?.trackingNumber ||
+                                      `TRK-${trackingModalOrder._id.slice(-8).toUpperCase()}`
+                                  )
+                                }
+                                title="Copy tracking number"
+                              >
+                                {copiedTracking ? <FiCheck /> : <FiCopy />}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="tracking-summary-grid">
+                          <div className="summary-grid-item">
+                            <span className="grid-item-label">Carrier Partner</span>
+                            <span className="grid-item-value">
+                              {hasActiveExchange && exchangeReq?.replacementCarrier
+                                ? exchangeReq.replacementCarrier
+                                : trackingData?.carrier || "Decathlon Demo Logistics"}
+                            </span>
+                          </div>
+
+                          <div className="summary-grid-item">
+                            <span className="grid-item-label">Current Location</span>
+                            <span className="grid-item-value location">
+                              <FiMapPin className="grid-location-icon" />
+                              {isOrderCancelled
+                                ? "Not Applicable"
+                                : hasActiveExchange && exchangeReq?.replacementLocation
+                                ? exchangeReq.replacementLocation
+                                : hasActiveReturn &&
+                                  (retStatus === "PICKED_UP" || retStatus === "RETURN_RECEIVED")
+                                ? "Decathlon Returns Hub"
+                                : trackingData?.currentLocation?.city
+                                ? `${trackingData.currentLocation.city}${
+                                    trackingData.currentLocation.latitude
+                                      ? ` (${trackingData.currentLocation.latitude.toFixed(
+                                          4
+                                        )}, ${trackingData.currentLocation.longitude.toFixed(
+                                          4
+                                        )})`
+                                      : ""
+                                  }`
+                                : "Decathlon Central Logistics Hub"}
+                            </span>
+                          </div>
+
+                          <div className="summary-grid-item">
+                            <span className="grid-item-label">Estimated Delivery</span>
+                            <span className="grid-item-value">
+                              {isOrderCancelled
+                                ? "Not Applicable"
+                                : hasActiveReturn
+                                ? "Not Applicable (Order Delivered)"
+                                : hasActiveExchange
+                                ? exchangeReq?.estimatedReplacementDeliveryDate
+                                  ? `Replacement ETA: ${formatDate(
+                                      exchangeReq.estimatedReplacementDeliveryDate
+                                    )}`
+                                  : "3-5 business days (Replacement)"
+                                : isDelivered
+                                ? "Not Applicable (Order Delivered)"
+                                : trackingData?.estimatedDelivery
+                                ? formatDate(trackingData.estimatedDelivery)
+                                : "Within 2-3 business days"}
+                            </span>
+                          </div>
+
+                          <div className="summary-grid-item">
+                            <span className="grid-item-label">Delivered Date &amp; Time</span>
+                            <span
+                              className={`grid-item-value ${
+                                !isOrderCancelled && (isDelivered || trackingData?.deliveredAt)
+                                  ? "delivered-highlight"
+                                  : isOrderCancelled
+                                  ? "cancelled-highlight"
+                                  : ""
+                              }`}
+                            >
+                              {isOrderCancelled
+                                ? "Not Delivered"
+                                : isDelivered || trackingData?.deliveredAt
+                                ? formatDateTime(
+                                    trackingData?.deliveredAt ||
+                                      trackingModalOrder.deliveredAt ||
+                                      trackingModalOrder.updatedAt
+                                  )
+                                : "Pending Delivery"}
+                            </span>
+                          </div>
+
+                          {trackingData?.paymentMethod === "COD" && (
+                            <div className="summary-grid-item">
+                              <span className="grid-item-label">COD Payment Status</span>
+                              <span
+                                className={`grid-item-value ${
+                                  trackingData?.paymentStatus === "paid" ||
+                                  payStatus === "refunded"
+                                    ? "paid-highlight"
+                                    : isOrderCancelled
+                                    ? "cancelled-highlight"
+                                    : ""
+                                }`}
+                              >
+                                {hasActiveReturn
+                                  ? payStatus === "refunded" || retStatus === "REFUNDED"
+                                    ? "Refund Completed (COD)"
+                                    : "COD Refund Pending (To be paid upon return inspection)"
+                                  : trackingData?.paymentStatus === "paid" &&
+                                    (trackingData?.paymentReceivedAt || trackingData?.paidAt)
+                                  ? `Payment Received (${formatDateTime(
+                                      trackingData.paymentReceivedAt || trackingData.paidAt
+                                    )})`
+                                  : isOrderCancelled
+                                  ? "Payment Not Charged (Cancelled)"
+                                  : "Payment Pending (To be paid upon delivery)"}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 1. SECTION 1: Original Order Delivery Tracking */}
+                      <div className="tracking-section-container original-delivery-section">
+                        <div className="section-title-with-badge">
+                          <h4 className="tracking-section-title">
+                            1. Original Order Delivery Tracking
+                          </h4>
+                          {isOrderCancelled ? (
+                            <span className="section-header-badge cancelled">ORDER CANCELLED</span>
+                          ) : hasActiveReturn || hasActiveExchange || isDelivered ? (
+                            <span className="section-header-badge delivered">
+                              DELIVERED (COMPLETED)
+                            </span>
+                          ) : (
+                            <span className="section-header-badge in-progress">
+                              ACTIVE DELIVERY
+                            </span>
+                          )}
+                        </div>
+
+                        {isOrderCancelled ? (
+                          /* Cancelled Order Flow: ONLY Order Placed -> Order Cancelled */
+                          <div className="customer-stepper cancelled-stepper">
+                            {/* Step 1: Order Placed */}
+                            <div className="customer-step-node completed">
+                              <div className="step-node-indicator">
+                                <div className="node-circle completed">
+                                  <FiCheck className="node-icon" />
+                                </div>
+                                <div className="node-connector filled error-connector"></div>
+                              </div>
+
+                              <div className="step-node-content">
+                                <div className="step-node-header">
+                                  <span className="step-node-label">Order Placed</span>
+                                  <span className="step-node-time">
+                                    <FiClock className="step-clock-icon" />{" "}
+                                    {formatDateTime(trackingModalOrder.createdAt)}
+                                  </span>
+                                </div>
+                                <p className="step-node-desc">
+                                  Your order was placed and confirmed.
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Step 2: Order Cancelled */}
+                            <div className="customer-step-node cancelled">
+                              <div className="step-node-indicator">
+                                <div className="node-circle cancelled-node">
+                                  <FiX className="node-icon cancelled-icon" />
+                                </div>
+                              </div>
+
+                              <div className="step-node-content">
+                                <div className="step-node-header">
+                                  <span className="step-node-label cancelled-label">
+                                    Order Cancelled
+                                  </span>
+                                  {(trackingData?.cancelledAt ||
+                                    trackingModalOrder.cancelledAt ||
+                                    trackingModalOrder.updatedAt) && (
+                                    <span className="step-node-time cancelled-time">
+                                      <FiClock className="step-clock-icon" />{" "}
+                                      {formatDateTime(
+                                        trackingData?.cancelledAt ||
+                                          trackingModalOrder.cancelledAt ||
+                                          trackingModalOrder.updatedAt
+                                      )}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="step-node-desc cancelled-desc">
+                                  {trackingData?.cancellationReason ||
+                                    trackingModalOrder.cancellationReason ||
+                                    "Your order has been cancelled and will not be delivered."}
+                                </p>
+                                {(trackingData?.paymentStatus === "refunded" ||
+                                  trackingModalOrder.paymentStatus === "refunded") && (
+                                  <div className="cancelled-refund-badge-note">
+                                    ✓ Full refund has been initiated to your original payment method.
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          /* Normal 5-Step Delivery Flow */
+                          <>
+                            <div className="customer-stepper">
+                              {TRACKING_STEPS.map((step, idx) => {
+                                const currentIdx =
+                                  hasActiveReturn || hasActiveExchange || isDelivered
+                                    ? 4
+                                    : getCustomerStepIndex(
+                                        trackingData?.status || trackingModalOrder.orderStatus
+                                      );
+                                const isCompleted = idx < currentIdx || (idx === 4 && (hasActiveReturn || hasActiveExchange || isDelivered));
+                                const isCurrent =
+                                  idx === currentIdx &&
+                                  !(hasActiveReturn || hasActiveExchange || isDelivered);
+                                const stepTime = getCustomerStepTimestamp(
+                                  step.key,
+                                  trackingData?.history,
+                                  trackingModalOrder
+                                );
+
+                                return (
+                                  <div
+                                    key={step.key}
+                                    className={`customer-step-node ${
+                                      isCompleted
+                                        ? "completed"
+                                        : isCurrent
+                                        ? "current"
+                                        : "upcoming"
+                                    }`}
+                                  >
+                                    <div className="step-node-indicator">
+                                      <div className="node-circle">
+                                        {isCompleted ? (
+                                          <FiCheck className="node-icon" />
+                                        ) : (
+                                          <span className="node-num">{idx + 1}</span>
+                                        )}
+                                      </div>
+                                      {idx < TRACKING_STEPS.length - 1 && (
+                                        <div
+                                          className={`node-connector ${
+                                            idx < currentIdx || (hasActiveReturn || hasActiveExchange || isDelivered)
+                                              ? "filled"
+                                              : ""
+                                          }`}
+                                        ></div>
+                                      )}
+                                    </div>
+
+                                    <div className="step-node-content">
+                                      <div className="step-node-header">
+                                        <span className="step-node-label">{step.label}</span>
+                                        {stepTime && (
+                                          <span className="step-node-time">
+                                            <FiClock className="step-clock-icon" />{" "}
+                                            {formatDateTime(stepTime)}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="step-node-desc">{step.desc}</p>
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            {(hasActiveReturn || hasActiveExchange) && (
+                              <div className="delivery-preserved-note">
+                                <FiCheckCircle className="preserved-check-icon" />
+                                <span>
+                                  Original order was delivered successfully on{" "}
+                                  <strong>
+                                    {formatDateTime(
+                                      trackingData?.deliveredAt ||
+                                        trackingModalOrder.deliveredAt ||
+                                        trackingModalOrder.updatedAt
+                                    )}
+                                  </strong>
+                                  . Delivery history is preserved.
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {/* 2. SECTION 2: Return Tracking (when return active) */}
+                      {hasActiveReturn && (
+                        <div className="tracking-section-container return-tracking-section">
+                          <div className="section-title-with-badge">
+                            <h4 className="tracking-section-title">2. Return Tracking</h4>
+                            <span className="section-header-badge return">
+                              CURRENT STATUS: {formatReturnStatusText(retStatus).toUpperCase()}
+                            </span>
+                          </div>
+
+                          {/* Prominent Return Banner */}
+                          <div className="return-prominent-banner">
+                            <div className="banner-top-row">
+                              <div>
+                                <span className="banner-label">CURRENT RETURN STATUS</span>
+                                <h3 className="banner-status-title">
+                                  {formatReturnStatusText(retStatus)}
+                                </h3>
+                              </div>
+                              <div className="banner-payment-col">
+                                <span className="banner-label">PAYMENT / REFUND STATUS</span>
+                                <span className={`banner-payment-pill ${retStatus === "REFUNDED" || payStatus === "refunded" ? "refunded" : "processing"}`}>
+                                  {method === "COD"
+                                    ? retStatus === "REFUNDED" || payStatus === "refunded"
+                                      ? "REFUNDED (COD Cash/Bank Payout)"
+                                      : "COD REFUND PENDING"
+                                    : retStatus === "REFUNDED" || payStatus === "refunded"
+                                    ? "REFUNDED"
+                                    : "REFUND PROCESSING"}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="banner-meta-row">
+                              <span><strong>Reason:</strong> {returnReq?.reason || "Product Return"}</span>
+                              {returnReq?.details && <span><strong>Notes:</strong> {returnReq.details}</span>}
+                              {returnReq?.refundAmount && (
+                                <span><strong>Refund Amount:</strong> {formatPrice(returnReq.refundAmount)}</span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* 8-Step Return Timeline Stepper */}
+                          <div className="customer-stepper return-customer-stepper">
+                            {RETURN_CUSTOMER_STEPS.map((step, idx) => {
+                              const retCurrentIdx = getReturnCustomerStepIndex(retStatus);
+                              const isCompleted = idx < retCurrentIdx || (idx === 7 && (retStatus === "REFUNDED" || payStatus === "refunded"));
+                              const isCurrent = idx === retCurrentIdx && !(retStatus === "REFUNDED" || payStatus === "refunded");
+                              const stepTime = getReturnCustomerStepTimestamp(
+                                step.key,
+                                returnReq,
+                                trackingData?.history,
+                                trackingModalOrder
+                              );
+
+                              return (
+                                <div
+                                  key={step.key}
+                                  className={`customer-step-node return-step-node ${
+                                    isCompleted
+                                      ? "completed"
+                                      : isCurrent
+                                      ? "current"
+                                      : "upcoming"
+                                  }`}
+                                >
+                                  <div className="step-node-indicator">
+                                    <div className="node-circle return-circle">
+                                      {isCompleted ? (
+                                        <FiCheck className="node-icon" />
+                                      ) : (
+                                        <span className="node-num">{idx + 1}</span>
+                                      )}
+                                    </div>
+                                    {idx < RETURN_CUSTOMER_STEPS.length - 1 && (
+                                      <div
+                                        className={`node-connector return-connector ${
+                                          idx < retCurrentIdx ? "filled" : ""
+                                        }`}
+                                      ></div>
+                                    )}
+                                  </div>
+
+                                  <div className="step-node-content">
+                                    <div className="step-node-header">
+                                      <span className="step-node-label">{step.label}</span>
+                                      {stepTime && (
+                                        <span className="step-node-time">
+                                          <FiClock className="step-clock-icon" />{" "}
+                                          {formatDateTime(stepTime)}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="step-node-desc">{step.desc}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Return Logistics & Refund Card */}
+                          <div className="return-details-card">
+                            <div className="details-card-col">
+                              <h5 className="details-card-subheading">Return Logistics</h5>
+                              <div className="details-meta-line">
+                                <strong>Pickup Location:</strong>{" "}
+                                <span>
+                                  {returnReq?.pickupAddress ||
+                                    (trackingModalOrder.shippingAddress
+                                      ? `${trackingModalOrder.shippingAddress.address}, ${trackingModalOrder.shippingAddress.city}`
+                                      : "Registered Customer Address")}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Pickup Date:</strong>{" "}
+                                <span>
+                                  {returnReq?.pickupDate
+                                    ? formatDateTime(returnReq.pickupDate)
+                                    : getReturnCustomerStepIndex(retStatus) >= 3
+                                    ? "Courier Assigned for Collection"
+                                    : "Will be scheduled upon approval"}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Items to Return:</strong>{" "}
+                                <span>
+                                  {returnReq?.items && returnReq.items.length > 0
+                                    ? returnReq.items
+                                        .map(
+                                          (it) =>
+                                            `${it.title || "Product"} (Qty: ${it.quantity || 1})`
+                                        )
+                                        .join(", ")
+                                    : trackingModalOrder.orderItems?.[0]?.title || "Order Product"}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="details-card-col">
+                              <h5 className="details-card-subheading">Refund Information</h5>
+                              <div className="details-meta-line">
+                                <strong>Refund Amount:</strong>{" "}
+                                <span>
+                                  {formatPrice(
+                                    returnReq?.refundAmount || trackingModalOrder.totalPrice
+                                  )}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Payment Method:</strong>{" "}
+                                <span>{method === "COD" ? "Cash on Delivery (COD)" : "Online / Stripe Card"}</span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Refund Status:</strong>{" "}
+                                <span>
+                                  {method === "COD"
+                                    ? retStatus === "REFUNDED" || payStatus === "refunded"
+                                      ? "COD Refund Completed"
+                                      : "COD Refund Pending (Cash / Bank transfer on quality check)"
+                                    : retStatus === "REFUNDED" || payStatus === "refunded"
+                                    ? "Refunded to original card"
+                                    : "Refund Processing"}
+                                </span>
+                              </div>
+                              {method !== "COD" && returnReq?.stripeRefundId && (
+                                <div className="details-meta-line">
+                                  <strong>Stripe Refund ID:</strong>{" "}
+                                  <code>{returnReq.stripeRefundId}</code>
+                                </div>
+                              )}
+                              {method === "COD" && (
+                                <div className="cod-refund-note">
+                                  ℹ️ COD refunds are verified at warehouse and paid directly to your registered bank account or in cash.
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 2. SECTION 2: Exchange Tracking (when exchange active) */}
+                      {hasActiveExchange && (
+                        <div className="tracking-section-container exchange-tracking-section">
+                          <div className="section-title-with-badge">
+                            <h4 className="tracking-section-title">2. Exchange Tracking</h4>
+                            <span className="section-header-badge exchange">
+                              CURRENT STATUS: {formatExchangeStatusText(exchStatus).toUpperCase()}
+                            </span>
+                          </div>
+
+                          {/* Prominent Exchange Banner */}
+                          <div className="exchange-prominent-banner">
+                            <div className="banner-top-row">
+                              <div>
+                                <span className="banner-label">CURRENT EXCHANGE STATUS</span>
+                                <h3 className="banner-status-title">
+                                  {formatExchangeStatusText(exchStatus)}
+                                </h3>
+                              </div>
+                              <div className="banner-payment-col">
+                                <span className="banner-label">PAYMENT STATUS</span>
+                                <span className="banner-payment-pill exchange-paid">
+                                  Payment Preserved ({method === "COD" ? "COD" : "Paid Online"})
+                                </span>
+                              </div>
+                            </div>
+                            <div className="banner-meta-row">
+                              <span><strong>Reason:</strong> {exchangeReq?.reason || "Size Exchange"}</span>
+                              <span><strong>Original Size:</strong> {exchangeReq?.originalSize || "Standard"}</span>
+                              <span><strong>Requested Replacement Size:</strong> <span className="highlight-tag">{exchangeReq?.newSize || "Requested Variant"}</span></span>
+                              <span><strong>Quantity:</strong> {exchangeReq?.quantity || 1}</span>
+                            </div>
+                          </div>
+
+                          {/* 8-Step Exchange Timeline Stepper */}
+                          <div className="customer-stepper exchange-customer-stepper">
+                            {EXCHANGE_CUSTOMER_STEPS.map((step, idx) => {
+                              const exchCurrentIdx = getExchangeCustomerStepIndex(exchStatus);
+                              const isCompleted = idx < exchCurrentIdx || (idx === 7 && exchStatus === "DELIVERED");
+                              const isCurrent = idx === exchCurrentIdx && exchStatus !== "DELIVERED";
+                              const stepTime = getExchangeCustomerStepTimestamp(
+                                step.key,
+                                exchangeReq,
+                                trackingData?.history,
+                                trackingModalOrder
+                              );
+
+                              return (
+                                <div
+                                  key={step.key}
+                                  className={`customer-step-node exchange-step-node ${
+                                    isCompleted
+                                      ? "completed"
+                                      : isCurrent
+                                      ? "current"
+                                      : "upcoming"
+                                  }`}
+                                >
+                                  <div className="step-node-indicator">
+                                    <div className="node-circle exchange-circle">
+                                      {isCompleted ? (
+                                        <FiCheck className="node-icon" />
+                                      ) : (
+                                        <span className="node-num">{idx + 1}</span>
+                                      )}
+                                    </div>
+                                    {idx < EXCHANGE_CUSTOMER_STEPS.length - 1 && (
+                                      <div
+                                        className={`node-connector exchange-connector ${
+                                          idx < exchCurrentIdx ? "filled" : ""
+                                        }`}
+                                      ></div>
+                                    )}
+                                  </div>
+
+                                  <div className="step-node-content">
+                                    <div className="step-node-header">
+                                      <span className="step-node-label">{step.label}</span>
+                                      {stepTime && (
+                                        <span className="step-node-time">
+                                          <FiClock className="step-clock-icon" />{" "}
+                                          {formatDateTime(stepTime)}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="step-node-desc">{step.desc}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Exchange Replacement & Logistics Card */}
+                          <div className="exchange-details-card">
+                            <div className="details-card-col">
+                              <h5 className="details-card-subheading">Product Details</h5>
+                              <div className="details-meta-line">
+                                <strong>Original Product:</strong>{" "}
+                                <span>
+                                  {exchangeReq?.originalItem?.title ||
+                                    trackingModalOrder.orderItems?.[0]?.title ||
+                                    "Decathlon Sports Gear"}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Original Size / Variant:</strong>{" "}
+                                <span>{exchangeReq?.originalSize || "Standard"}</span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Replacement Size / Variant:</strong>{" "}
+                                <span className="replacement-highlight-badge">
+                                  {exchangeReq?.newSize || "New Variant"}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Quantity:</strong>{" "}
+                                <span>{exchangeReq?.quantity || 1} unit</span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Return Pickup Address:</strong>{" "}
+                                <span>
+                                  {exchangeReq?.pickupAddress ||
+                                    (trackingModalOrder.shippingAddress
+                                      ? `${trackingModalOrder.shippingAddress.address}, ${trackingModalOrder.shippingAddress.city}`
+                                      : "Customer Shipping Address")}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="details-card-col">
+                              <h5 className="details-card-subheading">Replacement Dispatch Logistics</h5>
+                              <div className="details-meta-line">
+                                <strong>Replacement Tracking Number:</strong>{" "}
+                                <span className="replacement-trk-num">
+                                  {exchangeReq?.replacementTrackingNumber ||
+                                    (getExchangeCustomerStepIndex(exchStatus) >= 6
+                                      ? `TRK-EXCH-${trackingModalOrder._id.slice(-6).toUpperCase()}`
+                                      : "To be generated upon dispatch")}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Replacement Carrier:</strong>{" "}
+                                <span>
+                                  {exchangeReq?.replacementCarrier ||
+                                    (getExchangeCustomerStepIndex(exchStatus) >= 6
+                                      ? "Decathlon Express Logistics"
+                                      : "To be assigned upon dispatch")}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Replacement Location:</strong>{" "}
+                                <span>
+                                  <FiMapPin className="mini-pin-icon" />
+                                  {exchangeReq?.replacementLocation ||
+                                    (getExchangeCustomerStepIndex(exchStatus) >= 6
+                                      ? "Decathlon Central Fulfillment Hub"
+                                      : "Decathlon Warehouse")}
+                                </span>
+                              </div>
+                              <div className="details-meta-line">
+                                <strong>Expected Delivery Date:</strong>{" "}
+                                <span>
+                                  {exchangeReq?.estimatedReplacementDeliveryDate
+                                    ? formatDate(exchangeReq.estimatedReplacementDeliveryDate)
+                                    : getExchangeCustomerStepIndex(exchStatus) >= 6
+                                    ? "Within 2-3 business days"
+                                    : "Calculated upon dispatch"}
+                                </span>
+                              </div>
+                              <div className="exchange-payment-note">
+                                ℹ️ No additional payment required. Original order payment status is maintained.
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {/* 3. Detailed Tracking History Log */}
+                <div className="tracking-history-container">
+                  <h4 className="tracking-section-title">
+                    Chronological Activity Log
+                  </h4>
+                  {trackingData?.history && trackingData.history.length > 0 ? (
+                    <div className="history-timeline-list">
+                      {[...trackingData.history]
+                        .reverse()
+                        .map((entry, hIdx) => (
+                          <div key={hIdx} className="history-entry-item">
+                            <div className="history-entry-left">
+                              <span className="history-dot"></span>
+                              {hIdx < trackingData.history.length - 1 && (
+                                <span className="history-line"></span>
+                              )}
+                            </div>
+                            <div className="history-entry-content">
+                              <div className="history-top-row">
+                                <span
+                                  className={`history-status-tag ${(
+                                    entry.status || ""
+                                  ).toLowerCase()}`}
+                                >
+                                  {(entry.status || "").replace(/_/g, " ")}
+                                </span>
+                                <span className="history-timestamp">
+                                  <FiClock className="history-clock-icon" />{" "}
+                                  {formatDateTime(entry.timestamp)}
+                                </span>
+                              </div>
+                              <p className="history-description">
+                                {entry.description || "Status updated"}
+                              </p>
+                              {entry.location &&
+                                (entry.location.city ||
+                                  entry.location.latitude) && (
+                                  <div className="history-location-info">
+                                    <FiMapPin className="history-map-icon" />
+                                    <span>
+                                      {entry.location.city || "Location"}
+                                      {entry.location.latitude &&
+                                        ` (${entry.location.latitude.toFixed(
+                                          4
+                                        )}, ${entry.location.longitude.toFixed(
+                                          4
+                                        )})`}
+                                    </span>
+                                  </div>
+                                )}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="history-empty">
+                      <p>Tracking history will update as your package moves.</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 4. Shipping Address Preview */}
+                {trackingModalOrder.shippingAddress && (
+                  <div className="tracking-address-card">
+                    <h5 className="address-card-title">
+                      <FiMapPin /> Delivery Address
+                    </h5>
+                    <p className="address-card-text">
+                      <strong>
+                        {trackingModalOrder.shippingAddress.name ||
+                          trackingModalOrder.shippingAddress.fullName ||
+                          "Customer"}
+                      </strong>
+                      <br />
+                      {trackingModalOrder.shippingAddress.street ||
+                        trackingModalOrder.shippingAddress.addressLine1}
+                      {trackingModalOrder.shippingAddress.addressLine2
+                        ? `, ${trackingModalOrder.shippingAddress.addressLine2}`
+                        : ""}
+                      <br />
+                      {trackingModalOrder.shippingAddress.city},{" "}
+                      {trackingModalOrder.shippingAddress.state} -{" "}
+                      {trackingModalOrder.shippingAddress.postalCode ||
+                        trackingModalOrder.shippingAddress.pincode}
+                      <br />
+                      Phone:{" "}
+                      {trackingModalOrder.shippingAddress.phone ||
+                        trackingModalOrder.shippingAddress.phoneNumber ||
+                        "N/A"}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}

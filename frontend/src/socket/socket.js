@@ -38,4 +38,20 @@ const socket = io(getSocketURL(), {
   timeout: 20000,
 });
 
+const authenticateSocket = () => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (token && socket.connected) {
+    socket.emit("authenticate", { token });
+  }
+};
+
+socket.on("connect", () => {
+  authenticateSocket();
+});
+
+if (typeof window !== "undefined") {
+  window.addEventListener("authChanged", authenticateSocket);
+}
+
 export default socket;

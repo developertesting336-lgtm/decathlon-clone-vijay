@@ -243,9 +243,46 @@ const emitNotificationToAdmins = (notification) => {
     return;
   }
 
-  // Single broadcast event to prevent duplicate popup delivery
+// Single broadcast event to prevent duplicate popup delivery
   io.emit("admin_notification", notification);
   console.log(`📡 Notification emitted to admins: ${notification.title}`);
+};
+
+/*
+========================================
+ORDER TRACKING & COD PAYMENT EMITTERS
+========================================
+*/
+const emitTrackingUpdateToUser = (userId, payload) => {
+  if (!io) {
+    console.log("Socket.IO is not initialized");
+    return;
+  }
+
+  if (userId) {
+    const room = `user_${userId}`;
+    io.to(room).emit("order_tracking_updated", payload);
+  }
+
+  // Also broadcast so any open storefront tabs / admin dashboards receive it
+  io.emit("order_tracking_updated", payload);
+  console.log(`📡 order_tracking_updated emitted for order ${payload.orderId || payload.tracking?.orderId}`);
+};
+
+const emitPaymentStatusToUser = (userId, payload) => {
+  if (!io) {
+    console.log("Socket.IO is not initialized");
+    return;
+  }
+
+  if (userId) {
+    const room = `user_${userId}`;
+    io.to(room).emit("payment_status_updated", payload);
+  }
+
+  // Also broadcast
+  io.emit("payment_status_updated", payload);
+  console.log(`📡 payment_status_updated emitted for order ${payload.orderId}`);
 };
 
 export {
@@ -259,5 +296,8 @@ export {
   emitOrderUpdate,
   emitNotificationToUser,
   emitNotificationToAdmins,
+  emitTrackingUpdateToUser,
+  emitPaymentStatusToUser,
 };
+
 

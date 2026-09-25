@@ -273,10 +273,9 @@
 }
 
 /* =========================================================
-   4. STATUS & PAYMENT DROPDOWNS (PILL BADGES)
+   4. STATUS PILL BADGES & PAYMENT DROPDOWNS
    ========================================================= */
-.payment-status-select,
-.order-status-select {
+.payment-status-select {
   height: 32px;
   padding: 0 28px 0 12px;
   border-radius: 20px;
@@ -293,6 +292,24 @@
   background-size: 12px;
   border: 1px solid transparent;
 }
+
+/* Order Status — read-only pill badge (no dropdown arrow, no cursor) */
+.order-status-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  user-select: none;
+  pointer-events: none;
+}
+
 
 /* Payment Status Variants */
 .payment-status-select.payment-paid {
@@ -323,45 +340,64 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23be123c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
-/* Order Status Variants */
+/* Order Status Variants — clean pill badges, no dropdown arrows */
 .order-status-select.status-delivered {
   background-color: #ecfdf5;
   color: #047857;
   border-color: #a7f3d0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23047857' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
 .order-status-select.status-shipped {
   background-color: #f0f9ff;
   color: #0369a1;
   border-color: #bae6fd;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%230369a1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
 .order-status-select.status-processing,
-.order-status-select.status-confirmed,
 .order-status-select.status-placed {
   background-color: #eef2ff;
   color: #3548c4;
   border-color: #c7d2fe;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233548c4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+.order-status-select.status-confirmed {
+  background-color: #eef2ff;
+  color: #3548c4;
+  border-color: #c7d2fe;
+}
+
+.order-status-select.status-pending {
+  background-color: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
 }
 
 .order-status-select.status-cancelled {
   background-color: #fff1f2;
   color: #be123c;
   border-color: #fecdd3;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23be123c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+}
+
+.order-status-select.status-returned {
+  background-color: #fdf4ff;
+  color: #9333ea;
+  border-color: #e9d5ff;
+}
+
+.order-status-select.status-failed {
+  background-color: #fff1f2;
+  color: #be123c;
+  border-color: #fecdd3;
 }
 
 .order-status-select.status-refunded {
   background-color: #f5f3ff;
   color: #6d28d9;
   border-color: #ddd6fe;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236d28d9' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 }
 
-/* Action Button */
+
+
 .view-order-btn {
   width: 36px;
   height: 36px;
@@ -534,6 +570,31 @@
   border: 1px solid #d1fae5;
 }
 
+.badge-return_received,
+.badge-received {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-refund_processing {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.badge-shipped {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-delivered {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
 .return-detail-card {
   background: #fbfcfe;
   border: 1px solid #e0e7ff;
@@ -699,10 +760,14 @@
 }
 
 .btn-action-step {
+  min-height: 32px;
+  min-width: 132px;
   padding: 6px 14px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
   cursor: pointer;
   transition: all 0.15s ease;
   border: 1px solid transparent;
@@ -877,13 +942,17 @@
 }
 
 .btn-table-action {
+  min-height: 32px;
+  min-width: 118px;
   padding: 5px 10px;
   border-radius: 6px;
   font-size: 11.5px;
   font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
   cursor: pointer;
   transition: all 0.15s ease;
-  white-space: nowrap;
+  white-space: normal;
   border: 1px solid transparent;
 }
 
@@ -1311,5 +1380,660 @@
   }
 }
 
+/* =========================================================
+   DELIVERY FLOW & COD PAYMENT ENHANCEMENTS
+   ========================================================= */
+.btn-table-action.deliver {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #059669;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.25);
+}
 
+.btn-table-action.deliver:hover {
+  background: #059669;
+  border-color: #047857;
+  color: #ffffff;
+}
+
+.btn-table-action.cod-pay {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #d97706;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(245, 158, 11, 0.25);
+}
+
+.btn-table-action.cod-pay:hover {
+  background: #d97706;
+  border-color: #b45309;
+  color: #ffffff;
+}
+
+.tracking-timeline-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.admin-tracking-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 18px;
+  flex-wrap: wrap;
+}
+
+.tracking-current-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  color: #475569;
+}
+
+.tracking-status-badge {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.tracking-control-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-tracking-step {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-tracking-step.ship {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.btn-tracking-step.ship:hover {
+  background: #2563eb;
+}
+
+.btn-tracking-step.hub {
+  background: #8b5cf6;
+  color: #fff;
+}
+
+.btn-tracking-step.hub:hover {
+  background: #7c3aed;
+}
+
+.btn-tracking-step.out-delivery {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.btn-tracking-step.out-delivery:hover {
+  background: #d97706;
+}
+
+.btn-tracking-step.deliver {
+  background: #10b981;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+}
+
+.btn-tracking-step.deliver:hover {
+  background: #059669;
+}
+
+/* ── Terminal / completion badges in the ACTIONS column ──────── */
+.terminal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: 0.1px;
+}
+
+.terminal-badge.delivered-badge {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.terminal-badge.cancelled-badge {
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+}
+
+.terminal-badge.returned-badge {
+  background: #fdf4ff;
+  color: #9333ea;
+  border: 1px solid #e9d5ff;
+}
+
+.terminal-badge.return-active-badge {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.terminal-badge.exchange-active-badge {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+/* Legacy alias kept for any existing references */
+.delivered-done-badge {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #bbf7d0;
+}
+
+
+.tracking-metadata-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.tracking-metadata-card h3 {
+  margin: 0 0 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.tracking-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.tracking-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.tracking-meta-item span {
+  font-size: 11.5px;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.tracking-meta-item strong {
+  font-size: 13.5px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.step-time {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.step-current-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #3b82f6;
+  background: #eff6ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.highlight-payment-date strong {
+  color: #15803d;
+}
+
+.highlight-delivered-date strong {
+  color: #15803d;
+}
+
+/* Payment Status Badges */
+.pay-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pay-badge.paid {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.pay-badge.pending {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #ffedd5;
+}
+
+.pay-badge.unpaid {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #ffedd5;
+}
+
+.pay-badge.refunded {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #ddd6fe;
+}
+
+.pay-badge.failed {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* Cancelled Order Timeline & Reason */
+.order-timeline.cancelled-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #fffafa;
+  border: 1px solid #fee2e2;
+  border-radius: 12px;
+}
+
+.timeline-line.cancelled-line {
+  flex: 0 0 80px;
+  height: 2px;
+  background: #ef4444;
+  border-top: 2px dashed #f87171;
+  margin: 0 8px 24px;
+}
+
+.cancellation-reason-text {
+  display: block;
+  font-size: 11px;
+  color: #dc2626;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* =========================================================
+   RETURN & EXCHANGE ORDER TRACKING MODAL STYLES
+   ========================================================= */
+.tracking-section-container {
+  margin-bottom: 24px;
+  border-radius: 12px;
+  padding: 18px 20px !important;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.tracking-section-container.return-tracking-section {
+  background: #fdfaf6;
+  border: 1px solid #fed7aa;
+}
+
+.tracking-section-container.exchange-tracking-section {
+  background: #f8fafc;
+  border: 1px solid #bae6fd;
+}
+
+.section-title-with-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.return-tracking-section .section-title-with-badge {
+  border-bottom-color: #ffedd5;
+}
+
+.exchange-tracking-section .section-title-with-badge {
+  border-bottom-color: #e0f2fe;
+}
+
+.section-title-with-badge h3 {
+  margin: 0;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.section-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.section-header-badge.delivered {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.section-header-badge.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.section-header-badge.in-progress {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.section-header-badge.return-status-pill {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fdba74;
+}
+
+.section-header-badge.exchange-status-pill {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #7dd3fc;
+}
+
+/* Return Timeline Color Styling */
+.timeline-step.return-step-done .timeline-dot {
+  background: #ea580c;
+  border-color: #ea580c;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+}
+
+.timeline-step.return-step-active .timeline-dot {
+  background: #ffffff;
+  border-color: #ea580c;
+  color: #ea580c;
+  box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.25);
+  animation: pulse-dot-return 1.8s infinite;
+}
+
+@keyframes pulse-dot-return {
+  0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(234, 88, 12, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+}
+
+.timeline-line.return-line-done {
+  background: #ea580c;
+}
+
+.step-current-tag.return-tag {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* Exchange Timeline Color Styling */
+.timeline-step.exchange-step-done .timeline-dot {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.timeline-step.exchange-step-active .timeline-dot {
+  background: #ffffff;
+  border-color: #0284c7;
+  color: #0284c7;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.25);
+  animation: pulse-dot-exchange 1.8s infinite;
+}
+
+@keyframes pulse-dot-exchange {
+  0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(2, 132, 199, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+}
+
+.timeline-line.exchange-line-done {
+  background: #0284c7;
+}
+
+.step-current-tag.exchange-tag {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* Details Cards */
+.return-details-card,
+.exchange-details-card {
+  margin-top: 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.return-meta-grid,
+.exchange-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px 16px;
+}
+
+.return-meta-item,
+.exchange-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.return-meta-item span,
+.exchange-meta-item span {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.return-meta-item strong,
+.exchange-meta-item strong {
+  font-size: 13px;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.meta-sub {
+  font-size: 11.5px !important;
+  color: #475569 !important;
+  text-transform: none !important;
+  font-weight: 500 !important;
+}
+
+.return-meta-item.highlight-refund {
+  grid-column: 1 / -1;
+  background: #fdfaf6;
+  border: 1px dashed #fed7aa;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.refund-subtext {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.exchange-meta-item.highlight-exchange {
+  background: #f0f9ff;
+  border: 1px dashed #bae6fd;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.exchange-meta-item.highlight-logistics {
+  background: #fafafa;
+  border-left: 3px solid #0082c3;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+
+/* Returned Items List */
+.return-items-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.return-items-section h4 {
+  font-size: 12.5px;
+  margin: 0 0 8px 0;
+  color: #334155;
+  font-weight: 700;
+}
+
+.return-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.return-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.return-item-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.return-item-info {
+  flex: 1;
+}
+
+.return-item-info strong {
+  display: block;
+  font-size: 12.5px;
+  color: #1e293b;
+}
+
+.return-item-info span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.return-item-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Pay Badges Extensions */
+.pay-badge.refund-processing {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.pay-badge.cancelled-pay {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.badge-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.badge-pill.return-requested,
+.badge-pill.exchange-requested {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.badge-pill.return-approved,
+.badge-pill.exchange-approved {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-pill.return-refunded,
+.badge-pill.exchange-delivered {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+@media (max-width: 768px) {
+  .section-title-with-badge {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .return-meta-grid,
+  .exchange-meta-grid {
+    grid-template-columns: 1fr;
+  }
+}
 

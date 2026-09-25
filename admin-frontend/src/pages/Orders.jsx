@@ -13,6 +13,11 @@ import {
   MdInventory,
   MdAssignmentReturn,
   MdCheck,
+  MdThumbUp,
+  MdSchedule,
+  MdAutorenew,
+  MdDoneAll,
+  MdSync,
 } from "react-icons/md";
 import toast from "react-hot-toast";
 
@@ -60,6 +65,24 @@ const EXCHANGE_STATUS_OPTIONS = [
   "DELIVERED",
   "CANCELLED",
 ];
+
+const RETURN_NEXT_ACTIONS = {
+  REQUESTED: { label: "Approve Return", status: "APPROVED" },
+  APPROVED: { label: "Schedule Pickup", status: "PICKUP_SCHEDULED" },
+  PICKUP_SCHEDULED: { label: "Mark Picked Up", status: "PICKED_UP" },
+  PICKED_UP: { label: "Mark Return Received", status: "RETURN_RECEIVED" },
+  RETURN_RECEIVED: { label: "Process Refund", refund: true },
+  REFUND_PROCESSING: { label: "Complete Refund", refund: true },
+};
+
+const EXCHANGE_NEXT_ACTIONS = {
+  REQUESTED: { label: "Approve Exchange", status: "APPROVED" },
+  APPROVED: { label: "Schedule Pickup", status: "PICKUP_SCHEDULED" },
+  PICKUP_SCHEDULED: { label: "Mark Picked Up", status: "PICKED_UP" },
+  PICKED_UP: { label: "Mark Received", status: "RECEIVED" },
+  RECEIVED: { label: "Ship Replacement", status: "SHIPPED" },
+  SHIPPED: { label: "Mark Exchange Delivered", status: "DELIVERED" },
+};
 
 const Orders = () => {
   const [searchParams] = useSearchParams();
@@ -184,10 +207,108 @@ const Orders = () => {
       }
     };
 
+    const handleTrackingUpdate = (event) => {
+      try {
+        const orderId = event?.orderId;
+        if (!orderId) return;
+        const targetId = orderId.toString();
+
+        setOrders((prev) =>
+          sortOrders(
+            prev.map((o) => {
+              if (o._id && o._id.toString() === targetId) {
+                const history = o.trackingHistory ? [...o.trackingHistory] : [];
+                if (event.status && !history.some((h) => h.status === event.status)) {
+                  history.push({
+                    status: event.status,
+                    location: event.currentLocation?.city || "",
+                    description: `Status updated to ${event.status}`,
+                    timestamp: event.timestamp || new Date(),
+                  });
+                }
+                return {
+                  ...o,
+                  orderStatus: event.status === "DELIVERED" ? "delivered" : o.orderStatus,
+                  deliveredAt: event.status === "DELIVERED" ? (event.timestamp || new Date()) : o.deliveredAt,
+                  trackingNumber: event.trackingNumber || o.trackingNumber,
+                  currentLocation: event.currentLocation || o.currentLocation,
+                  trackingHistory: history,
+                };
+              }
+              return o;
+            })
+          )
+        );
+
+        setSelectedOrder((prev) => {
+          if (prev && prev._id && prev._id.toString() === targetId) {
+            const history = prev.trackingHistory ? [...prev.trackingHistory] : [];
+            if (event.status && !history.some((h) => h.status === event.status)) {
+              history.push({
+                status: event.status,
+                location: event.currentLocation?.city || "",
+                description: `Status updated to ${event.status}`,
+                timestamp: event.timestamp || new Date(),
+              });
+            }
+            return {
+              ...prev,
+              orderStatus: event.status === "DELIVERED" ? "delivered" : prev.orderStatus,
+              deliveredAt: event.status === "DELIVERED" ? (event.timestamp || new Date()) : prev.deliveredAt,
+              trackingNumber: event.trackingNumber || prev.trackingNumber,
+              currentLocation: event.currentLocation || prev.currentLocation,
+              trackingHistory: history,
+            };
+          }
+          return prev;
+        });
+      } catch (err) {
+        console.error("Realtime tracking update error:", err);
+      }
+    };
+
+    const handlePaymentStatusUpdate = (event) => {
+      try {
+        const orderId = event?.orderId;
+        if (!orderId) return;
+        const targetId = orderId.toString();
+
+        setOrders((prev) =>
+          prev.map((o) => {
+            if (o._id && o._id.toString() === targetId) {
+              return {
+                ...o,
+                paymentStatus: event.paymentStatus || "paid",
+                paymentReceivedAt: event.timestamp || new Date(),
+              };
+            }
+            return o;
+          })
+        );
+
+        setSelectedOrder((prev) => {
+          if (prev && prev._id && prev._id.toString() === targetId) {
+            return {
+              ...prev,
+              paymentStatus: event.paymentStatus || "paid",
+              paymentReceivedAt: event.timestamp || new Date(),
+            };
+          }
+          return prev;
+        });
+      } catch (err) {
+        console.error("Realtime payment status update error:", err);
+      }
+    };
+
     socket.on("order_updated", handleOrderUpdate);
+    socket.on("order_tracking_updated", handleTrackingUpdate);
+    socket.on("payment_status_updated", handlePaymentStatusUpdate);
 
     return () => {
       socket.off("order_updated", handleOrderUpdate);
+      socket.off("order_tracking_updated", handleTrackingUpdate);
+      socket.off("payment_status_updated", handlePaymentStatusUpdate);
     };
   }, [sortOrders]);
 
@@ -308,95 +429,6 @@ const Orders = () => {
   const closeOrderModal = () => {
     setSelectedOrder(null);
     setModalOpen(false);
-  };
-
-  const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      const response = await api.put(`/orders/${orderId}/status`, {
-        status: newStatus,
-      });
-
-      const updatedOrder = response.data?.order;
-
-      setOrders((prev) =>
-        sortOrders(
-          prev.map((order) =>
-            order._id === orderId
-              ? {
-                  ...order,
-                  orderStatus: updatedOrder?.orderStatus || newStatus,
-                }
-              : order,
-          ),
-        ),
-      );
-
-      setSelectedOrder((prev) =>
-        prev && prev._id === orderId
-          ? {
-              ...prev,
-              orderStatus: updatedOrder?.orderStatus || newStatus,
-            }
-          : prev,
-      );
-
-      toast.success("Order status updated successfully");
-    } catch (error) {
-      console.error("Update Order Status Error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to update order status",
-      );
-    }
-  };
-
-  // Safe payment status updater: prevents manual "refunded" for Stripe orders
-  const updatePaymentStatus = async (orderId, newPaymentStatus) => {
-    const targetOrder = orders.find((o) => o._id === orderId) || selectedOrder;
-    const isStripe = isStripePaidOrder(targetOrder);
-
-    if (newPaymentStatus === "refunded" && isStripe) {
-      toast.error(
-        "Stripe payments cannot be marked refunded manually. Use the Process Refund button to execute an actual refund.",
-      );
-      return;
-    }
-
-    try {
-      const response = await api.put(`/orders/${orderId}/payment-status`, {
-        paymentStatus: newPaymentStatus,
-      });
-
-      const updatedOrder = response.data?.order;
-
-      setOrders((prev) =>
-        prev.map((order) =>
-          order._id === orderId
-            ? {
-                ...order,
-                paymentStatus: updatedOrder?.paymentStatus || newPaymentStatus,
-                orderStatus: updatedOrder?.orderStatus || order.orderStatus,
-              }
-            : order,
-        ),
-      );
-
-      setSelectedOrder((prev) =>
-        prev && prev._id === orderId
-          ? {
-              ...prev,
-              paymentStatus: updatedOrder?.paymentStatus || newPaymentStatus,
-              orderStatus: updatedOrder?.orderStatus || prev.orderStatus,
-            }
-          : prev,
-      );
-
-      toast.success("Payment status updated successfully");
-    } catch (error) {
-      console.error("Update Payment Status Error:", error);
-      toast.error(
-        error.response?.data?.message || "Failed to update payment status",
-      );
-    }
   };
 
   const updateReturnStatus = async (orderId, newReturnStatus, adminNote = "") => {
@@ -540,41 +572,202 @@ const Orders = () => {
     }
   };
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "pending":
-        return "status-badge status-pending";
-      case "confirmed":
-        return "status-badge status-confirmed";
-      case "processing":
-        return "status-badge status-processing";
-      case "shipped":
-        return "status-badge status-shipped";
-      case "delivered":
-        return "status-badge status-delivered";
-      case "cancelled":
-        return "status-badge status-cancelled";
-      case "returned":
-        return "status-badge status-returned";
-      case "failed":
-        return "status-badge status-failed";
-      default:
-        return "status-badge";
+  const getOrderTrackingStatus = useCallback((order) => {
+    if (!order) return "ORDER_PLACED";
+    if (order.orderStatus === "cancelled") return "CANCELLED";
+    if (order.trackingHistory && order.trackingHistory.length > 0) {
+      return order.trackingHistory[order.trackingHistory.length - 1].status;
+    }
+    if (order.orderStatus === "delivered") return "DELIVERED";
+    if (order.orderStatus === "shipped") return "SHIPPED";
+    return "ORDER_PLACED";
+  }, []);
+
+  const handleMarkAsDelivered = async (order) => {
+    if (!order) return;
+    const confirmDelivery = window.confirm(
+      `Confirm delivery for Order #${order._id.toString().slice(-8).toUpperCase()}?\nThis will mark tracking and order status as DELIVERED.`
+    );
+    if (!confirmDelivery) return;
+
+    try {
+      const locCity =
+        order.shippingAddress?.cityState ||
+        order.currentLocation?.city ||
+        "Delhi";
+      const locLat = order.currentLocation?.latitude || 28.6139;
+      const locLng = order.currentLocation?.longitude || 77.2090;
+
+      const response = await api.put(`/orders/${order._id}/tracking`, {
+        status: "DELIVERED",
+        location: {
+          city: locCity,
+          latitude: locLat,
+          longitude: locLng,
+        },
+        description: "Order delivered successfully",
+      });
+
+      const updatedOrder = response.data?.order;
+      const trackingData = response.data?.tracking;
+
+      setOrders((prev) =>
+        sortOrders(
+          prev.map((o) =>
+            o._id === order._id
+              ? {
+                  ...o,
+                  ...(updatedOrder || {}),
+                  orderStatus: "delivered",
+                  deliveredAt: trackingData?.deliveredAt || new Date().toISOString(),
+                  trackingHistory: trackingData?.trackingHistory || o.trackingHistory,
+                }
+              : o
+          )
+        )
+      );
+
+      setSelectedOrder((prev) =>
+        prev && prev._id === order._id
+          ? {
+              ...prev,
+              ...(updatedOrder || {}),
+              orderStatus: "delivered",
+              deliveredAt: trackingData?.deliveredAt || new Date().toISOString(),
+              trackingHistory: trackingData?.trackingHistory || prev.trackingHistory,
+            }
+          : prev
+      );
+
+      toast.success("Order marked as DELIVERED successfully!");
+    } catch (error) {
+      console.error("Mark Delivered Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to mark order as delivered"
+      );
     }
   };
 
-  const getPaymentClass = (status) => {
+  const handleMarkCodPaymentReceived = async (order) => {
+    if (!order) return;
+    const confirmCod = window.confirm(
+      "Confirm that COD payment has been received?"
+    );
+    if (!confirmCod) return;
+
+    try {
+      const response = await api.put(`/orders/${order._id}/payment-status`, {
+        paymentStatus: "paid",
+      });
+
+      const updatedOrder = response.data?.order;
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === order._id
+            ? {
+                ...o,
+                ...(updatedOrder || {}),
+                paymentStatus: "paid",
+                paymentReceivedAt: updatedOrder?.paymentReceivedAt || new Date().toISOString(),
+              }
+            : o
+        )
+      );
+
+      setSelectedOrder((prev) =>
+        prev && prev._id === order._id
+          ? {
+              ...prev,
+              ...(updatedOrder || {}),
+              paymentStatus: "paid",
+              paymentReceivedAt: updatedOrder?.paymentReceivedAt || new Date().toISOString(),
+            }
+          : prev
+      );
+
+      toast.success("COD payment confirmed as received!");
+    } catch (error) {
+      console.error("Confirm COD Payment Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to confirm COD payment"
+      );
+    }
+  };
+
+  const handleUpdateTrackingStep = async (order, nextStatus) => {
+    if (!order) return;
+    try {
+      const locCity =
+        order.shippingAddress?.cityState ||
+        order.currentLocation?.city ||
+        "Central Fulfillment Hub, Bengaluru";
+      const locLat = order.currentLocation?.latitude || 12.9716;
+      const locLng = order.currentLocation?.longitude || 77.5946;
+
+      const response = await api.put(`/orders/${order._id}/tracking`, {
+        status: nextStatus,
+        location: {
+          city: locCity,
+          latitude: locLat,
+          longitude: locLng,
+        },
+      });
+
+      const updatedOrder = response.data?.order;
+      const trackingData = response.data?.tracking;
+
+      setOrders((prev) =>
+        sortOrders(
+          prev.map((o) =>
+            o._id === order._id
+              ? {
+                  ...o,
+                  ...(updatedOrder || {}),
+                  trackingHistory: trackingData?.trackingHistory || o.trackingHistory,
+                }
+              : o
+          )
+        )
+      );
+
+      setSelectedOrder((prev) =>
+        prev && prev._id === order._id
+          ? {
+              ...prev,
+              ...(updatedOrder || {}),
+              trackingHistory: trackingData?.trackingHistory || prev.trackingHistory,
+            }
+          : prev
+      );
+
+      toast.success(`Tracking updated to ${nextStatus.replace(/_/g, " ")}`);
+    } catch (error) {
+      console.error("Update Tracking Step Error:", error);
+      toast.error(error.response?.data?.message || "Failed to update tracking");
+    }
+  };
+
+  const getStatusClass = (status) => {
     switch (status) {
-      case "paid":
-        return "payment-badge payment-paid";
       case "pending":
-        return "payment-badge payment-pending";
+        return "order-status-select status-pending";
+      case "confirmed":
+        return "order-status-select status-confirmed";
+      case "processing":
+        return "order-status-select status-processing";
+      case "shipped":
+        return "order-status-select status-shipped";
+      case "delivered":
+        return "order-status-select status-delivered";
+      case "cancelled":
+        return "order-status-select status-cancelled";
+      case "returned":
+        return "order-status-select status-returned";
       case "failed":
-        return "payment-badge payment-failed";
-      case "refunded":
-        return "payment-badge payment-refunded";
+        return "order-status-select status-failed";
       default:
-        return "payment-badge";
+        return "order-status-select";
     }
   };
 
@@ -587,9 +780,21 @@ const Orders = () => {
     });
   };
 
+  const formatDateTime = (date) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
   const formatPaymentMethod = (method) => {
     if (!method) return "-";
-    if (method === "COD") return "Cash on Delivery";
+    if (method === "COD") return "Cash on Delivery (COD)";
     if (method === "CARD") return "Credit / Debit Card (Stripe)";
     if (method === "UPI") return "UPI (Stripe)";
     return method;
@@ -610,41 +815,157 @@ const Orders = () => {
     );
   };
 
-  // Render payment status badge distinguishing Stripe vs COD
+  const formatReturnStatus = (status) => {
+    if (!status || status === "NONE") return "None";
+    return status.replace(/_/g, " ");
+  };
+
+  const formatExchangeStatus = (status) => {
+    if (!status || status === "NONE") return "None";
+    return status.replace(/_/g, " ");
+  };
+
+  const hasActiveReturn = (order) => {
+    if (!order) return false;
+    const status = (order.returnStatus || order.returnRequest?.status || "NONE").toUpperCase();
+    return (status !== "NONE" && status !== "CANCELLED") || order.orderStatus === "returned";
+  };
+
+  const hasActiveExchange = (order) => {
+    if (!order) return false;
+    const status = (order.exchangeStatus || order.exchangeRequest?.status || "NONE").toUpperCase();
+    return status !== "NONE" && status !== "CANCELLED";
+  };
+
+  const getDisplayedOrderStatus = (order) => {
+    if (!order) return "-";
+
+    const returnStatus = (order.returnStatus || order.returnRequest?.status || "NONE").toUpperCase();
+    const exchangeStatus = (order.exchangeStatus || order.exchangeRequest?.status || "NONE").toUpperCase();
+
+    // Completed lifecycle states take precedence when both fields are present.
+    if (returnStatus === "REFUNDED") return "Returned";
+    if (["DELIVERED", "COMPLETED"].includes(exchangeStatus)) return "Exchanged";
+
+    if ([
+      "REQUESTED",
+      "APPROVED",
+      "PICKUP_SCHEDULED",
+      "PICKED_UP",
+      "RETURN_RECEIVED",
+      "REFUND_PROCESSING",
+    ].includes(returnStatus)) {
+      return "Return Active";
+    }
+
+    if ([
+      "REQUESTED",
+      "APPROVED",
+      "PICKUP_SCHEDULED",
+      "PICKED_UP",
+      "RECEIVED",
+      "SHIPPED",
+    ].includes(exchangeStatus)) {
+      return "Exchange Active";
+    }
+
+    return formatStatus(order.orderStatus);
+  };
+
+  const getReturnNextAction = (order) => {
+    const status = (order?.returnStatus || order?.returnRequest?.status || "NONE").toUpperCase();
+    return RETURN_NEXT_ACTIONS[status] || null;
+  };
+
+  const getExchangeNextAction = (order) => {
+    const status = (order?.exchangeStatus || order?.exchangeRequest?.status || "NONE").toUpperCase();
+    return EXCHANGE_NEXT_ACTIONS[status] || null;
+  };
+
+  const handleReturnNextAction = (order) => {
+    const action = getReturnNextAction(order);
+    if (!action) return;
+    if (action.refund) {
+      return handleProcessRefund(order._id, order);
+    }
+    return updateReturnStatus(order._id, action.status);
+  };
+
+  const handleExchangeNextAction = (order) => {
+    const action = getExchangeNextAction(order);
+    if (!action) return;
+    return updateExchangeStatus(order._id, action.status);
+  };
+
+  // Render payment status badge distinguishing Stripe vs COD, Returns, Exchanges, Cancelled
   const renderPaymentBadge = (order) => {
+    if (!order) return null;
     const isStripe = isStripePaidOrder(order);
     const isCod = order.paymentMethod === "COD";
-    const status = order.paymentStatus || "pending";
+    const rawStatus = (order.paymentStatus || "pending").toLowerCase();
+    const returnStatus = (order.returnStatus || order.returnRequest?.status || "NONE").toUpperCase();
+    const hasReturn = returnStatus !== "NONE" && returnStatus !== "CANCELLED";
 
-    if (status === "refunded") {
+    // Handle Return Orders payment badge rules
+    if (hasReturn) {
+      if (rawStatus === "refunded" || returnStatus === "REFUNDED") {
+        return (
+          <span className="pay-badge refunded">
+            {isCod ? "REFUNDED (COD)" : "REFUNDED"}
+          </span>
+        );
+      }
+      if (isCod) {
+        return (
+          <span className="pay-badge pending">
+            COD REFUND PENDING
+          </span>
+        );
+      }
+      return (
+        <span className="pay-badge refund-processing">
+          REFUND PROCESSING
+        </span>
+      );
+    }
+
+    // Cancelled orders
+    if (order.orderStatus === "cancelled") {
+      if (rawStatus === "refunded") {
+        return <span className="pay-badge refunded">REFUNDED</span>;
+      }
+      if (isCod) {
+        return <span className="pay-badge cancelled-pay">CANCELLED (NO PAYMENT)</span>;
+      }
+      return <span className="pay-badge pending">PENDING</span>;
+    }
+
+    // Normal & Exchange orders
+    if (rawStatus === "refunded") {
       return (
         <span className="pay-badge refunded">
-          Refunded {isStripe ? "(Stripe)" : "(COD)"}
+          {isStripe ? "REFUNDED" : "REFUNDED (COD)"}
         </span>
       );
     }
-    if (status === "paid") {
+    if (rawStatus === "paid") {
       return (
         <span className="pay-badge paid">
-          Paid {isStripe ? "(Stripe)" : ""}
+          {isCod ? "PAID (COD)" : `Paid ${isStripe ? "(Stripe)" : ""}`}
         </span>
       );
     }
-    if (status === "failed") {
+    if (rawStatus === "failed") {
       return <span className="pay-badge failed">Failed</span>;
     }
-    // Pending states
-    if (order.orderStatus === "cancelled" && isCod) {
-      return <span className="pay-badge unpaid">Unpaid (COD)</span>;
-    }
     if (isCod) {
-      return <span className="pay-badge pending">Pending (COD)</span>;
+      return <span className="pay-badge pending">PENDING (COD)</span>;
     }
     return <span className="pay-badge pending">Pending</span>;
   };
 
-  // Render interactive Order Status Timeline for Modal
-  const renderOrderTimeline = (order) => {
+  // 1. ORIGINAL ORDER DELIVERY TIMELINE
+  const renderDeliveryTimeline = (order) => {
     if (!order) return null;
 
     if (order.orderStatus === "cancelled") {
@@ -654,99 +975,691 @@ const Orders = () => {
             <div className="timeline-dot"><MdCheck /></div>
             <div className="timeline-content">
               <strong>Order Placed</strong>
-              <span>{formatDate(order.createdAt)}</span>
+              <span>{formatDateTime(order.createdAt)}</span>
             </div>
           </div>
-          <div className="timeline-line active-line"></div>
+          <div className="timeline-line cancelled-line"></div>
           <div className="timeline-step error">
             <div className="timeline-dot"><MdCancel /></div>
             <div className="timeline-content">
-              <strong>Cancelled</strong>
+              <strong>Order Cancelled</strong>
               <span>
-                {order.paymentStatus === "refunded"
-                  ? "Order Cancelled & Refunded"
-                  : order.paymentMethod === "COD"
-                  ? "Order Cancelled (Unpaid)"
-                  : "Order Cancelled"}
+                {order.cancelledAt
+                  ? formatDateTime(order.cancelledAt)
+                  : formatDateTime(order.updatedAt)}
               </span>
+              {order.cancellationReason && (
+                <span className="cancellation-reason-text">
+                  Reason: {order.cancellationReason}
+                </span>
+              )}
             </div>
           </div>
         </div>
       );
     }
 
-    if (order.orderStatus === "returned") {
-      return (
+    const TRACKING_STEPS = [
+      { key: "ORDER_PLACED", label: "Order Placed", icon: <MdCheck /> },
+      { key: "SHIPPED", label: "Shipped", icon: <MdLocalShipping /> },
+      { key: "REACHED_HUB", label: "Reached Hub", icon: <MdInventory /> },
+      { key: "OUT_FOR_DELIVERY", label: "Out For Delivery", icon: <MdLocalShipping /> },
+      { key: "DELIVERED", label: "Delivered", icon: <MdCheckCircle /> },
+    ];
+
+    const isOrderAlreadyDelivered =
+      hasActiveReturn(order) ||
+      hasActiveExchange(order) ||
+      order.orderStatus === "returned" ||
+      order.orderStatus === "delivered" ||
+      Boolean(order.deliveredAt);
+
+    const currentTracking = isOrderAlreadyDelivered
+      ? "DELIVERED"
+      : getOrderTrackingStatus(order);
+
+    const currentStepIndex = isOrderAlreadyDelivered
+      ? TRACKING_STEPS.length - 1
+      : TRACKING_STEPS.findIndex((s) => s.key === currentTracking);
+
+    const getStepTimestamp = (stepKey) => {
+      const entry = (order.trackingHistory || []).find((h) => h.status === stepKey);
+      if (entry?.timestamp) return formatDateTime(entry.timestamp);
+      if (stepKey === "ORDER_PLACED") return formatDateTime(order.createdAt);
+      if (stepKey === "DELIVERED" && (order.deliveredAt || isOrderAlreadyDelivered)) {
+        return formatDateTime(order.deliveredAt || order.updatedAt || order.createdAt);
+      }
+      return null;
+    };
+
+    return (
+      <div className="tracking-timeline-wrapper">
         <div className="order-timeline">
+          {TRACKING_STEPS.map((step, idx) => {
+            const isCompleted = idx <= currentStepIndex;
+            const isActive = idx === currentStepIndex;
+            const stepTime = getStepTimestamp(step.key);
+
+            return (
+              <React.Fragment key={step.key}>
+                <div
+                  className={`timeline-step ${isCompleted ? "completed" : ""} ${
+                    isActive ? "active" : ""
+                  }`}
+                >
+                  <div className="timeline-dot">{step.icon}</div>
+                  <div className="timeline-content">
+                    <strong>{step.label}</strong>
+                    {stepTime && <span className="step-time">{stepTime}</span>}
+                    {isActive && (
+                      <span className="step-current-tag">
+                        {isOrderAlreadyDelivered ? "Delivered" : "Current Stage"}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {idx < TRACKING_STEPS.length - 1 && (
+                  <div
+                    className={`timeline-line ${
+                      idx < currentStepIndex ? "completed-line" : ""
+                    }`}
+                  ></div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+
+        {/* Action progression bar only for active un-delivered orders */}
+        {!isOrderAlreadyDelivered && (
+          <div className="admin-tracking-actions-bar">
+            <div className="tracking-current-summary">
+              <span>Tracking Status:</span>
+              <strong className="tracking-status-badge">
+                {currentTracking.replace(/_/g, " ")}
+              </strong>
+            </div>
+
+            <div className="tracking-control-buttons">
+              {currentTracking === "ORDER_PLACED" && (
+                <button
+                  type="button"
+                  className="btn-tracking-step ship"
+                  onClick={() => handleUpdateTrackingStep(order, "SHIPPED")}
+                >
+                  Mark Shipped
+                </button>
+              )}
+
+              {currentTracking === "SHIPPED" && (
+                <button
+                  type="button"
+                  className="btn-tracking-step hub"
+                  onClick={() => handleUpdateTrackingStep(order, "REACHED_HUB")}
+                >
+                  Mark Reached Hub
+                </button>
+              )}
+
+              {currentTracking === "REACHED_HUB" && (
+                <button
+                  type="button"
+                  className="btn-tracking-step out-delivery"
+                  onClick={() => handleUpdateTrackingStep(order, "OUT_FOR_DELIVERY")}
+                >
+                  Mark Out for Delivery
+                </button>
+              )}
+
+              {currentTracking === "OUT_FOR_DELIVERY" && (
+                <button
+                  type="button"
+                  className="btn-tracking-step deliver"
+                  onClick={() => handleMarkAsDelivered(order)}
+                >
+                  Mark as Delivered
+                </button>
+              )}
+
+              {currentTracking === "DELIVERED" && (
+                <span className="delivered-done-badge">
+                  ✓ Order Delivered
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // 1. ORIGINAL ORDER LOGISTICS CARD
+  const renderDeliveryLogisticsCard = (order) => {
+    const isCancelled = order.orderStatus === "cancelled";
+    const isOrderAlreadyDelivered =
+      hasActiveReturn(order) ||
+      hasActiveExchange(order) ||
+      order.orderStatus === "returned" ||
+      order.orderStatus === "delivered" ||
+      Boolean(order.deliveredAt);
+
+    return (
+      <div className="tracking-metadata-card">
+        <div className="tracking-meta-grid">
+          <div className="tracking-meta-item">
+            <span>Tracking Number</span>
+            <strong>{order.trackingNumber || "Pending Generation"}</strong>
+          </div>
+          <div className="tracking-meta-item">
+            <span>Carrier</span>
+            <strong>{order.carrier || "Decathlon Demo Logistics"}</strong>
+          </div>
+          <div className="tracking-meta-item">
+            <span>Current Location</span>
+            <strong>
+              {isCancelled
+                ? "Not Applicable"
+                : isOrderAlreadyDelivered
+                ? order.shippingAddress?.cityState || "Delivered to Customer"
+                : (order.currentLocation?.city || order.shippingAddress?.cityState || "In Transit")}
+            </strong>
+          </div>
+          <div className="tracking-meta-item">
+            <span>Estimated Delivery</span>
+            <strong>
+              {isCancelled
+                ? "Not Applicable"
+                : isOrderAlreadyDelivered
+                ? "Delivered"
+                : formatDate(order.estimatedDeliveryDate)}
+            </strong>
+          </div>
+          <div className={`tracking-meta-item ${isCancelled ? "cancelled" : "delivered"}`}>
+            <span>Delivered Timestamp</span>
+            {isCancelled ? (
+              <strong style={{ color: "#ef4444" }}>Not Delivered</strong>
+            ) : isOrderAlreadyDelivered ? (
+              <strong style={{ color: "#16a34a" }}>
+                {formatDateTime(order.deliveredAt || order.updatedAt || order.createdAt)}
+              </strong>
+            ) : (
+              <span style={{ color: "#64748b" }}>Pending Delivery</span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // 2. RETURN TRACKING TIMELINE
+  const RETURN_TIMELINE_STEPS = [
+    { key: "ORDER_DELIVERED", label: "Order Delivered", icon: <MdCheckCircle /> },
+    { key: "REQUESTED", label: "Return Requested", icon: <MdAssignmentReturn /> },
+    { key: "APPROVED", label: "Return Approved", icon: <MdThumbUp /> },
+    { key: "PICKUP_SCHEDULED", label: "Pickup Scheduled", icon: <MdSchedule /> },
+    { key: "PICKED_UP", label: "Picked Up", icon: <MdLocalShipping /> },
+    { key: "RETURN_RECEIVED", label: "Return Received", icon: <MdInventory /> },
+    { key: "REFUND_PROCESSING", label: "Refund Processing", icon: <MdAutorenew /> },
+    { key: "REFUNDED", label: "Refunded", icon: <MdDoneAll /> },
+  ];
+
+  const renderReturnTimeline = (order) => {
+    if (!order) return null;
+    const rStatus = (order.returnStatus || order.returnRequest?.status || "REQUESTED").toUpperCase();
+
+    if (rStatus === "REJECTED") {
+      return (
+        <div className="order-timeline cancelled-timeline">
           <div className="timeline-step completed">
-            <div className="timeline-dot"><MdCheck /></div>
+            <div className="timeline-dot"><MdCheckCircle /></div>
             <div className="timeline-content">
-              <strong>Delivered</strong>
-              <span>{formatDate(order.deliveredAt || order.createdAt)}</span>
+              <strong>Order Delivered</strong>
+              <span>{formatDateTime(order.deliveredAt || order.createdAt)}</span>
             </div>
           </div>
           <div className="timeline-line completed-line"></div>
           <div className="timeline-step completed">
             <div className="timeline-dot"><MdAssignmentReturn /></div>
             <div className="timeline-content">
-              <strong>Return Processed</strong>
+              <strong>Return Requested</strong>
               <span>{formatDate(order.returnRequest?.requestedAt || order.updatedAt)}</span>
             </div>
           </div>
-          <div className="timeline-line completed-line"></div>
-          <div className="timeline-step completed refund-step">
-            <div className="timeline-dot"><MdCheckCircle /></div>
+          <div className="timeline-line cancelled-line"></div>
+          <div className="timeline-step error">
+            <div className="timeline-dot"><MdCancel /></div>
             <div className="timeline-content">
-              <strong>Refund Completed</strong>
-              <span>
-                {order.returnRequest?.refundMethod === "COD_MANUAL"
-                  ? "Manual Cash/Bank Payout"
-                  : "Stripe Online Refund"}
-              </span>
+              <strong>Return Rejected</strong>
+              {order.returnRequest?.adminNote && (
+                <span className="cancellation-reason-text">
+                  Note: {order.returnRequest.adminNote}
+                </span>
+              )}
             </div>
           </div>
         </div>
       );
     }
 
-    const steps = [
-      { key: "confirmed", label: "Confirmed", icon: <MdCheck /> },
-      { key: "processing", label: "Processing", icon: <MdInventory /> },
-      { key: "shipped", label: "Shipped", icon: <MdLocalShipping /> },
-      { key: "delivered", label: "Delivered", icon: <MdCheckCircle /> },
+    const stepOrder = [
+      "ORDER_DELIVERED",
+      "REQUESTED",
+      "APPROVED",
+      "PICKUP_SCHEDULED",
+      "PICKED_UP",
+      "RETURN_RECEIVED",
+      "REFUND_PROCESSING",
+      "REFUNDED",
     ];
 
-    const currentOrderIndex = steps.findIndex((s) => s.key === order.orderStatus);
+    let currentIdx = stepOrder.indexOf(rStatus);
+    if (currentIdx === -1) currentIdx = 1;
+
+    const getReturnStepTime = (stepKey) => {
+      if (stepKey === "ORDER_DELIVERED") {
+        return formatDateTime(order.deliveredAt || order.createdAt);
+      }
+      if (stepKey === "REQUESTED") {
+        return formatDate(order.returnRequest?.requestedAt || order.updatedAt);
+      }
+      if (stepKey === "REFUNDED" && (order.refundedAt || order.returnRequest?.processedAt)) {
+        return formatDate(order.refundedAt || order.returnRequest?.processedAt);
+      }
+      return null;
+    };
 
     return (
-      <div className="order-timeline">
-        {steps.map((step, idx) => {
-          const isCompleted = idx <= currentOrderIndex;
-          const isActive = idx === currentOrderIndex;
+      <div className="tracking-timeline-wrapper return-flow">
+        <div className="order-timeline">
+          {RETURN_TIMELINE_STEPS.map((step, idx) => {
+            const isCompleted = idx <= currentIdx;
+            const isActive = idx === currentIdx;
+            const stepTime = getReturnStepTime(step.key);
 
-          return (
-            <React.Fragment key={step.key}>
-              <div
-                className={`timeline-step ${isCompleted ? "completed" : ""} ${
-                  isActive ? "active" : ""
-                }`}
-              >
-                <div className="timeline-dot">{step.icon}</div>
-                <div className="timeline-content">
-                  <strong>{step.label}</strong>
-                  {isActive && <span>Current Stage</span>}
-                </div>
-              </div>
-              {idx < steps.length - 1 && (
+            return (
+              <React.Fragment key={step.key}>
                 <div
-                  className={`timeline-line ${
-                    idx < currentOrderIndex ? "completed-line" : ""
+                  className={`timeline-step ${isCompleted ? "completed return-step-done" : ""} ${
+                    isActive ? "active return-step-active" : ""
                   }`}
-                ></div>
+                >
+                  <div className="timeline-dot">{step.icon}</div>
+                  <div className="timeline-content">
+                    <strong>{step.label}</strong>
+                    {stepTime && <span className="step-time">{stepTime}</span>}
+                    {isActive && (
+                      <span className="step-current-tag return-tag">Active</span>
+                    )}
+                  </div>
+                </div>
+                {idx < RETURN_TIMELINE_STEPS.length - 1 && (
+                  <div
+                    className={`timeline-line ${
+                      idx < currentIdx ? "completed-line return-line-done" : ""
+                    }`}
+                  ></div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // 2. RETURN DETAILS CARD
+  const renderReturnDetailsCard = (order) => {
+    const isCod = order.paymentMethod === "COD" || order.returnRequest?.refundMethod === "COD_MANUAL";
+    const rStatus = (order.returnStatus || order.returnRequest?.status || "REQUESTED").toUpperCase();
+    const isRefunded = rStatus === "REFUNDED" || order.paymentStatus === "refunded";
+    const refundAmount = Number(
+      order.returnRequest?.refundAmount || order.refundAmount || order.totalAmount || 0
+    );
+
+    return (
+      <div className="return-details-card">
+        <div className="return-meta-grid">
+          <div className="return-meta-item">
+            <span>Return Status</span>
+            <strong className={`badge-pill return-${rStatus.toLowerCase()}`}>
+              {formatReturnStatus(rStatus)}
+            </strong>
+          </div>
+
+          <div className="return-meta-item">
+            <span>Requested On</span>
+            <strong>{formatDateTime(order.returnRequest?.requestedAt || order.updatedAt)}</strong>
+          </div>
+
+          <div className="return-meta-item">
+            <span>Return Reason</span>
+            <strong>{order.returnRequest?.reason || "Not Specified"}</strong>
+          </div>
+
+          <div className="return-meta-item">
+            <span>Pickup Address</span>
+            <strong>
+              {order.returnRequest?.pickupAddress ||
+                `${order.shippingAddress?.houseBuilding}, ${order.shippingAddress?.streetLocality}, ${order.shippingAddress?.cityState} - ${order.shippingAddress?.pincode}`}
+            </strong>
+          </div>
+
+          <div className="return-meta-item">
+            <span>Pickup Status</span>
+            <strong>
+              {["PICKED_UP", "RETURN_RECEIVED", "REFUND_PROCESSING", "REFUNDED"].includes(rStatus)
+                ? "Items Picked Up"
+                : rStatus === "PICKUP_SCHEDULED"
+                ? "Pickup Scheduled"
+                : "Pending Pickup Scheduling"}
+            </strong>
+          </div>
+
+          {/* PAYMENT & REFUND SECTION */}
+          <div className="return-meta-item highlight-refund">
+            <span>Payment &amp; Refund Status</span>
+            {isCod ? (
+              <div>
+                <strong style={{ color: isRefunded ? "#16a34a" : "#ea580c" }}>
+                  {isRefunded ? "REFUNDED (COD Cash / Bank Payout)" : "COD REFUND PENDING"}
+                </strong>
+                <p className="refund-subtext">
+                  {isRefunded
+                    ? `₹${refundAmount.toLocaleString("en-IN")} settled via manual payout on ${formatDate(
+                        order.refundedAt || order.returnRequest?.processedAt || order.updatedAt
+                      )}.`
+                    : `₹${refundAmount.toLocaleString("en-IN")} will be refunded via Cash/Bank Transfer upon return verification.`}
+                </p>
+                {order.returnRequest?.adminNote && (
+                  <p className="refund-subtext">Note: {order.returnRequest.adminNote}</p>
+                )}
+              </div>
+            ) : (
+              <div>
+                <strong style={{ color: isRefunded ? "#16a34a" : "#7c3aed" }}>
+                  {isRefunded ? "Payment: REFUNDED (Stripe Gateway)" : "Payment: REFUND PROCESSING"}
+                </strong>
+                <p className="refund-subtext">
+                  {isRefunded
+                    ? `₹${refundAmount.toLocaleString("en-IN")} refunded to original payment method. Stripe Refund ID: ${
+                        order.returnRequest?.stripeRefundId || order.stripeRefundId || "Completed"
+                      }`
+                    : `₹${refundAmount.toLocaleString("en-IN")} refund being processed to original payment method.`}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* RETURNED ITEMS LIST */}
+        {order.returnRequest?.items && order.returnRequest.items.length > 0 && (
+          <div className="return-items-section">
+            <h4>Returned Product ({order.returnRequest.items.length})</h4>
+            <div className="return-items-list">
+              {order.returnRequest.items.map((item, idx) => (
+                <div key={idx} className="return-item-row">
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="return-item-thumb"
+                      onError={(e) => { e.target.style.display = "none"; }}
+                    />
+                  )}
+                  <div className="return-item-info">
+                    <strong>{item.name}</strong>
+                    <span>
+                      Qty: {item.quantity} {item.size ? `• Size: ${item.size}` : ""}{" "}
+                      {item.color ? `• Color: ${item.color}` : ""}
+                    </span>
+                  </div>
+                  <div className="return-item-price">
+                    ₹{Number(item.price || 0).toLocaleString("en-IN")}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // 2. EXCHANGE TRACKING TIMELINE
+  const EXCHANGE_TIMELINE_STEPS = [
+    { key: "ORDER_DELIVERED", label: "Order Delivered", icon: <MdCheckCircle /> },
+    { key: "REQUESTED", label: "Exchange Requested", icon: <MdSync /> },
+    { key: "APPROVED", label: "Exchange Approved", icon: <MdThumbUp /> },
+    { key: "PICKUP_SCHEDULED", label: "Pickup Scheduled", icon: <MdSchedule /> },
+    { key: "PICKED_UP", label: "Picked Up", icon: <MdLocalShipping /> },
+    { key: "RECEIVED", label: "Product Received", icon: <MdInventory /> },
+    { key: "SHIPPED", label: "Replacement Shipped", icon: <MdLocalShipping /> },
+    { key: "DELIVERED", label: "Replacement Delivered", icon: <MdCheckCircle /> },
+  ];
+
+  const renderExchangeTimeline = (order) => {
+    if (!order) return null;
+    const eStatus = (order.exchangeStatus || order.exchangeRequest?.status || "REQUESTED").toUpperCase();
+
+    if (eStatus === "REJECTED") {
+      return (
+        <div className="order-timeline cancelled-timeline">
+          <div className="timeline-step completed">
+            <div className="timeline-dot"><MdCheckCircle /></div>
+            <div className="timeline-content">
+              <strong>Order Delivered</strong>
+              <span>{formatDateTime(order.deliveredAt || order.createdAt)}</span>
+            </div>
+          </div>
+          <div className="timeline-line completed-line"></div>
+          <div className="timeline-step completed">
+            <div className="timeline-dot"><MdSync /></div>
+            <div className="timeline-content">
+              <strong>Exchange Requested</strong>
+              <span>{formatDate(order.exchangeRequest?.requestedAt || order.updatedAt)}</span>
+            </div>
+          </div>
+          <div className="timeline-line cancelled-line"></div>
+          <div className="timeline-step error">
+            <div className="timeline-dot"><MdCancel /></div>
+            <div className="timeline-content">
+              <strong>Exchange Rejected</strong>
+              {order.exchangeRequest?.adminNote && (
+                <span className="cancellation-reason-text">
+                  Note: {order.exchangeRequest.adminNote}
+                </span>
               )}
-            </React.Fragment>
-          );
-        })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const stepOrder = [
+      "ORDER_DELIVERED",
+      "REQUESTED",
+      "APPROVED",
+      "PICKUP_SCHEDULED",
+      "PICKED_UP",
+      "RECEIVED",
+      "SHIPPED",
+      "DELIVERED",
+    ];
+
+    let currentIdx = stepOrder.indexOf(eStatus);
+    if (currentIdx === -1) currentIdx = 1;
+
+    const getExchangeStepTime = (stepKey) => {
+      if (stepKey === "ORDER_DELIVERED") {
+        return formatDateTime(order.deliveredAt || order.createdAt);
+      }
+      if (stepKey === "REQUESTED") {
+        return formatDate(order.exchangeRequest?.requestedAt || order.updatedAt);
+      }
+      if (stepKey === "DELIVERED" && order.exchangeRequest?.replacementDeliveredAt) {
+        return formatDate(order.exchangeRequest.replacementDeliveredAt);
+      }
+      return null;
+    };
+
+    return (
+      <div className="tracking-timeline-wrapper exchange-flow">
+        <div className="order-timeline">
+          {EXCHANGE_TIMELINE_STEPS.map((step, idx) => {
+            const isCompleted = idx <= currentIdx;
+            const isActive = idx === currentIdx;
+            const stepTime = getExchangeStepTime(step.key);
+
+            return (
+              <React.Fragment key={step.key}>
+                <div
+                  className={`timeline-step ${isCompleted ? "completed exchange-step-done" : ""} ${
+                    isActive ? "active exchange-step-active" : ""
+                  }`}
+                >
+                  <div className="timeline-dot">{step.icon}</div>
+                  <div className="timeline-content">
+                    <strong>{step.label}</strong>
+                    {stepTime && <span className="step-time">{stepTime}</span>}
+                    {isActive && (
+                      <span className="step-current-tag exchange-tag">Active</span>
+                    )}
+                  </div>
+                </div>
+                {idx < EXCHANGE_TIMELINE_STEPS.length - 1 && (
+                  <div
+                    className={`timeline-line ${
+                      idx < currentIdx ? "completed-line exchange-line-done" : ""
+                    }`}
+                  ></div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  // 2. EXCHANGE DETAILS CARD
+  const renderExchangeDetailsCard = (order) => {
+    const eStatus = (order.exchangeStatus || order.exchangeRequest?.status || "REQUESTED").toUpperCase();
+    const reqItem = order.exchangeRequest?.items?.[0] || {};
+    const origItem = order.orderItems?.[0] || {};
+
+    const replacementTrackingNum =
+      order.exchangeRequest?.replacementTrackingNumber ||
+      (["SHIPPED", "DELIVERED"].includes(eStatus)
+        ? `EX-TRK-${order._id.toString().slice(-8).toUpperCase()}`
+        : "Pending Generation");
+
+    const replacementCarrier =
+      order.exchangeRequest?.replacementCarrier || "Decathlon Express Logistics";
+
+    const replacementLocation =
+      order.exchangeRequest?.replacementLocation ||
+      (eStatus === "DELIVERED"
+        ? "Delivered to Customer"
+        : eStatus === "SHIPPED"
+        ? "In Transit to Destination"
+        : eStatus === "RECEIVED"
+        ? "Decathlon Fulfillment Center"
+        : "Awaiting Item Pickup & Inspection");
+
+    const replacementETA =
+      order.exchangeRequest?.estimatedReplacementDeliveryDate
+        ? formatDate(order.exchangeRequest.estimatedReplacementDeliveryDate)
+        : eStatus === "DELIVERED"
+        ? "Delivered"
+        : eStatus === "SHIPPED"
+        ? "Within 2-3 business days"
+        : "Calculated upon dispatch";
+
+    return (
+      <div className="exchange-details-card">
+        <div className="exchange-meta-grid">
+          <div className="exchange-meta-item">
+            <span>Exchange Status</span>
+            <strong className={`badge-pill exchange-${eStatus.toLowerCase()}`}>
+              {formatExchangeStatus(eStatus)}
+            </strong>
+          </div>
+
+          <div className="exchange-meta-item">
+            <span>Original Product</span>
+            <strong>{origItem.name || reqItem.name || "Product"}</strong>
+            <span className="meta-sub">Original Size: {origItem.size || reqItem.originalSize || "Standard"}</span>
+          </div>
+
+          <div className="exchange-meta-item highlight-exchange">
+            <span>Replacement Product &amp; Size</span>
+            <strong style={{ color: "#0082c3" }}>
+              {reqItem.name || origItem.name || "Product"}
+            </strong>
+            <span className="meta-sub" style={{ fontWeight: 700, color: "#0284c7" }}>
+              Requested Size: {reqItem.newSize || "N/A"}
+            </span>
+          </div>
+
+          <div className="exchange-meta-item">
+            <span>Exchange Quantity</span>
+            <strong>{reqItem.quantity || 1} unit(s)</strong>
+          </div>
+
+          <div className="exchange-meta-item">
+            <span>Exchange Reason</span>
+            <strong>{order.exchangeRequest?.reason || "Not Specified"}</strong>
+            {order.exchangeRequest?.details && (
+              <span className="meta-sub">Note: {order.exchangeRequest.details}</span>
+            )}
+          </div>
+
+          <div className="exchange-meta-item">
+            <span>Pickup Address &amp; Contact</span>
+            <strong>
+              {order.shippingAddress?.houseBuilding}, {order.shippingAddress?.streetLocality},{" "}
+              {order.shippingAddress?.cityState} - {order.shippingAddress?.pincode}
+            </strong>
+            <span className="meta-sub">
+              Contact: {order.shippingAddress?.firstName} {order.shippingAddress?.lastName} (
+              {order.shippingAddress?.mobile})
+            </span>
+          </div>
+
+          {/* REPLACEMENT SHIPMENT LOGISTICS */}
+          <div className="exchange-meta-item highlight-logistics">
+            <span>Replacement Tracking Number</span>
+            <strong>{replacementTrackingNum}</strong>
+          </div>
+
+          <div className="exchange-meta-item highlight-logistics">
+            <span>Replacement Carrier</span>
+            <strong>{replacementCarrier}</strong>
+          </div>
+
+          <div className="exchange-meta-item highlight-logistics">
+            <span>Replacement Location</span>
+            <strong>{replacementLocation}</strong>
+          </div>
+
+          <div className="exchange-meta-item highlight-logistics">
+            <span>Expected Replacement Delivery</span>
+            <strong style={{ color: "#16a34a" }}>{replacementETA}</strong>
+          </div>
+
+          {/* PAYMENT BEHAVIOR FOR EXCHANGE: KEEP EXISTING PAYMENT */}
+          <div className="exchange-meta-item">
+            <span>Payment Status</span>
+            <div>
+              {renderPaymentBadge(order)}
+              {Number(order.exchangeRequest?.additionalPaymentRequired || 0) > 0 && (
+                <span className="meta-sub" style={{ color: "#dc2626", display: "block", marginTop: "4px" }}>
+                  Additional Payment Required: ₹{order.exchangeRequest.additionalPaymentRequired}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -920,11 +1833,14 @@ const Orders = () => {
                   <tr>
                     <th>Order ID</th>
                     <th>Customer</th>
-                    <th>Product(s)</th>
-                    <th>Qty</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
                     <th>Return Reason</th>
                     <th>Return Status</th>
-                    <th>Refund Status</th>
+                    <th>Payment Method</th>
+                    <th>Payment Status</th>
+                    <th>Request Date</th>
+                    <th>Refund Amount</th>
                     <th>Actions</th>
                   </tr>
                 ) : activeTab === "exchanges" ? (
@@ -932,11 +1848,12 @@ const Orders = () => {
                     <th>Order ID</th>
                     <th>Customer</th>
                     <th>Product</th>
-                    <th>Original Size</th>
-                    <th>New Size</th>
-                    <th>Reason</th>
-                    <th>Price Diff</th>
+                    <th>Current Size</th>
+                    <th>Requested Size</th>
+                    <th>Quantity</th>
                     <th>Exchange Status</th>
+                    <th>Price Diff</th>
+                    <th>Request Date</th>
                     <th>Actions</th>
                   </tr>
                 ) : (
@@ -956,7 +1873,7 @@ const Orders = () => {
                 {paginatedOrders.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={activeTab === "exchanges" ? "9" : activeTab === "returns" ? "8" : "7"}
+                      colSpan={activeTab === "returns" ? "11" : activeTab === "exchanges" ? "10" : "7"}
                       className="empty-orders"
                     >
                       {search || statusFilter !== "all" || orderDate
@@ -966,8 +1883,6 @@ const Orders = () => {
                   </tr>
                 ) : (
                   paginatedOrders.map((order) => {
-                    const isStripe = isStripePaidOrder(order);
-
                     return (
                       <tr key={order._id}>
                         {/* 1. ORDER ID */}
@@ -997,7 +1912,7 @@ const Orders = () => {
                         {/* 3. DYNAMIC TAB CELLS */}
                         {activeTab === "returns" ? (
                           <>
-                            {/* Product(s) */}
+                            {/* Product */}
                             <td>
                               <div className="table-product-preview">
                                 <strong>
@@ -1013,7 +1928,7 @@ const Orders = () => {
                               </div>
                             </td>
 
-                            {/* Qty */}
+                            {/* Quantity */}
                             <td>
                               <strong>
                                 {order.returnRequest?.items?.reduce(
@@ -1023,7 +1938,7 @@ const Orders = () => {
                               </strong>
                             </td>
 
-                            {/* Reason */}
+                            {/* Return Reason */}
                             <td>
                               <span className="table-reason-text">
                                 {order.returnRequest?.reason || "Return"}
@@ -1041,7 +1956,34 @@ const Orders = () => {
                               </span>
                             </td>
 
-                            {/* Refund Status */}
+                            {/* Payment Method */}
+                            <td>
+                              <span className={`table-pay-badge ${order.paymentMethod === "COD" ? "cod" : "stripe"}`}>
+                                {order.paymentMethod === "COD" ? "COD" : "Online / Stripe"}
+                              </span>
+                            </td>
+
+                            {/* Payment Status */}
+                            <td>
+                              <span className={`status-badge payment-${(order.paymentStatus || "pending").toLowerCase()}`}>
+                                {order.paymentStatus || "Pending"}
+                              </span>
+                            </td>
+
+                            {/* Request Date */}
+                            <td>
+                              <span className="table-date">
+                                {order.returnRequest?.requestedAt
+                                  ? new Date(order.returnRequest.requestedAt).toLocaleDateString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })
+                                  : "-"}
+                              </span>
+                            </td>
+
+                            {/* Refund Amount */}
                             <td>
                               <div className="refund-cell-status">
                                 <strong>
@@ -1053,102 +1995,24 @@ const Orders = () => {
                                       0,
                                   ).toLocaleString("en-IN")}
                                 </strong>
-                                <span className="table-pay-badge">
-                                  {order.returnStatus === "REFUNDED"
-                                    ? "✓ Refunded"
-                                    : order.paymentMethod === "COD"
-                                    ? "Refund Pending (COD)"
-                                    : "Stripe Refund Due"}
-                                </span>
                               </div>
                             </td>
 
                             {/* Actions */}
                             <td>
                               <div className="table-action-group">
-                                {order.returnStatus === "REQUESTED" && (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="btn-table-action approve"
-                                      onClick={() =>
-                                        updateReturnStatus(order._id, "APPROVED")
-                                      }
-                                      title="Approve return request"
-                                    >
-                                      Approve
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn-table-action reject"
-                                      onClick={() =>
-                                        updateReturnStatus(order._id, "REJECTED")
-                                      }
-                                      title="Reject return request"
-                                    >
-                                      Reject
-                                    </button>
-                                  </>
-                                )}
-
-                                {order.returnStatus === "APPROVED" && (
+                                {getReturnNextAction(order) && (
                                   <button
                                     type="button"
-                                    className="btn-table-action step"
-                                    onClick={() =>
-                                      updateReturnStatus(order._id, "PICKUP_SCHEDULED")
-                                    }
+                                    className={`btn-table-action ${getReturnNextAction(order).refund ? `refund ${order.paymentMethod === "COD" ? "cod" : "stripe"}` : "step"}`}
+                                    disabled={getReturnNextAction(order).refund && processingRefundId === order._id}
+                                    onClick={() => handleReturnNextAction(order)}
+                                    title={getReturnNextAction(order).label}
                                   >
-                                    Schedule Pickup
-                                  </button>
-                                )}
-
-                                {order.returnStatus === "PICKUP_SCHEDULED" && (
-                                  <button
-                                    type="button"
-                                    className="btn-table-action step"
-                                    onClick={() =>
-                                      updateReturnStatus(order._id, "PICKED_UP")
-                                    }
-                                  >
-                                    Mark Picked Up
-                                  </button>
-                                )}
-
-                                {order.returnStatus === "PICKED_UP" && (
-                                  <button
-                                    type="button"
-                                    className="btn-table-action step"
-                                    onClick={() =>
-                                      updateReturnStatus(order._id, "RETURN_RECEIVED")
-                                    }
-                                  >
-                                    Mark Received
-                                  </button>
-                                )}
-
-                                {(order.returnStatus === "RETURN_RECEIVED" ||
-                                  order.returnStatus === "REFUND_PROCESSING") && (
-                                  <button
-                                    type="button"
-                                    className={`btn-table-action refund ${
-                                      order.paymentMethod === "COD" ? "cod" : "stripe"
-                                    }`}
-                                    disabled={processingRefundId === order._id}
-                                    onClick={() => handleProcessRefund(order._id, order)}
-                                  >
-                                    {processingRefundId === order._id
+                                    {getReturnNextAction(order).refund && processingRefundId === order._id
                                       ? "Processing..."
-                                      : order.paymentMethod === "COD"
-                                      ? "Mark COD Refund Completed"
-                                      : "Process Stripe Refund"}
+                                      : getReturnNextAction(order).label}
                                   </button>
-                                )}
-
-                                {order.returnStatus === "REFUNDED" && (
-                                  <span className="refund-complete-badge">
-                                    ✓ Refunded
-                                  </span>
                                 )}
 
                                 <button
@@ -1175,28 +2039,39 @@ const Orders = () => {
                               </div>
                             </td>
 
-                            {/* Original Size */}
+                            {/* Current Size */}
                             <td>
                               <span className="table-size-badge original">
                                 {order.exchangeRequest?.items?.[0]?.originalSize || "-"}
                               </span>
                             </td>
 
-                            {/* New Size */}
+                            {/* Requested Size */}
                             <td>
                               <span className="table-size-badge replacement">
                                 {order.exchangeRequest?.items?.[0]?.newSize || "-"}
                               </span>
                             </td>
 
-                            {/* Reason */}
+                            {/* Quantity */}
                             <td>
-                              <span className="table-reason-text">
-                                {order.exchangeRequest?.reason || "Exchange"}
+                              <strong>
+                                {order.exchangeRequest?.items?.[0]?.quantity || 1}
+                              </strong>
+                            </td>
+
+                            {/* Exchange Status */}
+                            <td>
+                              <span
+                                className={`admin-exchange-badge badge-${(
+                                  order.exchangeStatus || ""
+                                ).toLowerCase()}`}
+                              >
+                                {order.exchangeStatus?.replace(/_/g, " ")}
                               </span>
                             </td>
 
-                            {/* Price Difference */}
+                            {/* Price Diff */}
                             <td>
                               {order.exchangeRequest?.additionalPaymentRequired > 0 ? (
                                 <span className="diff-pill pay">
@@ -1211,109 +2086,31 @@ const Orders = () => {
                               )}
                             </td>
 
-                            {/* Exchange Status */}
+                            {/* Request Date */}
                             <td>
-                              <span
-                                className={`admin-exchange-badge badge-${(
-                                  order.exchangeStatus || ""
-                                ).toLowerCase()}`}
-                              >
-                                {order.exchangeStatus?.replace(/_/g, " ")}
+                              <span className="table-date">
+                                {order.exchangeRequest?.requestedAt
+                                  ? new Date(order.exchangeRequest.requestedAt).toLocaleDateString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })
+                                  : "-"}
                               </span>
                             </td>
 
                             {/* Actions */}
                             <td>
                               <div className="table-action-group">
-                                {order.exchangeStatus === "REQUESTED" && (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="btn-table-action approve"
-                                      onClick={() =>
-                                        updateExchangeStatus(order._id, "APPROVED")
-                                      }
-                                      title="Approve exchange request"
-                                    >
-                                      Approve
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="btn-table-action reject"
-                                      onClick={() =>
-                                        updateExchangeStatus(order._id, "REJECTED")
-                                      }
-                                      title="Reject exchange request"
-                                    >
-                                      Reject
-                                    </button>
-                                  </>
-                                )}
-
-                                {order.exchangeStatus === "APPROVED" && (
+                                {getExchangeNextAction(order) && (
                                   <button
                                     type="button"
                                     className="btn-table-action step"
-                                    onClick={() =>
-                                      updateExchangeStatus(order._id, "PICKUP_SCHEDULED")
-                                    }
+                                    onClick={() => handleExchangeNextAction(order)}
+                                    title={getExchangeNextAction(order).label}
                                   >
-                                    Schedule Pickup
+                                    {getExchangeNextAction(order).label}
                                   </button>
-                                )}
-
-                                {order.exchangeStatus === "PICKUP_SCHEDULED" && (
-                                  <button
-                                    type="button"
-                                    className="btn-table-action step"
-                                    onClick={() =>
-                                      updateExchangeStatus(order._id, "PICKED_UP")
-                                    }
-                                  >
-                                    Mark Picked Up
-                                  </button>
-                                )}
-
-                                {order.exchangeStatus === "PICKED_UP" && (
-                                  <button
-                                    type="button"
-                                    className="btn-table-action step"
-                                    onClick={() =>
-                                      updateExchangeStatus(order._id, "RECEIVED")
-                                    }
-                                  >
-                                    Mark Received
-                                  </button>
-                                )}
-
-                                {order.exchangeStatus === "RECEIVED" && (
-                                  <button
-                                    type="button"
-                                    className="btn-table-action step ship"
-                                    onClick={() =>
-                                      updateExchangeStatus(order._id, "SHIPPED")
-                                    }
-                                  >
-                                    Ship Replacement
-                                  </button>
-                                )}
-
-                                {order.exchangeStatus === "SHIPPED" && (
-                                  <button
-                                    type="button"
-                                    className="btn-table-action approve"
-                                    onClick={() =>
-                                      updateExchangeStatus(order._id, "DELIVERED")
-                                    }
-                                  >
-                                    Mark Delivered
-                                  </button>
-                                )}
-
-                                {order.exchangeStatus === "DELIVERED" && (
-                                  <span className="refund-complete-badge">
-                                    ✓ Delivered
-                                  </span>
                                 )}
 
                                 <button
@@ -1341,62 +2138,129 @@ const Orders = () => {
                               </strong>
                             </td>
 
-                            {/* Safe Payment Badge / Non-corruptible Dropdown */}
+                            {/* Payment Status Column */}
                             <td>
-                              {isStripe ? (
-                                // For Stripe orders: display authoritative status badge (never allow manual "refunded")
-                                renderPaymentBadge(order)
-                              ) : (
-                                // For COD orders: allow updating between pending and paid (or display badge if refunded/cancelled)
-                                order.paymentStatus === "refunded" ||
-                                order.orderStatus === "cancelled" ? (
-                                  renderPaymentBadge(order)
-                                ) : (
-                                  <select
-                                    value={order.paymentStatus || "pending"}
-                                    onChange={(e) =>
-                                      updatePaymentStatus(order._id, e.target.value)
-                                    }
-                                    className={getPaymentClass(
-                                      order.paymentStatus || "pending",
-                                    )}
+                              {renderPaymentBadge(order)}
+                            </td>
+
+                            {/* Order Status — Read-only auto-updating badge */}
+                            <td>
+                              <span className={getStatusClass(order.orderStatus)}>
+                                {getDisplayedOrderStatus(order)}
+                              </span>
+                            </td>
+
+                            {/* Actions Column — only shows the NEXT step button, nothing when done */}
+                            <td>
+                              <div className="table-action-group">
+
+                                {hasActiveReturn(order) && getReturnNextAction(order) && (
+                                  <button
+                                    type="button"
+                                    className={`btn-table-action ${getReturnNextAction(order).refund ? `refund ${order.paymentMethod === "COD" ? "cod" : "stripe"}` : "step"}`}
+                                    disabled={getReturnNextAction(order).refund && processingRefundId === order._id}
+                                    onClick={() => handleReturnNextAction(order)}
+                                    title={getReturnNextAction(order).label}
                                   >
-                                    <option value="pending">Pending (COD)</option>
-                                    <option value="paid">Paid</option>
-                                    <option value="failed">Failed</option>
-                                  </select>
-                                )
-                              )}
+                                    {getReturnNextAction(order).refund && processingRefundId === order._id
+                                      ? "Processing..."
+                                      : getReturnNextAction(order).label}
+                                  </button>
+                                )}
+
+                                {!hasActiveReturn(order) && hasActiveExchange(order) && getExchangeNextAction(order) && (
+                                  <button
+                                    type="button"
+                                    className="btn-table-action step"
+                                    onClick={() => handleExchangeNextAction(order)}
+                                    title={getExchangeNextAction(order).label}
+                                  >
+                                    {getExchangeNextAction(order).label}
+                                  </button>
+                                )}
+
+                                {/* Delivery progression — each button disappears after its step is done */}
+                                {!hasActiveReturn(order) &&
+                                  !hasActiveExchange(order) &&
+                                  order.orderStatus !== "cancelled" &&
+                                  order.orderStatus !== "returned" &&
+                                  order.orderStatus !== "delivered" && (
+                                    <>
+                                      {getOrderTrackingStatus(order) === "ORDER_PLACED" && (
+                                        <button
+                                          type="button"
+                                          className="btn-table-action step ship"
+                                          onClick={() => handleUpdateTrackingStep(order, "SHIPPED")}
+                                          title="Mark order as Shipped"
+                                        >
+                                          Mark Shipped
+                                        </button>
+                                      )}
+
+                                      {getOrderTrackingStatus(order) === "SHIPPED" && (
+                                        <button
+                                          type="button"
+                                          className="btn-table-action step hub"
+                                          onClick={() => handleUpdateTrackingStep(order, "REACHED_HUB")}
+                                          title="Mark as Reached Hub"
+                                        >
+                                          Mark Hub
+                                        </button>
+                                      )}
+
+                                      {getOrderTrackingStatus(order) === "REACHED_HUB" && (
+                                        <button
+                                          type="button"
+                                          className="btn-table-action step out-delivery"
+                                          onClick={() => handleUpdateTrackingStep(order, "OUT_FOR_DELIVERY")}
+                                          title="Mark as Out for Delivery"
+                                        >
+                                          Out for Delivery
+                                        </button>
+                                      )}
+
+                                      {getOrderTrackingStatus(order) === "OUT_FOR_DELIVERY" && (
+                                        <button
+                                          type="button"
+                                          className="btn-table-action deliver"
+                                          onClick={() => handleMarkAsDelivered(order)}
+                                          title="Mark order as Delivered"
+                                        >
+                                          Mark Delivered
+                                        </button>
+                                      )}
+                                    </>
+                                  )}
+
+                                {/* COD payment — disappears once paid */}
+                                {order.paymentMethod === "COD" &&
+                                  !hasActiveReturn(order) &&
+                                  !hasActiveExchange(order) &&
+                                  (order.paymentStatus || "").toLowerCase() === "pending" &&
+                                  order.orderStatus !== "cancelled" && (
+                                    <button
+                                      type="button"
+                                      className="btn-table-action cod-pay"
+                                      onClick={() => handleMarkCodPaymentReceived(order)}
+                                      title="Mark COD Payment Received"
+                                    >
+                                      Mark COD Received
+                                    </button>
+                                  )}
+
+                                {/* View details — always visible */}
+                                <button
+                                  type="button"
+                                  className="view-order-btn"
+                                  title="View Order Details"
+                                  onClick={() => openOrderModal(order)}
+                                >
+                                  <MdVisibility />
+                                </button>
+                              </div>
                             </td>
 
-                            {/* Order Status Dropdown */}
-                            <td>
-                              <select
-                                value={order.orderStatus}
-                                onChange={(e) =>
-                                  updateOrderStatus(order._id, e.target.value)
-                                }
-                                className={getStatusClass(order.orderStatus)}
-                              >
-                                {STATUS_OPTIONS.map((status) => (
-                                  <option key={status} value={status}>
-                                    {formatStatus(status)}
-                                  </option>
-                                ))}
-                              </select>
-                            </td>
 
-                            {/* Action */}
-                            <td>
-                              <button
-                                type="button"
-                                className="view-order-btn"
-                                title="View Order Details"
-                                onClick={() => openOrderModal(order)}
-                              >
-                                <MdVisibility />
-                              </button>
-                            </td>
                           </>
                         )}
                       </tr>
@@ -1482,82 +2346,117 @@ const Orders = () => {
 
               <div className="modal-header-badges">
                 <span className={getStatusClass(selectedOrder.orderStatus)}>
-                  {formatStatus(selectedOrder.orderStatus)}
+                  {selectedOrder.orderStatus === "cancelled"
+                    ? "🔴 ORDER CANCELLED"
+                    : (hasActiveReturn(selectedOrder) ||
+                       hasActiveExchange(selectedOrder) ||
+                       selectedOrder.orderStatus === "returned")
+                    ? "DELIVERED"
+                    : formatStatus(selectedOrder.orderStatus)}
                 </span>
                 {renderPaymentBadge(selectedOrder)}
               </div>
             </div>
 
-            {/* VISUAL ORDER STATUS TIMELINE */}
-            <div className="order-detail-section timeline-section">
-              <h3>Order Status Timeline</h3>
-              {renderOrderTimeline(selectedOrder)}
+            {/* =========================================================
+                SECTION 1: ORIGINAL ORDER TRACKING
+                ========================================================= */}
+            <div className="order-detail-section tracking-section-container">
+              <div className="section-title-with-badge">
+                <h3>1. Original Order Delivery Tracking</h3>
+                {selectedOrder.orderStatus === "cancelled" ? (
+                  <span className="section-header-badge cancelled">Cancelled</span>
+                ) : (hasActiveReturn(selectedOrder) ||
+                     hasActiveExchange(selectedOrder) ||
+                     selectedOrder.orderStatus === "returned" ||
+                     selectedOrder.orderStatus === "delivered" ||
+                     Boolean(selectedOrder.deliveredAt)) ? (
+                  <span className="section-header-badge delivered">Delivered</span>
+                ) : (
+                  <span className="section-header-badge in-progress">In Progress</span>
+                )}
+              </div>
+              {renderDeliveryTimeline(selectedOrder)}
+              {renderDeliveryLogisticsCard(selectedOrder)}
             </div>
 
-            {/* DEDICATED REFUND SUMMARY CARD (IF REFUNDED) */}
-            {(selectedOrder.paymentStatus === "refunded" ||
-              selectedOrder.returnStatus === "REFUNDED") && (
-              <div className="order-detail-section refund-summary-card">
-                <div className="refund-summary-header">
-                  <MdCheckCircle className="refund-success-icon" />
-                  <div>
-                    <h4>Refund Completed</h4>
-                    <p>
-                      This order has been successfully refunded via{" "}
-                      {selectedOrder.returnRequest?.refundMethod === "COD_MANUAL" ||
-                      selectedOrder.paymentMethod === "COD"
-                        ? "Manual Cash / Bank Payout"
-                        : "Stripe Online Payment Gateway"}
-                    </p>
-                  </div>
+            {/* =========================================================
+                SECTION 2: RETURN TRACKING (FOR RETURN ORDERS)
+                ========================================================= */}
+            {hasActiveReturn(selectedOrder) && (
+              <div className="order-detail-section tracking-section-container return-tracking-section">
+                <div className="section-title-with-badge">
+                  <h3>2. Return Tracking</h3>
+                  <span className="section-header-badge return-status-pill">
+                    CURRENT STATUS: {formatReturnStatus(selectedOrder.returnStatus || selectedOrder.returnRequest?.status)}
+                  </span>
                 </div>
-
-                <div className="refund-meta-grid">
-                  <div className="refund-meta-item">
-                    <span>Refund ID</span>
-                    <code>
-                      {selectedOrder.returnRequest?.stripeRefundId ||
-                        selectedOrder.stripeRefundId ||
-                        "COD-MANUAL-REFUND"}
-                    </code>
-                  </div>
-
-                  <div className="refund-meta-item">
-                    <span>Refund Amount</span>
-                    <strong className="refund-amount-text">
-                      ₹
-                      {Number(
-                        selectedOrder.returnRequest?.refundAmount ||
-                          selectedOrder.refundAmount ||
-                          selectedOrder.totalAmount ||
-                          0,
-                      ).toLocaleString("en-IN")}
-                    </strong>
-                  </div>
-
-                  <div className="refund-meta-item">
-                    <span>Refund Date</span>
-                    <strong>
-                      {formatDate(
-                        selectedOrder.refundedAt ||
-                          selectedOrder.returnRequest?.processedAt ||
-                          selectedOrder.updatedAt,
-                      )}
-                    </strong>
-                  </div>
-
-                  <div className="refund-meta-item">
-                    <span>Refund Method</span>
-                    <strong>
-                      {selectedOrder.returnRequest?.refundMethod === "COD_MANUAL" ||
-                      selectedOrder.paymentMethod === "COD"
-                        ? "COD Manual Refund"
-                        : "Stripe Refund"}
-                    </strong>
-                  </div>
-                </div>
+                {renderReturnTimeline(selectedOrder)}
+                {renderReturnDetailsCard(selectedOrder)}
               </div>
             )}
+
+            {/* =========================================================
+                SECTION 2: EXCHANGE TRACKING (FOR EXCHANGE ORDERS)
+                ========================================================= */}
+            {hasActiveExchange(selectedOrder) && (
+              <div className="order-detail-section tracking-section-container exchange-tracking-section">
+                <div className="section-title-with-badge">
+                  <h3>2. Exchange Tracking</h3>
+                  <span className="section-header-badge exchange-status-pill">
+                    CURRENT STATUS: {formatExchangeStatus(selectedOrder.exchangeStatus || selectedOrder.exchangeRequest?.status)}
+                  </span>
+                </div>
+                {renderExchangeTimeline(selectedOrder)}
+                {renderExchangeDetailsCard(selectedOrder)}
+              </div>
+            )}
+
+            {/* DEDICATED REFUND CARD FOR CANCELLED ORDERS WITH REFUND */}
+            {selectedOrder.orderStatus === "cancelled" &&
+              selectedOrder.paymentStatus === "refunded" && (
+                <div className="order-detail-section refund-summary-card">
+                  <div className="refund-summary-header">
+                    <MdCheckCircle className="refund-success-icon" />
+                    <div>
+                      <h4>Cancellation Refund Completed</h4>
+                      <p>
+                        This cancelled order has been refunded to the original payment method.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="refund-meta-grid">
+                    <div className="refund-meta-item">
+                      <span>Refund ID</span>
+                      <code>
+                        {selectedOrder.stripeRefundId || "ONLINE-REFUND"}
+                      </code>
+                    </div>
+
+                    <div className="refund-meta-item">
+                      <span>Refund Amount</span>
+                      <strong className="refund-amount-text">
+                        ₹
+                        {Number(
+                          selectedOrder.refundAmount ||
+                            selectedOrder.totalAmount ||
+                            0,
+                        ).toLocaleString("en-IN")}
+                      </strong>
+                    </div>
+
+                    <div className="refund-meta-item">
+                      <span>Refund Date</span>
+                      <strong>
+                        {formatDate(
+                          selectedOrder.refundedAt || selectedOrder.updatedAt,
+                        )}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+              )}
 
             {/* CUSTOMER DETAILS */}
             <div className="order-detail-section">
@@ -1630,87 +2529,17 @@ const Orders = () => {
                 <div className="admin-lifecycle-actions">
                   <span>Progress Return:</span>
                   <div className="admin-action-btns">
-                    {selectedOrder.returnStatus === "REQUESTED" && (
-                      <>
-                        <button
-                          type="button"
-                          className="btn-action-step approve"
-                          onClick={() =>
-                            updateReturnStatus(selectedOrder._id, "APPROVED")
-                          }
-                        >
-                          Approve Return
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-action-step reject"
-                          onClick={() =>
-                            updateReturnStatus(selectedOrder._id, "REJECTED")
-                          }
-                        >
-                          Reject Return
-                        </button>
-                      </>
-                    )}
-
-                    {selectedOrder.returnStatus === "APPROVED" && (
+                    {getReturnNextAction(selectedOrder) && (
                       <button
                         type="button"
-                        className="btn-action-step primary"
-                        onClick={() =>
-                          updateReturnStatus(selectedOrder._id, "PICKUP_SCHEDULED")
-                        }
+                        className={`btn-action-step ${getReturnNextAction(selectedOrder).refund ? `refund ${selectedOrder.paymentMethod === "COD" ? "cod" : "stripe"}` : "primary"}`}
+                        disabled={getReturnNextAction(selectedOrder).refund && processingRefundId === selectedOrder._id}
+                        onClick={() => handleReturnNextAction(selectedOrder)}
                       >
-                        Schedule Pickup
-                      </button>
-                    )}
-
-                    {selectedOrder.returnStatus === "PICKUP_SCHEDULED" && (
-                      <button
-                        type="button"
-                        className="btn-action-step primary"
-                        onClick={() =>
-                          updateReturnStatus(selectedOrder._id, "PICKED_UP")
-                        }
-                      >
-                        Mark Picked Up
-                      </button>
-                    )}
-
-                    {selectedOrder.returnStatus === "PICKED_UP" && (
-                      <button
-                        type="button"
-                        className="btn-action-step primary"
-                        onClick={() =>
-                          updateReturnStatus(selectedOrder._id, "RETURN_RECEIVED")
-                        }
-                      >
-                        Mark Received
-                      </button>
-                    )}
-
-                    {(selectedOrder.returnStatus === "RETURN_RECEIVED" ||
-                      selectedOrder.returnStatus === "REFUND_PROCESSING") && (
-                      <button
-                        type="button"
-                        className={`btn-action-step refund ${
-                          selectedOrder.paymentMethod === "COD" ? "cod" : "stripe"
-                        }`}
-                        disabled={processingRefundId === selectedOrder._id}
-                        onClick={() => handleProcessRefund(selectedOrder._id, selectedOrder)}
-                      >
-                        {processingRefundId === selectedOrder._id
+                        {getReturnNextAction(selectedOrder).refund && processingRefundId === selectedOrder._id
                           ? "Processing..."
-                          : selectedOrder.paymentMethod === "COD"
-                          ? "Mark COD Refund Completed"
-                          : "Process Stripe Refund"}
+                          : getReturnNextAction(selectedOrder).label}
                       </button>
-                    )}
-
-                    {selectedOrder.returnStatus === "REFUNDED" && (
-                      <span className="refund-complete-badge">
-                        ✓ Refund Completed
-                      </span>
                     )}
                   </div>
                 </div>
@@ -1836,93 +2665,14 @@ const Orders = () => {
                 <div className="admin-lifecycle-actions">
                   <span>Progress Exchange:</span>
                   <div className="admin-action-btns">
-                    {selectedOrder.exchangeStatus === "REQUESTED" && (
-                      <>
-                        <button
-                          type="button"
-                          className="btn-action-step approve"
-                          onClick={() =>
-                            updateExchangeStatus(selectedOrder._id, "APPROVED")
-                          }
-                        >
-                          Approve Exchange
-                        </button>
-                        <button
-                          type="button"
-                          className="btn-action-step reject"
-                          onClick={() =>
-                            updateExchangeStatus(selectedOrder._id, "REJECTED")
-                          }
-                        >
-                          Reject Exchange
-                        </button>
-                      </>
-                    )}
-
-                    {selectedOrder.exchangeStatus === "APPROVED" && (
+                    {getExchangeNextAction(selectedOrder) && (
                       <button
                         type="button"
                         className="btn-action-step primary"
-                        onClick={() =>
-                          updateExchangeStatus(selectedOrder._id, "PICKUP_SCHEDULED")
-                        }
+                        onClick={() => handleExchangeNextAction(selectedOrder)}
                       >
-                        Schedule Pickup
+                        {getExchangeNextAction(selectedOrder).label}
                       </button>
-                    )}
-
-                    {selectedOrder.exchangeStatus === "PICKUP_SCHEDULED" && (
-                      <button
-                        type="button"
-                        className="btn-action-step primary"
-                        onClick={() =>
-                          updateExchangeStatus(selectedOrder._id, "PICKED_UP")
-                        }
-                      >
-                        Mark Picked Up
-                      </button>
-                    )}
-
-                    {selectedOrder.exchangeStatus === "PICKED_UP" && (
-                      <button
-                        type="button"
-                        className="btn-action-step primary"
-                        onClick={() =>
-                          updateExchangeStatus(selectedOrder._id, "RECEIVED")
-                        }
-                      >
-                        Mark Received
-                      </button>
-                    )}
-
-                    {selectedOrder.exchangeStatus === "RECEIVED" && (
-                      <button
-                        type="button"
-                        className="btn-action-step primary"
-                        onClick={() =>
-                          updateExchangeStatus(selectedOrder._id, "SHIPPED")
-                        }
-                      >
-                        Ship Replacement
-                      </button>
-                    )}
-
-                    {selectedOrder.exchangeStatus === "SHIPPED" && (
-                      <button
-                        type="button"
-                        className="btn-action-step approve"
-                        onClick={() =>
-                          updateExchangeStatus(selectedOrder._id, "DELIVERED")
-                        }
-                      >
-                        Mark Delivered
-                      </button>
-                    )}
-
-                    {selectedOrder.exchangeStatus === "DELIVERED" && (
-                      <span className="refund-complete-badge">
-                        ✓ Exchange Delivered
-                      </span>
                     )}
                   </div>
                 </div>
@@ -2013,24 +2763,40 @@ const Orders = () => {
 
               <div className="order-summary-row">
                 <span>Payment Status</span>
-                {isStripePaidOrder(selectedOrder) ? (
-                  renderPaymentBadge(selectedOrder)
-                ) : (
-                  <select
-                    value={selectedOrder.paymentStatus || "pending"}
-                    onChange={(e) =>
-                      updatePaymentStatus(selectedOrder._id, e.target.value)
-                    }
-                    className={getPaymentClass(
-                      selectedOrder.paymentStatus || "pending",
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                  {renderPaymentBadge(selectedOrder)}
+                  {selectedOrder.paymentMethod === "COD" &&
+                    (selectedOrder.paymentStatus || "").toLowerCase() === "pending" &&
+                    selectedOrder.orderStatus !== "cancelled" && (
+                      <button
+                        type="button"
+                        className="btn-table-action cod-pay"
+                        style={{ padding: "4px 10px", fontSize: "12px" }}
+                        onClick={() => handleMarkCodPaymentReceived(selectedOrder)}
+                      >
+                        Mark COD Payment Received
+                      </button>
                     )}
-                  >
-                    <option value="pending">Pending (COD)</option>
-                    <option value="paid">Paid</option>
-                    <option value="failed">Failed</option>
-                  </select>
-                )}
+                </div>
               </div>
+
+              {(selectedOrder.paymentReceivedAt || selectedOrder.paidAt) && (
+                <div className="order-summary-row highlight-payment-date">
+                  <span>Payment Received Date/Time</span>
+                  <strong style={{ color: "#16a34a" }}>
+                    {formatDateTime(selectedOrder.paymentReceivedAt || selectedOrder.paidAt)}
+                  </strong>
+                </div>
+              )}
+
+              {selectedOrder.deliveredAt && (
+                <div className="order-summary-row highlight-delivered-date">
+                  <span>Delivered Date/Time</span>
+                  <strong style={{ color: "#16a34a" }}>
+                    {formatDateTime(selectedOrder.deliveredAt)}
+                  </strong>
+                </div>
+              )}
 
               {selectedOrder.stripePaymentIntentId && (
                 <div className="order-summary-row highlight-stripe">
@@ -2082,5 +2848,4 @@ const Orders = () => {
     </>
   );
 };
-
 export default Orders;

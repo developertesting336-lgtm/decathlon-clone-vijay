@@ -42,12 +42,18 @@ const AddressDrawer = ({
   const [form, setForm] = useState(initialForm);
   const [saving, setSaving] = useState(false);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [detectingLocation, setDetectingLocation] = useState(false);
+  const [locationDetected, setLocationDetected] = useState(false);
+  const [accuracyNotice, setAccuracyNotice] = useState(null);
 
   useEffect(() => {
     if (!isOpen) {
       document.body.style.overflow = "";
       setShowForm(false);
       setEditingAddressObj(null);
+      setDetectingLocation(false);
+      setLocationDetected(false);
+      setAccuracyNotice(null);
       return;
     }
 
@@ -148,12 +154,138 @@ const AddressDrawer = ({
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
+    if (locationDetected) {
+      setLocationDetected(false);
+    }
     setForm((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // Auto-resolve City & State when a valid 6-digit Indian pincode is entered
+    if (name === "pincode") {
+      const cleanPin = value.trim().replace(/\D/g, "");
+      if (cleanPin.length === 6) {
+        try {
+          const pinRes = await api.get(`/location/pincode/${cleanPin}`);
+          if (pinRes.data?.success && pinRes.data?.data) {
+            const pinData = pinRes.data.data;
+            setForm((prev) => ({
+              ...prev,
+              cityState: pinData.cityState || prev.cityState,
+            }));
+            setAccuracyNotice(null);
+            toast.success(`Location set: ${pinData.cityState}`, {
+              id: "pincode-detected",
+            });
+          }
+        } catch (pinErr) {
+          console.warn("Pincode auto-lookup error:", pinErr.message);
+        }
+      }
+    }
+  };
+
+  const handleUseCurrentLocation = () => {
+    if (detectingLocation) return;
+
+    if (!navigator.geolocation) {
+      toast.error(
+        "Geolocation is not supported by your browser. Please enter your address manually."
+      );
+      return;
+    }
+
+    setDetectingLocation(true);
+    setLocationDetected(false);
+    setAccuracyNotice(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude, accuracy } = position.coords;
+          console.info(
+            `📍 Geolocation detected: lat=${latitude}, lon=${longitude}, accuracy=${Math.round(
+              accuracy || 0
+            )}m`
+          );
+
+          // If accuracy is coarse (> 3000m), it's likely an ISP/network IP fallback
+          if (accuracy && accuracy > 3000) {
+            const km = Math.max(1, Math.round(accuracy / 1000));
+            setAccuracyNotice(
+              `Detected approximate network location (±${km} km). Please verify your Pincode and Street.`
+            );
+          } else {
+            setAccuracyNotice(null);
+          }
+
+          const response = await api.get("/location/reverse-geocode", {
+            params: { lat: latitude, lon: longitude },
+            ...getAuthConfig(),
+          });
+
+          if (response.data?.success && response.data?.data) {
+            const data = response.data.data;
+            setForm((prev) => ({
+              ...prev,
+              // Only fill houseBuilding if detected, else keep user's manual entry
+              houseBuilding: data.houseBuilding || prev.houseBuilding || "",
+              streetLocality: data.streetLocality || prev.streetLocality || "",
+              landmark: data.landmark || prev.landmark || "",
+              pincode: data.pincode || prev.pincode || "",
+              cityState: data.cityState || prev.cityState || "",
+            }));
+
+            setLocationDetected(true);
+            toast.success("✓ Location detected");
+
+            setTimeout(() => {
+              setLocationDetected(false);
+            }, 4000);
+          } else {
+            toast.error(
+              response.data?.message ||
+                "Unable to find your address. Please enter it manually."
+            );
+          }
+        } catch (error) {
+          console.error("Reverse Geocoding Error:", error);
+          toast.error(
+            error.response?.data?.message ||
+              "Unable to find your address. Please enter it manually."
+          );
+        } finally {
+          setDetectingLocation(false);
+        }
+      },
+      (error) => {
+        setDetectingLocation(false);
+        console.error("Geolocation Error:", error);
+
+        if (error.code === error.PERMISSION_DENIED || error.code === 1) {
+          toast.error(
+            "Location permission was denied. Please allow location access or enter your address manually."
+          );
+        } else if (
+          error.code === error.POSITION_UNAVAILABLE ||
+          error.code === 2
+        ) {
+          toast.error("Unable to detect your location. Please try again.");
+        } else if (error.code === error.TIMEOUT || error.code === 3) {
+          toast.error("Location request timed out. Please try again.");
+        } else {
+          toast.error("Unable to detect your location. Please try again.");
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 0,
+      }
+    );
   };
 
   const handleSave = async (e) => {
@@ -305,6 +437,8 @@ const AddressDrawer = ({
     setForm(initialForm);
     setAddressType("Home");
     setIsDefault(false);
+    setDetectingLocation(false);
+    setLocationDetected(false);
     setShowForm(true);
   };
 
@@ -425,7 +559,61 @@ const AddressDrawer = ({
           <form className="address-form" onSubmit={handleSave}>
             <div className="address-form-content">
               <div className="address-form-section">
-                <h3>Address details</h3>
+                <div className="address-section-header-row">
+                  <h3>Address details</h3>
+                  <button
+                    type="button"
+                    className={`btn-current-location ${
+                      detectingLocation
+                        ? "loading"
+                        : locationDetected
+                        ? "detected"
+                        : ""
+                    }`}
+                    onClick={handleUseCurrentLocation}
+                    disabled={detectingLocation}
+                    title="Detect and fill address from current GPS location"
+                  >
+                    {detectingLocation ? (
+                      <>
+                        <span className="location-btn-spinner" />
+                        <span>📍 Detecting your location...</span>
+                      </>
+                    ) : locationDetected ? (
+                      <>
+                        <FiCheck className="location-btn-icon detected" />
+                        <span>✓ Location detected</span>
+                      </>
+                    ) : (
+                      <>
+                        <FiMapPin className="location-btn-icon" />
+                        <span>Use My Current Location</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {accuracyNotice && (
+                  <div className="location-accuracy-notice">
+                    <div className="location-notice-content">
+                      <span className="location-notice-icon">⚠️</span>
+                      <div className="location-notice-texts">
+                        <span className="location-notice-msg">{accuracyNotice}</span>
+                        <span className="location-notice-hint">
+                          Tip: Entering your 6-digit Pincode will automatically set your City & State.
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="location-notice-dismiss"
+                      onClick={() => setAccuracyNotice(null)}
+                      title="Dismiss notice"
+                    >
+                      <FiX />
+                    </button>
+                  </div>
+                )}
 
                 <input
                   type="text"
