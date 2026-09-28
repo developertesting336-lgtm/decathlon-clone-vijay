@@ -1,20 +1,6 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-
-import {
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-
-import {
-  MdArrowBack,
-  MdCloudUpload,
-  MdDelete,
-} from "react-icons/md";
-
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { MdArrowBack, MdCloudUpload, MdClose } from "react-icons/md";
 import toast from "react-hot-toast";
 
 import api from "../../api/axios";
@@ -26,29 +12,17 @@ const EditBanner = () => {
 
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
-  const [isActive, setIsActive] =
-    useState(true);
+  const [subcategory, setSubcategory] = useState("");
+  const [isActive, setIsActive] = useState(true);
 
-  const [existingImage, setExistingImage] =
-    useState("");
+  // Existing images saved in database (URLs)
+  const [existingImages, setExistingImages] = useState([]);
 
-  const [image, setImage] =
-    useState(null);
+  // Newly selected files to upload { file, preview, id }
+  const [newImages, setNewImages] = useState([]);
 
-  const [preview, setPreview] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [saving, setSaving] =
-    useState(false);
-
-  /*
-  ========================================
-  IMAGE URL
-  ========================================
-  */
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const getImageUrl = (imagePath) => {
     if (!imagePath) return "";
@@ -62,78 +36,44 @@ const EditBanner = () => {
     return imagePath;
   };
 
-  /*
-  ========================================
-  FETCH BANNER
-  ========================================
-  */
+  const fetchBanner = useCallback(async () => {
+    try {
+      setLoading(true);
 
-  const fetchBanner = useCallback(
-    async () => {
-      try {
-        setLoading(true);
+      const response = await api.get("/banners");
+      const banners = response.data.banners || [];
+      const banner = banners.find((item) => item._id === id);
 
-        const response =
-          await api.get("/banners");
-
-        const banners =
-          response.data.banners || [];
-
-        const banner =
-          banners.find(
-            (item) => item._id === id
-          );
-
-        if (!banner) {
-          toast.error(
-            "Banner not found"
-          );
-
-          navigate("/banners");
-
-          return;
-        }
-
-        setTitle(
-          banner.title || ""
-        );
-
-        setLink(
-          banner.link || ""
-        );
-
-        setIsActive(
-          banner.isActive ?? true
-        );
-
-        setExistingImage(
-          banner.image || ""
-        );
-      } catch (error) {
-        console.error(
-          "Fetch Banner Error:",
-          error
-        );
-
-        toast.error(
-          error.response?.data
-            ?.message ||
-            "Failed to load banner"
-        );
-
+      if (!banner) {
+        toast.error("Banner not found");
         navigate("/banners");
-      } finally {
-        setLoading(false);
+        return;
       }
-    },
-    [id, navigate]
-  );
 
-  /*
-  ========================================
-  INITIAL LOAD
-  ========================================
-  */
+      setTitle(banner.title || "");
+      setLink(banner.link || "");
+      setSubcategory(banner.subcategory || "");
+      setIsActive(banner.isActive ?? true);
+
+      // Load existing images array, fallback to single image
+      const imgs =
+        Array.isArray(banner.images) && banner.images.length > 0
+          ? banner.images
+          : banner.image
+          ? [banner.image]
+          : [];
+
+      setExistingImages(imgs);
+    } catch (error) {
+      console.error("Fetch Banner Error:", error);
+      toast.error(
+        error.response?.data?.message || "Failed to load banner"
+      );
+      navigate("/banners");
+    } finally {
+      setLoading(false);
+    }
+  }, [id, navigate]);
 
   useEffect(() => {
     fetchBanner();
@@ -141,34 +81,21 @@ const EditBanner = () => {
 
   /*
   ========================================
-  IMAGE CHANGE
+  ADD NEW IMAGES
   ========================================
   */
+  const handleNewImagesChange = (e) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (!selectedFiles.length) return;
 
-  const handleImageChange = (e) => {
-    const file =
-      e.target.files?.[0];
+    const newItems = selectedFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
 
-    if (!file) {
-      return;
-    }
-
-    setImage(file);
-
-    setPreview(
-      URL.createObjectURL(file)
-    );
-  };
-
-  /*
-  ========================================
-  REMOVE NEW IMAGE
-  ========================================
-  */
-
-  const removeNewImage = () => {
-    setImage(null);
-    setPreview("");
+    setNewImages((prev) => [...prev, ...newItems]);
+    e.target.value = "";
   };
 
   /*
@@ -176,9 +103,23 @@ const EditBanner = () => {
   REMOVE EXISTING IMAGE
   ========================================
   */
+  const removeExistingImage = (indexToRemove) => {
+    setExistingImages((prev) => prev.filter((_, idx) => idx !== indexToRemove));
+  };
 
-  const removeExistingImage = () => {
-    setExistingImage("");
+  /*
+  ========================================
+  REMOVE NEW IMAGE
+  ========================================
+  */
+  const removeNewImage = (indexToRemove) => {
+    setNewImages((prev) => {
+      const item = prev[indexToRemove];
+      if (item && item.preview) {
+        URL.revokeObjectURL(item.preview);
+      }
+      return prev.filter((_, idx) => idx !== indexToRemove);
+    });
   };
 
   /*
@@ -186,332 +127,193 @@ const EditBanner = () => {
   SUBMIT
   ========================================
   */
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (existingImages.length === 0 && newImages.length === 0) {
+      toast.error("At least one banner image is required");
+      return;
+    }
 
     try {
       setSaving(true);
 
-      const data =
-        new FormData();
+      const data = new FormData();
+      data.append("title", title.trim());
+      data.append("link", link.trim());
+      data.append("subcategory", subcategory.trim());
+      data.append("isActive", isActive);
 
-      data.append(
-        "title",
-        title.trim()
-      );
+      // Send retained existing image URLs as JSON
+      data.append("existingImages", JSON.stringify(existingImages));
+      data.append("existingImage", existingImages[0] || "");
 
-      data.append(
-        "link",
-        link.trim()
-      );
-
-      data.append(
-        "isActive",
-        isActive
-      );
-
-      /*
-      New image selected
-      */
-
-      if (image) {
-        data.append(
-          "image",
-          image
-        );
-      } else {
-        /*
-        Keep existing image
-        or send empty string
-        if admin removed it.
-        */
-
-        data.append(
-          "existingImage",
-          existingImage
-        );
+      // Append newly uploaded files
+      newImages.forEach((item) => {
+        data.append("images", item.file);
+      });
+      if (newImages[0]) {
+        data.append("image", newImages[0].file);
       }
 
-      await api.put(
-        `/banners/${id}`,
-        data
-      );
+      await api.put(`/banners/${id}`, data);
 
-      toast.success(
-        "Banner updated successfully"
-      );
-
+      toast.success("Banner updated successfully");
       navigate("/banners");
     } catch (error) {
-      console.error(
-        "Update Banner Error:",
-        error
-      );
-
+      console.error("Update Banner Error:", error);
       toast.error(
-        error.response?.data
-          ?.message ||
-          "Failed to update banner"
+        error.response?.data?.message || "Failed to update banner"
       );
     } finally {
       setSaving(false);
     }
   };
 
-  /*
-  ========================================
-  LOADING
-  ========================================
-  */
-
   if (loading) {
     return (
       <div className="edit-banner-page">
-        <div className="edit-banner-loading">
-          Loading banner...
-        </div>
+        <div className="edit-banner-loading">Loading banner...</div>
       </div>
     );
   }
 
-  /*
-  ========================================
-  UI
-  ========================================
-  */
+  const totalImagesCount = existingImages.length + newImages.length;
 
   return (
     <div className="edit-banner-page">
-
       {/* HEADER */}
-
       <div className="edit-banner-header">
-
         <button
           type="button"
           className="edit-banner-back-btn"
-          onClick={() =>
-            navigate("/banners")
-          }
+          onClick={() => navigate("/banners")}
         >
           <MdArrowBack />
           Back
         </button>
 
         <div>
-
-          <h1>
-            Edit Banner
-          </h1>
-
-          <p>
-            Update homepage banner
-          </p>
-
+          <h1>Edit Banner</h1>
+          <p>Update homepage banner, subcategory, and images</p>
         </div>
-
       </div>
 
       {/* FORM */}
-
-      <form
-        className="edit-banner-form"
-        onSubmit={handleSubmit}
-      >
-
+      <form className="edit-banner-form" onSubmit={handleSubmit}>
         <section className="edit-banner-section">
-
           <div className="edit-banner-section-title">
-
-            <h2>
-              Banner Information
-            </h2>
-
+            <h2>Banner Information</h2>
           </div>
 
           {/* TITLE */}
-
           <div className="edit-banner-form-group">
-
-            <label>
-              Banner Title
-            </label>
-
+            <label>Banner Title</label>
             <input
               type="text"
               value={title}
-              onChange={(e) =>
-                setTitle(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter banner title"
             />
-
           </div>
 
           {/* LINK */}
-
           <div className="edit-banner-form-group">
-
-            <label>
-              Link
-            </label>
-
+            <label>Link</label>
             <input
               type="text"
               value={link}
-              onChange={(e) =>
-                setLink(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setLink(e.target.value)}
               placeholder="/products"
             />
-
           </div>
 
-          {/* CURRENT IMAGE */}
-
+          {/* SUBCATEGORY */}
           <div className="edit-banner-form-group">
-
-            <label>
-              Current Image
-            </label>
-
-            {existingImage ? (
-
-              <div className="edit-banner-existing-image">
-
-                <img
-                  src={getImageUrl(
-                    existingImage
-                  )}
-                  alt="Current Banner"
-                />
-
-                <button
-                  type="button"
-                  onClick={
-                    removeExistingImage
-                  }
-                >
-                  <MdDelete />
-                  Remove
-                </button>
-
-              </div>
-
-            ) : (
-
-              <div className="edit-banner-no-image">
-                No existing image
-              </div>
-
-            )}
-
+            <label>Banner Subcategory</label>
+            <input
+              type="text"
+              value={subcategory}
+              onChange={(e) => setSubcategory(e.target.value)}
+              placeholder="e.g. First Order, Monsoon Sale, Clearance"
+            />
           </div>
 
-          {/* REPLACE IMAGE */}
-
+          {/* CURRENT & NEW IMAGES */}
           <div className="edit-banner-form-group">
+            <label>Banner Images ({totalImagesCount})</label>
 
-            <label>
-              Replace Image
-            </label>
+            {/* PREVIEWS CONTAINER */}
+            <div className="banner-multi-previews">
+              {/* Saved Existing Images */}
+              {existingImages.map((imgUrl, idx) => (
+                <div className="banner-multi-preview-item" key={`existing-${idx}`}>
+                  <img src={getImageUrl(imgUrl)} alt={`Existing ${idx + 1}`} />
+                  <button
+                    type="button"
+                    className="banner-remove-preview-btn"
+                    onClick={() => removeExistingImage(idx)}
+                    title="Remove this image"
+                  >
+                    <MdClose />
+                  </button>
+                  <span className="banner-preview-badge">Saved #{idx + 1}</span>
+                </div>
+              ))}
 
-            <label className="edit-banner-upload-box">
+              {/* Newly Selected Images */}
+              {newImages.map((img, idx) => (
+                <div className="banner-multi-preview-item new-upload" key={img.id || idx}>
+                  <img src={img.preview} alt={`New Preview ${idx + 1}`} />
+                  <button
+                    type="button"
+                    className="banner-remove-preview-btn"
+                    onClick={() => removeNewImage(idx)}
+                    title="Remove this new image"
+                  >
+                    <MdClose />
+                  </button>
+                  <span className="banner-preview-badge new">New</span>
+                </div>
+              ))}
+            </div>
 
+            {/* ADD MORE IMAGES UPLOAD BOX */}
+            <label className="edit-banner-upload-box" style={{ marginTop: "14px" }}>
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 hidden
-                onChange={
-                  handleImageChange
-                }
+                onChange={handleNewImagesChange}
               />
-
               <MdCloudUpload />
-
-              <strong>
-                Upload New Banner
-              </strong>
-
+              <strong>Upload More Images</strong>
               <span>
-                All image types supported (JPG, PNG, WEBP, SVG, AVIF, GIF, etc.)
+                Select additional images to add to this banner
               </span>
-
             </label>
-
           </div>
 
-          {/* NEW PREVIEW */}
-
-          {preview && (
-
-            <div className="edit-banner-preview-wrapper">
-
-              <div className="edit-banner-preview">
-
-                <img
-                  src={preview}
-                  alt="New Banner Preview"
-                />
-
-                <button
-                  type="button"
-                  onClick={
-                    removeNewImage
-                  }
-                >
-                  Remove
-                </button>
-
-              </div>
-
-            </div>
-
-          )}
-
           {/* ACTIVE */}
-
           <div className="edit-banner-active-row">
-
-            <label>
-              Active Banner
-            </label>
-
+            <label>Active Banner</label>
             <button
               type="button"
-              className={
-                isActive
-                  ? "edit-banner-switch active"
-                  : "edit-banner-switch"
-              }
-              onClick={() =>
-                setIsActive(
-                  !isActive
-                )
-              }
+              className={isActive ? "edit-banner-switch active" : "edit-banner-switch"}
+              onClick={() => setIsActive(!isActive)}
             >
               <span />
             </button>
-
           </div>
-
         </section>
 
         {/* ACTIONS */}
-
         <div className="edit-banner-actions">
-
           <button
             type="button"
             className="edit-banner-cancel-btn"
-            onClick={() =>
-              navigate("/banners")
-            }
+            onClick={() => navigate("/banners")}
             disabled={saving}
           >
             Cancel
@@ -522,15 +324,10 @@ const EditBanner = () => {
             className="edit-banner-save-btn"
             disabled={saving}
           >
-            {saving
-              ? "Updating..."
-              : "Update Banner"}
+            {saving ? "Updating..." : "Update Banner"}
           </button>
-
         </div>
-
       </form>
-
     </div>
   );
 };

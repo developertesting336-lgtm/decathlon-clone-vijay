@@ -19,8 +19,6 @@ import Banners from "./pages/Banners";
 import AddBanner from "./components/banners/AddBanner";
 import EditBanner from "./components/banners/EditBanner";
 
-import Pages from "./pages/Pages";
-import PageBuilder from "./pages/PageBuilder";
 import AiKnowledgeManager from "./pages/AiKnowledgeManager";
 import SupportTickets from "./pages/SupportTickets";
 import AdminProfile from "./pages/AdminProfile";
@@ -182,28 +180,6 @@ function App() {
         />
 
         <Route
-          path="/pages"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <Pages />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/pages/builder/:id"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <PageBuilder />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
-        />
-
-        <Route
           path="/ai-knowledge"
           element={
             <AdminProtectedRoute>
@@ -247,7 +223,7 @@ function App() {
           }
         />
 
-        <Route path="/homepage-sections" element={<Navigate to="/pages" replace />} />
+        <Route path="/homepage-sections" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );

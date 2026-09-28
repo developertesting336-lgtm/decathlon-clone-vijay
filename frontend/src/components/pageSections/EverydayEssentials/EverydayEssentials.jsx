@@ -1,293 +1,127 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./EverydayEssentials.css";
 import api from "../../../api/axios";
-import socket from "../../../socket/socket";
 
-const EverydayEssentials = ({
-  section,
-  data,
-  style,
-  customCategories,
-  customItems,
-  title: propTitle,
-}) => {
+const EverydayEssentials = () => {
   const navigate = useNavigate();
-  const [dataItems, setDataItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [canScrollPrevious, setCanScrollPrevious] = useState(false);
-  const [canScrollNext, setCanScrollNext] = useState(false);
-  const sliderRef = useRef(null);
 
-  const sectionData = useMemo(() => data || section?.data || {}, [data, section?.data]);
-  const displayTitle =
-    propTitle ||
-    sectionData.title ||
-    section?.name ||
-    "Everyday Essentials, Head to toe Collection.";
+  const [categories, setCategories] = useState([]);
+  const [slider, setSlider] = useState(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get("/categories");
+
+        const list = res.data?.categories || [];
+
+        const filtered = list.filter(
+          (category) =>
+            category.isActive === true &&
+            category.image &&
+            String(category.subcategory || "")
+              .trim()
+              .toLowerCase() === "everyday essentials",
+        );
+
+        setCategories(filtered);
+      } catch (error) {
+        console.error("Everyday Essentials Error:", error);
+        setCategories([]);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const getImageUrl = (image) => {
     if (!image) return "";
-    if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
+
+    if (image.startsWith("http://") || image.startsWith("https://")) {
       return image;
     }
-    const apiBaseUrl = api.defaults.baseURL || "";
-    const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
-    if (image.startsWith("/uploads/")) return `${backendUrl}${image}`;
-    if (image.startsWith("uploads/")) return `${backendUrl}/${image}`;
-    return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
+
+    const backendUrl = (api.defaults.baseURL || "").replace(/\/api\/?$/, "");
+
+    return `${backendUrl}/${image.replace(/^\/+/, "")}`;
   };
 
-  const fetchSection = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/pages/slug/home");
-      const pageSections = response.data?.page?.sections || [];
+  const handleClick = (category) => {
+    if (!category.slug) return;
 
-      const found = pageSections.find(
-        (item) =>
-          item.type === "everyday-essentials" ||
-          item.name?.includes("Essentials") ||
-          item.name?.includes("Head to toe") ||
-          item.name?.includes("Everyday") ||
-          item.name === "Everyday Essentials, Head to toe Collection."
-      );
+    navigate(`/category/${category.slug}`, {
+      state: {
+        categoryId: category._id,
+        categoryName: category.name,
+        subcategory: category.subcategory || "",
+      },
+    });
+  };
 
-      const raw =
-        found?.data?.items ||
-        found?.data?.categories ||
-        found?.items ||
-        found?.categories ||
-        [];
-      const valid = raw.filter(
-        (c) => c && typeof c === "object" && (c.name || c.image)
-      );
+  const next = () => {
+    if (!slider) return;
 
-      if (valid.length > 0) {
-        setDataItems(valid);
-      } else {
-        const catRes = await api.get("/categories");
-        setDataItems(catRes.data.categories || []);
-      }
-    } catch (error) {
-      console.error("Everyday Essentials Error:", error);
-      try {
-        const catRes = await api.get("/categories");
-        setDataItems(catRes.data.categories || []);
-      } catch {
-        setDataItems([]);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    slider.scrollBy({
+      left: slider.clientWidth / 2,
+      behavior: "smooth",
+    });
+  };
 
-  useEffect(() => {
-    const directItems =
-      sectionData.items?.length
-        ? sectionData.items
-        : sectionData.categories?.length
-        ? sectionData.categories
-        : customItems?.length
-        ? customItems
-        : section?.items?.length
-        ? section.items
-        : customCategories?.length
-        ? customCategories
-        : section?.categories;
+  const previous = () => {
+    if (!slider) return;
 
-    const valid = (directItems || []).filter(
-      (c) => c && typeof c === "object" && (c.name || c.image)
-    );
+    slider.scrollBy({
+      left: -slider.clientWidth / 2,
+      behavior: "smooth",
+    });
+  };
 
-    if (valid.length > 0) {
-      setDataItems(valid);
-      setLoading(false);
-      return;
-    }
-
-    fetchSection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionData, customCategories, customItems, section, fetchSection]);
-
-  useEffect(() => {
-    const slider = sliderRef.current;
-    if (!slider) return undefined;
-
-    const updateArrowState = () => {
-      const maxScrollLeft = slider.scrollWidth - slider.clientWidth;
-      setCanScrollPrevious(slider.scrollLeft > 1);
-      setCanScrollNext(maxScrollLeft - slider.scrollLeft > 1);
-    };
-
-    updateArrowState();
-    slider.addEventListener("scroll", updateArrowState, { passive: true });
-    window.addEventListener("resize", updateArrowState);
-
-    return () => {
-      slider.removeEventListener("scroll", updateArrowState);
-      window.removeEventListener("resize", updateArrowState);
-    };
-  }, [dataItems]);
-
-  useEffect(() => {
-    if (sectionData.items?.length || customItems?.length || customCategories?.length) {
-      return;
-    }
-
-    const handleHomepageUpdate = (updateData) => {
-      const events = [
-        "section_created",
-        "section_updated",
-        "section_deleted",
-        "section_reordered",
-        "category_created",
-        "category_updated",
-        "category_deleted",
-        "category_reordered",
-      ];
-      if (events.includes(updateData?.type)) {
-        fetchSection();
-      }
-    };
-
-    socket.on("homepage_updated", handleHomepageUpdate);
-    return () => {
-      socket.off("homepage_updated", handleHomepageUpdate);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sectionData, customCategories, customItems, fetchSection]);
-
-  if (loading || !dataItems.length) {
+  if (!categories.length) {
     return null;
   }
 
-  const handleNext = () => {
-    const slider = sliderRef.current;
-    if (!slider) return;
-
-    const card = slider.querySelector(".everyday-essentials-card");
-    const gap = parseFloat(getComputedStyle(slider).columnGap || "0");
-    slider.scrollBy({
-      left: (card?.getBoundingClientRect().width || slider.clientWidth / 4) + gap,
-      behavior: "smooth",
-    });
-  };
-
-  const handlePrevious = () => {
-    const slider = sliderRef.current;
-    if (!slider) return;
-
-    const card = slider.querySelector(".everyday-essentials-card");
-    const gap = parseFloat(getComputedStyle(slider).columnGap || "0");
-    slider.scrollBy({
-      left: -((card?.getBoundingClientRect().width || slider.clientWidth / 4) + gap),
-      behavior: "smooth",
-    });
-  };
-
-  const variantClass = style?.variant ? `variant-${style.variant}` : "";
-  const isMoreAccessories = displayTitle === "More Accessories";
-  const isRealLifeSolves = displayTitle === "Real-Life Solves";
-
   return (
-    <section
-      className={`everyday-essentials-section ${variantClass} ${
-        isMoreAccessories ? "more-accessories-section" : ""
-      } ${isRealLifeSolves ? "real-life-solves-section" : ""}
-      }`}
-    >
+    <section className="everyday-essentials-section">
       <div className="everyday-essentials-container">
-        {displayTitle && (
-          <h2 className="everyday-essentials-title">{displayTitle}</h2>
-        )}
+        <h2 className="everyday-essentials-title">
+          Everyday Essentials, Head to toe Collection.
+        </h2>
 
-        <div className="everyday-essentials-grid" ref={sliderRef}>
-          {dataItems.map((item, index) => {
-            const slug =
-              item.slug ||
-              item.name?.toLowerCase().replace(/\s+/g, "-") ||
-              item._id;
-
-            let resolvedSlug = slug;
-            let resolvedName = item.name;
-            if (index === 0 && (!slug || slug === "1" || slug === "t-shirt")) {
-              resolvedSlug = "t-shirts";
-              resolvedName = "T-Shirts";
-            } else if (index === 1 && (!slug || slug === "2")) {
-              resolvedSlug = "shorts";
-              resolvedName = "Shorts";
-            } else if (index === 2 && (!slug || slug === "3")) {
-              resolvedSlug = "pants";
-              resolvedName = "Pants & Trackpants";
-            } else if (index === 3 && (!slug || slug === "4")) {
-              resolvedSlug = "shoes";
-              resolvedName = "Shoes";
-            }
-
-            const imageUrl = getImageUrl(item.image);
-            const targetLink =
-              item.link && item.link !== "#"
-                ? item.link
-                : `/category/${encodeURIComponent(resolvedSlug)}`;
-
-            const isWide =
-              (dataItems.length === 6 && index >= 4) ||
-              dataItems.length === 2 ||
-              item.isWide ||
-              item.wide;
-
-            return (
-              <div
-                className={`everyday-essentials-card ${
-                  isWide ? "card-wide" : "card-standard"
-                }`}
-                key={item._id || index}
-                onClick={() =>
-                  navigate(targetLink, {
-                    state: {
-                      categoryId: item._id,
-                      categoryName: resolvedName,
-                    },
-                  })
-                }
-                style={{ cursor: "pointer" }}
-              >
-                {imageUrl ? (
-                  <img
-                    src={imageUrl}
-                    alt={item.name || "Collection item"}
-                    className="everyday-essentials-image"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="everyday-essentials-no-image">No Image</div>
-                )}
-                {!isMoreAccessories && !isRealLifeSolves && (
-                  <p className="everyday-essentials-card-name">{resolvedName}</p>
-                )}
-              </div>
-            );
-          })}
+        <div className="everyday-essentials-grid" ref={setSlider}>
+          {categories.map((category) => (
+            <div
+              key={category._id}
+              className="everyday-essentials-card"
+              onClick={() => handleClick(category)}
+            >
+              <img
+                src={getImageUrl(category.image)}
+                alt={category.name || "Everyday Essentials"}
+                className="everyday-essentials-image"
+                loading="lazy"
+              />
+            </div>
+          ))}
         </div>
-        {dataItems.length > 4 && (
+
+        {categories.length > 4 && (
           <>
             <button
               type="button"
               className="everyday-essentials-arrow everyday-essentials-previous"
-              onClick={handlePrevious}
-              disabled={!canScrollPrevious}
-              aria-label="Show previous collection"
+              onClick={previous}
+              aria-label="Previous"
             >
               <MdChevronLeft size={26} />
             </button>
+
             <button
               type="button"
               className="everyday-essentials-arrow everyday-essentials-next"
-              onClick={handleNext}
-              disabled={!canScrollNext}
-              aria-label="Show next collection"
+              onClick={next}
+              aria-label="Next"
             >
               <MdChevronRight size={26} />
             </button>

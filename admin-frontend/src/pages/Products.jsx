@@ -528,12 +528,19 @@ const Products = () => {
                         </td>
 
                         <td>
-                          {Array.isArray(product.categories) &&
-                          product.categories.length > 0
-                            ? product.categories
-                                .map((c) => c.name || c)
-                                .join(", ")
-                            : product.category?.name || "-"}
+                          <div>
+                            {Array.isArray(product.categories) &&
+                            product.categories.length > 0
+                              ? product.categories
+                                  .map((c) => c.name || c)
+                                  .join(", ")
+                              : product.category?.name || "-"}
+                          </div>
+                          {product.subcategory && (
+                            <small style={{ color: "#777", display: "block", fontSize: "11px", marginTop: "2px" }}>
+                              {product.subcategory}
+                            </small>
+                          )}
                         </td>
 
                         <td>
@@ -949,6 +956,18 @@ const Products = () => {
                         : viewProduct.category?.name || "-"}
                     </strong>
                   </div>
+
+                  {viewProduct.subcategory && (
+                    <div>
+                      <span>
+                        Subcategory
+                      </span>
+
+                      <strong>
+                        {viewProduct.subcategory}
+                      </strong>
+                    </div>
+                  )}
 
                   <div>
                     <span>

@@ -14,6 +14,27 @@
   object-position: center;
 }
 
+.coupon-banner-clickable {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.coupon-banner-clickable.is-clickable {
+  cursor: pointer;
+}
+
+.coupon-banner-clickable.has-multiple {
+  gap: 12px;
+}
+
+.coupon-banner-clickable.has-multiple .coupon-banner-image {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
 /* Variant styles if configured */
 .coupon-banner.variant-compact {
   margin: 10px 0;
@@ -76,6 +97,10 @@
   .coupon-banner {
     width: 100%;
     margin: 14px 0;
+  }
+
+  .coupon-banner-clickable.has-multiple {
+    gap: 8px;
   }
 
   .coupon-banner-image {

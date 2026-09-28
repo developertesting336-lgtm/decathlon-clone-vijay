@@ -38,6 +38,40 @@ const Categories = () => {
     name: "",
   });
 
+  const [togglingId, setTogglingId] = useState(null);
+
+  const handleToggleActive = async (category) => {
+    const currentActive = category.isActive !== false;
+    const newActive = !currentActive;
+
+    setCategories((prev) =>
+      prev.map((c) =>
+        c._id === category._id ? { ...c, isActive: newActive } : c,
+      ),
+    );
+
+    try {
+      setTogglingId(category._id);
+      await api.put(`/categories/${category._id}`, {
+        isActive: newActive,
+      });
+      toast.success(
+        `Category '${category.name}' ${newActive ? "activated" : "deactivated"}`,
+      );
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to update category status",
+      );
+      setCategories((prev) =>
+        prev.map((c) =>
+          c._id === category._id ? { ...c, isActive: currentActive } : c,
+        ),
+      );
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
   const getImageUrl = (image) => {
     if (!image) {
       return "";
@@ -106,8 +140,10 @@ const Categories = () => {
       return categories;
     }
 
-    return categories.filter((category) =>
-      category.name?.toLowerCase().includes(value),
+    return categories.filter(
+      (category) =>
+        category.name?.toLowerCase().includes(value) ||
+        category.subcategory?.toLowerCase().includes(value),
     );
   }, [categories, search]);
 
@@ -243,6 +279,10 @@ const Categories = () => {
 
                 <th>Category Name</th>
 
+                <th>Subcategory</th>
+
+                <th>Status</th>
+
                 <th>Products Count</th>
 
                 <th>Actions</th>
@@ -252,7 +292,7 @@ const Categories = () => {
             <tbody>
               {paginatedCategories.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="empty-category">
+                  <td colSpan="7" className="empty-category">
                     {search
                       ? "No categories match your search"
                       : "No categories found"}
@@ -310,6 +350,41 @@ const Categories = () => {
 
                           <span>Category</span>
                         </div>
+                      </td>
+
+                      <td>
+                        {category.subcategory ? (
+                          <span className="category-subcategory-badge">
+                            {category.subcategory}
+                          </span>
+                        ) : (
+                          <span className="category-no-subcategory">—</span>
+                        )}
+                      </td>
+
+                      <td>
+                        <button
+                          type="button"
+                          className={`category-status-btn ${
+                            category.isActive !== false
+                              ? "status-active"
+                              : "status-inactive"
+                          }`}
+                          onClick={() => handleToggleActive(category)}
+                          disabled={togglingId === category._id}
+                          title={`Click to ${
+                            category.isActive !== false
+                              ? "deactivate"
+                              : "activate"
+                          } category`}
+                        >
+                          <span className="category-status-dot" />
+                          <span>
+                            {category.isActive !== false
+                              ? "Active"
+                              : "Inactive"}
+                          </span>
+                        </button>
                       </td>
 
                       <td>

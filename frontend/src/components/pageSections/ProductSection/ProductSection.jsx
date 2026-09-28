@@ -14,13 +14,9 @@ import socket from "../../../socket/socket";
 import ProductSizeModal from "../../ProductSizeModal";
 
 const ProductSection = ({
-  section,
-  data,
-  style,
   customProducts,
   title,
   subtitle,
-  pageSlug,
 }) => {
   const { isWishlisted, handleToggle } = useWishlist();
   const [products, setProducts] = useState([]);
@@ -35,23 +31,9 @@ const ProductSection = ({
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
 
-  const sectionData = data || section?.data || {};
-  const sectionStyle = style || section?.style || {};
-
   // Extract subtitle and title smartly
-  const rawTitle =
-    title !== undefined
-      ? title
-      : sectionData.title !== undefined && sectionData.title !== ""
-      ? sectionData.title
-      : section?.name || "Workout Checklist";
-
-  const rawSubtitle =
-    subtitle !== undefined
-      ? subtitle
-      : sectionData.subtitle !== undefined
-      ? sectionData.subtitle
-      : "";
+  const rawTitle = title !== undefined ? title : "Workout Checklist";
+  const rawSubtitle = subtitle !== undefined ? subtitle : "";
 
   let displaySubtitle = rawSubtitle;
   let displayTitle = rawTitle;
@@ -119,88 +101,126 @@ const ProductSection = ({
     return { brand, name };
   };
 
-  const fetchSection = useCallback(async () => {
+  const isWorkoutChecklist = (product) => {
+    if (!product || typeof product !== "object") return false;
+
+    const subcategory =
+      product.subcategory ||
+      product.subCategory ||
+      product.sub_category;
+
+    if (Array.isArray(subcategory)) {
+      if (
+        subcategory.some((item) =>
+          String(item?.name || item?.title || item?.slug || item || "")
+            .trim()
+            .toLowerCase() === "workout checklist"
+        )
+      ) {
+        return true;
+      }
+    } else if (subcategory) {
+      const subName = String(
+        subcategory?.name ||
+        subcategory?.title ||
+        subcategory?.slug ||
+        subcategory ||
+        ""
+      )
+        .trim()
+        .toLowerCase();
+
+      if (subName === "workout checklist") {
+        return true;
+      }
+    }
+
+    // Also safely check if populated category object or categories array contains subcategory
+    if (product.category && typeof product.category === "object") {
+      const catSub =
+        product.category.subcategory ||
+        product.category.subCategory ||
+        product.category.sub_category;
+      const catSubName = String(
+        catSub?.name || catSub?.title || catSub?.slug || catSub || ""
+      )
+        .trim()
+        .toLowerCase();
+      if (catSubName === "workout checklist") {
+        return true;
+      }
+    }
+
+    if (Array.isArray(product.categories)) {
+      for (const cat of product.categories) {
+        if (cat && typeof cat === "object") {
+          const catSub =
+            cat.subcategory || cat.subCategory || cat.sub_category;
+          const catSubName = String(
+            catSub?.name || catSub?.title || catSub?.slug || catSub || ""
+          )
+            .trim()
+            .toLowerCase();
+          if (catSubName === "workout checklist") {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  };
+
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const targetSlug = pageSlug || "home";
-      const response = await api.get(`/pages/slug/${targetSlug}`);
-      const pageSections = response.data?.page?.sections || [];
-
-      const found =
-        (section?._id &&
-          pageSections.find(
-            (item) => String(item._id) === String(section._id),
-          )) ||
-        pageSections.find(
-          (item) =>
-            item.type === "product-section" ||
-            item.name === "Product Section" ||
-            item.name === "ProductSection" ||
-            (item.name && item.name.toLowerCase().includes("checklist")) ||
-            item.type === "product",
+      let fetchedList = [];
+      try {
+        const prodRes = await api.get(
+          "/products?subcategory=Workout Checklist&limit=50"
         );
+        fetchedList = prodRes.data?.products || [];
+      } catch {
+        fetchedList = [];
+      }
 
-      const disabledIds = new Set(
-        (found?.data?.disabledItemIds || found?.disabledItemIds || []).map((id) =>
-          String(id),
-        ),
-      );
+      if (!fetchedList.length) {
+        try {
+          const fallbackRes = await api.get("/products?limit=100");
+          fetchedList = fallbackRes.data?.products || [];
+        } catch {
+          fetchedList = [];
+        }
+      }
 
-      const rawProds = found?.data?.products || found?.products || [];
-      const validProds = rawProds.filter(
+      const workoutProducts = fetchedList.filter(
         (p) =>
           p &&
           typeof p === "object" &&
-          p.name &&
           p.isActive !== false &&
-          !disabledIds.has(String(p._id)),
+          isWorkoutChecklist(p),
       );
 
-      if (validProds.length > 0) {
-        setProducts(validProds);
-      } else {
-        const prodRes = await api.get("/products?limit=12");
-        setProducts(prodRes.data.products || []);
-      }
+      setProducts(workoutProducts);
       setCurrentIndex(0);
     } catch (error) {
       console.error("Product Section Error:", error);
-      try {
-        const prodRes = await api.get("/products?limit=12");
-        setProducts(prodRes.data.products || []);
-      } catch {
-        setProducts([]);
-      }
+      setProducts([]);
       setCurrentIndex(0);
     } finally {
       setLoading(false);
     }
-  }, [pageSlug, section?._id]);
+  }, []);
 
   useEffect(() => {
-    const rawProds =
-      customProducts ||
-      sectionData.products ||
-      section?.products ||
-      section?.items;
-
-    const disabledIds = new Set(
-      (
-        sectionData?.disabledItemIds ||
-        section?.data?.disabledItemIds ||
-        section?.disabledItemIds ||
-        []
-      ).map((id) => String(id)),
-    );
-
-    if (rawProds !== undefined && Array.isArray(rawProds)) {
-      const valid = rawProds.filter(
+    if (customProducts !== undefined && Array.isArray(customProducts)) {
+      const valid = customProducts.filter(
         (p) =>
           p &&
           typeof p === "object" &&
           (p.name || p.title) &&
           p.isActive !== false &&
-          !disabledIds.has(String(p._id)),
+          isWorkoutChecklist(p),
       );
       setProducts(valid);
       setCurrentIndex(0);
@@ -208,41 +228,29 @@ const ProductSection = ({
       return;
     }
 
-    fetchSection();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    customProducts,
-    sectionData.products,
-    sectionData?.disabledItemIds,
-    section,
-    fetchSection,
-  ]);
+    fetchProducts();
+  }, [customProducts, fetchProducts]);
 
   useEffect(() => {
-    if (customProducts?.length || sectionData.products?.length || section?.products?.length) {
-      return;
-    }
-
-    const handleHomepageUpdate = (updateData) => {
-      const events = [
-        "section_created",
-        "section_updated",
-        "section_deleted",
-        "section_reordered",
-        "product_created",
-        "product_updated",
-        "product_deleted",
-      ];
-      if (events.includes(updateData?.type)) {
-        fetchSection();
+    const handleProductUpdate = (updateData) => {
+      const type = typeof updateData === "string" ? updateData : updateData?.type;
+      if (type && type.startsWith("product_")) {
+        fetchProducts();
       }
     };
 
-    socket.on("homepage_updated", handleHomepageUpdate);
+    socket.on("product_created", fetchProducts);
+    socket.on("product_updated", fetchProducts);
+    socket.on("product_deleted", fetchProducts);
+    socket.on("homepage_updated", handleProductUpdate);
+
     return () => {
-      socket.off("homepage_updated", handleHomepageUpdate);
+      socket.off("product_created", fetchProducts);
+      socket.off("product_updated", fetchProducts);
+      socket.off("product_deleted", fetchProducts);
+      socket.off("homepage_updated", handleProductUpdate);
     };
-  }, [customProducts, sectionData.products, section, fetchSection]);
+  }, [fetchProducts]);
 
   // TOUCH SWIPE FOR MOBILE
   const [touchStartX, setTouchStartX] = useState(null);
@@ -385,11 +393,10 @@ const ProductSection = ({
   const trackWidth = (products.length / visibleProducts) * 100;
   const cardWidth = 100 / products.length;
   const translateAmount = currentIndex * cardWidth;
-  const variantClass = sectionStyle?.variant ? `variant-${sectionStyle.variant}` : "";
 
   return (
     <>
-      <section className={`product-section ${variantClass}`}>
+      <section className="product-section">
         <div className="product-section__sidebar product-section-left">
           <div className="product-section__header-text">
             {displaySubtitle && (

@@ -15,6 +15,8 @@ const AddCategory = () => {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
+  const [subcategory, setSubcategory] = useState("");
+  const [isActive, setIsActive] = useState(true);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
 
@@ -55,6 +57,8 @@ const AddCategory = () => {
       const data = new FormData();
 
       data.append("name", name.trim());
+      data.append("subcategory", subcategory.trim());
+      data.append("isActive", isActive);
 
       if (image) {
         data.append("image", image);
@@ -67,6 +71,8 @@ const AddCategory = () => {
       );
 
       setName("");
+      setSubcategory("");
+      setIsActive(true);
       setImage(null);
       setPreview("");
 
@@ -143,6 +149,25 @@ const AddCategory = () => {
 
           </div>
 
+          {/* SUBCATEGORY */}
+
+          <div className="category-form-group">
+
+            <label>
+              Subcategory
+            </label>
+
+            <input
+              type="text"
+              value={subcategory}
+              onChange={(e) =>
+                setSubcategory(e.target.value)
+              }
+              placeholder="Enter subcategory name"
+            />
+
+          </div>
+
           {/* IMAGE */}
 
           <div className="category-form-group">
@@ -199,6 +224,30 @@ const AddCategory = () => {
 
             </div>
           )}
+
+          {/* ACTIVE STATUS */}
+
+          <div className="category-active-row">
+
+            <div>
+              <label className="category-active-label">
+                Active Category
+              </label>
+              <p className="category-active-hint">
+                Enable or disable this category on storefront
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className={isActive ? "category-switch active" : "category-switch"}
+              onClick={() => setIsActive(!isActive)}
+              title={isActive ? "Category is active" : "Category is inactive"}
+            >
+              <span />
+            </button>
+
+          </div>
 
         </section>
 

@@ -8,12 +8,27 @@ const bannerSchema = new mongoose.Schema(
       default: "",
     },
 
-    image: {
+    subcategory: {
       type: String,
-      required: true,
+      trim: true,
+      default: "",
     },
 
-    
+    type: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    image: {
+      type: String,
+      default: "",
+    },
+
+    images: {
+      type: [String],
+      default: [],
+    },
 
     link: {
       type: String,
@@ -30,9 +45,15 @@ const bannerSchema = new mongoose.Schema(
   }
 );
 
-const Banner = mongoose.model(
-  "Banner",
-  bannerSchema
-);
+// Pre-save hook for backward compatibility between single image and images array
+bannerSchema.pre("save", function () {
+  if (Array.isArray(this.images) && this.images.length > 0) {
+    this.image = this.images[0];
+  } else if (this.image) {
+    this.images = [this.image];
+  }
+});
+
+const Banner = mongoose.model("Banner", bannerSchema);
 
 export default Banner;

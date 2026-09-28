@@ -154,9 +154,9 @@ const Banners = () => {
               banners.map((banner) => (
                 <div className="banner-card" key={banner._id}>
                   <div className="banner-image-wrapper">
-                    {banner.image ? (
+                    {banner.image || banner.images?.[0] ? (
                       <img
-                        src={getImageUrl(banner.image)}
+                        src={getImageUrl(banner.images?.[0] || banner.image)}
                         alt={banner.title || getBannerType(banner.type)}
                         onError={(e) => {
                           e.currentTarget.style.display = "none";
@@ -176,11 +176,17 @@ const Banners = () => {
                     <div
                       className="banner-no-image"
                       style={{
-                        display: banner.image ? "none" : "flex",
+                        display: banner.image || banner.images?.[0] ? "none" : "flex",
                       }}
                     >
                       No Image
                     </div>
+
+                    {banner.images && banner.images.length > 1 && (
+                      <span className="banner-count-badge">
+                        {banner.images.length} Images
+                      </span>
+                    )}
 
                     <span
                       className={
@@ -197,7 +203,23 @@ const Banners = () => {
                     <div className="banner-card-info">
                       <h3>{banner.title || "Untitled Banner"}</h3>
 
-                      <span>{getBannerType(banner.type)}</span>
+                      <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "4px" }}>
+                        <span>{getBannerType(banner.type)}</span>
+                        {banner.subcategory && (
+                          <span
+                            style={{
+                              background: "#e0f2fe",
+                              color: "#0369a1",
+                              padding: "2px 8px",
+                              borderRadius: "4px",
+                              fontSize: "11px",
+                              fontWeight: "600",
+                            }}
+                          >
+                            {banner.subcategory}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <div className="banner-actions">
@@ -252,35 +274,71 @@ const Banners = () => {
               <MdClose />
             </button>
 
-            <div className="banner-view-image">
-              {viewBanner.image ? (
-                <img
-                  src={getImageUrl(viewBanner.image)}
-                  alt={viewBanner.title || "Banner"}
-                />
-              ) : (
-                <div className="banner-no-image">No Image</div>
-              )}
-            </div>
+            {/* If multiple images, show all previews */}
+            {viewBanner.images && viewBanner.images.length > 1 ? (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+                  gap: "10px",
+                  maxHeight: "260px",
+                  overflowY: "auto",
+                  padding: "10px 0",
+                }}
+              >
+                {viewBanner.images.map((imgUrl, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      borderRadius: "6px",
+                      overflow: "hidden",
+                      border: "1px solid #ddd",
+                      aspectRatio: "16/9",
+                    }}
+                  >
+                    <img
+                      src={getImageUrl(imgUrl)}
+                      alt={`Banner ${i + 1}`}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="banner-view-image">
+                {viewBanner.image || viewBanner.images?.[0] ? (
+                  <img
+                    src={getImageUrl(viewBanner.images?.[0] || viewBanner.image)}
+                    alt={viewBanner.title || "Banner"}
+                  />
+                ) : (
+                  <div className="banner-no-image">No Image</div>
+                )}
+              </div>
+            )}
 
             <div className="banner-view-content">
               <h2>{viewBanner.title || "Untitled Banner"}</h2>
 
+              {viewBanner.subcategory && (
+                <div className="banner-view-row">
+                  <span>Subcategory</span>
+                  <strong>{viewBanner.subcategory}</strong>
+                </div>
+              )}
+
               <div className="banner-view-row">
                 <span>Type</span>
-
                 <strong>{getBannerType(viewBanner.type)}</strong>
               </div>
 
               <div className="banner-view-row">
                 <span>Status</span>
-
                 <strong>{viewBanner.isActive ? "Active" : "Inactive"}</strong>
               </div>
 
               <div className="banner-view-row">
                 <span>Link</span>
-
                 <strong>{viewBanner.link || "-"}</strong>
               </div>
             </div>

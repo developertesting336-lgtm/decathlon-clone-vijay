@@ -236,6 +236,7 @@ const createProduct = async (req, res) => {
       onSale,
       category,
       categories,
+      subcategory,
       stock,
       brand,
       gender,
@@ -256,6 +257,7 @@ const createProduct = async (req, res) => {
     const pReview = toScalar(review, 0);
     const pOnSale = toScalar(onSale);
     const isOnSale = pOnSale === true || pOnSale === "true";
+    const pSubcategory = toScalar(subcategory, "");
     const pStock = toScalar(stock, 0);
     const pBrand = toScalar(brand, "Decathlon");
     const pGender = toScalar(gender, "Unisex");
@@ -303,6 +305,7 @@ const createProduct = async (req, res) => {
       onSale: isOnSale,
       category: categoryList[0],
       categories: categoryList,
+      subcategory: String(pSubcategory || "").trim(),
       images,
       stock: Number(pStock || 0),
       brand: String(pBrand || "Decathlon").trim(),
@@ -353,6 +356,7 @@ const getProducts = async (req, res) => {
     const {
       search,
       category,
+      subcategory,
       minPrice,
       maxPrice,
       brand,
@@ -654,6 +658,17 @@ const getProducts = async (req, res) => {
     }
 
     /*
+    SUBCATEGORY
+    */
+
+    if (subcategory) {
+      filter.subcategory = {
+        $regex: `^${escapeRegex(String(subcategory).trim())}$`,
+        $options: "i",
+      };
+    }
+
+    /*
     BRAND
     */
 
@@ -901,6 +916,7 @@ const updateProduct = async (req, res) => {
       onSale,
       category,
       categories,
+      subcategory,
       stock,
       brand,
       gender,
@@ -955,6 +971,10 @@ const updateProduct = async (req, res) => {
         product.categories = catList;
         product.category = catList[0];
       }
+    }
+
+    if (subcategory !== undefined) {
+      product.subcategory = String(toScalar(subcategory, "")).trim();
     }
 
     if (stock !== undefined) {

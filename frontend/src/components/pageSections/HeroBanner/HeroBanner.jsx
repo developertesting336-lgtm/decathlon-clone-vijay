@@ -6,10 +6,7 @@ import api from "../../../api/axios";
 import socket from "../../../socket/socket";
 
 const HeroBanner = ({
-  section,
-  data,
   customBanners,
-  style,
   pageSlug,
   getImageUrl: propGetImageUrl,
   navigate: propNavigate,
@@ -55,38 +52,48 @@ const HeroBanner = ({
     [propGetImageUrl]
   );
 
-  const fetchSection = useCallback(async () => {
+  const fetchBanners = useCallback(async () => {
     try {
       setLoading(true);
-      const targetSlug = pageSlug || "hiking-trekking";
-      const response = await api.get(`/pages/slug/${targetSlug}`);
-      const pageSections = response.data?.page?.sections || [];
-
-      const found = pageSections.find(
-        (item) =>
-          item.type === "hero-banner" ||
-          item.name === "hero-banner" ||
-          item.type === "promo-banner" ||
-          (item.name && item.name.toLowerCase().includes("banner"))
+      const res = await api.get("/banners");
+      const allBanners = res.data?.banners || [];
+      const activeBanners = allBanners.filter(
+        (b) => b && b.isActive !== false && (b.image || b.images?.length)
       );
 
-      const disabledIds = new Set(
-        (found?.data?.disabledItemIds || found?.disabledItemIds || []).map((id) =>
-          String(id)
+      const slugKey = (pageSlug || "").toLowerCase().replace(/[-_\s]+/g, "");
+
+      let matched = activeBanners.filter((b) => {
+        const title = (b.title || "").toLowerCase().replace(/[-_\s]+/g, "");
+        const sub = (b.subcategory || "").toLowerCase().replace(/[-_\s]+/g, "");
+        const type = (b.type || "").toLowerCase().replace(/[-_\s]+/g, "");
+
+        if (slugKey.includes("monsoon") && (title.includes("monsoon") || sub.includes("monsoon"))) return true;
+        if (slugKey.includes("activewear") && (title.includes("activewear") || sub.includes("activewear"))) return true;
+        if (
+          (slugKey.includes("cycling") || slugKey.includes("cycle")) &&
+          (title.includes("cycle") || sub.includes("cycle") || title.includes("cycling") || sub.includes("cycling"))
         )
-      );
+          return true;
+        if (
+          (slugKey.includes("hiking") || slugKey.includes("trekking")) &&
+          (title.includes("hiking") || title.includes("trekking") || sub.includes("hiking") || sub.includes("trekking"))
+        )
+          return true;
+        if ((slugKey.includes("shoe") || slugKey.includes("footwear")) && (title.includes("shoe") || sub.includes("shoe")))
+          return true;
+        if (slugKey.includes("bag") && (title.includes("bag") || sub.includes("bag"))) return true;
+        if (slugKey.includes("accessories") && (title.includes("accessories") || sub.includes("accessories"))) return true;
+        if (slugKey.includes("workout") && (title.includes("workout") || sub.includes("workout"))) return true;
 
-      const rawBanners = found?.data?.banners || found?.banners || [];
-      const validBanners = rawBanners.filter(
-        (b) =>
-          b &&
-          typeof b === "object" &&
-          (b.image || b.title) &&
-          b.isActive !== false &&
-          !disabledIds.has(String(b._id))
-      );
+        return slugKey && (title.includes(slugKey) || sub.includes(slugKey) || type.includes(slugKey));
+      });
 
-      setBanners(validBanners);
+      if (matched.length === 0 && activeBanners.length > 0) {
+        matched = activeBanners.slice(0, 5);
+      }
+
+      setBanners(matched);
       setCurrentBanner(0);
       setIsTransitioning(true);
     } catch (error) {
@@ -99,32 +106,9 @@ const HeroBanner = ({
   }, [pageSlug]);
 
   useEffect(() => {
-    const rawBanners =
-      data?.banners?.length
-        ? data.banners
-        : section?.data?.banners?.length
-        ? section.data.banners
-        : section?.banners?.length
-        ? section.banners
-        : customBanners;
-
-    const disabledIds = new Set(
-      (
-        data?.disabledItemIds ||
-        section?.data?.disabledItemIds ||
-        section?.disabledItemIds ||
-        []
-      ).map((id) => String(id))
-    );
-
-    if (rawBanners && Array.isArray(rawBanners) && rawBanners.length > 0) {
-      const valid = rawBanners.filter(
-        (b) =>
-          b &&
-          typeof b === "object" &&
-          (b.image || b.title) &&
-          b.isActive !== false &&
-          !disabledIds.has(String(b._id))
+    if (customBanners && Array.isArray(customBanners) && customBanners.length > 0) {
+      const valid = customBanners.filter(
+        (b) => b && typeof b === "object" && (b.image || b.title) && b.isActive !== false
       );
       if (valid.length > 0) {
         setBanners(valid);
@@ -134,53 +118,29 @@ const HeroBanner = ({
       }
     }
 
-    if (data?.image || section?.data?.image) {
-      setBanners([
-        {
-          image: data?.image || section.data.image,
-          link: data?.link || "/",
-          title: data?.title || section?.data?.title || "Banner",
-        },
-      ]);
-      setCurrentBanner(0);
-      setLoading(false);
-      return;
-    }
-
-    fetchSection();
-  }, [data, section, customBanners, fetchSection]);
+    fetchBanners();
+  }, [customBanners, fetchBanners]);
 
   useEffect(() => {
-    if (
-      data?.banners?.length ||
-      section?.data?.banners?.length ||
-      customBanners?.length
-    ) {
-      return;
-    }
-
-    const handlePageUpdate = (updateData) => {
-      const events = [
-        "section_created",
-        "section_updated",
-        "section_deleted",
-        "section_reordered",
-        "banner_created",
-        "banner_updated",
-        "banner_deleted",
-      ];
-      if (events.includes(updateData?.type)) {
-        fetchSection();
+    const handleBannerUpdate = (updateData) => {
+      const type = typeof updateData === "string" ? updateData : updateData?.type;
+      if (!type || type.startsWith("banner_") || type === "banners_updated") {
+        fetchBanners();
       }
     };
 
-    socket.on("homepage_updated", handlePageUpdate);
-    socket.on("page_updated", handlePageUpdate);
+    socket.on("banner_created", fetchBanners);
+    socket.on("banner_updated", fetchBanners);
+    socket.on("banner_deleted", fetchBanners);
+    socket.on("homepage_updated", handleBannerUpdate);
+
     return () => {
-      socket.off("homepage_updated", handlePageUpdate);
-      socket.off("page_updated", handlePageUpdate);
+      socket.off("banner_created", fetchBanners);
+      socket.off("banner_updated", fetchBanners);
+      socket.off("banner_deleted", fetchBanners);
+      socket.off("homepage_updated", handleBannerUpdate);
     };
-  }, [data, section, customBanners, fetchSection]);
+  }, [fetchBanners]);
 
   // Clone first banner at end for seamless looping transition
   const sliderBanners = banners.length > 1 ? [...banners, banners[0]] : banners;
@@ -280,11 +240,10 @@ const HeroBanner = ({
   }
 
   const activeDot = currentBanner === banners.length ? 0 : currentBanner;
-  const variantClass = style?.variant ? `variant-${style.variant}` : "";
 
   return (
     <section
-      className={`hero-banner-container ${variantClass}`}
+      className="hero-banner-container"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}

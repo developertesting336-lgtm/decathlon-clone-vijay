@@ -5,9 +5,6 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 
 import "./App.css";
 
-import Navbar from "./components/Navbar";
-import CategoryNav from "./components/pageSections/CategoryNav/CategoryNav";
-
 import Home from "./pages/Home";
 import UserLogin from "./pages/UserLogin";
 import UserRegister from "./pages/UserRegister";
@@ -24,7 +21,6 @@ import ProductDetail from "./pages/ProductDetail";
 import CategoryRoutes from "./routes/categoryRoutes";
 import ScrollToTop from "./components/ScrollToTop";
 import AiChatbot from "./components/chat/AiChatbot";
-import SectionPreview from "./pages/SectionPreview";
 import {
   isTokenExpired,
   getTokenRemainingTime,
@@ -98,26 +94,8 @@ function App() {
         <ScrollToTop />
         <div className="App">
           <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <Navbar />
-                  <CategoryNav />
-                  <Home />
-                </>
-              }
-            />
-            <Route
-              path="/home"
-              element={
-                <>
-                  <Navbar />
-                  <CategoryNav />
-                  <Home />
-                </>
-              }
-            />
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
 
             {CategoryRoutes}
 
@@ -147,10 +125,6 @@ function App() {
             <Route path="/account" element={<MyAccount />} />
 
             <Route path="/account/orders-returns" element={<MyAccount />} />
-
-            {/* Standalone Section Preview Route */}
-            <Route path="/preview/section" element={<SectionPreview />} />
-            <Route path="/preview/section/:pageId/:sectionId" element={<SectionPreview />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

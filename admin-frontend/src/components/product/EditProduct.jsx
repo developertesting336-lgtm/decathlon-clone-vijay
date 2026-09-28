@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -50,6 +50,7 @@ const EditProduct = () => {
     discountPercent: "",
     review: "",
     onSale: false,
+    subcategory: "",
     stock: "",
     brand: "",
     gender: "Unisex",
@@ -72,6 +73,33 @@ const EditProduct = () => {
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  // Extract available subcategories related to selected categories
+  const availableSubcategories = useMemo(() => {
+    const subcatSet = new Set();
+    if (selectedCategories.length && categories.length) {
+      selectedCategories.forEach((catId) => {
+        const cat = categories.find((c) => String(c._id) === String(catId));
+        if (cat) {
+          if (Array.isArray(cat.subcategories)) {
+            cat.subcategories.forEach((s) => {
+              if (typeof s === "string" && s.trim()) subcatSet.add(s.trim());
+              else if (s && s.name && typeof s.name === "string" && s.name.trim()) subcatSet.add(s.name.trim());
+            });
+          }
+          if (typeof cat.subcategory === "string" && cat.subcategory.trim()) {
+            const parts = cat.subcategory.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean);
+            parts.forEach((p) => subcatSet.add(p));
+          }
+        }
+      });
+    }
+    // If product has a saved subcategory, preserve it in the options
+    if (formData.subcategory && !subcatSet.has(formData.subcategory)) {
+      subcatSet.add(formData.subcategory);
+    }
+    return Array.from(subcatSet);
+  }, [selectedCategories, categories, formData.subcategory]);
 
   // LOAD PRODUCT + CATEGORIES
 
@@ -109,6 +137,7 @@ const EditProduct = () => {
           discountPercent: product.discountPercent ?? "",
           review: product.review ?? "",
           onSale: product.onSale ?? false,
+          subcategory: product.subcategory || "",
           stock: product.stock ?? "",
           brand: product.brand || "",
           gender: product.gender || "Unisex",
@@ -292,6 +321,11 @@ const EditProduct = () => {
         data.append("categories", catId);
       });
       data.append("category", selectedCategories[0]);
+
+      data.append(
+        "subcategory",
+        formData.subcategory ? formData.subcategory.trim() : ""
+      );
 
       data.append(
         "stock",
@@ -589,6 +623,41 @@ const EditProduct = () => {
                 )}
               </div>
 
+            </div>
+
+            {/* SUBCATEGORY */}
+            <div className="form-group full-width">
+              <label>
+                Subcategory
+              </label>
+
+              <input
+                type="text"
+                name="subcategory"
+                value={formData.subcategory || ""}
+                onChange={handleChange}
+                placeholder="Enter subcategory name (or select suggestion)"
+                list="subcategory-suggestions"
+                autoComplete="off"
+              />
+
+              {availableSubcategories.length > 0 && (
+                <datalist id="subcategory-suggestions">
+                  {availableSubcategories.map((sub) => (
+                    <option key={sub} value={sub} />
+                  ))}
+                </datalist>
+              )}
+
+              {availableSubcategories.length > 0 ? (
+                <small>
+                  Suggestions for selected category: {availableSubcategories.join(", ")}
+                </small>
+              ) : selectedCategories.length > 0 ? (
+                <small>
+                  Type any subcategory name for the selected category.
+                </small>
+              ) : null}
             </div>
 
             {/* STOCK */}

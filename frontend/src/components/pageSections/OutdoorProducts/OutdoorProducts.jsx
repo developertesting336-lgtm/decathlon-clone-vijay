@@ -7,7 +7,7 @@ import api, { useWishlist } from "../../../api/axios";
 import socket from "../../../socket/socket";
 import ProductSizeModal from "../../ProductSizeModal";
 
-const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle }) => {
+const OutdoorProducts = ({ customProducts, title, subtitle }) => {
   const { isWishlisted, handleToggle } = useWishlist();
 
   const [products, setProducts] = useState([]);
@@ -21,9 +21,8 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
 
-  const sectionData = data || section?.data || {};
-  const displaySubtitle = subtitle || sectionData.subtitle || "Explore best of";
-  const displayTitle = title || sectionData.title || "Outdoor\nShoes &\nSneakers.";
+  const displaySubtitle = subtitle || "Explore best of";
+  const displayTitle = title || "Outdoor\nShoes &\nSneakers.";
 
   const getImageUrl = (image) => {
     if (!image) return "";
@@ -41,52 +40,26 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
     return `₹${Number(price || 0).toLocaleString("en-IN")}`;
   };
 
-  const fetchSection = useCallback(async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get("/pages/slug/home");
-      const pageSections = response.data?.page?.sections || [];
-
-      const found = pageSections.find(
-        (item) =>
-          item.type === "outdoor-products" ||
-          item.name === "Outdoor Products" ||
-          item.name === "OutdoorProducts" ||
-          (item.name && item.name.toLowerCase().includes("outdoor"))
+      const prodRes = await api.get("/products?limit=12");
+      const list = prodRes.data?.products || [];
+      const validProds = list.filter(
+        (p) => p && typeof p === "object" && p.name && p.isActive !== false
       );
-
-      const rawProds = found?.data?.products || found?.products || [];
-      const validProds = rawProds.filter(
-        (p) => p && typeof p === "object" && p.name
-      );
-
-      if (validProds.length > 0) {
-        setProducts(validProds);
-      } else {
-        const prodRes = await api.get("/products?limit=12");
-        setProducts(prodRes.data.products || []);
-      }
+      setProducts(validProds);
     } catch (error) {
       console.error("Outdoor Products Error:", error);
-      try {
-        const prodRes = await api.get("/products?limit=12");
-        setProducts(prodRes.data.products || []);
-      } catch {
-        setProducts([]);
-      }
+      setProducts([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const rawProds =
-      customProducts ||
-      sectionData.products ||
-      section?.products;
-
-    if (rawProds && Array.isArray(rawProds) && rawProds.length > 0) {
-      const valid = rawProds.filter((p) => p && typeof p === "object" && (p.name || p.title));
+    if (customProducts && Array.isArray(customProducts) && customProducts.length > 0) {
+      const valid = customProducts.filter((p) => p && typeof p === "object" && (p.name || p.title));
       if (valid.length > 0) {
         setProducts(valid);
         setLoading(false);
@@ -94,34 +67,29 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
       }
     }
 
-    fetchSection();
-  }, [customProducts, sectionData.products, section, fetchSection]);
+    fetchProducts();
+  }, [customProducts, fetchProducts]);
 
   useEffect(() => {
-    if (customProducts?.length || sectionData.products?.length || section?.products?.length) {
-      return;
-    }
-
-    const handleHomepageUpdate = (updateData) => {
-      const events = [
-        "section_created",
-        "section_updated",
-        "section_deleted",
-        "section_reordered",
-        "product_created",
-        "product_updated",
-        "product_deleted",
-      ];
-      if (events.includes(updateData?.type)) {
-        fetchSection();
+    const handleProductUpdate = (updateData) => {
+      const type = typeof updateData === "string" ? updateData : updateData?.type;
+      if (type && type.startsWith("product_")) {
+        fetchProducts();
       }
     };
 
-    socket.on("homepage_updated", handleHomepageUpdate);
+    socket.on("product_created", fetchProducts);
+    socket.on("product_updated", fetchProducts);
+    socket.on("product_deleted", fetchProducts);
+    socket.on("homepage_updated", handleProductUpdate);
+
     return () => {
-      socket.off("homepage_updated", handleHomepageUpdate);
+      socket.off("product_created", fetchProducts);
+      socket.off("product_updated", fetchProducts);
+      socket.off("product_deleted", fetchProducts);
+      socket.off("homepage_updated", handleProductUpdate);
     };
-  }, [customProducts, sectionData.products, section, fetchSection]);
+  }, [fetchProducts]);
 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
@@ -247,11 +215,9 @@ const OutdoorProducts = ({ section, data, style, customProducts, title, subtitle
     return null;
   }
 
-  const variantClass = style?.variant ? `variant-${style.variant}` : "";
-
   return (
     <>
-      <section className={`outdoor-products-section ${variantClass}`}>
+      <section className="outdoor-products-section">
         <div className="outdoor-products-container">
           <div className="outdoor-products-intro">
             <div className="outdoor-products-intro-text">

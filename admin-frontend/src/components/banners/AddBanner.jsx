@@ -1,14 +1,6 @@
-import React, {
-  useState,
-} from "react";
-
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import {
-  MdArrowBack,
-  MdCloudUpload,
-} from "react-icons/md";
-
+import { MdArrowBack, MdCloudUpload, MdClose } from "react-icons/md";
 import toast from "react-hot-toast";
 
 import api from "../../api/axios";
@@ -17,43 +9,31 @@ import "../../styles/banner/AddBanner.css";
 const AddBanner = () => {
   const navigate = useNavigate();
 
-  const [title, setTitle] =
-    useState("");
-
-  const [link, setLink] =
-    useState("");
-
-  const [image, setImage] =
-    useState(null);
-
-  const [preview, setPreview] =
-    useState("");
-
-  const [isActive, setIsActive] =
-    useState(true);
-
-  const [loading, setLoading] =
-    useState(false);
+  const [title, setTitle] = useState("");
+  const [link, setLink] = useState("");
+  const [subcategory, setSubcategory] = useState("");
+  const [images, setImages] = useState([]); // array of { file, preview, id }
+  const [isActive, setIsActive] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   /*
   ========================================
-  IMAGE CHANGE
+  IMAGE CHANGE (SUPPORTS MULTIPLE)
   ========================================
   */
-
   const handleImageChange = (e) => {
-    const file =
-      e.target.files?.[0];
+    const selectedFiles = Array.from(e.target.files || []);
+    if (!selectedFiles.length) return;
 
-    if (!file) {
-      return;
-    }
+    const newItems = selectedFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      id: `${file.name}-${Date.now()}-${Math.random()}`,
+    }));
 
-    setImage(file);
-
-    setPreview(
-      URL.createObjectURL(file)
-    );
+    setImages((prev) => [...prev, ...newItems]);
+    // Reset file input so same file can be selected again if needed
+    e.target.value = "";
   };
 
   /*
@@ -61,10 +41,14 @@ const AddBanner = () => {
   REMOVE IMAGE
   ========================================
   */
-
-  const removeImage = () => {
-    setImage(null);
-    setPreview("");
+  const removeImage = (indexToRemove) => {
+    setImages((prev) => {
+      const item = prev[indexToRemove];
+      if (item && item.preview) {
+        URL.revokeObjectURL(item.preview);
+      }
+      return prev.filter((_, idx) => idx !== indexToRemove);
+    });
   };
 
   /*
@@ -72,266 +56,166 @@ const AddBanner = () => {
   SUBMIT
   ========================================
   */
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!image) {
-      toast.error(
-        "Banner image is required"
-      );
-
+    if (!images.length) {
+      toast.error("At least one banner image is required");
       return;
     }
 
     try {
       setLoading(true);
 
-      const data =
-        new FormData();
+      const data = new FormData();
+      data.append("title", title.trim());
+      data.append("link", link.trim());
+      data.append("subcategory", subcategory.trim());
+      data.append("isActive", isActive);
 
-      data.append(
-        "title",
-        title.trim()
-      );
+      images.forEach((item) => {
+        data.append("images", item.file);
+      });
+      // Fallback single image field
+      if (images[0]) {
+        data.append("image", images[0].file);
+      }
 
-      data.append(
-        "link",
-        link.trim()
-      );
+      await api.post("/banners", data);
 
-      data.append(
-        "isActive",
-        isActive
-      );
-
-      data.append(
-        "image",
-        image
-      );
-
-      await api.post(
-        "/banners",
-        data
-      );
-
-      toast.success(
-        "Banner added successfully"
-      );
-
+      toast.success("Banner added successfully");
       navigate("/banners");
     } catch (error) {
-      console.error(
-        "Add Banner Error:",
-        error
-      );
-
+      console.error("Add Banner Error:", error);
       toast.error(
-        error.response?.data
-          ?.message ||
-          "Failed to add banner"
+        error.response?.data?.message || "Failed to add banner"
       );
     } finally {
       setLoading(false);
     }
   };
 
-  /*
-  ========================================
-  UI
-  ========================================
-  */
-
   return (
     <div className="add-banner-page">
-
       {/* HEADER */}
-
       <div className="add-banner-header">
-
         <button
           type="button"
           className="banner-back-btn"
-          onClick={() =>
-            navigate("/banners")
-          }
+          onClick={() => navigate("/banners")}
         >
           <MdArrowBack />
           Back
         </button>
 
         <div>
-
-          <h1>
-            Add Banner
-          </h1>
-
-          <p>
-            Create a homepage banner
-          </p>
-
+          <h1>Add Banner</h1>
+          <p>Create a homepage banner with single or multiple images</p>
         </div>
-
       </div>
 
       {/* FORM */}
-
-      <form
-        className="add-banner-form"
-        onSubmit={handleSubmit}
-      >
-
+      <form className="add-banner-form" onSubmit={handleSubmit}>
         <section className="banner-form-section">
-
           <div className="banner-section-title">
-
-            <h2>
-              Banner Information
-            </h2>
-
+            <h2>Banner Information</h2>
           </div>
 
           {/* TITLE */}
-
           <div className="banner-form-group">
-
-            <label>
-              Banner Title
-            </label>
-
+            <label>Banner Title</label>
             <input
               type="text"
               value={title}
-              onChange={(e) =>
-                setTitle(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter banner title"
             />
-
           </div>
 
           {/* LINK */}
-
           <div className="banner-form-group">
-
-            <label>
-              Link
-            </label>
-
+            <label>Link</label>
             <input
               type="text"
               value={link}
-              onChange={(e) =>
-                setLink(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setLink(e.target.value)}
               placeholder="/products"
             />
-
           </div>
 
-          {/* IMAGE */}
-
+          {/* SUBCATEGORY */}
           <div className="banner-form-group">
+            <label>Banner Subcategory</label>
+            <input
+              type="text"
+              value={subcategory}
+              onChange={(e) => setSubcategory(e.target.value)}
+              placeholder="e.g. First Order, Monsoon Sale, Clearance"
+            />
+          </div>
 
-            <label>
-              Banner Image *
-            </label>
+          {/* MULTIPLE IMAGES UPLOAD BOX */}
+          <div className="banner-form-group">
+            <label>Banner Images *</label>
 
             <label className="banner-upload-box">
-
               <input
                 type="file"
                 accept="image/*"
+                multiple
                 hidden
-                onChange={
-                  handleImageChange
-                }
+                onChange={handleImageChange}
               />
-
               <MdCloudUpload />
-
-              <strong>
-                Upload Banner Image
-              </strong>
-
+              <strong>Upload Banner Images</strong>
               <span>
-                All image types supported (JPG, PNG, WEBP, SVG, AVIF, GIF, etc.)
+                Select one or multiple images (JPG, PNG, WEBP, SVG, AVIF, GIF, etc.)
               </span>
-
             </label>
-
           </div>
 
-          {/* PREVIEW */}
-
-          {preview && (
-
-            <div className="banner-preview-wrapper">
-
-              <div className="banner-preview">
-
-                <img
-                  src={preview}
-                  alt="Banner Preview"
-                />
-
-                <button
-                  type="button"
-                  onClick={
-                    removeImage
-                  }
-                >
-                  Remove
-                </button>
-
+          {/* PREVIEWS */}
+          {images.length > 0 && (
+            <div className="banner-form-group">
+              <label>Selected Images ({images.length})</label>
+              <div className="banner-multi-previews">
+                {images.map((img, idx) => (
+                  <div className="banner-multi-preview-item" key={img.id || idx}>
+                    <img src={img.preview} alt={`Banner Preview ${idx + 1}`} />
+                    <button
+                      type="button"
+                      className="banner-remove-preview-btn"
+                      onClick={() => removeImage(idx)}
+                      title="Remove image"
+                    >
+                      <MdClose />
+                    </button>
+                    <span className="banner-preview-badge">#{idx + 1}</span>
+                  </div>
+                ))}
               </div>
-
             </div>
-
           )}
 
           {/* ACTIVE */}
-
           <div className="banner-active-row">
-
-            <label>
-              Active Banner
-            </label>
-
+            <label>Active Banner</label>
             <button
               type="button"
-              className={
-                isActive
-                  ? "banner-switch active"
-                  : "banner-switch"
-              }
-              onClick={() =>
-                setIsActive(
-                  !isActive
-                )
-              }
+              className={isActive ? "banner-switch active" : "banner-switch"}
+              onClick={() => setIsActive(!isActive)}
             >
               <span />
             </button>
-
           </div>
-
         </section>
 
         {/* ACTIONS */}
-
         <div className="banner-form-actions">
-
           <button
             type="button"
             className="banner-cancel-btn"
-            onClick={() =>
-              navigate("/banners")
-            }
+            onClick={() => navigate("/banners")}
             disabled={loading}
           >
             Cancel
@@ -342,15 +226,10 @@ const AddBanner = () => {
             className="banner-save-btn"
             disabled={loading}
           >
-            {loading
-              ? "Saving..."
-              : "Save Banner"}
+            {loading ? "Saving..." : "Save Banner"}
           </button>
-
         </div>
-
       </form>
-
     </div>
   );
 };

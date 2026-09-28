@@ -17,7 +17,6 @@ import {
   MdCancel,
   MdSmartToy,
   MdImage,
-  MdViewModule,
   MdCurrencyRupee,
 } from "react-icons/md";
 import toast from "react-hot-toast";
@@ -1008,24 +1007,6 @@ const Dashboard = () => {
             <div className="op-content">
               <h3>Hero Banners</h3>
               <p>Control homepage sliders, seasonal campaigns, and links</p>
-            </div>
-            <span className="op-arrow">
-              <MdArrowForward />
-            </span>
-          </div>
-
-          <div
-            className="op-card"
-            onClick={() => navigate("/pages")}
-            role="button"
-            tabIndex={0}
-          >
-            <div className="op-icon-wrap op-icon-pages">
-              <MdViewModule />
-            </div>
-            <div className="op-content">
-              <h3>Store Pages</h3>
-              <p>Customize dynamic layouts, carousels, and sports landing pages</p>
             </div>
             <span className="op-arrow">
               <MdArrowForward />

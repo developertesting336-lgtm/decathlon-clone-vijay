@@ -22,8 +22,6 @@ router.get(
 
 router.get(
   "/",
-  authMiddleware,
-  adminMiddleware,
   getBanners
 );
 
@@ -31,7 +29,7 @@ router.post(
   "/",
   authMiddleware,
   adminMiddleware,
-  upload.single("image"),
+  upload.any(),
   createBanner
 );
 
@@ -39,7 +37,7 @@ router.put(
   "/:id",
   authMiddleware,
   adminMiddleware,
-  upload.single("image"),
+  upload.any(),
   updateBanner
 );
 

@@ -1,248 +1,320 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./PromoBanner2.css";
 import api from "../../../api/axios";
-import socket from "../../../socket/socket";
 
-const PromoBanner2 = ({ section, data, customBanners, style }) => {
+const PromoBanner2 = () => {
   const navigate = useNavigate();
+
   const [banners, setBanners] = useState([]);
-  const [currentBanner, setCurrentBanner] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
+  const [current, setCurrent] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const getImageUrl = (image) => {
-    if (!image) return "";
-    if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
-      return image;
-    }
-    const apiBaseUrl = api.defaults.baseURL || "";
-    const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
-    if (image.startsWith("/uploads/")) return `${backendUrl}${image}`;
-    if (image.startsWith("uploads/")) return `${backendUrl}/${image}`;
-    return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
-  };
+  const isResettingRef = useRef(false);
+  const touchStartX = useRef(null);
+  const touchEndX = useRef(null);
 
-  const fetchSection = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/pages/slug/home");
-      const pageSections = response.data?.page?.sections || [];
-
-      const found = pageSections.find(
-        (item) =>
-          item.type === "promo-banner-2" ||
-          item.name === "Promo Banner 2" ||
-          item.name === "PromoBanner2" ||
-          (item.name && item.name.toLowerCase().includes("promo banner 2"))
-      );
-
-      const rawBanners = found?.data?.banners || found?.banners || [];
-      const validBanners = rawBanners.filter(
-        (b) => b && typeof b === "object" && (b.image || b.title)
-      );
-
-      if (validBanners.length > 0) {
-        setBanners(validBanners);
-      } else {
-        const banRes = await api.get("/banners");
-        setBanners(banRes.data.banners || []);
-      }
-      setCurrentBanner(0);
-      setAutoplay(true);
-      setIsTransitioning(true);
-    } catch (error) {
-      console.error("Promo Banner 2 Error:", error);
+  // Fetch banners
+  useEffect(() => {
+    const fetchBanners = async () => {
       try {
-        const banRes = await api.get("/banners");
-        setBanners(banRes.data.banners || []);
-      } catch {
+        const res = await api.get("/banners");
+
+        const allBanners = res.data?.banners || [];
+
+        const filteredBanners = allBanners
+          .filter(
+            (banner) =>
+              banner.isActive === true &&
+              String(banner.subcategory || "")
+                .trim()
+                .toLowerCase() === "home page promo banner 2" &&
+              (banner.image || banner.images?.length),
+          )
+          .sort((a, b) => {
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+
+            return dateA - dateB;
+          });
+
+        setBanners(filteredBanners);
+        setCurrent(filteredBanners.length > 1 ? 1 : 0);
+        setIsTransitioning(false);
+      } catch (error) {
+        console.error("Promo Banner 2 Error:", error);
         setBanners([]);
       }
-      setCurrentBanner(0);
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    fetchBanners();
   }, []);
 
+  // Re-enable transition after instant reset
   useEffect(() => {
-    const rawBanners =
-      data?.banners?.length
-        ? data.banners
-        : section?.data?.banners?.length
-        ? section.data.banners
-        : section?.banners?.length
-        ? section.banners
-        : customBanners;
+    if (!isTransitioning) {
+      let raf2;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => {
+          setIsTransitioning(true);
+          isResettingRef.current = false;
+        });
+      });
 
-    if (rawBanners && Array.isArray(rawBanners) && rawBanners.length > 0) {
-      const valid = rawBanners.filter((b) => b && typeof b === "object" && (b.image || b.title));
-      if (valid.length > 0) {
-        setBanners(valid);
-        setCurrentBanner(0);
-        setLoading(false);
-        return;
-      }
+      return () => {
+        cancelAnimationFrame(raf1);
+        if (raf2) cancelAnimationFrame(raf2);
+      };
     }
+  }, [isTransitioning]);
 
-    if (data?.image || section?.data?.image) {
-      setBanners([{ image: data?.image || section.data.image, link: data?.link || "/" }]);
-      setCurrentBanner(0);
-      setLoading(false);
-      return;
-    }
-
-    fetchSection();
-  }, [data, section, customBanners, fetchSection]);
-
+  // Infinite loop boundary reset
   useEffect(() => {
-    if (data?.banners?.length || section?.data?.banners?.length || customBanners?.length) {
-      return;
+    if (banners.length <= 1) return;
+
+    let timer;
+
+    if (current >= banners.length + 1) {
+      timer = setTimeout(() => {
+        isResettingRef.current = true;
+        setIsTransitioning(false);
+        setCurrent(1);
+      }, 500);
     }
 
-    const handleHomepageUpdate = (updateData) => {
-      const events = [
-        "section_created",
-        "section_updated",
-        "section_deleted",
-        "section_reordered",
-        "banner_created",
-        "banner_updated",
-        "banner_deleted",
-      ];
-      if (events.includes(updateData?.type)) {
-        fetchSection();
-      }
-    };
+    if (current <= 0) {
+      timer = setTimeout(() => {
+        isResettingRef.current = true;
+        setIsTransitioning(false);
+        setCurrent(banners.length);
+      }, 500);
+    }
 
-    socket.on("homepage_updated", handleHomepageUpdate);
     return () => {
-      socket.off("homepage_updated", handleHomepageUpdate);
+      if (timer) clearTimeout(timer);
     };
-  }, [data, section, customBanners, fetchSection]);
+  }, [current, banners.length]);
 
-  const sliderBanners = banners.length > 0 ? [...banners, banners[0]] : [];
-
+  // Auto slide
   useEffect(() => {
-    if (!autoplay || banners.length <= 1) return;
+    if (isPaused || banners.length <= 1) return;
+
     const interval = setInterval(() => {
-      setCurrentBanner((prev) => prev + 1);
-    }, 3000);
+      if (isResettingRef.current) return;
+
+      setIsTransitioning(true);
+
+      setCurrent((prev) => {
+        if (prev >= banners.length + 1) {
+          return prev;
+        }
+
+        return prev + 1;
+      });
+    }, 3500);
+
     return () => clearInterval(interval);
-  }, [autoplay, banners.length]);
+  }, [isPaused, banners.length]);
 
-  useEffect(() => {
-    if (banners.length === 0 || currentBanner !== banners.length) return;
-    const timeout = setTimeout(() => {
-      setIsTransitioning(false);
-      setCurrentBanner(0);
-      setTimeout(() => {
-        setIsTransitioning(true);
-      }, 50);
-    }, 500);
-    return () => clearTimeout(timeout);
-  }, [currentBanner, banners.length]);
-
-  const handlePrev = () => {
-    if (banners.length <= 1) return;
-    setAutoplay(false);
-    if (currentBanner === 0) {
-      setIsTransitioning(false);
-      setCurrentBanner(banners.length - 1);
-      setTimeout(() => {
-        setIsTransitioning(true);
-      }, 50);
+  // Transition end
+  const handleTransitionEnd = (e) => {
+    if (e && (e.target !== e.currentTarget || e.propertyName !== "transform")) {
       return;
     }
-    setCurrentBanner((prev) => prev - 1);
+
+    if (current >= banners.length + 1) {
+      isResettingRef.current = true;
+      setIsTransitioning(false);
+      setCurrent(1);
+    } else if (current <= 0) {
+      isResettingRef.current = true;
+      setIsTransitioning(false);
+      setCurrent(banners.length);
+    }
   };
 
-  const handleNext = () => {
-    if (banners.length <= 1) return;
-    setAutoplay(false);
-    setCurrentBanner((prev) => prev + 1);
+  // Image URL
+  const getImageUrl = (image) => {
+    if (!image) return "";
+
+    if (
+      typeof image === "string" &&
+      (image.startsWith("http://") || image.startsWith("https://"))
+    ) {
+      return image;
+    }
+
+    const backendUrl = (api.defaults.baseURL || "").replace(/\/api\/?$/, "");
+
+    return `${backendUrl}/${String(image).replace(/^\/+/, "")}`;
   };
 
-  const handleDotClick = (index) => {
-    setAutoplay(false);
+  // Banner click
+  const handleBannerClick = (banner) => {
+    if (!banner?.link || banner.link === "#") return;
+
+    if (
+      banner.link.startsWith("http://") ||
+      banner.link.startsWith("https://")
+    ) {
+      window.location.href = banner.link;
+    } else {
+      navigate(banner.link);
+    }
+  };
+
+  // Previous
+  const previousBanner = () => {
+    if (banners.length <= 1 || isResettingRef.current) return;
+
     setIsTransitioning(true);
-    setCurrentBanner(index);
+
+    setCurrent((prev) => {
+      if (prev <= 0) return prev;
+
+      return prev - 1;
+    });
   };
 
-  if (loading || !banners.length) {
+  // Next
+  const nextBanner = () => {
+    if (banners.length <= 1 || isResettingRef.current) return;
+
+    setIsTransitioning(true);
+
+    setCurrent((prev) => {
+      if (prev >= banners.length + 1) {
+        return prev;
+      }
+
+      return prev + 1;
+    });
+  };
+
+  // Dot click
+  const handleDotClick = (index) => {
+    if (isResettingRef.current) return;
+
+    setIsTransitioning(true);
+    setCurrent(index + 1);
+  };
+
+  // Touch start
+  const handleTouchStart = (e) => {
+    setIsPaused(true);
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  // Touch move
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  // Touch end
+  const handleTouchEnd = () => {
+    setIsPaused(false);
+
+    if (touchStartX.current === null || touchEndX.current === null) {
+      return;
+    }
+
+    const distance = touchStartX.current - touchEndX.current;
+
+    if (distance > 50) {
+      nextBanner();
+    } else if (distance < -50) {
+      previousBanner();
+    }
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
+  if (!banners.length) {
     return null;
   }
 
-  const activeDot = currentBanner === banners.length ? 0 : currentBanner;
+  // Clone last and first banner for infinite loop
+  const extendedBanners =
+    banners.length > 1
+      ? [banners[banners.length - 1], ...banners, banners[0]]
+      : banners;
 
-  const handleBannerClick = (bannerItem, index) => {
-    if (bannerItem?.link && bannerItem.link !== "#") {
-      if (
-        bannerItem.link.startsWith("http://") ||
-        bannerItem.link.startsWith("https://")
-      ) {
-        window.location.href = bannerItem.link;
-      } else {
-        navigate(bannerItem.link);
-      }
-      return;
-    }
-    const fallbackRoutes = [
-      "/workout-essentials",
-      "/hiking-trekking",
-      "/bags-backpacks",
-      "/sports-accessories",
-    ];
-    navigate(fallbackRoutes[index % fallbackRoutes.length]);
-  };
-
-  const variantClass = style?.variant ? `variant-${style.variant}` : "";
+  // Active dot
+  const activeDot =
+    current === 0
+      ? banners.length - 1
+      : current === banners.length + 1
+        ? 0
+        : current - 1;
 
   return (
-    <section className={`promo-banner ${variantClass}`}>
+    <section
+      className="promo-banner"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      aria-label="Promotional Banners"
+    >
       <div
         className="promo-slider"
+        onTransitionEnd={handleTransitionEnd}
         style={{
-          transform: `translateX(-${currentBanner * 100}%)`,
+          transform: `translateX(-${current * 100}%)`,
           transition: isTransitioning ? "transform 0.5s ease-in-out" : "none",
         }}
       >
-        {sliderBanners.map((banner, index) => (
-          <div
-            className="promo-slide"
-            key={`${banner._id || index}-${index}`}
-            onClick={() => handleBannerClick(banner, index)}
-            style={{ cursor: "pointer" }}
-            role="button"
-            tabIndex={0}
-          >
-            <img
-              src={getImageUrl(banner.image)}
-              alt={banner.title || "Promotion"}
-            />
-          </div>
-        ))}
+        {extendedBanners.map((banner, index) => {
+          const rawImage =
+            banner.images?.length > 0 ? banner.images[0] : banner.image;
+
+          const image =
+            typeof rawImage === "object" && rawImage?.url
+              ? rawImage.url
+              : rawImage;
+
+          return (
+            <div
+              key={`${banner._id || index}-${index}`}
+              className="promo-slide"
+              onClick={() => handleBannerClick(banner)}
+              style={{
+                cursor: banner.link ? "pointer" : "default",
+              }}
+            >
+              <img
+                src={getImageUrl(image)}
+                alt={banner.title || `Promotion ${index + 1}`}
+                loading={index === 1 ? "eager" : "lazy"}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {banners.length > 1 && (
         <>
           <button
-            className="promo-arrow promo-arrow-left"
             type="button"
-            onClick={handlePrev}
+            className="promo-arrow promo-arrow-left"
+            onClick={previousBanner}
             aria-label="Previous Banner"
           >
-            ‹
+            <MdChevronLeft size={22} />
           </button>
 
           <button
-            className="promo-arrow promo-arrow-right"
             type="button"
-            onClick={handleNext}
+            className="promo-arrow promo-arrow-right"
+            onClick={nextBanner}
             aria-label="Next Banner"
           >
-            ›
+            <MdChevronRight size={22} />
           </button>
 
           <div className="promo-dots">

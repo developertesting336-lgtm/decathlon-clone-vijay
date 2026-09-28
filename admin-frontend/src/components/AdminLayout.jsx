@@ -8,7 +8,6 @@ import {
   MdShoppingBag,
   MdPeople,
   MdImage,
-  MdViewModule,
   MdSmartToy,
   MdLogout,
   MdMenu,
@@ -121,7 +120,6 @@ const AdminLayout = ({ children }) => {
   const isOrdersActive = location.pathname.startsWith("/orders");
   const isUsersActive = location.pathname.startsWith("/users");
   const isBannersActive = location.pathname.startsWith("/banners");
-  const isPagesActive = location.pathname.startsWith("/pages");
   const isAiActive = location.pathname.startsWith("/ai-knowledge");
   const isTicketsActive = location.pathname.startsWith("/support-tickets");
   const isProfileActive = location.pathname.startsWith("/profile");
@@ -234,16 +232,6 @@ const AdminLayout = ({ children }) => {
           >
             <MdCategory />
             {sidebarOpen && <span>Categories</span>}
-          </button>
-
-          <button
-            type="button"
-            className={isPagesActive ? "active" : ""}
-            onClick={() => handleNav("/pages")}
-            title="Store Landing Pages"
-          >
-            <MdViewModule />
-            {sidebarOpen && <span>Store Pages</span>}
           </button>
 
           {/* SECTION: COMMERCE & SALES */}

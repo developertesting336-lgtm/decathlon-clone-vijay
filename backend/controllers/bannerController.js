@@ -1,7 +1,6 @@
 import Banner from "../models/Banner.js";
 import { emitHomepageUpdate, emitBannerUpdate } from "../socket/socketManager.js";
-
-import { getSingleImageUrl } from "../utils/uploadToCloudinary.js";
+import { getSingleImageUrl, getMultipleImageUrls } from "../utils/uploadToCloudinary.js";
 
 /*
 ========================================
@@ -11,50 +10,86 @@ CREATE BANNER
 
 const createBanner = async (req, res) => {
   try {
-    const { title = "", link = "", isActive = true, type = "" } = req.body;
+    const {
+      title = "",
+      link = "",
+      isActive = true,
+      type = "",
+      subcategory = "",
+    } = req.body;
 
     /*
-    IMAGE REQUIRED
+    COLLECT UPLOADED FILES
     */
+    const uploadedFiles = req.files || (req.file ? [req.file] : []);
 
-    if (!req.file) {
+    /*
+    COLLECT EXISTING / URL STRINGS IF ANY
+    */
+    let existingUrlList = [];
+    if (req.body.images) {
+      if (Array.isArray(req.body.images)) {
+        existingUrlList = req.body.images;
+      } else if (typeof req.body.images === "string") {
+        try {
+          const parsed = JSON.parse(req.body.images);
+          existingUrlList = Array.isArray(parsed) ? parsed : [req.body.images];
+        } catch {
+          existingUrlList = [req.body.images];
+        }
+      }
+    } else if (
+      req.body.image &&
+      typeof req.body.image === "string" &&
+      (req.body.image.startsWith("http") || req.body.image.startsWith("/uploads"))
+    ) {
+      existingUrlList = [req.body.image];
+    }
+
+    if (uploadedFiles.length === 0 && existingUrlList.length === 0) {
       return res.status(400).json({
         message: "Banner image is required",
       });
     }
 
     /*
-    UPLOAD IMAGE
+    UPLOAD IMAGES TO CLOUDINARY
     */
+    let newUploadedUrls = [];
+    if (uploadedFiles.length > 0) {
+      newUploadedUrls = await getMultipleImageUrls(uploadedFiles, "banners");
+    }
 
-    const imageUrl = await getSingleImageUrl(req.file, "banners");
+    const allImages = [...existingUrlList, ...newUploadedUrls].filter(Boolean);
+
+    if (allImages.length === 0) {
+      return res.status(400).json({
+        message: "Failed to process banner image(s)",
+      });
+    }
 
     /*
     CREATE BANNER
     */
-
     const banner = await Banner.create({
-      title,
-      link,
-      type,
+      title: title.trim(),
+      subcategory: (subcategory || "").trim(),
+      link: link.trim(),
+      type: (type || "").trim(),
       isActive: isActive === true || isActive === "true",
-      image: imageUrl,
+      image: allImages[0] || "",
+      images: allImages,
     });
 
     /*
     REALTIME UPDATE
     */
-
     emitBannerUpdate("banner_created", banner);
 
     emitHomepageUpdate("banner_created", {
       bannerId: banner._id,
       banner,
     });
-
-    /*
-    RESPONSE
-    */
 
     return res.status(201).json({
       message: "Banner created successfully",
@@ -77,12 +112,40 @@ GET ALL BANNERS
 
 const getBanners = async (req, res) => {
   try {
-    const banners = await Banner.find().sort({
+    const { type, subcategory, active, isActive } = req.query;
+    const filter = {};
+
+    if (type) {
+      filter.type = type;
+    }
+
+    if (subcategory) {
+      filter.subcategory = { $regex: new RegExp(`^${subcategory.trim()}$`, "i") };
+    }
+
+    const activeFilter = active !== undefined ? active : isActive;
+    if (activeFilter !== undefined) {
+      filter.isActive =
+        activeFilter === "true" || activeFilter === true ? { $ne: false } : false;
+    }
+
+    const banners = await Banner.find(filter).sort({
       createdAt: -1,
-    });
+    }).lean();
+
+    const formatted = banners.map((b) => ({
+      ...b,
+      images:
+        b.images && b.images.length > 0
+          ? b.images
+          : b.image
+          ? [b.image]
+          : [],
+      subcategory: b.subcategory || "",
+    }));
 
     return res.status(200).json({
-      banners,
+      banners: formatted,
     });
   } catch (error) {
     console.error("Get Banners Error:", error);
@@ -108,13 +171,21 @@ const getActiveBanner = async (req, res) => {
       isActive: true,
     }).sort({
       createdAt: -1,
-    });
+    }).lean();
 
     if (!banner) {
       return res.status(404).json({
         message: "Active banner not found",
       });
     }
+
+    banner.images =
+      banner.images && banner.images.length > 0
+        ? banner.images
+        : banner.image
+        ? [banner.image]
+        : [];
+    banner.subcategory = banner.subcategory || "";
 
     return res.status(200).json({
       banner,
@@ -138,13 +209,21 @@ const getBannerById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const banner = await Banner.findById(id);
+    const banner = await Banner.findById(id).lean();
 
     if (!banner) {
       return res.status(404).json({
         message: "Banner not found",
       });
     }
+
+    banner.images =
+      banner.images && banner.images.length > 0
+        ? banner.images
+        : banner.image
+        ? [banner.image]
+        : [];
+    banner.subcategory = banner.subcategory || "";
 
     return res.status(200).json({
       banner,
@@ -168,10 +247,6 @@ const updateBanner = async (req, res) => {
   try {
     const { id } = req.params;
 
-    /*
-    FIND BANNER
-    */
-
     const banner = await Banner.findById(id);
 
     if (!banner) {
@@ -180,60 +255,91 @@ const updateBanner = async (req, res) => {
       });
     }
 
-    const { title, link, type, isActive, existingImage } = req.body;
-
-    /*
-    UPDATE TITLE
-    */
+    const {
+      title,
+      link,
+      type,
+      isActive,
+      subcategory,
+      existingImages,
+      existingImage,
+    } = req.body;
 
     if (title !== undefined) {
-      banner.title = title;
+      banner.title = title.trim();
     }
 
-    /*
-    UPDATE LINK
-    */
+    if (subcategory !== undefined) {
+      banner.subcategory = (subcategory || "").trim();
+    }
 
     if (link !== undefined) {
-      banner.link = link;
+      banner.link = link.trim();
     }
-
-    /*
-    UPDATE TYPE
-    */
 
     if (type !== undefined) {
-      banner.type = type;
+      banner.type = type.trim();
     }
-
-    /*
-    UPDATE STATUS
-    */
 
     if (isActive !== undefined) {
       banner.isActive = isActive === true || isActive === "true";
     }
 
     /*
-    UPDATE IMAGE
+    PROCESS EXISTING IMAGES
     */
-
-    if (req.file) {
-      banner.image = await getSingleImageUrl(req.file, "banners");
+    let parsedExistingImages = [];
+    if (existingImages !== undefined) {
+      if (Array.isArray(existingImages)) {
+        parsedExistingImages = existingImages;
+      } else if (typeof existingImages === "string") {
+        try {
+          const parsed = JSON.parse(existingImages);
+          parsedExistingImages = Array.isArray(parsed) ? parsed : [existingImages];
+        } catch {
+          parsedExistingImages = existingImages ? [existingImages] : [];
+        }
+      }
     } else if (existingImage !== undefined) {
-      banner.image = existingImage;
+      parsedExistingImages = existingImage ? [existingImage] : [];
+    } else {
+      // Retain currently stored images if not explicitly specified
+      parsedExistingImages =
+        banner.images && banner.images.length > 0
+          ? banner.images
+          : banner.image
+          ? [banner.image]
+          : [];
     }
 
     /*
-    SAVE
+    PROCESS NEW FILE UPLOADS
     */
+    const uploadedFiles = req.files || (req.file ? [req.file] : []);
+    let newUploadedUrls = [];
+    if (uploadedFiles.length > 0) {
+      newUploadedUrls = await getMultipleImageUrls(uploadedFiles, "banners");
+    }
+
+    const finalImages = [...parsedExistingImages, ...newUploadedUrls].filter(Boolean);
+
+    if (finalImages.length > 0) {
+      banner.images = finalImages;
+      banner.image = finalImages[0];
+    } else if (
+      existingImages !== undefined ||
+      existingImage !== undefined ||
+      uploadedFiles.length > 0
+    ) {
+      banner.images = [];
+      banner.image = "";
+    }
 
     await banner.save();
 
     /*
     REALTIME UPDATE
     */
-
     emitBannerUpdate("banner_updated", banner);
 
     emitHomepageUpdate("banner_updated", {
@@ -242,10 +348,6 @@ const updateBanner = async (req, res) => {
       isActive: banner.isActive,
       banner,
     });
-
-    /*
-    RESPONSE
-    */
 
     return res.status(200).json({
       message: "Banner updated successfully",
@@ -283,16 +385,11 @@ const deleteBanner = async (req, res) => {
     /*
     REALTIME UPDATE
     */
-
     emitBannerUpdate("banner_deleted", { bannerId: id });
 
     emitHomepageUpdate("banner_deleted", {
       bannerId: id,
     });
-
-    /*
-    RESPONSE
-    */
 
     return res.status(200).json({
       message: "Banner deleted successfully",
@@ -305,12 +402,6 @@ const deleteBanner = async (req, res) => {
     });
   }
 };
-
-/*
-========================================
-EXPORT
-========================================
-*/
 
 export {
   createBanner,

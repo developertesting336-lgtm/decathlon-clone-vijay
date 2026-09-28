@@ -1,227 +1,289 @@
 /* ========================================
-   EVERYDAY ESSENTIALS (SECTION 9)
+   EVERYDAY ESSENTIALS
 ======================================== */
 
-.everyday-essentials-section,
-.rainy-day-section {
-  width: 100% !important;
-  margin: 12px 0 24px 0 !important;
-  padding: 0 !important;
-  background: transparent !important;
-  box-sizing: border-box !important;
+.everyday-essentials-section {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 24px;
+  background: #fff;
+  box-sizing: border-box;
 }
 
-.everyday-essentials-container,
-.rainy-day-container {
-  position: relative !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 0 auto !important;
-  padding: 0 !important;
-  box-sizing: border-box !important;
+.everyday-essentials-container {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* TITLE */
+/* ========================================
+   TITLE
+======================================== */
 
-.everyday-essentials-title,
-.rainy-day-title {
-  margin: 0 0 14px 0 !important;
-  font-family: inherit !important;
-  font-size: 18px !important;
-  font-weight: 700 !important;
-  line-height: 1.25 !important;
-  color: #111111 !important;
-  letter-spacing: -0.2px !important;
+.everyday-essentials-title {
+  margin: 0 0 14px;
+  padding: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #111;
 }
 
-/* GRID */
+/* ========================================
+   SLIDER
+======================================== */
 
-.everyday-essentials-grid,
-.rainy-day-grid {
-  width: 100% !important;
-  display: flex !important;
-  gap: 12px !important;
-  overflow-x: auto !important;
-  scrollbar-width: none !important;
-  scroll-behavior: smooth !important;
-  box-sizing: border-box !important;
+.everyday-essentials-grid {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
 }
 
-.everyday-essentials-grid::-webkit-scrollbar,
-.rainy-day-grid::-webkit-scrollbar {
-  display: none !important;
+.everyday-essentials-grid::-webkit-scrollbar {
+  display: none;
 }
 
-/* CARD */
+/* ========================================
+   CARD
+======================================== */
 
-.everyday-essentials-card,
-.rainy-day-card {
-  position: relative !important;
-  width: 100% !important;
-  aspect-ratio: 1 / 1.05 !important;
-  height: auto !important;
-  overflow: hidden !important;
-  background: #f4f5f7 !important;
-  border-radius: 16px !important;
-  box-sizing: border-box !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-  border: none !important;
-  cursor: pointer !important;
-  flex: 0 0 calc((100% - 36px) / 4) !important;
-  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+.everyday-essentials-card {
+  position: relative;
+  flex: 0 0 calc((100% - 30px) / 4);
+  width: calc((100% - 30px) / 4);
+  aspect-ratio: 1 / 1.08;
+  overflow: hidden;
+  background: #f4f4f4;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.25s ease;
 }
+
+/* ========================================
+   IMAGE
+======================================== */
+
+.everyday-essentials-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+  transition: transform 0.3s ease;
+}
+
+/* ========================================
+   DESKTOP HOVER
+======================================== */
+
+@media (hover: hover) and (pointer: fine) {
+  .everyday-essentials-card:hover {
+    transform: translateY(-3px);
+  }
+
+  .everyday-essentials-card:hover
+  .everyday-essentials-image {
+    transform: scale(1.03);
+  }
+}
+
+/* ========================================
+   ARROWS
+======================================== */
 
 .everyday-essentials-arrow {
-  position: absolute !important;
-  top: 50% !important;
-  right: 12px !important;
-  z-index: 2 !important;
-  width: 38px !important;
-  height: 38px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 50% !important;
-  background: #ffffff !important;
-  color: #111111 !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.16) !important;
-  cursor: pointer !important;
-  transform: translateY(-50%) !important;
+  position: absolute;
+  top: 55%;
+  z-index: 5;
+
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background: #fff;
+  color: #111;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+
+  cursor: pointer;
+  transform: translateY(-50%);
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
 .everyday-essentials-previous {
-  right: auto !important;
-  left: 12px !important;
+  left: 10px;
 }
+
+.everyday-essentials-next {
+  right: 10px;
+}
+
+/* ========================================
+   ARROW HOVER
+======================================== */
 
 .everyday-essentials-arrow:hover {
-  background: #f4f5f7 !important;
+  background: #f3f3f3;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+  transform: translateY(-50%) scale(1.05);
 }
+
+/* ========================================
+   ARROW ACTIVE
+======================================== */
+
+.everyday-essentials-arrow:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+/* ========================================
+   DISABLED ARROWS
+======================================== */
 
 .everyday-essentials-arrow:disabled {
-  opacity: 0.35 !important;
-  cursor: default !important;
-  pointer-events: none !important;
+  display: none;
 }
 
-/* STANDARD CARD (1 column) */
-.everyday-essentials-card.card-standard,
-.rainy-day-card.card-standard {
-  grid-column: span 1 !important;
-  aspect-ratio: 1 / 1.05 !important;
-}
-
-/* WIDE CARD (2 columns for 6-item layouts like Yoga & Boxing) */
-.everyday-essentials-card.card-wide,
-.rainy-day-card.card-wide {
-  grid-column: span 2 !important;
-  aspect-ratio: 768 / 450 !important;
-}
-
-.everyday-essentials-card:hover,
-.rainy-day-card:hover {
-  transform: translateY(-4px) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-/* IMAGE */
-
-.everyday-essentials-image,
-.rainy-day-image {
-  width: 100% !important;
-  height: 100% !important;
-  display: block !important;
-  object-fit: cover !important;
-  object-position: center !important;
-  border-radius: 16px !important;
-  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
-}
-
-.everyday-essentials-card:hover .everyday-essentials-image,
-.rainy-day-card:hover .rainy-day-image {
-  transform: scale(1.03) !important;
-}
-
-.more-accessories-section .everyday-essentials-card,
-.more-accessories-section .everyday-essentials-image {
-  border-radius: 0 !important;
-}
-
-.real-life-solves-section .everyday-essentials-card,
-.real-life-solves-section .everyday-essentials-image {
-  border-radius: 0 !important;
-}
-
-.everyday-essentials-card-name {
-  position: absolute !important;
-  right: 18px !important;
-  bottom: 18px !important;
-  left: 18px !important;
-  z-index: 1 !important;
-  margin: 0 !important;
-  color: #ffffff !important;
-  font-size: 22px !important;
-  font-weight: 600 !important;
-  line-height: 1.15 !important;
-  text-align: center !important;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65) !important;
-}
-
-/* NO IMAGE */
-
-.everyday-essentials-no-image,
-.rainy-day-no-image {
-  width: 100% !important;
-  height: 100% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: #f4f5f7 !important;
-  color: #888888 !important;
-  font-size: 13px !important;
-  text-align: center !important;
-}
-
-/* TABLET */
+/* ========================================
+   TABLET
+======================================== */
 
 @media (max-width: 900px) {
-  .everyday-essentials-grid,
-  .rainy-day-grid {
-    gap: 10px !important;
+  .everyday-essentials-section {
+    padding-bottom: 20px;
   }
 
-  .everyday-essentials-card,
-  .rainy-day-card {
-    flex-basis: calc((100% - 10px) / 2) !important;
-  }
-}
-
-/* MOBILE */
-
-@media (max-width: 550px) {
-  .everyday-essentials-title,
-  .rainy-day-title {
-    font-size: 16px !important;
-    margin-bottom: 10px !important;
+  .everyday-essentials-title {
+    margin-bottom: 12px;
+    font-size: 16px;
   }
 
-  .everyday-essentials-grid,
-  .rainy-day-grid {
-    gap: 8px !important;
+  .everyday-essentials-grid {
+    gap: 10px;
   }
 
-  .everyday-essentials-card,
-  .rainy-day-card {
-    flex-basis: calc((100% - 8px) / 2) !important;
+  .everyday-essentials-card {
+    flex: 0 0 calc((100% - 20px) / 3);
+    width: calc((100% - 20px) / 3);
   }
 
-  .everyday-essentials-card-name {
-    right: 12px !important;
-    bottom: 12px !important;
-    left: 12px !important;
-    font-size: 16px !important;
+  .everyday-essentials-arrow {
+    width: 34px;
+    height: 34px;
+  }
+
+  .everyday-essentials-previous {
+    left: 8px;
+  }
+
+  .everyday-essentials-next {
+    right: 8px;
   }
 }
 
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+  .everyday-essentials-section {
+    padding-bottom: 18px;
+  }
+
+  .everyday-essentials-title {
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .everyday-essentials-grid {
+    gap: 8px;
+  }
+
+  .everyday-essentials-card {
+    flex: 0 0 calc((100% - 8px) / 2);
+    width: calc((100% - 8px) / 2);
+    aspect-ratio: 1 / 1.08;
+  }
+
+  .everyday-essentials-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .everyday-essentials-previous {
+    left: 6px;
+  }
+
+  .everyday-essentials-next {
+    right: 6px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 400px) {
+  .everyday-essentials-title {
+    font-size: 14px;
+  }
+
+  .everyday-essentials-grid {
+    gap: 7px;
+  }
+
+  .everyday-essentials-card {
+    flex: 0 0 calc((100% - 7px) / 2);
+    width: calc((100% - 7px) / 2);
+  }
+
+  .everyday-essentials-arrow {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* ========================================
+   VERY SMALL MOBILE
+======================================== */
+
+@media (max-width: 320px) {
+  .everyday-essentials-section {
+    padding-bottom: 14px;
+  }
+
+  .everyday-essentials-title {
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  .everyday-essentials-grid {
+    gap: 6px;
+  }
+
+  .everyday-essentials-card {
+    flex: 0 0 calc((100% - 6px) / 2);
+    width: calc((100% - 6px) / 2);
+  }
+}

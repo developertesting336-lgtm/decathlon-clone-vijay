@@ -16,6 +16,12 @@ const categorySchema = new mongoose.Schema(
       trim: true,
     },
 
+    subcategory: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     image: {
       type: String,
       default: "",

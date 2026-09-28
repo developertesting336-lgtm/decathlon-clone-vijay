@@ -4,44 +4,81 @@ import "./CouponBanner.css";
 import api from "../../../api/axios";
 import socket from "../../../socket/socket";
 
-const CouponBanner = ({ section, data, customBanners, style }) => {
+const CouponBanner = ({ style } = {}) => {
   const navigate = useNavigate();
   const [banner, setBanner] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Return Cloudinary or backend image URL exactly as returned by API
   const getImageUrl = (image) => {
-    if (!image) return "";
-    if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
-      return image;
+    if (!image || typeof image !== "string") return "";
+    const trimmed = image.trim();
+
+    // If already absolute URL (Cloudinary, HTTPS, HTTP, protocol-relative), return exactly as-is
+    if (
+      trimmed.startsWith("http://") ||
+      trimmed.startsWith("https://") ||
+      trimmed.startsWith("//")
+    ) {
+      return trimmed;
     }
-    const apiBaseUrl = api.defaults.baseURL || "";
+
+    const apiBaseUrl = api.defaults?.baseURL || "";
     const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
-    if (image.startsWith("/uploads/")) return `${backendUrl}${image}`;
-    if (image.startsWith("uploads/")) return `${backendUrl}/${image}`;
-    return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
+
+    if (trimmed.startsWith("/uploads/")) {
+      return `${backendUrl}${trimmed}`;
+    }
+    if (trimmed.startsWith("uploads/")) {
+      return `${backendUrl}/${trimmed}`;
+    }
+
+    return `${backendUrl}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
   };
 
-  const fetchCouponSection = useCallback(async () => {
+  const fetchCouponBanner = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await api.get("/pages/slug/home");
-      const pageSections = response.data?.page?.sections || [];
 
-      const found = pageSections.find(
-        (item) =>
-          item.type === "coupon-banner" ||
-          item.name === "CouponBanner" ||
-          (item.name && item.name.toLowerCase().includes("coupon"))
-      );
-
-      const bannersList = found?.data?.banners || found?.banners || [];
-      if (!bannersList.length) {
-        setBanner(null);
-        return;
+      // Fetch active banners from existing Banner API
+      let bannersList = [];
+      try {
+        const response = await api.get("/banners?isActive=true");
+        bannersList = response.data?.banners || [];
+      } catch (err) {
+        console.warn("Failed fetching with isActive=true query, retrying /banners:", err);
       }
-      setBanner(bannersList[0]);
+
+      if (!bannersList.length) {
+        const response = await api.get("/banners");
+        bannersList = response.data?.banners || [];
+      }
+
+      // Filter active banners
+      const activeBanners = bannersList.filter((b) => b && b.isActive !== false);
+
+      // Find banner whose subcategory is "coupon banner" (handle case differences safely)
+      const foundBanner =
+        activeBanners.find((b) => {
+          const sub = (b.subcategory || "").trim().toLowerCase();
+          return sub === "coupon banner" || sub === "coupon-banner";
+        }) ||
+        activeBanners.find((b) => {
+          const sub = (b.subcategory || "").trim().toLowerCase();
+          return sub.includes("coupon");
+        }) ||
+        activeBanners.find((b) => {
+          const type = (b.type || "").trim().toLowerCase();
+          return type === "coupon" || type === "coupon banner" || type === "coupon-banner";
+        }) ||
+        activeBanners.find((b) => {
+          const title = (b.title || "").trim().toLowerCase();
+          return title.includes("coupon");
+        });
+
+      setBanner(foundBanner || null);
     } catch (error) {
-      console.error("Coupon Section Error:", error);
+      console.error("Coupon Banner API Error:", error);
       setBanner(null);
     } finally {
       setLoading(false);
@@ -49,89 +86,103 @@ const CouponBanner = ({ section, data, customBanners, style }) => {
   }, []);
 
   useEffect(() => {
-    const directBanners =
-      data?.banners?.length
-        ? data.banners
-        : section?.data?.banners?.length
-        ? section.data.banners
-        : section?.banners?.length
-        ? section.banners
-        : customBanners;
+    fetchCouponBanner();
+  }, [fetchCouponBanner]);
 
-    if (directBanners && Array.isArray(directBanners) && directBanners.length > 0) {
-      setBanner(directBanners[0]);
-      setLoading(false);
-      return;
-    }
-
-    if (data?.image || section?.data?.image) {
-      setBanner({ image: data?.image || section.data.image, link: data?.link || "/" });
-      setLoading(false);
-      return;
-    }
-
-    fetchCouponSection();
-  }, [data, section, customBanners, fetchCouponSection]);
-
+  // Real-time banner updates when modified in Admin Banner Management
   useEffect(() => {
-    // If banners were provided as direct props, parent handles socket updates
-    if (data?.banners?.length || section?.data?.banners?.length || customBanners?.length) {
-      return;
-    }
+    const handleBannerChange = () => {
+      fetchCouponBanner();
+    };
 
-    const handleHomepageUpdate = (updateData) => {
-      const events = [
-        "section_created",
-        "section_updated",
-        "section_deleted",
-        "section_reordered",
-        "banner_created",
-        "banner_updated",
-        "banner_deleted",
-      ];
-      if (events.includes(updateData?.type)) {
-        fetchCouponSection();
+    socket.on("banner_created", handleBannerChange);
+    socket.on("banner_updated", handleBannerChange);
+    socket.on("banner_deleted", handleBannerChange);
+    socket.on("banners_updated", handleBannerChange);
+
+    const handleHomepageBannerUpdate = (payload) => {
+      if (
+        payload?.type &&
+        (payload.type.startsWith("banner_") || payload.type === "banners_updated")
+      ) {
+        fetchCouponBanner();
       }
     };
+    socket.on("homepage_updated", handleHomepageBannerUpdate);
 
-    socket.on("homepage_updated", handleHomepageUpdate);
     return () => {
-      socket.off("homepage_updated", handleHomepageUpdate);
+      socket.off("banner_created", handleBannerChange);
+      socket.off("banner_updated", handleBannerChange);
+      socket.off("banner_deleted", handleBannerChange);
+      socket.off("banners_updated", handleBannerChange);
+      socket.off("homepage_updated", handleHomepageBannerUpdate);
     };
-  }, [data, section, customBanners, fetchCouponSection]);
+  }, [fetchCouponBanner]);
 
-  if (loading || !banner?.image) {
+  // Extract images array with backward compatibility to single image field
+  const getBannerImages = () => {
+    if (!banner) return [];
+    if (Array.isArray(banner.images) && banner.images.length > 0) {
+      const valid = banner.images.filter(
+        (img) => typeof img === "string" && img.trim().length > 0
+      );
+      if (valid.length > 0) return valid;
+    }
+    if (banner.image && typeof banner.image === "string" && banner.image.trim().length > 0) {
+      return [banner.image.trim()];
+    }
+    return [];
+  };
+
+  const images = getBannerImages();
+
+  if (loading || images.length === 0) {
     return null;
   }
 
   const handleBannerClick = () => {
-    if (banner?.link && banner.link !== "#" && banner.link !== "/") {
-      if (banner.link.startsWith("http://") || banner.link.startsWith("https://")) {
-        window.location.href = banner.link;
-        return;
-      }
-      navigate(banner.link);
-    } else {
-      navigate("/");
+    const link = banner?.link?.trim();
+    if (!link || link === "#") return;
+
+    if (link.startsWith("http://") || link.startsWith("https://")) {
+      window.location.href = link;
+      return;
+    }
+
+    navigate(link);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleBannerClick();
     }
   };
 
+  const isClickable = Boolean(banner?.link && banner.link.trim() !== "");
+  const bannerTitle = banner?.title || "Get Your First-Order Coupon";
   const variantClass = style?.variant ? `variant-${style.variant}` : "";
 
   return (
-    <section className={`coupon-banner ${variantClass}`}>
+    <section className={`coupon-banner ${variantClass}`.trim()} aria-label={bannerTitle}>
       <div
-        className="coupon-banner-clickable"
+        className={`coupon-banner-clickable ${isClickable ? "is-clickable" : ""} ${
+          images.length > 1 ? "has-multiple" : ""
+        }`}
         onClick={handleBannerClick}
-        style={{ cursor: "pointer", display: "block" }}
-        role="button"
-        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        role={isClickable ? "button" : undefined}
+        tabIndex={isClickable ? 0 : undefined}
       >
-        <img
-          src={getImageUrl(banner.image)}
-          alt={banner.title || "Coupon Offers"}
-          className="coupon-banner-image"
-        />
+        {images.map((imgUrl, idx) => (
+          <img
+            key={`${imgUrl}-${idx}`}
+            src={getImageUrl(imgUrl)}
+            alt={bannerTitle || `Coupon Offer ${idx + 1}`}
+            title={bannerTitle}
+            className="coupon-banner-image"
+          />
+        ))}
       </div>
     </section>
   );

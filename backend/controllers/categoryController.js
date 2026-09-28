@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Category from "../models/Category.js";
 import Product from "../models/Product.js";
-import Page from "../models/Page.js";
 
 import { emitHomepageUpdate, emitCategoryUpdate } from "../socket/socketManager.js";
 
@@ -114,7 +113,7 @@ CREATE CATEGORY
 
 const createCategory = async (req, res) => {
   try {
-    const { name, slug: customSlug } = req.body;
+    const { name, slug: customSlug, subcategory, isActive } = req.body;
 
     /*
     VALIDATION
@@ -180,6 +179,11 @@ const createCategory = async (req, res) => {
     const category = await Category.create({
       name: trimmedName,
       slug: generatedSlug,
+      subcategory: (subcategory || "").trim(),
+      isActive:
+        isActive === undefined
+          ? true
+          : isActive === true || isActive === "true",
       image: imageUrl,
       sortOrder,
     });
@@ -234,7 +238,7 @@ const updateCategory = async (req, res) => {
       });
     }
 
-    const { name, slug: customSlug, existingImage } = req.body;
+    const { name, slug: customSlug, subcategory, isActive, existingImage } = req.body;
 
     /*
     UPDATE NAME & SLUG
@@ -294,6 +298,22 @@ const updateCategory = async (req, res) => {
       }
 
       category.slug = updatedSlug;
+    }
+
+    /*
+    UPDATE SUBCATEGORY
+    */
+
+    if (subcategory !== undefined) {
+      category.subcategory = (subcategory || "").trim();
+    }
+
+    /*
+    UPDATE ACTIVE STATUS
+    */
+
+    if (isActive !== undefined) {
+      category.isActive = isActive === true || isActive === "true";
     }
 
     /*
