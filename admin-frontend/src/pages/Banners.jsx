@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { Link } from "react-router-dom";
 
@@ -9,6 +9,8 @@ import {
   MdRefresh,
   MdClose,
   MdVisibility,
+  MdSearch,
+  MdFilterList,
 } from "react-icons/md";
 
 import toast from "react-hot-toast";
@@ -19,6 +21,9 @@ import "../styles/Banners.css";
 const Banners = () => {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
   const [deleteModal, setDeleteModal] = useState({
     open: false,
@@ -117,6 +122,46 @@ const Banners = () => {
     }
   };
 
+  const categoryOptions = useMemo(() => {
+    const set = new Set();
+    banners.forEach((b) => {
+      if (b.subcategory && b.subcategory.trim()) {
+        set.add(b.subcategory.trim());
+      }
+      if (b.type && b.type.trim()) {
+        set.add(getBannerType(b.type.trim()));
+      }
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [banners]);
+
+  const filteredBanners = useMemo(() => {
+    return banners.filter((banner) => {
+      const query = search.trim().toLowerCase();
+      const title = String(banner.title || "").toLowerCase();
+      const subcategory = String(banner.subcategory || "").toLowerCase();
+      const type = String(banner.type || "").toLowerCase();
+      const displayType = String(getBannerType(banner.type) || "").toLowerCase();
+
+      // Search by name (title) or category (subcategory / type)
+      const matchesSearch =
+        !query ||
+        title.includes(query) ||
+        subcategory.includes(query) ||
+        type.includes(query) ||
+        displayType.includes(query);
+
+      // Category filter dropdown
+      const matchesCategory =
+        categoryFilter === "all" ||
+        subcategory === categoryFilter.toLowerCase() ||
+        displayType === categoryFilter.toLowerCase() ||
+        type === categoryFilter.toLowerCase();
+
+      return matchesSearch && matchesCategory;
+    });
+  }, [banners, search, categoryFilter]);
+
   return (
     <>
       <div className="banners-page">
@@ -144,14 +189,79 @@ const Banners = () => {
           </div>
         </div>
 
+        {/* TOOLBAR: SEARCH & CATEGORY FILTER */}
+        <div className="banners-toolbar">
+          <div className="banners-toolbar-left">
+            <div className="banners-search">
+              <MdSearch />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by banner name or category..."
+              />
+              {search && (
+                <button
+                  type="button"
+                  className="clear-banner-search"
+                  onClick={() => setSearch("")}
+                  title="Clear search"
+                >
+                  <MdClose />
+                </button>
+              )}
+            </div>
+
+            <div className="banners-filter-wrapper">
+              <MdFilterList className="banners-filter-icon" />
+              <select
+                className="banners-category-select"
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="all">All Categories & Types</option>
+                {categoryOptions.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="banners-toolbar-right">
+            <span className="banners-count">
+              Showing {filteredBanners.length} of {banners.length} banner
+              {banners.length === 1 ? "" : "s"}
+            </span>
+
+            {(search || categoryFilter !== "all") && (
+              <button
+                type="button"
+                className="banners-reset-filter-btn"
+                onClick={() => {
+                  setSearch("");
+                  setCategoryFilter("all");
+                }}
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
         {loading ? (
           <div className="banners-loading">Loading banners...</div>
         ) : (
           <div className="banners-grid">
-            {banners.length === 0 ? (
-              <div className="empty-banners">No banners found</div>
+            {filteredBanners.length === 0 ? (
+              <div className="empty-banners">
+                {search || categoryFilter !== "all"
+                  ? "No banners match your search or category filter"
+                  : "No banners found"}
+              </div>
             ) : (
-              banners.map((banner) => (
+              filteredBanners.map((banner) => (
                 <div className="banner-card" key={banner._id}>
                   <div className="banner-image-wrapper">
                     {banner.image || banner.images?.[0] ? (

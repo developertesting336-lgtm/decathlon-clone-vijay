@@ -54,5 +54,24 @@ categorySchema.pre("save", function () {
 
 const Category = mongoose.model("Category", categorySchema);
 
+// Ensure legacy name_1 unique index is dropped if it exists in DB
+Category.on("index", async (err) => {
+  if (err) console.warn("Category indexing warning:", err.message);
+  try {
+    const indexes = await Category.collection.indexes();
+    const hasNameIndex = indexes.some(
+      (idx) => idx.name === "name_1" && idx.unique
+    );
+    if (hasNameIndex) {
+      await Category.collection.dropIndex("name_1");
+      console.log(
+        "Dropped legacy unique index name_1 from categories collection"
+      );
+    }
+  } catch (dropErr) {
+    // Ignore if index doesn't exist
+  }
+});
+
 export default Category;
 

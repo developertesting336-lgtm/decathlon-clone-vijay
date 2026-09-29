@@ -4,7 +4,7 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./PromoBanner.css";
 import api from "../../../api/axios";
 
-const PromoBanner = () => {
+const PromoBanner = ({ subcategory }) => {
   const navigate = useNavigate();
 
   const [banners, setBanners] = useState([]);
@@ -23,12 +23,19 @@ const PromoBanner = () => {
 
         const allBanners = res.data?.banners || [];
 
+        const targetSub = (subcategory || "home page promo banner")
+          .trim()
+          .toLowerCase()
+          .replace(/['’]/g, "'");
+
         const activeBanners = allBanners
           .filter(
             (banner) =>
               banner.isActive === true &&
-              banner.subcategory?.trim().toLowerCase() ===
-                "home page promo banner"
+              (banner.subcategory || "")
+                .trim()
+                .toLowerCase()
+                .replace(/['’]/g, "'") === targetSub
           )
           .sort((a, b) => {
             const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
@@ -46,7 +53,7 @@ const PromoBanner = () => {
     };
 
     fetchBanners();
-  }, []);
+  }, [subcategory]);
 
   // When transition is disabled for seamless index swap, re-enable transition after DOM paint
   useEffect(() => {

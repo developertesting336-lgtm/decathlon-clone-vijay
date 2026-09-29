@@ -17,6 +17,7 @@ const ProductSection = ({
   customProducts,
   title,
   subtitle,
+  subcategory,
 }) => {
   const { isWishlisted, handleToggle } = useWishlist();
   const [products, setProducts] = useState([]);
@@ -31,8 +32,10 @@ const ProductSection = ({
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
 
+  const targetSubcategory = subcategory || "Workout Checklist";
+
   // Extract subtitle and title smartly
-  const rawTitle = title !== undefined ? title : "Workout Checklist";
+  const rawTitle = title !== undefined ? title : targetSubcategory;
   const rawSubtitle = subtitle !== undefined ? subtitle : "";
 
   let displaySubtitle = rawSubtitle;
@@ -101,52 +104,42 @@ const ProductSection = ({
     return { brand, name };
   };
 
-  const isWorkoutChecklist = (product) => {
+  const matchesSubcategory = useCallback((product, targetSub) => {
     if (!product || typeof product !== "object") return false;
 
-    const subcategory =
-      product.subcategory ||
-      product.subCategory ||
-      product.sub_category;
+    const norm = (str) =>
+      String(str || "")
+        .toLowerCase()
+        .replace(/['’]/g, "'")
+        .trim();
+    const target = norm(targetSub);
 
-    if (Array.isArray(subcategory)) {
-      if (
-        subcategory.some((item) =>
-          String(item?.name || item?.title || item?.slug || item || "")
-            .trim()
-            .toLowerCase() === "workout checklist"
-        )
-      ) {
-        return true;
+    const checkValue = (val) => {
+      if (!val) return false;
+      if (Array.isArray(val)) {
+        return val.some(
+          (item) => norm(item?.name || item?.title || item?.slug || item) === target
+        );
       }
-    } else if (subcategory) {
-      const subName = String(
-        subcategory?.name ||
-        subcategory?.title ||
-        subcategory?.slug ||
-        subcategory ||
-        ""
+      return norm(val?.name || val?.title || val?.slug || val) === target;
+    };
+
+    if (
+      checkValue(
+        product.subcategory || product.subCategory || product.sub_category
       )
-        .trim()
-        .toLowerCase();
-
-      if (subName === "workout checklist") {
-        return true;
-      }
+    ) {
+      return true;
     }
 
-    // Also safely check if populated category object or categories array contains subcategory
     if (product.category && typeof product.category === "object") {
-      const catSub =
-        product.category.subcategory ||
-        product.category.subCategory ||
-        product.category.sub_category;
-      const catSubName = String(
-        catSub?.name || catSub?.title || catSub?.slug || catSub || ""
-      )
-        .trim()
-        .toLowerCase();
-      if (catSubName === "workout checklist") {
+      if (
+        checkValue(
+          product.category.subcategory ||
+            product.category.subCategory ||
+            product.category.sub_category
+        )
+      ) {
         return true;
       }
     }
@@ -154,14 +147,11 @@ const ProductSection = ({
     if (Array.isArray(product.categories)) {
       for (const cat of product.categories) {
         if (cat && typeof cat === "object") {
-          const catSub =
-            cat.subcategory || cat.subCategory || cat.sub_category;
-          const catSubName = String(
-            catSub?.name || catSub?.title || catSub?.slug || catSub || ""
-          )
-            .trim()
-            .toLowerCase();
-          if (catSubName === "workout checklist") {
+          if (
+            checkValue(
+              cat.subcategory || cat.subCategory || cat.sub_category
+            )
+          ) {
             return true;
           }
         }
@@ -169,7 +159,7 @@ const ProductSection = ({
     }
 
     return false;
-  };
+  }, []);
 
   const fetchProducts = useCallback(async () => {
     try {
@@ -177,7 +167,7 @@ const ProductSection = ({
       let fetchedList = [];
       try {
         const prodRes = await api.get(
-          "/products?subcategory=Workout Checklist&limit=50"
+          `/products?subcategory=${encodeURIComponent(targetSubcategory)}&limit=50`
         );
         fetchedList = prodRes.data?.products || [];
       } catch {
@@ -193,15 +183,15 @@ const ProductSection = ({
         }
       }
 
-      const workoutProducts = fetchedList.filter(
+      const filteredProducts = fetchedList.filter(
         (p) =>
           p &&
           typeof p === "object" &&
           p.isActive !== false &&
-          isWorkoutChecklist(p),
+          matchesSubcategory(p, targetSubcategory),
       );
 
-      setProducts(workoutProducts);
+      setProducts(filteredProducts);
       setCurrentIndex(0);
     } catch (error) {
       console.error("Product Section Error:", error);
@@ -210,7 +200,7 @@ const ProductSection = ({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [targetSubcategory, matchesSubcategory]);
 
   useEffect(() => {
     if (customProducts !== undefined && Array.isArray(customProducts)) {
@@ -220,7 +210,7 @@ const ProductSection = ({
           typeof p === "object" &&
           (p.name || p.title) &&
           p.isActive !== false &&
-          isWorkoutChecklist(p),
+          matchesSubcategory(p, targetSubcategory),
       );
       setProducts(valid);
       setCurrentIndex(0);
@@ -229,7 +219,7 @@ const ProductSection = ({
     }
 
     fetchProducts();
-  }, [customProducts, fetchProducts]);
+  }, [customProducts, fetchProducts, targetSubcategory, matchesSubcategory]);
 
   useEffect(() => {
     const handleProductUpdate = (updateData) => {

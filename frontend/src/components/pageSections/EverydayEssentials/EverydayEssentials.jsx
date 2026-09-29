@@ -4,7 +4,7 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./EverydayEssentials.css";
 import api from "../../../api/axios";
 
-const EverydayEssentials = () => {
+const EverydayEssentials = ({ subcategory, title, pageSlug }) => {
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState([]);
@@ -17,13 +17,19 @@ const EverydayEssentials = () => {
 
         const list = res.data?.categories || [];
 
+        const targetSub = (subcategory || "everyday essentials")
+          .trim()
+          .toLowerCase()
+          .replace(/['’]/g, "'");
+
         const filtered = list.filter(
           (category) =>
             category.isActive === true &&
             category.image &&
             String(category.subcategory || "")
               .trim()
-              .toLowerCase() === "everyday essentials",
+              .toLowerCase()
+              .replace(/['’]/g, "'") === targetSub,
         );
 
         setCategories(filtered);
@@ -34,7 +40,7 @@ const EverydayEssentials = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [subcategory]);
 
   const getImageUrl = (image) => {
     if (!image) return "";
@@ -82,11 +88,17 @@ const EverydayEssentials = () => {
     return null;
   }
 
+  const displayTitle =
+    title ||
+    (subcategory
+      ? subcategory.replace(/-/g, " - ")
+      : "Everyday Essentials, Head to toe Collection.");
+
   return (
     <section className="everyday-essentials-section">
       <div className="everyday-essentials-container">
         <h2 className="everyday-essentials-title">
-          Everyday Essentials, Head to toe Collection.
+          {displayTitle}
         </h2>
 
         <div className="everyday-essentials-grid" ref={setSlider}>

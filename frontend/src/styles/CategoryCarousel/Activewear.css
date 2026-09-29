@@ -1,0 +1,798 @@
+/* =========================================================
+   ACTIVEWEAR PAGE
+   DECATHLON-STYLE LAYOUT
+========================================================= */
+
+.activewear-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #111111;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+  overflow-x: hidden;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.activewear-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 14px 18px 50px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.activewear-container > * {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CATEGORY SECTION
+========================================================= */
+
+.activewear-container .category-carousel-section {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.activewear-container .category-carousel-title {
+  margin: 0 0 12px;
+  padding: 0;
+
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #111111;
+}
+
+
+/* =========================================================
+   CIRCULAR CATEGORY CAROUSEL
+========================================================= */
+
+.activewear-container .category-carousel-track--circle {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  padding: 2px 0 4px;
+  margin: 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  box-sizing: border-box;
+}
+
+.activewear-container
+.category-carousel-track--circle::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* CATEGORY CARD */
+
+.activewear-container .category-carousel-card--circle {
+  flex: 1 0 0;
+
+  min-width: 110px;
+  max-width: 138px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  cursor: pointer;
+
+  text-decoration: none;
+
+  transition:
+    transform 0.2s ease;
+}
+
+.activewear-container
+.category-carousel-card--circle:hover {
+  transform: translateY(-2px);
+}
+
+
+/* CIRCLE IMAGE */
+
+.activewear-container
+.category-carousel-circle-avatar {
+  width: 126px;
+  height: 126px;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  background: #f1f2f4;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 8px;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.activewear-container
+.category-carousel-card--circle:hover
+.category-carousel-circle-avatar {
+  transform: scale(1.025);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+
+/* IMAGE */
+
+.activewear-container
+.category-carousel-circle-avatar img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 50%;
+}
+
+
+/* CATEGORY NAME */
+
+.activewear-container
+.category-carousel-name {
+  width: 100%;
+
+  margin: 0;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  line-height: 1.25;
+  text-align: center;
+
+  color: #111111;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   PROMO BANNER
+========================================================= */
+
+.activewear-container .promo-banner {
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  border-radius: 18px;
+  overflow: hidden;
+
+  background: #f4f4f4;
+
+  position: relative;
+
+  /*
+    Screenshot ratio is close to 4:1
+  */
+  aspect-ratio: 4.1 / 1;
+
+  min-height: 260px;
+
+  box-shadow: none;
+}
+
+.activewear-container .promo-slider {
+  width: 100%;
+  height: 100%;
+}
+
+.activewear-container .promo-slide {
+  width: 100%;
+  height: 100%;
+}
+
+.activewear-container .promo-slide img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  border-radius: 18px;
+}
+
+
+/* PROMO ARROWS */
+
+.activewear-container .promo-arrow {
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid #d0d4d8;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #222222;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.12);
+
+  z-index: 5;
+}
+
+.activewear-container .promo-arrow:hover {
+  background: #ffffff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.activewear-container .promo-dots {
+  bottom: 8px;
+}
+
+
+/* =========================================================
+   PRODUCT SECTION
+========================================================= */
+
+.activewear-container .product-section {
+  width: 100%;
+
+  display: flex;
+  align-items: stretch;
+
+  gap: 18px;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+
+  box-sizing: border-box;
+}
+
+
+/* LEFT PROMO TEXT */
+
+.activewear-container
+.product-section__sidebar,
+.activewear-container
+.product-section-left {
+  width: 190px;
+  min-width: 190px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0;
+
+  box-sizing: border-box;
+}
+
+.activewear-container
+.product-section__subtitle {
+  margin: 0 0 8px;
+
+  font-size: 17px;
+  font-weight: 500;
+
+  color: #555555;
+
+  line-height: 1.2;
+}
+
+.activewear-container
+.product-section__title {
+  margin: 0;
+
+  font-size: 31px;
+  font-weight: 800;
+
+  line-height: 1.05;
+
+  color: #111111;
+
+  white-space: pre-line;
+
+  letter-spacing: -0.7px;
+}
+
+
+/* PRODUCT ARROWS */
+
+.activewear-container
+.product-section__navigation,
+.activewear-container
+.product-section-arrows {
+  display: flex;
+
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+.activewear-container
+.product-section__nav-btn,
+.activewear-container
+.product-arrow {
+  width: 34px;
+  height: 34px;
+
+  border: 1px solid #d3d7db;
+
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #222222;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+/* PRODUCT AREA */
+
+.activewear-container
+.product-section__products,
+.activewear-container
+.product-section-right {
+  flex: 1;
+  min-width: 0;
+}
+
+
+/* =========================================================
+   STYLE THAT WORKS HARD
+========================================================= */
+
+.activewear-container
+.everyday-essentials-section {
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  background: transparent;
+}
+
+.activewear-container
+.everyday-essentials-title {
+  margin: 0 0 12px;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  color: #111111;
+}
+
+
+/* GRID */
+
+.activewear-container
+.everyday-essentials-grid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin: 0;
+  padding: 0;
+}
+
+
+/* CARD */
+
+.activewear-container
+.everyday-essentials-card {
+  width: 100%;
+
+  aspect-ratio: 1 / 1.08;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: #eeeeee;
+
+  cursor: pointer;
+
+  box-sizing: border-box;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.activewear-container
+.everyday-essentials-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+
+/* IMAGE */
+
+.activewear-container
+.everyday-essentials-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+  object-position: center;
+
+  transition:
+    transform 0.35s ease;
+}
+
+.activewear-container
+.everyday-essentials-card:hover
+.everyday-essentials-image {
+  transform: scale(1.025);
+}
+
+
+/* HIDE ARROWS ON 4-CARD LAYOUT */
+
+.activewear-container
+.everyday-essentials-arrow {
+  display: none !important;
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 1200px) {
+  .activewear-container {
+    max-width: 1280px;
+    padding-left: 18px;
+    padding-right: 18px;
+    gap: 28px;
+  }
+
+  .activewear-container
+  .category-carousel-track--circle {
+    gap: 8px;
+  }
+
+  .activewear-container
+  .category-carousel-card--circle {
+    min-width: 120px;
+    max-width: 140px;
+  }
+
+  .activewear-container
+  .category-carousel-circle-avatar {
+    width: 126px;
+    height: 126px;
+  }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+  .activewear-container {
+    padding: 14px 16px 40px;
+
+    gap: 24px;
+  }
+
+  .activewear-container
+  .category-carousel-track--circle {
+    gap: 10px;
+  }
+
+  .activewear-container
+  .category-carousel-card--circle {
+    min-width: 94px;
+    max-width: 108px;
+    flex: 0 0 94px;
+  }
+
+  .activewear-container
+  .category-carousel-circle-avatar {
+    width: 94px;
+    height: 94px;
+  }
+
+  .activewear-container
+  .category-carousel-name {
+    font-size: 12px;
+  }
+
+  .activewear-container .promo-banner {
+    aspect-ratio: 3.6 / 1;
+    min-height: 190px;
+    border-radius: 14px;
+  }
+
+  .activewear-container .promo-slide img {
+    border-radius: 14px;
+  }
+
+  .activewear-container .product-section {
+    gap: 14px;
+  }
+
+  .activewear-container
+  .product-section__sidebar,
+  .activewear-container
+  .product-section-left {
+    width: 165px;
+    min-width: 165px;
+  }
+
+  .activewear-container
+  .product-section__title {
+    font-size: 27px;
+  }
+
+  .activewear-container
+  .product-section__subtitle {
+    font-size: 15px;
+  }
+
+  .activewear-container
+  .everyday-essentials-grid {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+  }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+  .activewear-container {
+    width: 100%;
+
+    padding:
+      10px
+      12px
+      28px;
+
+    gap: 22px;
+  }
+
+
+  /* CATEGORY */
+
+  .activewear-container
+  .category-carousel-title {
+    margin-bottom: 10px;
+    font-size: 17px;
+  }
+
+  .activewear-container
+  .category-carousel-track--circle {
+    gap: 10px;
+
+    padding-bottom: 2px;
+
+    justify-content: flex-start;
+  }
+
+  .activewear-container
+  .category-carousel-card--circle {
+    min-width: 78px;
+    max-width: 82px;
+
+    flex: 0 0 78px;
+  }
+
+  .activewear-container
+  .category-carousel-circle-avatar {
+    width: 78px;
+    height: 78px;
+
+    margin-bottom: 6px;
+  }
+
+  .activewear-container
+  .category-carousel-name {
+    font-size: 11.5px;
+  }
+
+
+  /* BANNER */
+
+  .activewear-container
+  .promo-banner {
+    aspect-ratio: 3.25 / 1;
+
+    min-height: 140px;
+
+    border-radius: 10px;
+  }
+
+  .activewear-container
+  .promo-slide img {
+    border-radius: 10px;
+  }
+
+  .activewear-container
+  .promo-arrow {
+    width: 30px;
+    height: 30px;
+
+    font-size: 13px;
+  }
+
+
+  /* PRODUCT SECTION */
+
+  .activewear-container
+  .product-section {
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+  .activewear-container
+  .product-section__sidebar,
+  .activewear-container
+  .product-section-left {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .activewear-container
+  .product-section__subtitle {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .activewear-container
+  .product-section__title {
+    font-size: 24px;
+  }
+
+
+  /* STYLE CARDS */
+
+  .activewear-container
+  .everyday-essentials-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 8px;
+  }
+
+  .activewear-container
+  .everyday-essentials-card {
+    aspect-ratio: 1 / 1.05;
+
+    border-radius: 10px;
+  }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .activewear-container {
+    padding-left: 10px;
+    padding-right: 10px;
+
+    gap: 20px;
+  }
+
+  .activewear-container
+  .category-carousel-card--circle {
+    min-width: 72px;
+    max-width: 74px;
+
+    flex-basis: 72px;
+  }
+
+  .activewear-container
+  .category-carousel-circle-avatar {
+    width: 72px;
+    height: 72px;
+  }
+
+  .activewear-container
+  .category-carousel-name {
+    font-size: 11px;
+  }
+
+  .activewear-container
+  .promo-banner {
+    aspect-ratio: 3 / 1;
+
+    min-height: 120px;
+
+    border-radius: 8px;
+  }
+
+  .activewear-container
+  .promo-slide img {
+    border-radius: 8px;
+  }
+
+  .activewear-container
+  .product-section__title {
+    font-size: 21px;
+  }
+
+  .activewear-container
+  .everyday-essentials-grid {
+    gap: 7px;
+  }
+
+  .activewear-container
+  .everyday-essentials-card {
+    border-radius: 8px;
+  }
+}

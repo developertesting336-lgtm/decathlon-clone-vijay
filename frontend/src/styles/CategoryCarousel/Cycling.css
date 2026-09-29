@@ -1,0 +1,810 @@
+/* =========================================
+   CYCLING PAGE
+========================================= */
+
+.cycling-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  color: #111;
+}
+
+.cycling-container {
+  width: calc(100% - 116px);
+  max-width: 1235px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+}
+
+.cycling-section {
+  width: 100%;
+}
+
+/* =========================================
+   1. TOP CATEGORIES
+========================================= */
+
+.cycling-categories-section {
+  padding: 18px 0 22px;
+}
+
+.cycling-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.cycling-category-card {
+  min-width: 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+.cycling-category-image-wrapper {
+  width: 100%;
+  height: 145px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+  background: #fff;
+}
+
+.cycling-category-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+  object-position: center;
+
+  transition: transform 0.25s ease;
+}
+
+.cycling-category-card:hover
+.cycling-category-image {
+  transform: scale(1.04);
+}
+
+.cycling-category-title {
+  margin: 8px 2px 0;
+
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 500;
+
+  color: #111;
+}
+
+/* =========================================
+   2. HERO BANNER
+========================================= */
+
+.cycling-banner-section {
+  margin: 0 0 18px;
+}
+
+.cycling-banner-container {
+  position: relative;
+  width: 100%;
+
+  overflow: hidden;
+
+  border-radius: 0;
+
+  background: #f5f5f5;
+
+  touch-action: pan-y;
+}
+
+.cycling-banner-track {
+  display: flex;
+  width: 100%;
+
+  will-change: transform;
+}
+
+.cycling-banner-slide {
+  flex: 0 0 100%;
+  width: 100%;
+
+  overflow: hidden;
+
+  cursor: pointer;
+}
+
+.cycling-banner-image {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  /*
+    Important:
+    Do not use cover because banner content
+    like price/text can get cropped.
+  */
+  object-fit: contain;
+  object-position: center;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* =========================================
+   BANNER ARROWS
+========================================= */
+
+.cycling-banner-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #d8d8d8;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.96);
+  color: #222;
+
+  cursor: pointer;
+
+  transform: translateY(-50%);
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  transition: all 0.2s ease;
+}
+
+.cycling-banner-arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.cycling-banner-arrow-left {
+  left: 12px;
+}
+
+.cycling-banner-arrow-right {
+  right: 12px;
+}
+
+/* =========================================
+   BANNER DOTS
+========================================= */
+
+.cycling-banner-dots {
+  position: absolute;
+
+  left: 50%;
+  bottom: 7px;
+
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  transform: translateX(-50%);
+}
+
+.cycling-banner-dot {
+  width: 7px;
+  height: 7px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #d3d3d3;
+
+  cursor: pointer;
+}
+
+.cycling-banner-dot.active {
+  width: 9px;
+  height: 9px;
+
+  background: #3046c7;
+}
+
+/* =========================================
+   FRESH COMBOS SECTION
+========================================= */
+
+.cycling-combos-section {
+  width: 100%;
+  padding: 12px 0 35px;
+}
+
+.cycling-combos-container {
+  display: grid;
+  grid-template-columns: 195px minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* =========================================
+   LEFT CONTENT
+========================================= */
+
+.cycling-combos-intro {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 72px 10px 8px 0;
+}
+
+.cycling-combos-intro-text {
+  max-width: 180px;
+}
+
+.cycling-combos-subtitle {
+  margin: 0 0 10px;
+
+  font-size: 17px;
+  line-height: 1.25;
+  font-weight: 400;
+
+  color: #333;
+}
+
+.cycling-combos-title {
+  margin: 0;
+
+  font-size: 28px;
+  line-height: 1.12;
+  font-weight: 700;
+
+  color: #050505;
+}
+
+/* =========================================
+   CONTROLS
+   IMPORTANT FIX
+========================================= */
+
+.cycling-combos-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  width: fit-content;
+
+  margin-top: auto;
+}
+
+.cycling-arrow-btn {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #d5d5d5;
+  border-radius: 50%;
+
+  background: #fff;
+  color: #222;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.cycling-arrow-btn:hover {
+  background: #f5f5f5;
+  border-color: #999;
+}
+
+.cycling-arrow-btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================================
+   PRODUCT SLIDER
+========================================= */
+
+.cycling-combos-slider {
+  min-width: 0;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 10px;
+
+  overflow-x: auto;
+
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+
+  padding: 0 0 5px;
+}
+
+.cycling-combos-slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* =========================================
+   PRODUCT CARD
+========================================= */
+
+.cycling-product-card {
+  flex: 0 0 210px;
+  min-width: 210px;
+
+  display: flex;
+  flex-direction: column;
+
+  background: #fff;
+}
+
+/* =========================================
+   PRODUCT IMAGE
+========================================= */
+
+.cycling-product-image-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cycling-product-image-wrapper {
+  width: 100%;
+  height: 212px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+
+  background: #f4f4f4;
+}
+
+.cycling-product-image {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: contain;
+
+  transition: transform 0.25s ease;
+}
+
+.cycling-product-image:hover {
+  transform: scale(1.03);
+}
+
+/* =========================================
+   PRODUCT INFO
+========================================= */
+
+.cycling-product-info {
+  padding-top: 7px;
+}
+
+.cycling-product-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cycling-product-title {
+  margin: 0;
+
+  height: 38px;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+
+  font-size: 13px;
+  line-height: 1.25;
+  font-weight: 400;
+
+  color: #222;
+}
+
+.cycling-product-brand {
+  font-weight: 700;
+}
+
+/* =========================================
+   RATING
+========================================= */
+
+.cycling-product-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-top: 6px;
+}
+
+.cycling-rating-stars {
+  font-size: 14px;
+  letter-spacing: -1px;
+
+  color: #ff6b00;
+}
+
+.cycling-review-count {
+  font-size: 12px;
+  color: #666;
+}
+
+/* =========================================
+   PRICE
+========================================= */
+
+.cycling-product-pricing {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-top: 6px;
+}
+
+.cycling-selling-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111;
+}
+
+.cycling-mrp-price {
+  font-size: 12px;
+  color: #777;
+}
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.cycling-product-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 6px;
+
+  margin-top: 10px;
+}
+
+.cycling-wishlist-btn {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+
+  background: #fff;
+
+  cursor: pointer;
+}
+
+.cycling-wishlist-btn:hover {
+  border-color: #999;
+}
+
+.cycling-wishlist-btn.active {
+  border-color: #e53935;
+}
+
+.cycling-add-to-cart-btn {
+  height: 30px;
+
+  padding: 0 10px;
+
+  border: 1px solid #aaa;
+  border-radius: 5px;
+
+  background: #fff;
+
+  color: #111;
+
+  font-size: 11px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.cycling-add-to-cart-btn:hover {
+  background: #f5f5f5;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.cycling-loading {
+  min-height: 450px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 15px;
+  color: #666;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .cycling-container {
+    width: calc(100% - 60px);
+  }
+
+  .cycling-category-image-wrapper {
+    height: 125px;
+  }
+
+  .cycling-category-title {
+    font-size: 12px;
+  }
+
+  .cycling-combos-container {
+    grid-template-columns: 175px minmax(0, 1fr);
+  }
+
+  .cycling-combos-title {
+    font-size: 24px;
+  }
+
+  .cycling-product-card {
+    flex-basis: 195px;
+    min-width: 195px;
+  }
+
+  .cycling-product-image-wrapper {
+    height: 195px;
+  }
+}
+
+/* =========================================
+   TABLET / MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+  .cycling-container {
+    width: calc(100% - 30px);
+    padding-bottom: 35px;
+  }
+
+  /* Categories */
+
+  .cycling-categories-section {
+    padding: 14px 0 20px;
+  }
+
+  .cycling-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px 8px;
+  }
+
+  .cycling-category-image-wrapper {
+    height: 105px;
+  }
+
+  .cycling-category-title {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+
+  /* Banner */
+
+  .cycling-banner-section {
+    margin-bottom: 22px;
+  }
+
+  .cycling-banner-container {
+    border-radius: 14px;
+  }
+
+  .cycling-banner-arrow {
+    width: 30px;
+    height: 30px;
+  }
+
+  .cycling-banner-arrow-left {
+    left: 7px;
+  }
+
+  .cycling-banner-arrow-right {
+    right: 7px;
+  }
+
+  /* Combos */
+
+  .cycling-combos-section {
+    padding-top: 5px;
+  }
+
+  .cycling-combos-container {
+    display: block;
+  }
+
+  .cycling-combos-intro {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+
+    padding: 0 0 12px;
+  }
+
+  .cycling-combos-title {
+    max-width: none;
+    font-size: 22px;
+  }
+
+  .cycling-combos-subtitle {
+    max-width: none;
+    margin-bottom: 6px;
+
+    font-size: 15px;
+  }
+
+  .cycling-combos-slider {
+    gap: 9px;
+  }
+
+  .cycling-product-card {
+    flex: 0 0 185px;
+    min-width: 185px;
+  }
+
+  .cycling-product-image-wrapper {
+    height: 185px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .cycling-container {
+    width: calc(100% - 20px);
+  }
+
+  .cycling-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 6px;
+  }
+
+  .cycling-category-image-wrapper {
+    height: 78px;
+  }
+
+  .cycling-category-title {
+    font-size: 9px;
+    line-height: 1.15;
+  }
+
+  .cycling-banner-container {
+    border-radius: 10px;
+  }
+
+  .cycling-banner-arrow {
+    width: 27px;
+    height: 27px;
+  }
+
+  .cycling-banner-arrow-left {
+    left: 5px;
+  }
+
+  .cycling-banner-arrow-right {
+    right: 5px;
+  }
+
+  .cycling-banner-dots {
+    bottom: 5px;
+    gap: 5px;
+  }
+
+  .cycling-banner-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .cycling-banner-dot.active {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Product section */
+
+  .cycling-combos-intro {
+    display: block;
+  }
+
+  .cycling-combos-subtitle {
+    font-size: 14px;
+  }
+
+  .cycling-combos-title {
+    font-size: 20px;
+  }
+
+  .cycling-product-card {
+    flex: 0 0 175px;
+    min-width: 175px;
+  }
+
+  .cycling-product-image-wrapper {
+    height: 175px;
+  }
+
+  .cycling-product-title {
+    font-size: 13px;
+  }
+
+  .cycling-selling-price {
+    font-size: 15px;
+  }
+
+  .cycling-add-to-cart-btn {
+    padding: 0 7px;
+    font-size: 10px;
+  }
+}
+
+/* =========================================
+   VERY SMALL MOBILE
+========================================= */
+
+@media (max-width: 360px) {
+
+  .cycling-category-image-wrapper {
+    height: 68px;
+  }
+
+  .cycling-category-title {
+    font-size: 8px;
+  }
+
+  .cycling-product-card {
+    flex-basis: 160px;
+    min-width: 160px;
+  }
+
+  .cycling-product-image-wrapper {
+    height: 160px;
+  }
+}

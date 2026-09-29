@@ -8,6 +8,7 @@ import socket from "../../../socket/socket";
 const HeroBanner = ({
   customBanners,
   pageSlug,
+  subcategory,
   getImageUrl: propGetImageUrl,
   navigate: propNavigate,
 }) => {
@@ -61,6 +62,24 @@ const HeroBanner = ({
         (b) => b && b.isActive !== false && (b.image || b.images?.length)
       );
 
+      const norm = (str) =>
+        String(str || "")
+          .toLowerCase()
+          .replace(/['’]/g, "'")
+          .trim();
+
+      if (subcategory) {
+        const target = norm(subcategory);
+        const matched = activeBanners.filter((b) => {
+          const sub = norm(b.subcategory);
+          return sub === target || sub.replace(/[-_\s]+/g, "") === target.replace(/[-_\s]+/g, "");
+        });
+        setBanners(matched);
+        setCurrentBanner(0);
+        setIsTransitioning(true);
+        return;
+      }
+
       const slugKey = (pageSlug || "").toLowerCase().replace(/[-_\s]+/g, "");
 
       let matched = activeBanners.filter((b) => {
@@ -103,7 +122,7 @@ const HeroBanner = ({
     } finally {
       setLoading(false);
     }
-  }, [pageSlug]);
+  }, [pageSlug, subcategory]);
 
   useEffect(() => {
     if (customBanners && Array.isArray(customBanners) && customBanners.length > 0) {

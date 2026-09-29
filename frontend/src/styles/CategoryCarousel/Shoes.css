@@ -1,0 +1,634 @@
+/* =========================================
+   SHOES PAGE
+========================================= */
+
+.shoes-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  color: #111;
+}
+
+.shoes-container {
+  width: 100%;
+  max-width: 1235px;
+  margin: 0 auto;
+  padding: 0 0 50px;
+}
+
+.shoes-section {
+  width: 100%;
+}
+
+/* =========================================
+   1. TOP CATEGORY CARDS
+========================================= */
+
+.shoes-categories-section {
+  padding: 20px 0 28px;
+}
+
+.shoes-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.shoes-category-card {
+  cursor: pointer;
+  text-align: center;
+  min-width: 0;
+}
+
+.shoes-category-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #f5f5f5;
+}
+
+.shoes-category-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.shoes-category-card:hover .shoes-category-image {
+  transform: scale(1.03);
+}
+
+.shoes-category-title {
+  margin: 7px 2px 0;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 500;
+  color: #111;
+}
+
+/* =========================================
+   PERFECT HERO BANNER
+========================================= */
+
+.shoes-banner-section {
+  width: 100%;
+  margin: 0 0 32px;
+}
+
+.shoes-banner-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+
+  border-radius: 24px;
+  background: #f5f5f5;
+
+  touch-action: pan-y;
+}
+
+.shoes-banner-track {
+  display: flex;
+  width: 100%;
+
+  will-change: transform;
+}
+
+.shoes-banner-slide {
+  flex: 0 0 100%;
+  width: 100%;
+
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.shoes-banner-image {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  /*
+    IMPORTANT:
+    Do not use object-fit: cover.
+    It crops the banner content.
+  */
+  object-fit: contain;
+  object-position: center;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* =========================================
+   LEFT / RIGHT ARROWS
+========================================= */
+
+.shoes-banner-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 10;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #d8d8d8;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #222;
+
+  cursor: pointer;
+
+  transform: translateY(-50%);
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.shoes-banner-arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.shoes-banner-arrow-left {
+  left: 12px;
+}
+
+.shoes-banner-arrow-right {
+  right: 12px;
+}
+
+/* =========================================
+   DOTS
+========================================= */
+
+.shoes-banner-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  z-index: 10;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  transform: translateX(-50%);
+}
+
+.shoes-banner-dot {
+  width: 7px;
+  height: 7px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #d4d4d4;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.shoes-banner-dot.active {
+  width: 9px;
+  height: 9px;
+
+  background: #3046c7;
+}
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width: 1200px) {
+
+  .shoes-banner-container {
+    border-radius: 24px;
+  }
+
+  .shoes-banner-image {
+    width: 100%;
+    height: auto;
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+  .shoes-banner-section {
+    margin-bottom: 24px;
+  }
+
+  .shoes-banner-container {
+    border-radius: 16px;
+  }
+
+  .shoes-banner-arrow {
+    width: 32px;
+    height: 32px;
+  }
+
+  .shoes-banner-arrow-left {
+    left: 8px;
+  }
+
+  .shoes-banner-arrow-right {
+    right: 8px;
+  }
+
+  .shoes-banner-dots {
+    bottom: 7px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .shoes-banner-container {
+    border-radius: 12px;
+  }
+
+  .shoes-banner-arrow {
+    width: 28px;
+    height: 28px;
+  }
+
+  .shoes-banner-arrow-left {
+    left: 6px;
+  }
+
+  .shoes-banner-arrow-right {
+    right: 6px;
+  }
+
+  .shoes-banner-dots {
+    bottom: 5px;
+    gap: 5px;
+  }
+
+  .shoes-banner-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .shoes-banner-dot.active {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* =========================================
+   SECTION TITLES
+========================================= */
+
+.shoes-section-title {
+  margin: 0 0 10px;
+
+  font-size: 16px;
+  line-height: 1.3;
+  font-weight: 600;
+
+  color: #111;
+}
+
+/* =========================================
+   3. FIND YOUR MOVE
+========================================= */
+
+.shoes-move-section {
+  margin-bottom: 32px;
+}
+
+.shoes-move-wrapper {
+  position: relative;
+}
+
+.shoes-move-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+
+.shoes-move-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.shoes-move-card {
+  position: relative;
+
+  min-width: 0;
+
+  overflow: hidden;
+
+  border-radius: 15px;
+
+  background: #eee;
+
+  cursor: pointer;
+}
+
+.shoes-move-image {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  aspect-ratio: 0.93 / 1;
+
+  object-fit: cover;
+
+  transition: transform 0.3s ease;
+}
+
+.shoes-move-card:hover .shoes-move-image {
+  transform: scale(1.02);
+}
+
+/* Move slider arrow */
+
+.shoes-slider-arrow {
+  position: absolute;
+
+  right: 8px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #ddd;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  color: #222;
+
+  cursor: pointer;
+
+  z-index: 3;
+}
+
+.shoes-slider-arrow:hover {
+  background: #fff;
+}
+
+/* =========================================
+   4. SHOP FOR FAMILY
+========================================= */
+
+.shoes-family-section {
+  margin-bottom: 35px;
+}
+
+.shoes-family-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.shoes-family-card {
+  overflow: hidden;
+
+  border-radius: 15px;
+
+  background: #eee;
+
+  cursor: pointer;
+}
+
+.shoes-family-image {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  aspect-ratio: 1 / 1;
+
+  object-fit: cover;
+
+  transition: transform 0.3s ease;
+}
+
+.shoes-family-card:hover .shoes-family-image {
+  transform: scale(1.02);
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.shoes-loading-container {
+  min-height: 450px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 15px;
+}
+
+.shoes-loading-spinner {
+  width: 32px;
+  height: 32px;
+
+  border: 3px solid #eee;
+  border-top-color: #3046c7;
+
+  border-radius: 50%;
+
+  animation: shoesSpin 0.8s linear infinite;
+}
+
+.shoes-loading-text {
+  margin: 0;
+
+  font-size: 14px;
+  color: #666;
+}
+
+@keyframes shoesSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   LARGE TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .shoes-container {
+    max-width: none;
+    width: calc(100% - 60px);
+  }
+
+  .shoes-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    row-gap: 18px;
+  }
+
+  .shoes-move-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .shoes-category-title {
+    font-size: 12px;
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+  .shoes-container {
+    width: calc(100% - 30px);
+    padding-bottom: 35px;
+  }
+
+  /* Categories */
+
+  .shoes-categories-section {
+    padding: 15px 0 22px;
+  }
+
+  .shoes-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 8px;
+  }
+
+  .shoes-category-image-wrapper {
+    border-radius: 10px;
+  }
+
+  .shoes-category-title {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+
+
+  /* Move */
+
+  .shoes-section-title {
+    font-size: 16px;
+  }
+
+  .shoes-move-grid {
+    display: flex;
+    gap: 10px;
+  }
+
+  .shoes-move-card {
+    flex: 0 0 calc(50% - 5px);
+    border-radius: 12px;
+  }
+
+  /* Family */
+
+  .shoes-family-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .shoes-family-card {
+    border-radius: 12px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .shoes-container {
+    width: calc(100% - 20px);
+  }
+
+  /* Top categories */
+
+  .shoes-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 6px;
+  }
+
+  .shoes-category-image-wrapper {
+    border-radius: 8px;
+  }
+
+  .shoes-category-title {
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+
+
+  /* Find your move */
+
+  .shoes-move-section {
+    margin-bottom: 25px;
+  }
+
+  .shoes-move-card {
+    flex: 0 0 82%;
+  }
+
+  /* Family */
+
+  .shoes-family-grid {
+    gap: 7px;
+  }
+
+  .shoes-family-card {
+    border-radius: 10px;
+  }
+}
+
+/* =========================================
+   VERY SMALL SCREEN
+========================================= */
+
+@media (max-width: 360px) {
+
+  .shoes-category-title {
+    font-size: 9px;
+  }
+
+  .shoes-move-card {
+    flex-basis: 90%;
+  }
+}

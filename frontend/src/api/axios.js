@@ -116,9 +116,10 @@ api.interceptors.request.use(
     if (token) {
       if (isTokenExpired(token)) {
         handleAutoLogout("Session expired. Please login again.");
-        return Promise.reject(new axios.Cancel("Token expired"));
+        delete config.headers.Authorization;
+      } else {
+        config.headers.Authorization = `Bearer ${token}`;
       }
-      config.headers.Authorization = `Bearer ${token}`;
     }
 
     if (config.data instanceof FormData) {

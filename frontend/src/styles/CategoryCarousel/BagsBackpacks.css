@@ -1,0 +1,404 @@
+/* =========================================
+   BAGS & BACKPACKS PAGE
+========================================= */
+
+.bags-backpacks-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #fff;
+  color: #111;
+}
+
+.bags-backpacks-container {
+  width: calc(100% - 116px);
+  max-width: 1235px;
+  margin: 0 auto;
+  padding-bottom: 50px;
+}
+
+.bags-section {
+  width: 100%;
+}
+
+/* =========================================
+   CATEGORY CARDS
+========================================= */
+
+.bags-categories-section {
+  padding: 22px 0 38px;
+}
+
+.bags-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.bags-category-card {
+  min-width: 0;
+  cursor: pointer;
+  text-align: center;
+}
+
+.bags-category-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+
+  background: #f3f3f3;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+}
+
+.bags-category-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  object-fit: cover;
+
+  transition: transform 0.25s ease;
+}
+
+.bags-category-card:hover .bags-category-image {
+  transform: scale(1.03);
+}
+
+.bags-category-title {
+  margin: 7px 2px 0;
+
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 500;
+
+  color: #111;
+}
+
+/* =========================================
+   BANNER
+========================================= */
+
+.bags-banner-section {
+  width: 100%;
+  margin-bottom: 35px;
+}
+
+.bags-banner-container {
+  position: relative;
+  width: 100%;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  background: #f5f5f5;
+
+  touch-action: pan-y;
+}
+
+.bags-banner-track {
+  display: flex;
+  width: 100%;
+
+  will-change: transform;
+}
+
+.bags-banner-slide {
+  flex: 0 0 100%;
+  width: 100%;
+
+  overflow: hidden;
+
+  cursor: pointer;
+}
+
+.bags-banner-image {
+  width: 100%;
+  height: auto;
+
+  display: block;
+
+  /*
+    Keep complete banner visible.
+    Do NOT use fixed aspect-ratio + cover.
+  */
+  object-fit: contain;
+  object-position: center;
+
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* =========================================
+   BANNER ARROWS
+========================================= */
+
+.bags-banner-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+
+  border: 1px solid #ddd;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #222;
+
+  cursor: pointer;
+
+  transform: translateY(-50%);
+
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+  transition: all 0.2s ease;
+}
+
+.bags-banner-arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.bags-banner-arrow-left {
+  left: 12px;
+}
+
+.bags-banner-arrow-right {
+  right: 12px;
+}
+
+/* =========================================
+   BANNER DOTS
+========================================= */
+
+.bags-banner-dots {
+  position: absolute;
+
+  left: 50%;
+  bottom: 8px;
+
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  transform: translateX(-50%);
+}
+
+.bags-banner-dot {
+  width: 7px;
+  height: 7px;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  background: #d5d5d5;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.bags-banner-dot.active {
+  width: 9px;
+  height: 9px;
+
+  background: #3046c7;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.bags-loading-container {
+  min-height: 450px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+}
+
+.bags-loading-spinner {
+  width: 32px;
+  height: 32px;
+
+  border: 3px solid #eee;
+  border-top-color: #3046c7;
+
+  border-radius: 50%;
+
+  animation: bagsSpin 0.8s linear infinite;
+}
+
+.bags-loading-text {
+  margin: 0;
+
+  font-size: 14px;
+  color: #666;
+}
+
+@keyframes bagsSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .bags-backpacks-container {
+    width: calc(100% - 60px);
+  }
+
+  .bags-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px 8px;
+  }
+
+  .bags-category-title {
+    font-size: 12px;
+  }
+}
+
+/* =========================================
+   MOBILE / TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+  .bags-backpacks-container {
+    width: calc(100% - 30px);
+    padding-bottom: 35px;
+  }
+
+  .bags-categories-section {
+    padding: 15px 0 25px;
+  }
+
+  .bags-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px 8px;
+  }
+
+  .bags-category-image-wrapper {
+    border-radius: 10px;
+  }
+
+  .bags-category-title {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+
+  /* Banner */
+
+  .bags-banner-section {
+    margin-bottom: 25px;
+  }
+
+  .bags-banner-container {
+    border-radius: 17px;
+  }
+
+  .bags-banner-arrow {
+    width: 31px;
+    height: 31px;
+  }
+
+  .bags-banner-arrow-left {
+    left: 8px;
+  }
+
+  .bags-banner-arrow-right {
+    right: 8px;
+  }
+
+  .bags-banner-dots {
+    bottom: 7px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+  .bags-backpacks-container {
+    width: calc(100% - 20px);
+  }
+
+  .bags-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 6px;
+  }
+
+  .bags-category-image-wrapper {
+    border-radius: 8px;
+  }
+
+  .bags-category-title {
+    font-size: 10px;
+    line-height: 1.15;
+  }
+
+  .bags-banner-container {
+    border-radius: 12px;
+  }
+
+  .bags-banner-arrow {
+    width: 28px;
+    height: 28px;
+  }
+
+  .bags-banner-arrow-left {
+    left: 6px;
+  }
+
+  .bags-banner-arrow-right {
+    right: 6px;
+  }
+
+  .bags-banner-dots {
+    bottom: 5px;
+    gap: 5px;
+  }
+
+  .bags-banner-dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .bags-banner-dot.active {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* =========================================
+   VERY SMALL MOBILE
+========================================= */
+
+@media (max-width: 360px) {
+
+  .bags-category-title {
+    font-size: 9px;
+  }
+}

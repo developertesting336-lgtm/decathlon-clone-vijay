@@ -169,6 +169,18 @@ const calculateRelevance = (product, cleanQuery, tokens, matchedCategoryIds) => 
     score += 40;
   }
 
+  // 4b. Subcategory match (55)
+  const prodSubcat = String(product.subcategory || "").toLowerCase();
+  if (prodSubcat) {
+    if (prodSubcat === lowerQuery || prodSubcat.startsWith(lowerQuery)) {
+      score += 70;
+    } else if (prodSubcat.includes(lowerQuery)) {
+      score += 55;
+    } else if (tokens.some((t) => prodSubcat.includes(t.toLowerCase()))) {
+      score += 30;
+    }
+  }
+
   // 5. Category match (40)
   const catIdStr = product.category?._id?.toString() || product.category?.toString();
   const catIdsStrList = Array.isArray(product.categories)
@@ -494,9 +506,11 @@ const getProducts = async (req, res) => {
           if (variant.length <= 4) {
             categoryConditions.push({ name: { $regex: `\\b${esc}(s)?\\b`, $options: "i" } });
             categoryConditions.push({ slug: { $regex: `(^|-)${esc}(s)?(-|$)`, $options: "i" } });
+            categoryConditions.push({ subcategory: { $regex: `\\b${esc}(s)?\\b`, $options: "i" } });
           } else {
             categoryConditions.push({ name: { $regex: esc, $options: "i" } });
             categoryConditions.push({ slug: { $regex: esc, $options: "i" } });
+            categoryConditions.push({ subcategory: { $regex: esc, $options: "i" } });
           }
         });
 
@@ -526,6 +540,7 @@ const getProducts = async (req, res) => {
 
         searchOrConditions.push({ name: { $regex: escapedRemaining, $options: "i" } });
         searchOrConditions.push({ description: { $regex: escapedRemaining, $options: "i" } });
+        searchOrConditions.push({ subcategory: { $regex: escapedRemaining, $options: "i" } });
 
         if (!filter.brand) {
           searchOrConditions.push({ brand: { $regex: escapedRemaining, $options: "i" } });
@@ -536,6 +551,7 @@ const getProducts = async (req, res) => {
           const esc = escapeRegex(variant);
           searchOrConditions.push({ name: { $regex: esc, $options: "i" } });
           searchOrConditions.push({ description: { $regex: esc, $options: "i" } });
+          searchOrConditions.push({ subcategory: { $regex: esc, $options: "i" } });
           if (!filter.brand) {
             searchOrConditions.push({ brand: { $regex: esc, $options: "i" } });
           }
@@ -551,6 +567,7 @@ const getProducts = async (req, res) => {
             if (tok.length < 2) return;
             const escTok = escapeRegex(tok);
             searchOrConditions.push({ name: { $regex: escTok, $options: "i" } });
+            searchOrConditions.push({ subcategory: { $regex: escTok, $options: "i" } });
           });
         }
 
@@ -662,8 +679,9 @@ const getProducts = async (req, res) => {
     */
 
     if (subcategory) {
+      const cleanSub = escapeRegex(String(subcategory).trim()).replace(/['’]/g, "['’]");
       filter.subcategory = {
-        $regex: `^${escapeRegex(String(subcategory).trim())}$`,
+        $regex: `^${cleanSub}$`,
         $options: "i",
       };
     }

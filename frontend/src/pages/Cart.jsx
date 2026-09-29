@@ -13,7 +13,6 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
-import CartProductSection from "../components/cart/CartProductSection";
 import CartSizeModal from "../components/CartSizeModal";
 import AddressDrawer from "../components/AddressDrawer";
 import "../styles/Cart.css";
@@ -30,8 +29,6 @@ const getMRP = (item) => Number(getProduct(item).price || 0);
 const Cart = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [homepageSections, setHomepageSections] = useState([]);
   const [couponBanner, setCouponBanner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updatingProduct, setUpdatingProduct] = useState("");
@@ -82,27 +79,7 @@ const Cart = () => {
     }
   }, [navigate]);
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      const response = await api.get("/products");
-      const data = response.data.products || [];
-      setProducts(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Products Error:", error);
-      setProducts([]);
-    }
-  }, []);
 
-  const fetchHomepageSections = useCallback(async () => {
-    try {
-      const response = await api.get("/homepage-sections/active");
-      const data = response.data.sections || [];
-      setHomepageSections(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Homepage Sections Error:", error);
-      setHomepageSections([]);
-    }
-  }, []);
 
   const fetchCouponBanner = useCallback(async () => {
     try {
@@ -141,8 +118,6 @@ const Cart = () => {
         setLoading(true);
         await Promise.all([
           fetchCart(),
-          fetchProducts(),
-          fetchHomepageSections(),
           fetchCouponBanner(),
           fetchAddresses(),
         ]);
@@ -153,8 +128,6 @@ const Cart = () => {
     loadData();
   }, [
     fetchCart,
-    fetchProducts,
-    fetchHomepageSections,
     fetchCouponBanner,
     fetchAddresses,
   ]);
@@ -297,49 +270,6 @@ const Cart = () => {
     }
   };
 
-  const addToCart = async (product, size = "", quantity = 1) => {
-    if (!product?._id) {
-      toast.error("Product not found");
-      return false;
-    }
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login first");
-      navigate("/login");
-      return false;
-    }
-    if (Array.isArray(product.size) && product.size.length > 0 && !size) {
-      toast.warning("Please select a size");
-      return false;
-    }
-    if (!quantity || Number(quantity) < 1) {
-      toast.warning("Quantity must be at least 1");
-      return false;
-    }
-    try {
-      const response = await api.post(
-        "/cart",
-        {
-          productId: product._id,
-          quantity: Number(quantity),
-          size,
-        },
-        getAuthConfig(),
-      );
-      toast.success(response?.data?.message || "Product added to cart");
-      window.dispatchEvent(new Event("cartUpdated"));
-      await fetchCart();
-      return true;
-    } catch (error) {
-      if (error.response?.status === 401) {
-        toast.error("Please login first");
-        navigate("/login");
-        return false;
-      }
-      toast.error(error.response?.data?.message || "Failed to add product");
-      return false;
-    }
-  };
 
   const openSizeModal = (item) => {
     const product = getProduct(item);
@@ -391,34 +321,6 @@ const Cart = () => {
     }
   };
 
-  const boughtTogetherSection = useMemo(() => {
-    const section = homepageSections.find(
-      (item) => item.name?.trim().toLowerCase() === "bought together",
-    );
-    if (!section) return null;
-
-    const selectedProducts =
-      section.products || section.productIds || section.items || [];
-
-    const finalProducts = selectedProducts
-      .map((selectedProduct) => {
-        if (selectedProduct && typeof selectedProduct === "object") {
-          return selectedProduct;
-        }
-        const selectedId = selectedProduct?.toString();
-        return products.find(
-          (product) => product?._id?.toString() === selectedId,
-        );
-      })
-      .filter(Boolean);
-
-    if (!finalProducts.length) return null;
-
-    return {
-      ...section,
-      products: finalProducts,
-    };
-  }, [homepageSections, products]);
 
   const openAddressDrawer = () => {
     setAddressDrawerOpen(true);
@@ -724,15 +626,6 @@ const Cart = () => {
           </section>
         )}
 
-        {boughtTogetherSection && (
-          <CartProductSection
-            section={boughtTogetherSection}
-            onAddToCart={addToCart}
-            getImageUrl={getImageUrl}
-            formatPrice={formatPrice}
-            getSellingPrice={getSellingPrice}
-          />
-        )}
 
         <footer className="cart-footer">
           <Link to="/" className="cart-footer-logo">

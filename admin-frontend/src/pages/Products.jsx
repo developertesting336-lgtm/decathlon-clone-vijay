@@ -35,6 +35,8 @@ const Products = () => {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] =
     useState("all");
+  const [subcategoryFilter, setSubcategoryFilter] =
+    useState("all");
   const [statusFilter, setStatusFilter] =
     useState("all");
 
@@ -124,6 +126,43 @@ const Products = () => {
     );
   }, [products]);
 
+  const subcategoryOptions = useMemo(() => {
+    const map = new Map();
+
+    products.forEach((product) => {
+      // If a category filter is active, only show subcategories belonging to that category
+      if (categoryFilter !== "all") {
+        const belongsToCat =
+          (Array.isArray(product.categories) &&
+            product.categories.some(
+              (c) => (c?._id || c) === categoryFilter
+            )) ||
+          product.category?._id === categoryFilter ||
+          product.category === categoryFilter;
+
+        if (!belongsToCat) return;
+      }
+
+      if (
+        product.subcategory &&
+        typeof product.subcategory === "string" &&
+        product.subcategory.trim()
+      ) {
+        const sub = product.subcategory.trim();
+        map.set(sub.toLowerCase(), sub);
+      }
+    });
+
+    return Array.from(map.values()).sort((a, b) =>
+      a.localeCompare(b, undefined, { sensitivity: "accent" })
+    );
+  }, [products, categoryFilter]);
+
+  const handleCategoryFilterChange = (val) => {
+    setCategoryFilter(val);
+    setSubcategoryFilter("all");
+  };
+
   const filteredProducts = useMemo(() => {
     const value =
       search.trim().toLowerCase();
@@ -135,15 +174,26 @@ const Products = () => {
       const brand =
         product.brand?.toLowerCase() || "";
 
+      const subcategory =
+        product.subcategory?.toLowerCase() || "";
+
       const category =
         product.category?.name?.toLowerCase() ||
         "";
+
+      const allCategories = Array.isArray(product.categories)
+        ? product.categories
+            .map((c) => (c?.name || "").toLowerCase())
+            .join(" ")
+        : "";
 
       const matchesSearch =
         !value ||
         name.includes(value) ||
         brand.includes(value) ||
-        category.includes(value);
+        subcategory.includes(value) ||
+        category.includes(value) ||
+        allCategories.includes(value);
 
       const matchesCategory =
         categoryFilter === "all" ||
@@ -152,7 +202,14 @@ const Products = () => {
             (c) => (c._id || c) === categoryFilter
           )) ||
         product.category?._id ===
-          categoryFilter;
+          categoryFilter ||
+        product.category === categoryFilter;
+
+      const matchesSubcategory =
+        subcategoryFilter === "all" ||
+        (product.subcategory &&
+          product.subcategory.trim().toLowerCase() ===
+            subcategoryFilter.trim().toLowerCase());
 
       const matchesStatus =
         statusFilter === "all" ||
@@ -163,6 +220,7 @@ const Products = () => {
       return (
         matchesSearch &&
         matchesCategory &&
+        matchesSubcategory &&
         matchesStatus
       );
     });
@@ -170,6 +228,7 @@ const Products = () => {
     products,
     search,
     categoryFilter,
+    subcategoryFilter,
     statusFilter,
   ]);
 
@@ -178,6 +237,7 @@ const Products = () => {
   }, [
     search,
     categoryFilter,
+    subcategoryFilter,
     statusFilter,
   ]);
 
@@ -217,6 +277,7 @@ const Products = () => {
   const clearFilters = () => {
     setSearch("");
     setCategoryFilter("all");
+    setSubcategoryFilter("all");
     setStatusFilter("all");
     setCurrentPage(1);
   };
@@ -379,7 +440,7 @@ const Products = () => {
             className="products-filter"
             value={categoryFilter}
             onChange={(e) =>
-              setCategoryFilter(
+              handleCategoryFilterChange(
                 e.target.value
               )
             }
@@ -395,6 +456,31 @@ const Products = () => {
                   value={category.id}
                 >
                   {category.name}
+                </option>
+              )
+            )}
+          </select>
+
+          <select
+            className="products-filter"
+            value={subcategoryFilter}
+            onChange={(e) =>
+              setSubcategoryFilter(
+                e.target.value
+              )
+            }
+          >
+            <option value="all">
+              All Subcategories
+            </option>
+
+            {subcategoryOptions.map(
+              (subcat) => (
+                <option
+                  key={subcat}
+                  value={subcat}
+                >
+                  {subcat}
                 </option>
               )
             )}
@@ -424,6 +510,7 @@ const Products = () => {
 
           {(search ||
             categoryFilter !== "all" ||
+            subcategoryFilter !== "all" ||
             statusFilter !== "all") && (
             <button
               type="button"
@@ -474,6 +561,8 @@ const Products = () => {
                     >
                       {search ||
                       categoryFilter !==
+                        "all" ||
+                      subcategoryFilter !==
                         "all" ||
                       statusFilter !==
                         "all"

@@ -1,0 +1,750 @@
+/* ==========================================================================
+   WORKOUT ESSENTIALS PAGE STYLES (DECATHLON FITNESS STORE)
+   Matches Decathlon's official layout from reference images:
+   1. Octagonal accessory badges (Yoga mats, Dumbbells, etc.)
+   2. "YOUR FAVORITE SPORT EQUIPMENTS" 4-card grid
+   3. Pill/capsule apparel collection (Men/Women apparel)
+   4. "Fitness Essentials" 4-card grid
+   5. Featured large hero banners (Yoga & Boxing)
+   6. "Iconic Products" horizontal product slider
+   ========================================================================== */
+
+.workout-essentials-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #111111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.workout-essentials-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 36px 64px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   GENERIC SECTION CONTAINERS
+   ========================================= */
+
+.workout-section {
+  width: 100%;
+  margin-bottom: 38px;
+}
+
+.workout-section:last-child {
+  margin-bottom: 0;
+}
+
+.workout-section-content {
+  width: 100%;
+}
+
+/* Section Headings */
+.workout-section-heading {
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #111111;
+  margin: 0 0 16px;
+  letter-spacing: 0.3px;
+}
+
+.workout-section-heading-regular {
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 16px;
+}
+
+/* ==========================================================================
+   SECTION 1: ACCESSORIES & SMALL GEAR (OCTAGONAL BADGES)
+   ========================================================================== */
+
+.workout-accessories-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.workout-accessory-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+}
+
+.workout-accessory-badge {
+  width: 100%;
+  max-width: 140px;
+  aspect-ratio: 1 / 1;
+  background-color: #d2d6d8;
+  /* Octagonal chamfered shape matching Decathlon photography badge */
+  clip-path: polygon(
+    28% 0%,
+    72% 0%,
+    100% 28%,
+    100% 72%,
+    72% 100%,
+    28% 100%,
+    0% 72%,
+    0% 28%
+  );
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.28s ease, filter 0.28s ease;
+}
+
+.workout-accessory-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.workout-accessory-card:hover .workout-accessory-badge {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+}
+
+.workout-accessory-card:hover .workout-accessory-img {
+  transform: scale(1.08);
+}
+
+.workout-accessory-title {
+  margin: 10px 0 0;
+  padding: 0 2px;
+  font-size: 13.5px;
+  line-height: 1.25;
+  font-weight: 500;
+  color: #111111;
+  text-align: center;
+  max-width: 140px;
+  transition: color 0.2s ease;
+}
+
+.workout-accessory-card:hover .workout-accessory-title {
+  color: #0082c3;
+}
+
+/* ==========================================================================
+   SECTION 2: YOUR FAVORITE SPORT EQUIPMENTS (4 LARGE CARDS)
+   ========================================================================== */
+
+.workout-equipments-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.workout-equipment-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.1 / 1;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #e5e7eb;
+}
+
+.workout-equipment-img-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.workout-equipment-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.workout-equipment-card:hover .workout-equipment-img {
+  transform: scale(1.045);
+}
+
+.workout-equipment-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 70px 14px 18px;
+  text-align: center;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.35) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.workout-equipment-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ==========================================================================
+   SECTION 3: WORKOUT APPAREL COLLECTION (8 OVAL / CAPSULE BADGES)
+   ========================================================================== */
+
+.workout-apparel-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.workout-apparel-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  user-select: none;
+}
+
+.workout-apparel-badge {
+  width: 100%;
+  max-width: 140px;
+  aspect-ratio: 0.74 / 1;
+  border-radius: 9999px;
+  background-color: #cbd0d4;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.28s ease, filter 0.28s ease;
+}
+
+.workout-apparel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.workout-apparel-card:hover .workout-apparel-badge {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+}
+
+.workout-apparel-card:hover .workout-apparel-img {
+  transform: scale(1.08);
+}
+
+.workout-apparel-title {
+  margin: 10px 0 0;
+  padding: 0 2px;
+  font-size: 13.5px;
+  line-height: 1.25;
+  font-weight: 500;
+  color: #111111;
+  text-align: center;
+  max-width: 140px;
+  transition: color 0.2s ease;
+}
+
+.workout-apparel-card:hover .workout-apparel-title {
+  color: #0082c3;
+}
+
+/* ==========================================================================
+   SECTION 4: FITNESS ESSENTIALS (4 LARGE CARDS)
+   ========================================================================== */
+
+.workout-essentials-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.workout-essential-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.1 / 1;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #e5e7eb;
+}
+
+.workout-essential-img-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.workout-essential-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.workout-essential-card:hover .workout-essential-img {
+  transform: scale(1.045);
+}
+
+.workout-essential-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 70px 14px 18px;
+  text-align: center;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.35) 45%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.workout-essential-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* ==========================================================================
+   SECTION 5: FEATURED HERO BANNER CARDS (YOGA & BOXING - 2 COLUMNS)
+   ========================================================================== */
+
+.workout-featured-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.workout-featured-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.7 / 1;
+  min-height: 320px;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #111111;
+}
+
+.workout-featured-img-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.workout-featured-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.workout-featured-card:hover .workout-featured-img {
+  transform: scale(1.035);
+}
+
+.workout-featured-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.workout-featured-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(52px, 7vw, 92px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -1px;
+  text-align: center;
+  text-shadow: 0 4px 22px rgba(0, 0, 0, 0.55);
+  user-select: none;
+  transition: transform 0.3s ease;
+}
+
+.workout-featured-card:hover .workout-featured-title {
+  transform: scale(1.04);
+}
+
+/* ==========================================================================
+   SECTION 6: ICONIC PRODUCTS SLIDER (Matches Reference Screenshot 2)
+   ========================================================================== */
+
+.workout-iconic-section {
+  margin-top: 48px;
+  margin-bottom: 28px;
+}
+
+.iconic-products-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.iconic-products-title {
+  font-size: 22px;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.iconic-products-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iconic-arrow-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.iconic-arrow-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+  color: #111111;
+}
+
+.iconic-products-slider {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 4px 2px 14px;
+}
+
+.iconic-products-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.iconic-product-card {
+  flex: 0 0 calc((100% - 64px) / 5);
+  min-width: 225px;
+  max-width: 275px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  box-sizing: border-box;
+}
+
+.iconic-product-image-link {
+  display: block;
+  text-decoration: none;
+  width: 100%;
+}
+
+.iconic-product-image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background-color: #f3f4f6;
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconic-product-image {
+  width: 86%;
+  height: 86%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.iconic-product-card:hover .iconic-product-image {
+  transform: scale(1.05);
+}
+
+.iconic-product-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-top: 12px;
+}
+
+.iconic-product-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.iconic-product-title {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: #111111;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 36px;
+}
+
+.iconic-product-brand {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #111111;
+}
+
+.iconic-product-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.iconic-rating-stars {
+  color: #f59e0b;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+
+.iconic-review-count {
+  color: #6b7280;
+  font-size: 12.5px;
+}
+
+.iconic-product-pricing {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.iconic-selling-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+  line-height: 1.2;
+}
+
+.iconic-mrp-price {
+  font-size: 12px;
+  color: #6b7280;
+  text-decoration: line-through;
+}
+
+.iconic-mrp-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.iconic-product-actions {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.iconic-wishlist-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.iconic-wishlist-btn:hover {
+  border-color: #9ca3af;
+  background-color: #f9fafb;
+}
+
+.iconic-wishlist-btn.active {
+  border-color: #fca5a5;
+  background-color: #fef2f2;
+}
+
+.iconic-add-to-cart-btn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111111;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconic-add-to-cart-btn:hover {
+  border-color: #111111;
+  background-color: #f9fafb;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN BREAKPOINTS
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+  .workout-essentials-container {
+    padding: 20px 24px 48px;
+  }
+
+  .workout-accessory-title,
+  .workout-apparel-title {
+    font-size: 12.5px;
+  }
+
+  .workout-equipment-title,
+  .workout-essential-title {
+    font-size: 24px;
+  }
+
+  .iconic-product-card {
+    flex: 0 0 calc((100% - 48px) / 4);
+  }
+}
+
+@media (max-width: 992px) {
+  .workout-accessories-grid,
+  .workout-apparel-grid {
+    grid-template-columns: repeat(4, 1fr);
+    row-gap: 20px;
+    column-gap: 14px;
+  }
+
+  .workout-equipments-grid,
+  .workout-essentials-sub-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .workout-featured-card {
+    min-height: 260px;
+  }
+
+  .iconic-product-card {
+    flex: 0 0 calc((100% - 32px) / 3);
+  }
+}
+
+@media (max-width: 600px) {
+  .workout-essentials-container {
+    padding: 16px 14px 40px;
+  }
+
+  .workout-section {
+    margin-bottom: 28px;
+  }
+
+  .workout-section-heading,
+  .workout-section-heading-regular {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+
+  /* 4 columns on mobile for icon grids */
+  .workout-accessories-grid,
+  .workout-apparel-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 8px;
+  }
+
+  .workout-accessory-title,
+  .workout-apparel-title {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  /* 2 columns on mobile for large cards */
+  .workout-equipments-grid,
+  .workout-essentials-sub-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .workout-equipment-card,
+  .workout-essential-card {
+    aspect-ratio: 1 / 1;
+  }
+
+  .workout-equipment-overlay,
+  .workout-essential-overlay {
+    padding: 40px 8px 12px;
+  }
+
+  .workout-equipment-title,
+  .workout-essential-title {
+    font-size: 17px;
+  }
+
+  /* Featured hero cards stacked or compact on small mobile */
+  .workout-featured-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .workout-featured-card {
+    min-height: 200px;
+    aspect-ratio: 1.8 / 1;
+  }
+
+  .workout-featured-title {
+    font-size: 46px;
+  }
+
+  .iconic-product-card {
+    flex: 0 0 205px;
+    min-width: 205px;
+  }
+}

@@ -3,14 +3,14 @@ import { Route, Navigate } from "react-router-dom";
 import CategoryProducts from "../pages/CategoryProducts";
 
 // Dedicated Store Pages
-import MonsoonEssentials from "../pages/MonsoonEssentials";
-import Activewear from "../pages/Activewear";
-import WorkoutEssentials from "../pages/WorkoutEssentials";
-import Cycling from "../pages/Cycling";
-import HikingTrekking from "../pages/HikingTrekking";
-import Shoes from "../pages/Shoes";
-import BagsBackpacks from "../pages/BagsBackpacks";
-import SportsAccessories from "../pages/SportsAccessories";
+import MonsoonEssentials from "../pages/CategoryCarousel/MonsoonEssentials";
+import Activewear from "../pages/CategoryCarousel/Activewear";
+import WorkoutEssentials from "../pages/CategoryCarousel/WorkoutEssentials";
+import Cycling from "../pages/CategoryCarousel/Cycling";
+import HikingTrekking from "../pages/CategoryCarousel/HikingTrekking";
+import Shoes from "../pages/CategoryCarousel/Shoes";
+import BagsBackpacks from "../pages/CategoryCarousel/BagsBackpacks";
+import SportsAccessories from "../pages/CategoryCarousel/SportsAccessories";
 
 const CategoryRoutes = (
   <>
@@ -19,10 +19,17 @@ const CategoryRoutes = (
     <Route path="/activewear" element={<Activewear />} />
     <Route path="/workout-essentials" element={<WorkoutEssentials />} />
     <Route path="/cycling" element={<Cycling />} />
+    <Route path="/cycle-store" element={<Cycling />} />
     <Route path="/hiking-trekking" element={<HikingTrekking />} />
+    <Route path="/hiking-trekking-store" element={<HikingTrekking />} />
     <Route path="/shoes" element={<Shoes />} />
+    <Route path="/sports-footwear" element={<Shoes />} />
     <Route path="/bags-backpacks" element={<BagsBackpacks />} />
+    <Route path="/bags-store" element={<BagsBackpacks />} />
+    <Route path="/bags" element={<BagsBackpacks />} />
     <Route path="/sports-accessories" element={<SportsAccessories />} />
+    <Route path="/accessories-store" element={<SportsAccessories />} />
+    <Route path="/accessories" element={<SportsAccessories />} />
 
     {/* Product Category Listing routes */}
     <Route path="/products" element={<CategoryProducts />} />

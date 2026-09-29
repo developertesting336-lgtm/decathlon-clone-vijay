@@ -28,7 +28,13 @@ const routes = {
   "Sports accessories": "/sports-accessories",
 };
 
-const CategoryCarousel = ({ categories: propCategories, title }) => {
+const CategoryCarousel = ({
+  categories: propCategories,
+  title,
+  subcategory,
+  variant,
+  pageSlug,
+}) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
 
@@ -46,7 +52,22 @@ const CategoryCarousel = ({ categories: propCategories, title }) => {
           (item) => item.isActive === true,
         );
 
-        // Keep the required order
+        const normalize = (str) =>
+          String(str || "")
+            .toLowerCase()
+            .replace(/['’]/g, "'")
+            .trim();
+
+        if (subcategory) {
+          const targetSub = normalize(subcategory);
+          const matched = activeCategories.filter(
+            (item) => normalize(item.subcategory) === targetSub,
+          );
+          setCategories(matched);
+          return;
+        }
+
+        // Keep the required order for homepage
         const orderedCategories = categoryOrder
           .map((name) =>
             activeCategories.find(
@@ -64,20 +85,28 @@ const CategoryCarousel = ({ categories: propCategories, title }) => {
     };
 
     fetchCategories();
-  }, [propCategories]);
+  }, [propCategories, subcategory]);
 
   const handleClick = (category) => {
     const path = routes[category.name];
 
-    if (!path) return;
-
-    navigate(path, {
-      state: {
-        categoryId: category._id,
-        categoryName: category.name,
-        subcategory: category.subcategory || "",
-      },
-    });
+    if (path) {
+      navigate(path, {
+        state: {
+          categoryId: category._id,
+          categoryName: category.name,
+          subcategory: category.subcategory || "",
+        },
+      });
+    } else {
+      navigate(`/category/${encodeURIComponent(category.slug || category._id)}`, {
+        state: {
+          categoryId: category._id,
+          categoryName: category.name,
+          subcategory: category.subcategory || "",
+        },
+      });
+    }
   };
 
   const getImageUrl = (image) => {
@@ -94,21 +123,46 @@ const CategoryCarousel = ({ categories: propCategories, title }) => {
 
   if (!categories.length) return null;
 
+  const isCircle = variant === "circle";
+
   return (
-    <section className="category-carousel-section">
+    <section
+      className={`category-carousel-section ${
+        isCircle ? "category-carousel-section--circle" : ""
+      }`}
+    >
       {title && <h2 className="category-carousel-title">{title}</h2>}
 
-      <div className="category-carousel-track">
+      <div
+        className={`category-carousel-track ${
+          isCircle ? "category-carousel-track--circle" : ""
+        }`}
+      >
         {categories.map((category) => (
           <div
             key={category._id}
-            className="category-carousel-card"
+            className={`category-carousel-card ${
+              isCircle ? "category-carousel-card--circle" : ""
+            }`}
             onClick={() => handleClick(category)}
           >
-            {category.image ? (
+            {isCircle ? (
+              <div className="category-carousel-circle-avatar">
+                {category.image ? (
+                  <img src={getImageUrl(category.image)} alt={category.name} />
+                ) : (
+                  <div className="category-carousel-no-image">
+                    {category.name}
+                  </div>
+                )}
+              </div>
+            ) : category.image ? (
               <img src={getImageUrl(category.image)} alt={category.name} />
             ) : (
               <div className="category-carousel-no-image">{category.name}</div>
+            )}
+            {isCircle && category.name && (
+              <span className="category-carousel-name">{category.name}</span>
             )}
           </div>
         ))}

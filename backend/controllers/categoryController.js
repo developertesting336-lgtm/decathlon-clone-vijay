@@ -8,6 +8,36 @@ import { getSingleImageUrl } from "../utils/uploadToCloudinary.js";
 
 /*
 ========================================
+HELPER: GENERATE UNIQUE SLUG
+========================================
+*/
+
+const generateUniqueSlug = async (name, customSlug = "", excludeId = null) => {
+  const base = (customSlug || name || "category")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "category";
+
+  let candidateSlug = base;
+  let counter = 1;
+
+  while (true) {
+    const query = { slug: candidateSlug };
+    if (excludeId) {
+      query._id = { $ne: excludeId };
+    }
+    const exists = await Category.findOne(query);
+    if (!exists) {
+      return candidateSlug;
+    }
+    candidateSlug = `${base}-${counter}`;
+    counter++;
+  }
+};
+
+/*
+========================================
 GET ALL CATEGORIES
 ========================================
 */
@@ -126,35 +156,7 @@ const createCategory = async (req, res) => {
     }
 
     const trimmedName = name.trim();
-    const generatedSlug = (customSlug || trimmedName)
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-
-    /*
-    DUPLICATE CHECK (BY NAME OR SLUG)
-    */
-
-    const existingCategory = await Category.findOne({
-      $or: [
-        {
-          name: {
-            $regex: `^${trimmedName}$`,
-            $options: "i",
-          },
-        },
-        {
-          slug: generatedSlug,
-        },
-      ],
-    });
-
-    if (existingCategory) {
-      return res.status(400).json({
-        message: "Category already exists",
-      });
-    }
+    const generatedSlug = await generateUniqueSlug(trimmedName, customSlug);
 
     /*
     GET LAST ORDER
@@ -241,62 +243,16 @@ const updateCategory = async (req, res) => {
     const { name, slug: customSlug, subcategory, isActive, existingImage } = req.body;
 
     /*
-    UPDATE NAME & SLUG
+    UPDATE NAME & SLUG (ALLOWS SAME NAME WITH AUTO UNIQUE SLUG)
     */
 
     if (name !== undefined && name.trim()) {
       const trimmedName = name.trim();
-      const updatedSlug = (customSlug || trimmedName)
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-
-      const duplicate = await Category.findOne({
-        _id: {
-          $ne: id,
-        },
-        $or: [
-          {
-            name: {
-              $regex: `^${trimmedName}$`,
-              $options: "i",
-            },
-          },
-          {
-            slug: updatedSlug,
-          },
-        ],
-      });
-
-      if (duplicate) {
-        return res.status(400).json({
-          message: "Category already exists",
-        });
-      }
-
+      const updatedSlug = await generateUniqueSlug(trimmedName, customSlug, id);
       category.name = trimmedName;
       category.slug = updatedSlug;
     } else if (customSlug !== undefined && customSlug.trim()) {
-      const updatedSlug = customSlug
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-
-      const duplicate = await Category.findOne({
-        _id: {
-          $ne: id,
-        },
-        slug: updatedSlug,
-      });
-
-      if (duplicate) {
-        return res.status(400).json({
-          message: "Category with this slug already exists",
-        });
-      }
-
+      const updatedSlug = await generateUniqueSlug(category.name, customSlug, id);
       category.slug = updatedSlug;
     }
 
@@ -389,23 +345,6 @@ const deleteCategory = async (req, res) => {
     if (productsCount > 0) {
       return res.status(400).json({
         message: "Cannot delete category with products",
-      });
-    }
-
-    /*
-    CHECK PAGE SECTIONS REFERENCE
-    */
-
-    const pageReferenced = await Page.findOne({
-      $or: [
-        { "sections.categories": id },
-        { "sections.categoryItems.category": id },
-      ],
-    });
-
-    if (pageReferenced) {
-      return res.status(400).json({
-        message: "This category is currently used by one or more page sections.",
       });
     }
 

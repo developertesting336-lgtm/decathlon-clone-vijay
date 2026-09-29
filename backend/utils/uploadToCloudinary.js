@@ -1,4 +1,4 @@
-import cloudinary from "../config/cloudinary.js";
+import cloudinary, { syncCloudinaryTime } from "../config/cloudinary.js";
 import streamifier from "streamifier";
 
 /*
@@ -7,7 +7,9 @@ UPLOAD BUFFER TO CLOUDINARY
 ========================================
 */
 
-const uploadToCloudinary = (buffer, folder = "decathlon") => {
+const uploadToCloudinary = async (buffer, folder = "decathlon") => {
+  await syncCloudinaryTime();
+
   return new Promise((resolve, reject) => {
     try {
       if (!buffer) {
