@@ -1577,26 +1577,25 @@ async function seedProducts() {
     let categoriesCreated = 0;
 
     for (const [categoryName, items] of Object.entries(productsData)) {
-      const slug = categoryName
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, "");
-
       // Find or create category
       let categoryDoc = await Category.findOne({
-        $or: [{ name: categoryName }, { slug }],
+        name: categoryName,
       });
 
       if (!categoryDoc) {
+        const catKey = categoryName
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "");
+
         categoryDoc = await Category.create({
           name: categoryName,
-          slug,
-          image: CATEGORY_IMAGES[slug] || CATEGORY_IMAGES.default,
+          image: CATEGORY_IMAGES[catKey] || CATEGORY_IMAGES.default,
           isActive: true,
         });
         categoriesCreated++;
-        console.log(`Created category: "${categoryName}" (${slug})`);
+        console.log(`Created category: "${categoryName}"`);
       }
 
       for (const item of items) {

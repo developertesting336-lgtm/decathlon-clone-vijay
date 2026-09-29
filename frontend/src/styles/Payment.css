@@ -73,8 +73,8 @@
   max-width: calc(100% - 40px);
   margin: 10px auto 0;
   display: grid;
-  grid-template-columns: 664px 365px;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1.8fr) minmax(0, 1fr);
+  gap: 16px;
   align-items: stretch;
 }
 
@@ -1655,4 +1655,155 @@
   color: #667085;
   margin: 10px 0 0;
   line-height: 1.4;
-}
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+===================================================== */
+
+@media (max-width: 992px) {
+  .payment-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: calc(100% - 32px);
+  }
+
+  .payment-right {
+    order: 2;
+    width: 100%;
+  }
+
+  .payment-left {
+    order: 1;
+    width: 100%;
+  }
+
+  .payment-summary-sticky {
+    position: static;
+    width: 100%;
+  }
+
+  .payment-methods {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-header {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .payment-container {
+    max-width: calc(100% - 20px);
+    margin: 8px auto 0;
+    gap: 16px;
+  }
+
+  .payment-methods {
+    display: flex;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .payment-method-sidebar {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+    gap: 6px;
+    background: #edf0f4;
+  }
+
+  .payment-method-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .payment-method {
+    width: auto;
+    flex: 0 0 auto;
+    min-height: auto;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    padding: 10px 14px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .payment-method.active {
+    border-left-color: transparent;
+    border-bottom-color: #3544c4;
+    background: #ffffff;
+  }
+
+  .payment-method strong {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .payment-method span {
+    display: none;
+  }
+
+  .payment-method-content {
+    padding: 24px 16px;
+  }
+
+  .qr-card {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .gift-card-box {
+    width: 100%;
+  }
+
+  .gift-card-box button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-header {
+    padding: 0 12px;
+  }
+
+  .secure-payment div {
+    display: none;
+  }
+
+  .payment-logo span {
+    font-size: 20px;
+  }
+
+  .payment-logo strong {
+    font-size: 18px;
+  }
+
+  .payment-container {
+    max-width: calc(100% - 16px);
+  }
+
+  .payment-method-title {
+    margin: 10px 12px;
+    font-size: 13px;
+  }
+
+  .payment-method-content {
+    padding: 18px 12px;
+  }
+
+  .upi-card-options,
+  .upi-apps-row {
+    flex-direction: column;
+  }
+
+  .bank-selection-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+

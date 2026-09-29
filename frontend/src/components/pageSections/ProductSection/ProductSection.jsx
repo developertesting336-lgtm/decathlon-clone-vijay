@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   MdChevronLeft,
@@ -21,8 +21,6 @@ const ProductSection = ({
 }) => {
   const { isWishlisted, handleToggle } = useWishlist();
   const [products, setProducts] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [visibleProducts, setVisibleProducts] = useState(4.3);
   const [loading, setLoading] = useState(true);
 
   // PRODUCT MODAL STATES
@@ -118,10 +116,10 @@ const ProductSection = ({
       if (!val) return false;
       if (Array.isArray(val)) {
         return val.some(
-          (item) => norm(item?.name || item?.title || item?.slug || item) === target
+          (item) => norm(item?.name || item?.title || item) === target
         );
       }
-      return norm(val?.name || val?.title || val?.slug || val) === target;
+      return norm(val?.name || val?.title || val) === target;
     };
 
     if (
@@ -192,11 +190,9 @@ const ProductSection = ({
       );
 
       setProducts(filteredProducts);
-      setCurrentIndex(0);
     } catch (error) {
       console.error("Product Section Error:", error);
       setProducts([]);
-      setCurrentIndex(0);
     } finally {
       setLoading(false);
     }
@@ -213,7 +209,6 @@ const ProductSection = ({
           matchesSubcategory(p, targetSubcategory),
       );
       setProducts(valid);
-      setCurrentIndex(0);
       setLoading(false);
       return;
     }
@@ -242,67 +237,42 @@ const ProductSection = ({
     };
   }, [fetchProducts]);
 
-  // TOUCH SWIPE FOR MOBILE
-  const [touchStartX, setTouchStartX] = useState(null);
-  const [touchEndX, setTouchEndX] = useState(null);
+  const sliderRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
-  useEffect(() => {
-    const updateVisibleProducts = () => {
-      const width = window.innerWidth;
-      if (width <= 480) {
-        setVisibleProducts(2);
-      } else if (width <= 768) {
-        setVisibleProducts(3);
-      } else if (width <= 992) {
-        setVisibleProducts(4);
-      } else {
-        // Desktop & laptops: Exactly 5 cards visible
-        setVisibleProducts(5);
-      }
-    };
-
-    updateVisibleProducts();
-    window.addEventListener("resize", updateVisibleProducts);
-    return () => {
-      window.removeEventListener("resize", updateVisibleProducts);
-    };
+  const checkScroll = useCallback(() => {
+    if (!sliderRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
   }, []);
 
-  const maxIndex = Math.max(Math.ceil(products.length - visibleProducts), 0);
-
   useEffect(() => {
-    if (currentIndex > maxIndex) {
-      setCurrentIndex(maxIndex);
+    checkScroll();
+    const el = sliderRef.current;
+    if (el) {
+      el.addEventListener("scroll", checkScroll, { passive: true });
+      window.addEventListener("resize", checkScroll);
+      return () => {
+        el.removeEventListener("scroll", checkScroll);
+        window.removeEventListener("resize", checkScroll);
+      };
     }
-  }, [currentIndex, maxIndex]);
+  }, [products, checkScroll]);
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+    if (!sliderRef.current) return;
+    const card = sliderRef.current.querySelector(".product-section__card");
+    const amount = card ? card.offsetWidth + 12 : 260;
+    sliderRef.current.scrollBy({ left: -amount, behavior: "smooth" });
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
-  };
-
-  const handleTouchStart = (e) => {
-    setTouchEndX(null);
-    setTouchStartX(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e) => {
-    setTouchEndX(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX || !touchEndX) return;
-    const distance = touchStartX - touchEndX;
-    const isLeftSwipe = distance > 40;
-    const isRightSwipe = distance < -40;
-    if (isLeftSwipe) {
-      handleNext();
-    } else if (isRightSwipe) {
-      handlePrev();
-    }
+    if (!sliderRef.current) return;
+    const card = sliderRef.current.querySelector(".product-section__card");
+    const amount = card ? card.offsetWidth + 12 : 260;
+    sliderRef.current.scrollBy({ left: amount, behavior: "smooth" });
   };
 
   const handleOpenModal = (product) => {
@@ -380,10 +350,6 @@ const ProductSection = ({
     return null;
   }
 
-  const trackWidth = (products.length / visibleProducts) * 100;
-  const cardWidth = 100 / products.length;
-  const translateAmount = currentIndex * cardWidth;
-
   return (
     <>
       <section className="product-section">
@@ -404,7 +370,7 @@ const ProductSection = ({
               type="button"
               className="product-section__nav-btn product-arrow"
               onClick={handlePrev}
-              disabled={currentIndex === 0}
+              disabled={!canScrollLeft}
               aria-label="Previous product"
             >
               <MdChevronLeft size={20} />
@@ -414,7 +380,7 @@ const ProductSection = ({
               type="button"
               className="product-section__nav-btn product-arrow"
               onClick={handleNext}
-              disabled={currentIndex >= maxIndex}
+              disabled={!canScrollRight}
               aria-label="Next product"
             >
               <MdChevronRight size={20} />
@@ -424,17 +390,9 @@ const ProductSection = ({
 
         <div
           className="product-section__viewport product-viewport"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          ref={sliderRef}
         >
-          <div
-            className="product-section__track product-list"
-            style={{
-              width: `${trackWidth}%`,
-              transform: `translateX(-${translateAmount}%)`,
-            }}
-          >
+          <div className="product-section__track product-list">
             {products.map((product) => {
               const { brand, name } = getBrandAndTitle(product);
               const hasDiscount =
@@ -460,9 +418,6 @@ const ProductSection = ({
                 <div
                   className="product-section__card product-card"
                   key={product._id}
-                  style={{
-                    flex: `0 0 ${cardWidth}%`,
-                  }}
                 >
                   <div className="product-section__card-inner product-card-content">
                     <Link

@@ -505,11 +505,9 @@ const getProducts = async (req, res) => {
           const esc = escapeRegex(variant);
           if (variant.length <= 4) {
             categoryConditions.push({ name: { $regex: `\\b${esc}(s)?\\b`, $options: "i" } });
-            categoryConditions.push({ slug: { $regex: `(^|-)${esc}(s)?(-|$)`, $options: "i" } });
             categoryConditions.push({ subcategory: { $regex: `\\b${esc}(s)?\\b`, $options: "i" } });
           } else {
             categoryConditions.push({ name: { $regex: esc, $options: "i" } });
-            categoryConditions.push({ slug: { $regex: esc, $options: "i" } });
             categoryConditions.push({ subcategory: { $regex: esc, $options: "i" } });
           }
         });
@@ -518,7 +516,7 @@ const getProducts = async (req, res) => {
           matchedCategoryDocs = await Category.find({
             $or: categoryConditions,
             isActive: true,
-          }).select("_id name slug image");
+          }).select("_id name image");
 
           // Exclude categories of conflicting gender
           if (detectedGender === "Men") {
@@ -605,15 +603,14 @@ const getProducts = async (req, res) => {
       let categoryConditions = [];
       if (mongoose.Types.ObjectId.isValid(category)) {
         const catObjId = new mongoose.Types.ObjectId(category);
-        const catDoc = await Category.findById(catObjId).select("name slug");
+        const catDoc = await Category.findById(catObjId).select("name");
         if (
           catDoc &&
-          (catDoc.slug === "running" || catDoc.name?.toLowerCase() === "running")
+          catDoc.name?.toLowerCase() === "running"
         ) {
           const relatedCats = await Category.find({
             $or: [
               { _id: catObjId },
-              { slug: /^running-/i },
               { name: /^running /i },
             ],
           }).select("_id");
@@ -629,19 +626,16 @@ const getProducts = async (req, res) => {
           ];
         }
       } else {
-        const cleanSlug = String(category).toLowerCase().trim();
         const cleanName = String(category).replace(/-/g, " ").trim();
         const escapedName = cleanName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
-        // Look up exact category by slug or exact name
+        // Look up category by exact or normalized name
         const matchedCategories = await Category.find({
           $or: [
-            { slug: cleanSlug },
             { name: { $regex: `^${escapedName}$`, $options: "i" } },
             { name: cleanName },
-            ...(cleanSlug === "running" || cleanName.toLowerCase() === "running"
+            ...(cleanName.toLowerCase() === "running"
               ? [
-                  { slug: /^running-/i },
                   { name: /^running /i },
                 ]
               : []),
@@ -793,8 +787,8 @@ const getProducts = async (req, res) => {
     if (isSearching && (!hasExplicitSort || sort === "relevant")) {
       // Fetch all matching products to score relevance
       const allMatching = await Product.find(filter)
-        .populate("category", "name image slug")
-        .populate("categories", "name image slug");
+        .populate("category", "name image")
+        .populate("categories", "name image");
 
       const scoringQuery =
         remainingQuery && remainingQuery.length > 0
@@ -832,8 +826,8 @@ const getProducts = async (req, res) => {
     } else {
       totalProducts = await Product.countDocuments(filter);
       products = await Product.find(filter)
-        .populate("category", "name image slug")
-        .populate("categories", "name image slug")
+        .populate("category", "name image")
+        .populate("categories", "name image")
         .sort(sortOption)
         .skip(skip)
         .limit(limitNumber);

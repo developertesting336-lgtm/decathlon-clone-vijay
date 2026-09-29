@@ -805,7 +805,7 @@ async function fetchExactMatchedProducts(userQuery) {
 
   // 4. Fetch all active products
   const products = await Product.find({ isActive: true })
-    .populate("category", "name slug")
+    .populate("category", "name")
     .lean();
 
   // If no category was named, but a price limit was asked (e.g. "under 10000 only"), return top products within budget!

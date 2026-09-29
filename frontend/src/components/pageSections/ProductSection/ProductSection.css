@@ -123,19 +123,32 @@
 .product-viewport {
   flex: 1;
   min-width: 0;
-  overflow: hidden;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-sizing: border-box;
   position: relative;
   touch-action: pan-y;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.product-section__viewport::-webkit-scrollbar,
+.product-viewport::-webkit-scrollbar {
+  display: none;
 }
 
 .product-section__track,
 .product-list {
   display: flex;
   align-items: stretch;
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-  will-change: transform;
+  gap: 12px;
+  width: max-content;
+  min-width: 100%;
   box-sizing: border-box;
+  padding: 4px 2px 8px;
 }
 
 /* ==========================================================================
@@ -144,8 +157,10 @@
 
 .product-section__card,
 .product-card {
-  min-width: 0;
-  padding-right: 12px;
+  flex: 0 0 calc((100% - (12px * 3.5)) / 4.5);
+  min-width: 195px;
+  max-width: 250px;
+  scroll-snap-align: start;
   box-sizing: border-box;
 }
 
@@ -555,7 +570,9 @@
 
   .product-section__card,
   .product-card {
-    padding-right: 10px;
+    flex: 0 0 calc((100% - (12px * 2)) / 3);
+    min-width: 165px;
+    max-width: none;
   }
 }
 
@@ -581,6 +598,8 @@
   .product-section__header-text {
     flex: 1;
     min-width: 0;
+    min-height: auto;
+    padding: 0;
   }
 
   .product-section__subtitle,
@@ -616,9 +635,19 @@
     width: 100%;
   }
 
+  .product-section__track,
+  .product-list {
+    gap: 10px;
+    width: 100%;
+    min-width: 100%;
+  }
+
   .product-section__card,
   .product-card {
-    padding-right: 10px;
+    flex: 0 0 calc((100% - 10px) / 2);
+    min-width: calc((100% - 10px) / 2);
+    max-width: calc((100% - 10px) / 2);
+    padding-right: 0;
   }
 }
 
@@ -634,9 +663,17 @@
     font-size: 20px;
   }
 
+  .product-section__track,
+  .product-list {
+    gap: 10px;
+  }
+
   .product-section__card,
   .product-card {
-    padding-right: 8px;
+    flex: 0 0 calc((100% - 10px) / 2);
+    min-width: calc((100% - 10px) / 2);
+    max-width: calc((100% - 10px) / 2);
+    padding-right: 0;
   }
 
   .product-section__current-price,
@@ -656,6 +693,21 @@
     width: 30px;
     height: 30px;
     flex: 0 0 30px;
+  }
+}
+
+/* Small / Narrow Mobile (<= 340px) */
+@media (max-width: 340px) {
+  .product-section__track,
+  .product-list {
+    gap: 8px;
+  }
+
+  .product-section__card,
+  .product-card {
+    flex: 0 0 calc((100% - 8px) / 2);
+    min-width: calc((100% - 8px) / 2);
+    max-width: calc((100% - 8px) / 2);
   }
 }
 

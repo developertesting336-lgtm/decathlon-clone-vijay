@@ -99,7 +99,7 @@ const CategoryCarousel = ({
         },
       });
     } else {
-      navigate(`/category/${encodeURIComponent(category.slug || category._id)}`, {
+      navigate(`/category/${encodeURIComponent(category.name || category._id)}`, {
         state: {
           categoryId: category._id,
           categoryName: category.name,

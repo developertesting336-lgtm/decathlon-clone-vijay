@@ -44,8 +44,10 @@ const CategoryShowcase = () => {
 
   const handleClick = (category) => {
     if (!category) return;
+    const target = category.name || category._id;
+    if (!target) return;
 
-    navigate(`/category/${category.slug}`, {
+    navigate(`/category/${encodeURIComponent(target)}`, {
       state: {
         categoryId: category._id,
         categoryName: category.name,

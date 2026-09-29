@@ -1301,6 +1301,10 @@
 ===================================================== */
 
 @media (max-width: 1024px) {
+  .product-detail-container {
+    padding: 12px var(--page-padding-x, 24px) 60px;
+  }
+
   .pdp-main-grid {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -1324,7 +1328,30 @@
   }
 }
 
+@media (max-width: 860px) {
+  .pdp-reviews-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .pdp-perks-bottom-strip {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 20px 8px;
+    text-align: left;
+  }
+
+  .pdp-perk-node {
+    justify-content: flex-start;
+  }
+}
+
 @media (max-width: 640px) {
+  .product-detail-container {
+    padding: 10px var(--page-padding-x, 16px) 40px;
+  }
+
   .pdp-mosaic-container {
     grid-template-columns: 1fr;
   }
@@ -1333,5 +1360,53 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    width: 100%;
+  }
+
+  .pdp-sports-categories {
+    width: 100%;
+    overflow-x: auto;
+    gap: 14px;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+
+  .pdp-sports-categories::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-detail-container {
+    padding: 8px var(--page-padding-x, 12px) 32px;
+  }
+
+  .pdp-cards-slider {
+    gap: 10px;
+  }
+
+  .pdp-product-card-decathlon {
+    flex: 0 0 calc((100% - 10px) / 2);
+    min-width: 140px;
+  }
+
+  .pdp-perks-bottom-strip {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px 0;
+  }
+
+  .pdp-score-block h2 {
+    font-size: 38px;
+  }
+
+  .pdp-price-amount {
+    font-size: 22px;
+  }
+
+  .pdp-pincode-input-frame {
+    height: 38px;
   }
 }

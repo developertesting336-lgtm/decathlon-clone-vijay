@@ -88,12 +88,7 @@ const EquippingChampions = () => {
 
         <div className="equipping-champions-grid">
           {categories.map((category) => {
-            const slug =
-              category.slug ||
-              category.name
-                ?.toLowerCase()
-                .replace(/\s+/g, "-") ||
-              category._id;
+            const target = category.name || category._id;
 
             return (
               <div
@@ -101,7 +96,7 @@ const EquippingChampions = () => {
                 key={category._id}
                 onClick={() =>
                   navigate(
-                    `/category/${encodeURIComponent(slug)}`,
+                    `/category/${encodeURIComponent(target)}`,
                     {
                       state: {
                         categoryId: category._id,

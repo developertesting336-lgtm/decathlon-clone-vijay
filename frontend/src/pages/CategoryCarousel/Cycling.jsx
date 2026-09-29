@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import api, { useWishlist } from "../../api/axios";
 import { FiChevronLeft, FiChevronRight, FiHeart } from "react-icons/fi";
 import toast from "react-hot-toast";
-
-import { useWishlist } from "../../api/axios";
 import Navbar from "../../components/Navbar";
 import CategoryNav from "../../components/pageSections/CategoryNav/CategoryNav";
 import Footer from "../../components/pageSections/Footer/Footer";
@@ -12,8 +10,6 @@ import ProductSizeModal from "../../components/ProductSizeModal";
 
 import "../../styles/CategoryCarousel/Cycling.css";
 import "../../styles/ProductSizeModal.css";
-
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 const Cycling = () => {
   const navigate = useNavigate();
@@ -50,7 +46,8 @@ const Cycling = () => {
     ) {
       return image;
     }
-    const backendUrl = API_URL.replace(/\/api\/?$/, "");
+    const apiBaseUrl = api.defaults.baseURL || "";
+    const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
     if (image.startsWith("/uploads/")) {
       return `${backendUrl}${image}`;
     }
@@ -73,10 +70,10 @@ const Cycling = () => {
       setLoading(true);
 
       const [catRes, bannerRes, prodRes] = await Promise.all([
-        axios.get(`${API_URL}/categories`).catch(() => ({ data: [] })),
-        axios.get(`${API_URL}/banners`).catch(() => ({ data: [] })),
-        axios
-          .get(`${API_URL}/products?subcategory=Cycle-Store&limit=50`)
+        api.get("/categories").catch(() => ({ data: [] })),
+        api.get("/banners").catch(() => ({ data: [] })),
+        api
+          .get("/products?subcategory=Cycle-Store&limit=50")
           .catch(() => ({ data: [] })),
       ]);
 
@@ -295,9 +292,7 @@ const Cycling = () => {
 
   const handleCategoryClick = (category) => {
     if (!category) return;
-    const path = category.slug
-      ? `/category/${category.slug}`
-      : `/category/${encodeURIComponent(category.name)}`;
+    const path = `/category/${encodeURIComponent(category.name)}`;
 
     navigate(path, {
       state: {
@@ -368,18 +363,13 @@ const Cycling = () => {
 
     try {
       setAdding(true);
-      const response = await axios.post(
-        `${API_URL}/cart`,
+      const response = await api.post(
+        "/cart",
         {
           productId: selectedProduct._id,
           quantity: Number(quantity) || 1,
           size: selectedSize || "",
           color: selectedColor || "",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         },
       );
 

@@ -2987,3 +2987,130 @@
   font-weight: 500;
 }
 
+/* =====================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+===================================================== */
+
+@media (max-width: 992px) {
+  .orders-layout {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: calc(100% - 24px);
+    gap: 16px;
+  }
+
+  .orders-sidebar {
+    width: 100%;
+  }
+
+  .orders-content {
+    width: 100%;
+  }
+
+  .sidebar-menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .orders-header {
+    height: 60px;
+    padding: 0 12px;
+  }
+
+  .orders-layout {
+    max-width: calc(100% - 16px);
+    margin-top: 12px;
+  }
+
+  .sidebar-menu {
+    grid-template-columns: 1fr;
+  }
+
+  .orders-tabs {
+    height: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .orders-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .order-card {
+    padding: 14px;
+  }
+
+  .order-item-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .order-item-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .order-actions {
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .order-actions button,
+  .order-actions a {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+    justify-content: center;
+  }
+
+  .return-details-card,
+  .exchange-details-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .orders-layout {
+    max-width: 100%;
+    padding: 0 8px;
+  }
+
+  .orders-phone-box {
+    font-size: 11px;
+    padding: 0 12px;
+  }
+
+  .loyalty-heading {
+    padding: 0 14px;
+  }
+
+  .loyalty-box p {
+    margin: 8px 14px;
+    font-size: 12px;
+  }
+
+  .loyalty-box button {
+    margin: 0 14px 12px;
+  }
+
+  .order-actions button,
+  .order-actions a {
+    flex: 1 1 100%;
+  }
+
+  .order-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+

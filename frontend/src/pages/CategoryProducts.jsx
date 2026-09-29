@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FiHeart, FiPlus, FiMinus, FiFilter, FiX } from "react-icons/fi";
-import axios from "axios";
 import toast from "react-hot-toast";
 import api, { useWishlist } from "../api/axios";
 import socket from "../socket/socket";
@@ -132,10 +131,10 @@ function CategoryProducts() {
 
   const [fetchedCategoryName, setFetchedCategoryName] = useState("");
 
-  const formatTitle = (slug) => {
-    if (!slug) return "";
-    return slug
-      .split("-")
+  const formatTitle = (name) => {
+    if (!name) return "";
+    return name
+      .split(/[-_]+/)
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
   };
@@ -195,7 +194,7 @@ function CategoryProducts() {
           : `${categoryName} | Decathlon`;
       } catch (err) {
         console.error(err);
-        if (axios.isAxiosError(err)) {
+        if (err.response || err.isAxiosError) {
           setError(err.response?.data?.message || "Unable to load products");
         } else {
           setError("Unable to load products");
@@ -372,7 +371,7 @@ function CategoryProducts() {
       toast.success("Added to cart!");
     } catch (err) {
       console.error("Add to cart error:", err);
-      if (axios.isAxiosError(err)) {
+      if (err.response || err.isAxiosError) {
         toast.error(err.response?.data?.message || "Failed to add to cart");
       } else {
         toast.error("Failed to add to cart");

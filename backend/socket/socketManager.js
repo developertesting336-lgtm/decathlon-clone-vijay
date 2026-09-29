@@ -28,22 +28,18 @@ const emitHomepageUpdate = (typeOrObj, data = null) => {
 
   let eventType = "homepage_updated";
   let payloadData = data;
-  let slug = "home";
 
   if (typeof typeOrObj === "string") {
     eventType = typeOrObj;
     payloadData = data;
-    if (data?.slug) slug = data.slug;
   } else if (typeof typeOrObj === "object" && typeOrObj !== null) {
     eventType = typeOrObj.type || "homepage_updated";
-    slug = typeOrObj.slug || "home";
     payloadData = { ...typeOrObj, ...(data || {}) };
   }
 
   const payload = {
     type: eventType,
     data: payloadData,
-    slug,
     timestamp: Date.now(),
   };
 

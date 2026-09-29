@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../api/axios";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import Navbar from "../../components/Navbar";
@@ -8,9 +8,6 @@ import CategoryNav from "../../components/pageSections/CategoryNav/CategoryNav";
 import Footer from "../../components/pageSections/Footer/Footer";
 
 import "../../styles/CategoryCarousel/SportsAccessories.css";
-
-const API_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 const SportsAccessories = () => {
   const navigate = useNavigate();
@@ -35,7 +32,8 @@ const SportsAccessories = () => {
     ) {
       return image;
     }
-    const backendUrl = API_URL.replace(/\/api\/?$/, "");
+    const apiBaseUrl = api.defaults.baseURL || "";
+    const backendUrl = apiBaseUrl.replace(/\/api\/?$/, "");
     if (typeof image === "string") {
       if (image.startsWith("/uploads/")) {
         return `${backendUrl}${image}`;
@@ -57,8 +55,8 @@ const SportsAccessories = () => {
       setLoading(true);
 
       const [catRes, bannerRes] = await Promise.all([
-        axios.get(`${API_URL}/categories`),
-        axios.get(`${API_URL}/banners`),
+        api.get("/categories"),
+        api.get("/banners"),
       ]);
 
       const normalize = (str) =>
@@ -286,9 +284,7 @@ const SportsAccessories = () => {
 
   const handleCategoryClick = (category) => {
     if (!category) return;
-    const path = category.slug
-      ? `/category/${category.slug}`
-      : `/category/${encodeURIComponent(category.name)}`;
+    const path = `/category/${encodeURIComponent(category.name)}`;
 
     navigate(path, {
       state: {

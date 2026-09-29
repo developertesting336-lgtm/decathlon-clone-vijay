@@ -47,7 +47,7 @@ export async function searchProducts(query, options = {}) {
     gender === "Kids" || /\b(kid|kids|child|children|junior)\b/i.test(q);
 
   const allProducts = await Product.find(filter)
-    .populate("category", "name slug")
+    .populate("category", "name")
     .lean();
 
   // Score & filter products

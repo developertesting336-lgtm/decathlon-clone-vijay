@@ -8,14 +8,6 @@ const categorySchema = new mongoose.Schema(
       trim: true,
     },
 
-    slug: {
-      type: String,
-      unique: true,
-      sparse: true,
-      lowercase: true,
-      trim: true,
-    },
-
     subcategory: {
       type: String,
       trim: true,
@@ -42,16 +34,6 @@ const categorySchema = new mongoose.Schema(
   },
 );
 
-categorySchema.pre("save", function () {
-  if (!this.slug && this.name) {
-    this.slug = this.name
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
-  }
-});
-
 const Category = mongoose.model("Category", categorySchema);
 
 // Ensure legacy name_1 unique index is dropped if it exists in DB
@@ -66,6 +48,15 @@ Category.on("index", async (err) => {
       await Category.collection.dropIndex("name_1");
       console.log(
         "Dropped legacy unique index name_1 from categories collection"
+      );
+    }
+    const hasSlugIndex = indexes.some(
+      (idx) => idx.name === "slug_1"
+    );
+    if (hasSlugIndex) {
+      await Category.collection.dropIndex("slug_1");
+      console.log(
+        "Dropped legacy unique index slug_1 from categories collection"
       );
     }
   } catch (dropErr) {

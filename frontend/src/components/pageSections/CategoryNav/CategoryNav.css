@@ -180,16 +180,26 @@
     width: 100%;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 var(--page-padding-x, 16px);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .category-links {
-    gap: 8px;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .category-tab-btn {
     padding: 4px 8px;
     font-size: 13px;
+    white-space: nowrap;
   }
 
   .delivery-location {

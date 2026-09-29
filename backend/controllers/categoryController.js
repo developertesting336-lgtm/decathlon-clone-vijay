@@ -6,35 +6,7 @@ import { emitHomepageUpdate, emitCategoryUpdate } from "../socket/socketManager.
 
 import { getSingleImageUrl } from "../utils/uploadToCloudinary.js";
 
-/*
-========================================
-HELPER: GENERATE UNIQUE SLUG
-========================================
-*/
 
-const generateUniqueSlug = async (name, customSlug = "", excludeId = null) => {
-  const base = (customSlug || name || "category")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "category";
-
-  let candidateSlug = base;
-  let counter = 1;
-
-  while (true) {
-    const query = { slug: candidateSlug };
-    if (excludeId) {
-      query._id = { $ne: excludeId };
-    }
-    const exists = await Category.findOne(query);
-    if (!exists) {
-      return candidateSlug;
-    }
-    candidateSlug = `${base}-${counter}`;
-    counter++;
-  }
-};
 
 /*
 ========================================
@@ -49,17 +21,7 @@ const getCategories = async (req, res) => {
       createdAt: 1,
     });
 
-    // Auto-backfill slug for legacy categories if missing
-    for (const cat of categories) {
-      if (!cat.slug && cat.name) {
-        cat.slug = cat.name
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "");
-        await cat.save().catch(() => {});
-      }
-    }
+
 
     const categoriesWithCount = await Promise.all(
       categories.map(async (category) => {
@@ -100,13 +62,9 @@ const getCategoryById = async (req, res) => {
     if (mongoose.Types.ObjectId.isValid(id) && /^[0-9a-fA-F]{24}$/.test(id)) {
       category = await Category.findById(id);
     } else {
-      const cleanSlug = String(id).toLowerCase().trim();
-      const cleanName = cleanSlug.replace(/-/g, " ");
+      const cleanName = String(id).replace(/-/g, " ").trim();
       category = await Category.findOne({
-        $or: [
-          { slug: cleanSlug },
-          { name: { $regex: `^${cleanName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" } },
-        ],
+        name: { $regex: `^${cleanName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`, $options: "i" },
       });
     }
 
@@ -143,7 +101,7 @@ CREATE CATEGORY
 
 const createCategory = async (req, res) => {
   try {
-    const { name, slug: customSlug, subcategory, isActive } = req.body;
+    const { name, subcategory, isActive } = req.body;
 
     /*
     VALIDATION
@@ -156,7 +114,6 @@ const createCategory = async (req, res) => {
     }
 
     const trimmedName = name.trim();
-    const generatedSlug = await generateUniqueSlug(trimmedName, customSlug);
 
     /*
     GET LAST ORDER
@@ -180,7 +137,6 @@ const createCategory = async (req, res) => {
 
     const category = await Category.create({
       name: trimmedName,
-      slug: generatedSlug,
       subcategory: (subcategory || "").trim(),
       isActive:
         isActive === undefined
@@ -240,20 +196,14 @@ const updateCategory = async (req, res) => {
       });
     }
 
-    const { name, slug: customSlug, subcategory, isActive, existingImage } = req.body;
+    const { name, subcategory, isActive, existingImage } = req.body;
 
     /*
-    UPDATE NAME & SLUG (ALLOWS SAME NAME WITH AUTO UNIQUE SLUG)
+    UPDATE NAME
     */
 
     if (name !== undefined && name.trim()) {
-      const trimmedName = name.trim();
-      const updatedSlug = await generateUniqueSlug(trimmedName, customSlug, id);
-      category.name = trimmedName;
-      category.slug = updatedSlug;
-    } else if (customSlug !== undefined && customSlug.trim()) {
-      const updatedSlug = await generateUniqueSlug(category.name, customSlug, id);
-      category.slug = updatedSlug;
+      category.name = name.trim();
     }
 
     /*

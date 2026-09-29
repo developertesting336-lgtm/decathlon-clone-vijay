@@ -1743,4 +1743,93 @@ body {
 .comm-language-select:focus {
   border-color: #3945bd;
   box-shadow: 0 0 0 3px rgba(57, 69, 189, 0.15);
-}
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+===================================================== */
+
+@media (max-width: 1024px) {
+  .profile-header {
+    padding: 0 24px;
+    height: 70px;
+  }
+
+  .profile-sidebar {
+    width: 280px;
+    min-width: 280px;
+  }
+
+  .profile-content {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 850px) {
+  .profile-layout {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .profile-sidebar {
+    width: 100%;
+    min-width: 100%;
+    height: auto;
+    position: static;
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .profile-menu-section {
+    margin-bottom: 20px;
+  }
+
+  .profile-content {
+    width: 100%;
+    padding: 20px 16px;
+  }
+
+  .profile-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .profile-grid,
+  .profile-edit-grid,
+  .sports-pref-grid,
+  .profile-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    padding: 0 16px;
+    height: 60px;
+  }
+
+  .decathlon-logo-text {
+    font-size: 22px;
+  }
+
+  .profile-user-box {
+    padding: 14px 16px;
+    height: auto;
+    min-height: auto;
+  }
+
+  .profile-content {
+    padding: 16px 12px;
+  }
+
+  .comm-language-select {
+    max-width: 100%;
+  }
+
+  .profile-action-btn,
+  .profile-save-btn {
+    width: 100%;
+  }
+}
+

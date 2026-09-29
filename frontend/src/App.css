@@ -88,13 +88,40 @@ body {
 
 /* =========================================
    GLOBAL CONSISTENT MARGINS & CONTAINERS
-   Guarantees the exact same margin (24px)
-   on BOTH sides (left & right) across ALL screens
+   Smoothly adapts padding across all screen sizes
 ========================================= */
 
 :root {
-  --page-margin-x: 48px;
-  --page-padding-x: 48px;
+  --page-margin-x: 36px;
+  --page-padding-x: 36px;
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --page-margin-x: 48px;
+    --page-padding-x: 48px;
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --page-margin-x: 24px;
+    --page-padding-x: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-margin-x: 16px;
+    --page-padding-x: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-margin-x: 12px;
+    --page-padding-x: 12px;
+  }
 }
 
 .navbar,
@@ -112,73 +139,27 @@ body {
 .dynamic-page-container-bags-backpacks,
 .activewear-container,
 .monsoon-essentials-container,
-.product-detail-container {
+.product-detail-container,
+.cycling-container,
+.shoes-container,
+.sports-accessories-container,
+.workout-essentials-container,
+.hiking-trekking-container,
+.bags-backpacks-container,
+.wishlist-container {
   width: 100% !important;
   max-width: var(--max-content-width, 1440px) !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-left: var(--page-padding-x, 48px) !important;
-  padding-right: var(--page-padding-x, 48px) !important;
+  padding-left: var(--page-padding-x) !important;
+  padding-right: var(--page-padding-x) !important;
   box-sizing: border-box !important;
 }
 
-/* Enforce the exact same side margin on all screens */
-@media (max-width: 1440px), (max-width: 1200px), (max-width: 992px) {
-  .navbar,
-  .category-nav,
-  .home-container,
-  .dynamic-page-container,
-  .dynamic-page-container-activewear,
-  .dynamic-page-container-monsoon-essentials,
-  .dynamic-page-container-workout-essentials,
-  .dynamic-page-container-sports-accessories,
-  .dynamic-page-container-shoes,
-  .dynamic-page-container-home,
-  .dynamic-page-container-hiking-trekking,
-  .dynamic-page-container-cycling,
-  .dynamic-page-container-bags-backpacks,
-  .activewear-container,
-  .monsoon-essentials-container,
-  .product-detail-container {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    padding-left: var(--page-padding-x, 48px) !important;
-    padding-right: var(--page-padding-x, 48px) !important;
-    box-sizing: border-box !important;
-  }
-}
-
-@media (max-width: 768px), (max-width: 600px), (max-width: 480px) {
-  :root {
-    --page-margin-x: 20px;
-    --page-padding-x: 20px;
-  }
-
-  .navbar,
-  .category-nav,
-  .home-container,
-  .dynamic-page-container,
-  .dynamic-page-container-activewear,
-  .dynamic-page-container-monsoon-essentials,
-  .dynamic-page-container-workout-essentials,
-  .dynamic-page-container-sports-accessories,
-  .dynamic-page-container-shoes,
-  .dynamic-page-container-home,
-  .dynamic-page-container-hiking-trekking,
-  .dynamic-page-container-cycling,
-  .dynamic-page-container-bags-backpacks,
-  .activewear-container,
-  .monsoon-essentials-container,
-  .product-detail-container {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    padding-left: var(--page-padding-x, 20px) !important;
-    padding-right: var(--page-padding-x, 20px) !important;
-    box-sizing: border-box !important;
-  }
-}
-
-img {
+img,
+svg,
+video,
+canvas {
   max-width: 100%;
   height: auto;
 }
