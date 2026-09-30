@@ -17,7 +17,7 @@ const getIO = () => {
 HOMEPAGE & SECTION REALTIME EMITTER
 Handles both:
 - emitHomepageUpdate("section_created", { ... })
-- emitHomepageUpdate({ type: "page_created", slug: "home" })
+- emitHomepageUpdate({ type: "page_created", page: "home" })
 ========================================
 */
 const emitHomepageUpdate = (typeOrObj, data = null) => {

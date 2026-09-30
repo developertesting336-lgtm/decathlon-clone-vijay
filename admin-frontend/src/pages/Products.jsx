@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 
 import api from "../api/axios";
 import socket from "../socket/socket";
+import { getPaginationRange } from "../utils/pagination";
 import "../styles/Products.css";
 
 const PRODUCTS_PER_PAGE = 20;
@@ -50,8 +51,17 @@ const Products = () => {
       name: "",
     });
 
-  const [viewProduct, setViewProduct] =
-    useState(null);
+  const handleViewProduct = (product) => {
+    const productId = product?._id || product?.id;
+
+    if (!productId) {
+      console.error("Product ID missing:", product);
+      toast.error("Product ID is missing");
+      return;
+    }
+
+    navigate(`/products/${productId}`);
+  };
 
   const fetchProducts = async () => {
     try {
@@ -700,8 +710,10 @@ const Products = () => {
                               type="button"
                               className="view-product-btn"
                               title="View Product"
+                              aria-label="View Product"
+                              disabled={!product?._id && !product?.id}
                               onClick={() =>
-                                setViewProduct(
+                                handleViewProduct(
                                   product
                                 )
                               }
@@ -750,70 +762,62 @@ const Products = () => {
 
             {totalPages > 1 && (
               <div className="products-pagination">
-
                 <button
                   type="button"
                   className="pagination-arrow"
-                  disabled={
-                    currentPage ===
-                    1
-                  }
-                  onClick={() =>
-                    handlePageChange(
-                      currentPage - 1
-                    )
-                  }
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  title="Previous Page"
+                  aria-label="Previous Page"
                 >
                   <MdChevronLeft />
                 </button>
 
                 <div className="pagination-pages">
-
-                  {Array.from(
-                    {
-                      length:
-                        totalPages,
-                    },
-                    (_, index) =>
-                      index + 1
-                  ).map((page) => (
-                    <button
-                      type="button"
-                      key={page}
-                      className={
-                        currentPage ===
-                        page
-                          ? "pagination-page active"
-                          : "pagination-page"
+                  {getPaginationRange(currentPage, totalPages).map(
+                    (item, index) => {
+                      if (typeof item === "string") {
+                        return (
+                          <span
+                            key={`dots-${index}`}
+                            className="pagination-ellipsis"
+                          >
+                            ...
+                          </span>
+                        );
                       }
-                      onClick={() =>
-                        handlePageChange(
-                          page
-                        )
-                      }
-                    >
-                      {page}
-                    </button>
-                  ))}
-
+                      return (
+                        <button
+                          type="button"
+                          key={item}
+                          className={
+                            currentPage === item
+                              ? "pagination-page active"
+                              : "pagination-page"
+                          }
+                          onClick={() => handlePageChange(item)}
+                          aria-label={`Page ${item}`}
+                          aria-current={
+                            currentPage === item ? "page" : undefined
+                          }
+                        >
+                          {item}
+                        </button>
+                      );
+                    }
+                  )}
                 </div>
 
                 <button
                   type="button"
                   className="pagination-arrow"
-                  disabled={
-                    currentPage ===
-                    totalPages
-                  }
-                  onClick={() =>
-                    handlePageChange(
-                      currentPage + 1
-                    )
-                  }
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  title="Next Page"
+                  aria-label="Next Page"
                 >
                   <MdChevronRight />
                 </button>
-
               </div>
             )}
 
@@ -890,294 +894,6 @@ const Products = () => {
                 }
               >
                 Delete Product
-              </button>
-
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      {viewProduct && (
-        <div
-          className="product-view-modal-overlay"
-          onClick={() =>
-            setViewProduct(null)
-          }
-        >
-          <div
-            className="product-view-modal"
-            onClick={(e) =>
-              e.stopPropagation()
-            }
-          >
-
-            <button
-              type="button"
-              className="product-view-modal-close"
-              onClick={() =>
-                setViewProduct(null)
-              }
-            >
-              <MdClose />
-            </button>
-
-            <div className="product-view-modal-header">
-
-              <div>
-                <h2>
-                  {viewProduct.name}
-                </h2>
-
-                <span>
-                  {viewProduct.brand ||
-                    "Decathlon"}
-                </span>
-              </div>
-
-              <span
-                className={
-                  viewProduct.isActive
-                    ? "status-active"
-                    : "status-inactive"
-                }
-              >
-                {viewProduct.isActive
-                  ? "Active"
-                  : "Inactive"}
-              </span>
-
-            </div>
-
-            <div className="product-view-modal-body">
-
-              <div className="product-view-images">
-
-                {viewProduct.images?.length >
-                0 ? (
-
-                  viewProduct.images.map(
-                    (image, index) => (
-                      <div
-                        className="product-view-image"
-                        key={`${image}-${index}`}
-                      >
-                        <img
-                          src={getProductImageUrl(
-                            image
-                          )}
-                          alt={`${viewProduct.name} ${
-                            index + 1
-                          }`}
-                        />
-                      </div>
-                    )
-                  )
-
-                ) : (
-
-                  <div className="product-view-no-image">
-                    No Image
-                  </div>
-
-                )}
-
-              </div>
-
-              <div className="product-view-info">
-
-                <div className="product-view-price">
-
-                  {viewProduct.discountPrice >
-                  0 ? (
-                    <>
-                      <strong>
-                        ₹
-                        {
-                          viewProduct.discountPrice
-                        }
-                      </strong>
-
-                      <span>
-                        ₹
-                        {
-                          viewProduct.price
-                        }
-                      </span>
-                    </>
-                  ) : (
-                    <strong>
-                      ₹
-                      {
-                        viewProduct.price
-                      }
-                    </strong>
-                  )}
-
-                </div>
-
-                <div className="product-view-description">
-
-                  <h3>
-                    Description
-                  </h3>
-
-                  <p>
-                    {viewProduct.description ||
-                      "No description available."}
-                  </p>
-
-                </div>
-
-                <div className="product-view-details">
-
-                  <div>
-                    <span>
-                      Categories
-                    </span>
-
-                    <strong>
-                      {Array.isArray(viewProduct.categories) &&
-                      viewProduct.categories.length > 0
-                        ? viewProduct.categories
-                            .map((c) => c.name || c)
-                            .join(", ")
-                        : viewProduct.category?.name || "-"}
-                    </strong>
-                  </div>
-
-                  {viewProduct.subcategory && (
-                    <div>
-                      <span>
-                        Subcategory
-                      </span>
-
-                      <strong>
-                        {viewProduct.subcategory}
-                      </strong>
-                    </div>
-                  )}
-
-                  <div>
-                    <span>
-                      Stock
-                    </span>
-
-                    <strong>
-                      {
-                        viewProduct.stock ??
-                        0
-                      }
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>
-                      Size
-                    </span>
-
-                    <strong>
-                      {Array.isArray(
-                        viewProduct.size
-                      )
-                        ? viewProduct.size.join(
-                            ", "
-                          )
-                        : viewProduct.size ||
-                          "-"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>
-                      Color
-                    </span>
-
-                    <strong>
-                      {Array.isArray(
-                        viewProduct.color
-                      )
-                        ? viewProduct.color.join(
-                            ", "
-                          )
-                        : viewProduct.color ||
-                          "-"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>
-                      Discount (%)
-                    </span>
-
-                    <strong>
-                      {viewProduct.discountPercent != null && viewProduct.discountPercent !== ""
-                        ? `${viewProduct.discountPercent}%`
-                        : "0%"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>
-                      Review (Rating)
-                    </span>
-
-                    <strong>
-                      {viewProduct.review != null && viewProduct.review !== ""
-                        ? `★ ${viewProduct.review}`
-                        : "-"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>
-                      On Sale
-                    </span>
-
-                    <strong
-                      style={{
-                        color: viewProduct.onSale
-                          ? "#16a34a"
-                          : "#64748b",
-                      }}
-                    >
-                      {viewProduct.onSale
-                        ? "Yes"
-                        : "No"}
-                    </strong>
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            <div className="product-view-modal-footer">
-
-              <button
-                type="button"
-                className="product-view-modal-edit"
-                onClick={() => {
-                  setViewProduct(null);
-
-                  navigate(
-                    `/products/edit/${viewProduct._id}`
-                  );
-                }}
-              >
-                <MdEdit />
-                Edit Product
-              </button>
-
-              <button
-                type="button"
-                className="product-view-modal-done"
-                onClick={() =>
-                  setViewProduct(null)
-                }
-              >
-                Close
               </button>
 
             </div>

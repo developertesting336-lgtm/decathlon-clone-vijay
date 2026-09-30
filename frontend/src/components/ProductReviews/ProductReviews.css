@@ -1,0 +1,1024 @@
+/* ==========================================================================
+   PRODUCT REVIEWS & RATINGS COMPONENT (DECATHLON CLONE DESIGN SYSTEM)
+   ========================================================================== */
+
+.pdp-reviews-section-v2 {
+  margin: 40px 0 50px;
+  padding-top: 36px;
+  border-top: 1px solid #e5e7eb;
+  font-family: inherit;
+  color: #111111;
+  clear: both;
+}
+
+/* --------------------------------------------------------------------------
+   HEADER & ACTIONS
+   -------------------------------------------------------------------------- */
+.pdp-reviews-header-v2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.pdp-reviews-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pdp-reviews-title-wrap h3 {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  color: #111111;
+  letter-spacing: -0.3px;
+}
+
+.pdp-reviews-count-badge {
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+}
+
+.pdp-reviews-actions-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdp-write-review-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.18s ease-in-out;
+  border: none;
+  font-family: inherit;
+  text-decoration: none;
+}
+
+.pdp-write-review-btn.primary {
+  background: #0082c3;
+  color: #ffffff;
+}
+
+.pdp-write-review-btn.primary:hover {
+  background: #006ba6;
+  box-shadow: 0 4px 12px rgba(0, 130, 195, 0.25);
+  transform: translateY(-1px);
+}
+
+.pdp-write-review-btn.outline {
+  background: #ffffff;
+  color: #0082c3;
+  border: 1.5px solid #0082c3;
+}
+
+.pdp-write-review-btn.outline:hover {
+  background: #f0f9ff;
+  border-color: #006ba6;
+  color: #006ba6;
+}
+
+/* --------------------------------------------------------------------------
+   STAR RATING ROW
+   -------------------------------------------------------------------------- */
+.pdp-star-rating-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5px;
+}
+
+.pdp-star-rating-row .star-icon {
+  flex-shrink: 0;
+}
+
+.pdp-star-rating-row .star-icon.filled,
+.pdp-star-rating-row .star-icon.half {
+  color: #ff9800;
+}
+
+.pdp-star-rating-row .star-icon.empty {
+  color: #d1d5db;
+}
+
+/* --------------------------------------------------------------------------
+   LOADING & ERROR STATES
+   -------------------------------------------------------------------------- */
+.pdp-reviews-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  gap: 14px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.pdp-reviews-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3.5px solid #e5e7eb;
+  border-top-color: #0082c3;
+  border-radius: 50%;
+  animation: pdpReviewSpin 0.75s linear infinite;
+}
+
+@keyframes pdpReviewSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pdp-reviews-error-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 8px;
+  color: #991b1b;
+  margin-bottom: 24px;
+}
+
+.pdp-reviews-error-box p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+.pdp-retry-btn {
+  margin-left: auto;
+  background: #991b1b;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.pdp-retry-btn:hover {
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   SCORECARD GRID (SUMMARY + BREAKDOWN + ASSURANCE)
+   -------------------------------------------------------------------------- */
+.pdp-reviews-scorecard-grid {
+  display: grid;
+  grid-template-columns: 260px 1.4fr 1fr;
+  gap: 24px;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  padding: 28px;
+  margin-bottom: 32px;
+}
+
+/* Hero Score Card */
+.pdp-score-hero-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 24px;
+}
+
+.pdp-score-number {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1;
+  color: #111111;
+  margin-bottom: 8px;
+}
+
+.pdp-score-max {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+.pdp-score-stars {
+  margin-bottom: 10px;
+}
+
+.pdp-score-total-text {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.pdp-score-recommend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #058527;
+  background: #e8f5e9;
+  padding: 6px 10px;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+
+/* Breakdown Card */
+.pdp-distribution-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-right: 1px solid #e5e7eb;
+  padding-right: 24px;
+}
+
+.pdp-breakdown-heading {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #374151;
+  margin: 0 0 14px;
+}
+
+.pdp-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pdp-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.pdp-bar-row:hover,
+.pdp-bar-row.active {
+  background: #f0f0f0;
+}
+
+.pdp-bar-row.active .pdp-bar-fill {
+  background: #0082c3;
+}
+
+.pdp-bar-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #374151;
+  width: 36px;
+}
+
+.pdp-bar-track-bg {
+  flex: 1;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pdp-bar-fill {
+  height: 100%;
+  background: #111111;
+  border-radius: 4px;
+  transition: width 0.35s ease;
+}
+
+.pdp-bar-count-text {
+  font-size: 11.5px;
+  color: #6b7280;
+  width: 65px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Satisfaction / Decathlon Assurance Card */
+.pdp-satisfaction-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.pdp-assurance-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pdp-assurance-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.4;
+}
+
+.pdp-assurance-list .assurance-icon {
+  color: #0082c3;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.pdp-user-has-reviewed-banner {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pdp-link-btn {
+  background: none;
+  border: none;
+  color: #0082c3;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   FILTER PILLS BAR
+   -------------------------------------------------------------------------- */
+.pdp-review-filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.pdp-filter-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+  margin-right: 4px;
+}
+
+.pdp-filter-pill {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.pdp-filter-pill:hover {
+  border-color: #111111;
+  background: #f9fafb;
+}
+
+.pdp-filter-pill.active {
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+}
+
+/* --------------------------------------------------------------------------
+   EMPTY STATES
+   -------------------------------------------------------------------------- */
+.pdp-reviews-empty-box {
+  background: #ffffff;
+  border: 1.5px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pdp-empty-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f0f9ff;
+  color: #0082c3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.pdp-reviews-empty-box h4 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #111111;
+}
+
+.pdp-reviews-empty-box p {
+  font-size: 14px;
+  color: #6b7280;
+  max-width: 440px;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.pdp-reviews-empty-filter {
+  padding: 32px 20px;
+  text-align: center;
+  background: #f9fafb;
+  border-radius: 6px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.pdp-clear-filter-btn {
+  margin-top: 10px;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   REVIEWS STREAM CARDS
+   -------------------------------------------------------------------------- */
+.pdp-review-cards-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.pdp-review-bubble-card {
+  background: #ffffff;
+  border: 1px solid #ebebeb;
+  border-radius: 8px;
+  padding: 22px 24px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pdp-review-bubble-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.pdp-review-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.pdp-reviewer-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdp-reviewer-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 800;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.pdp-reviewer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdp-reviewer-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pdp-reviewer-name-row strong {
+  font-size: 14.5px;
+  color: #111111;
+  font-weight: 700;
+}
+
+.pdp-verified-purchase-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #058527;
+  background: #e8f5e9;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.pdp-review-date {
+  font-size: 12px;
+  color: #9ca3af;
+  display: block;
+  margin-top: 1px;
+}
+
+.pdp-review-owner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pdp-icon-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.pdp-icon-action-btn.edit {
+  color: #0082c3;
+}
+
+.pdp-icon-action-btn.edit:hover {
+  background: #f0f9ff;
+  border-color: #0082c3;
+}
+
+.pdp-icon-action-btn.delete {
+  color: #dc2626;
+}
+
+.pdp-icon-action-btn.delete:hover {
+  background: #fef2f2;
+  border-color: #dc2626;
+}
+
+.pdp-review-rating-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.pdp-review-headline {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111111;
+}
+
+.pdp-review-paragraph {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   WRITE / EDIT REVIEW MODAL
+   -------------------------------------------------------------------------- */
+.pdp-review-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 16px;
+  box-sizing: border-box;
+  backdrop-filter: blur(2px);
+  animation: pdpModalFadeIn 0.2s ease-out;
+}
+
+@keyframes pdpModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pdp-review-modal-dialog {
+  background: #ffffff;
+  width: 100%;
+  max-width: 580px;
+  border-radius: 8px;
+  padding: 32px 32px 28px;
+  position: relative;
+  max-height: 92vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: pdpModalScaleUp 0.2s ease-out;
+}
+
+@keyframes pdpModalScaleUp {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pdp-review-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.pdp-review-modal-close:hover {
+  background: #f3f4f6;
+  color: #111111;
+}
+
+.pdp-modal-header-content {
+  margin-bottom: 20px;
+  padding-right: 28px;
+}
+
+.pdp-modal-header-content h3 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0 0 6px;
+}
+
+.pdp-modal-subtitle {
+  font-size: 13.5px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.pdp-modal-error-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #b91c1c;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.pdp-review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pdp-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pdp-form-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.pdp-form-label .req {
+  color: #e53935;
+  margin-left: 2px;
+}
+
+.pdp-form-label .optional {
+  color: #9ca3af;
+  font-weight: 400;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.pdp-interactive-star-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.pdp-star-select-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  display: flex;
+  align-items: center;
+}
+
+.pdp-star-select-btn:hover {
+  transform: scale(1.15);
+}
+
+.pdp-rating-selected-tag {
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ff9800;
+  min-width: 70px;
+}
+
+.pdp-form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111111;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pdp-form-input:focus {
+  outline: none;
+  border-color: #0082c3;
+  box-shadow: 0 0 0 3px rgba(0, 130, 195, 0.15);
+}
+
+.pdp-form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #111111;
+  box-sizing: border-box;
+  resize: vertical;
+  line-height: 1.5;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pdp-form-textarea:focus {
+  outline: none;
+  border-color: #0082c3;
+  box-shadow: 0 0 0 3px rgba(0, 130, 195, 0.15);
+}
+
+.pdp-char-counter {
+  align-self: flex-end;
+  font-size: 11.5px;
+  color: #9ca3af;
+}
+
+.pdp-modal-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.pdp-modal-btn {
+  padding: 10px 22px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  border: none;
+}
+
+.pdp-modal-btn.cancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.pdp-modal-btn.cancel:hover {
+  background: #e5e7eb;
+}
+
+.pdp-modal-btn.submit {
+  background: #0082c3;
+  color: #ffffff;
+}
+
+.pdp-modal-btn.submit:hover:not(:disabled) {
+  background: #006ba6;
+  box-shadow: 0 4px 12px rgba(0, 130, 195, 0.25);
+}
+
+.pdp-modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   DELETE CONFIRMATION DIALOG
+   -------------------------------------------------------------------------- */
+.pdp-confirm-modal-dialog {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 8px;
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: pdpModalScaleUp 0.18s ease-out;
+}
+
+.pdp-confirm-icon-wrap {
+  width: 52px;
+  height: 52px;
+  background: #fee2e2;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.pdp-confirm-modal-dialog h4 {
+  font-size: 19px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0 0 8px;
+}
+
+.pdp-confirm-modal-dialog p {
+  font-size: 14px;
+  color: #4b5563;
+  margin: 0 0 24px;
+  line-height: 1.5;
+}
+
+.pdp-confirm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.pdp-modal-btn.delete-confirm {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.pdp-modal-btn.delete-confirm:hover:not(:disabled) {
+  background: #b91c1c;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE BREAKPOINTS
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .pdp-reviews-scorecard-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 22px;
+  }
+
+  .pdp-score-hero-card {
+    grid-column: 1 / 2;
+    border-right: 1px solid #e5e7eb;
+  }
+
+  .pdp-distribution-card {
+    grid-column: 2 / 3;
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .pdp-satisfaction-card {
+    grid-column: 1 / -1;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .pdp-reviews-section-v2 {
+    margin: 30px 0 40px;
+    padding-top: 24px;
+  }
+
+  .pdp-reviews-header-v2 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pdp-reviews-actions-wrap {
+    width: 100%;
+  }
+
+  .pdp-write-review-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pdp-reviews-scorecard-grid {
+    grid-template-columns: 1fr;
+    padding: 18px;
+    gap: 20px;
+  }
+
+  .pdp-score-hero-card {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 18px;
+  }
+
+  .pdp-distribution-card {
+    grid-column: 1 / -1;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 18px;
+  }
+
+  .pdp-review-modal-dialog {
+    padding: 24px 20px 20px;
+  }
+
+  .pdp-review-bubble-card {
+    padding: 16px;
+  }
+
+  .pdp-review-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pdp-review-owner-actions {
+    align-self: flex-end;
+  }
+}

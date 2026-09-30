@@ -33,7 +33,6 @@ const CategoryCarousel = ({
   title,
   subcategory,
   variant,
-  pageSlug,
 }) => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);

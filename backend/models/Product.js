@@ -99,6 +99,19 @@ const productSchema = new mongoose.Schema(
       max: 5,
     },
 
+    averageRating: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+
+    reviewCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     onSale: {
       type: Boolean,
       default: false,
@@ -119,6 +132,14 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+productSchema.index({ category: 1 });
+productSchema.index({ categories: 1 });
+productSchema.index({ subcategory: 1 });
+productSchema.index({ isActive: 1, category: 1 });
+productSchema.index({ isActive: 1, subcategory: 1 });
+productSchema.index({ isActive: 1, createdAt: -1 });
+productSchema.index({ isActive: 1, price: 1 });
 
 const Product = mongoose.model("Product", productSchema);
 

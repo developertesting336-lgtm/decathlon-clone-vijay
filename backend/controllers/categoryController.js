@@ -10,31 +10,74 @@ import { getSingleImageUrl } from "../utils/uploadToCloudinary.js";
 
 /*
 ========================================
+CATEGORIES CACHE
+========================================
+*/
+
+let cachedCategoriesData = null;
+let cacheExpiry = 0;
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+const clearCategoriesCache = () => {
+  cachedCategoriesData = null;
+  cacheExpiry = 0;
+};
+
+/*
+========================================
 GET ALL CATEGORIES
 ========================================
 */
 
 const getCategories = async (req, res) => {
   try {
-    const categories = await Category.find().sort({
-      sortOrder: 1,
-      createdAt: 1,
-    });
+    const now = Date.now();
+    if (cachedCategoriesData && now < cacheExpiry) {
+      return res.status(200).json({
+        categories: cachedCategoriesData,
+      });
+    }
 
+    const [categories, productCounts] = await Promise.all([
+      Category.find().sort({ sortOrder: 1, createdAt: 1 }).lean(),
+      Product.aggregate([
+        {
+          $facet: {
+            bySingle: [
+              { $match: { category: { $ne: null } } },
+              { $group: { _id: "$category", count: { $sum: 1 } } },
+            ],
+            byArray: [
+              { $unwind: "$categories" },
+              { $group: { _id: "$categories", count: { $sum: 1 } } },
+            ],
+          },
+        },
+      ]),
+    ]);
 
+    const countMap = new Map();
+    if (productCounts && productCounts[0]) {
+      const { bySingle = [], byArray = [] } = productCounts[0];
+      bySingle.forEach((item) => {
+        if (item._id) countMap.set(item._id.toString(), item.count);
+      });
+      byArray.forEach((item) => {
+        if (item._id) {
+          const key = item._id.toString();
+          const current = countMap.get(key) || 0;
+          countMap.set(key, Math.max(current, item.count));
+        }
+      });
+    }
 
-    const categoriesWithCount = await Promise.all(
-      categories.map(async (category) => {
-        const productsCount = await Product.countDocuments({
-          category: category._id,
-        });
+    const categoriesWithCount = categories.map((category) => ({
+      ...category,
+      productsCount: countMap.get(category._id.toString()) || 0,
+    }));
 
-        return {
-          ...category.toObject(),
-          productsCount,
-        };
-      }),
-    );
+    cachedCategoriesData = categoriesWithCount;
+    cacheExpiry = now + CACHE_TTL_MS;
 
     return res.status(200).json({
       categories: categoriesWithCount,
@@ -161,6 +204,8 @@ const createCategory = async (req, res) => {
     RESPONSE
     */
 
+    clearCategoriesCache();
+
     return res.status(201).json({
       message: "Category created successfully",
       category,
@@ -253,6 +298,8 @@ const updateCategory = async (req, res) => {
     RESPONSE
     */
 
+    clearCategoriesCache();
+
     return res.status(200).json({
       message: "Category updated successfully",
       category,
@@ -317,6 +364,8 @@ const deleteCategory = async (req, res) => {
     /*
     RESPONSE
     */
+
+    clearCategoriesCache();
 
     return res.status(200).json({
       message: "Category deleted successfully",
@@ -448,6 +497,8 @@ const reorderCategory = async (req, res) => {
     RESPONSE
     */
 
+    clearCategoriesCache();
+
     return res.status(200).json({
       message: "Category order updated successfully",
 
@@ -475,4 +526,5 @@ export {
   updateCategory,
   deleteCategory,
   reorderCategory,
+  clearCategoriesCache,
 };

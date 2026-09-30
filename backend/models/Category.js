@@ -34,6 +34,10 @@ const categorySchema = new mongoose.Schema(
   },
 );
 
+categorySchema.index({ subcategory: 1 });
+categorySchema.index({ sortOrder: 1, createdAt: 1 });
+categorySchema.index({ isActive: 1 });
+
 const Category = mongoose.model("Category", categorySchema);
 
 // Ensure legacy name_1 unique index is dropped if it exists in DB
@@ -48,15 +52,6 @@ Category.on("index", async (err) => {
       await Category.collection.dropIndex("name_1");
       console.log(
         "Dropped legacy unique index name_1 from categories collection"
-      );
-    }
-    const hasSlugIndex = indexes.some(
-      (idx) => idx.name === "slug_1"
-    );
-    if (hasSlugIndex) {
-      await Category.collection.dropIndex("slug_1");
-      console.log(
-        "Dropped legacy unique index slug_1 from categories collection"
       );
     }
   } catch (dropErr) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   FiShield,
@@ -6,9 +6,7 @@ import {
   FiWind,
   FiDroplet,
   FiLayers,
-  FiX,
   FiChevronRight,
-  FiChevronLeft,
   FiShare2,
   FiEdit2,
 } from "react-icons/fi";
@@ -19,6 +17,10 @@ import api, { useWishlist } from "../api/axios";
 import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
 import Footer from "../components/pageSections/Footer/Footer";
+import ProductReviews, { StarRating } from "../components/ProductReviews/ProductReviews";
+import SizeGuide from "../components/SizeGuide/SizeGuide";
+import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
+import NotifyMe from "../components/NotifyMe/NotifyMe";
 import "../styles/ProductDetail.css";
 
 const ProductDetail = () => {
@@ -45,19 +47,18 @@ const ProductDetail = () => {
   // Size chart modal
   const [showSizeModal, setShowSizeModal] = useState(false);
 
-  // Category products
-  const [categoryProducts, setCategoryProducts] = useState([]);
-  const similarSliderRef = useRef(null);
+  // Rating and reviews summary
+  const [ratingSummary, setRatingSummary] = useState({
+    averageRating: 0,
+    reviewCount: 0,
+  });
 
-  const scrollSlider = (ref, direction) => {
-    if (!ref.current) return;
-    const container = ref.current;
-    const scrollAmount = container.clientWidth * 0.75;
-    container.scrollBy({
-      left: direction === "next" ? scrollAmount : -scrollAmount,
-      behavior: "smooth",
-    });
-  };
+  const handleRatingUpdate = useCallback(({ averageRating, reviewCount }) => {
+    setRatingSummary({ averageRating, reviewCount });
+    setProduct((prev) =>
+      prev ? { ...prev, averageRating, reviewCount } : prev
+    );
+  }, []);
 
   // Price formatter
   const formatPrice = (price) => `₹${Number(price || 0).toLocaleString("en-IN")}`;
@@ -95,6 +96,10 @@ const ProductDetail = () => {
         }
 
         setProduct(prod);
+        setRatingSummary({
+          averageRating: Number(prod.averageRating || prod.rating || prod.review || 0),
+          reviewCount: Number(prod.reviewCount || 0),
+        });
         document.title = `${prod.name || "Product"} | Decathlon`;
 
         if (Array.isArray(prod.color) && prod.color.length > 0) {
@@ -139,39 +144,6 @@ const ProductDetail = () => {
       socket.off("product_deleted", handleProductRealtime);
     };
   }, [id]);
-
-  // Fetch category products
-  useEffect(() => {
-    const fetchRelated = async () => {
-      if (!product) return;
-
-      const categoryId =
-        product.category?._id ||
-        (Array.isArray(product.categories) && product.categories[0]?._id) ||
-        product.category;
-
-      try {
-        let prods = [];
-        if (categoryId) {
-          const res = await api.get(`/products?category=${categoryId}&limit=12`);
-          prods = (res.data?.products || []).filter(
-            (p) => String(p._id) !== String(product._id)
-          );
-        }
-        if (prods.length === 0) {
-          const fallbackRes = await api.get(`/products?limit=12`);
-          prods = (fallbackRes.data?.products || []).filter(
-            (p) => String(p._id) !== String(product._id)
-          );
-        }
-        setCategoryProducts(prods);
-      } catch (err) {
-        console.error("Fetch Related Products Error:", err);
-      }
-    };
-
-    fetchRelated();
-  }, [product]);
 
   // Pricing calculations
   const currentPrice = useMemo(() => {
@@ -346,11 +318,16 @@ const ProductDetail = () => {
 
             {/* Rating Line */}
             <div className="pdp-rating-strip">
-              <span className="pdp-stars-gold">★★★★☆</span>
-              <span className="pdp-rating-num">4.4</span>
+              <StarRating rating={ratingSummary.averageRating} size={15} />
+              <span className="pdp-rating-num">
+                {ratingSummary.averageRating > 0
+                  ? ratingSummary.averageRating.toFixed(1)
+                  : "0.0"}
+              </span>
               <span style={{ color: "#ccc" }}>|</span>
-              <a href="#benefits-section" className="pdp-reviews-link-blue">
-                5.3k reviews
+              <a href="#customer-reviews" className="pdp-reviews-link-blue">
+                {ratingSummary.reviewCount}{" "}
+                {ratingSummary.reviewCount === 1 ? "review" : "reviews"}
               </a>
             </div>
 
@@ -407,13 +384,20 @@ const ProductDetail = () => {
             <div className="pdp-size-section">
               <div className="pdp-size-header-row">
                 <span className="pdp-size-label-text">Select size</span>
-                <button
-                  type="button"
-                  className="pdp-size-chart-btn"
-                  onClick={() => setShowSizeModal(true)}
-                >
-                  Size chart
-                </button>
+                {Boolean(
+                  product.category ||
+                    (Array.isArray(product.categories) && product.categories.length > 0)
+                ) && (
+                  <button
+                    type="button"
+                    className="pdp-size-chart-btn"
+                    onClick={() => setShowSizeModal(true)}
+                    id="pdp-size-guide-trigger"
+                    aria-label="Open size guide"
+                  >
+                    📏 Size Guide
+                  </button>
+                )}
               </div>
 
               <div className="pdp-fit-text-muted">72% of users say this fits as expected</div>
@@ -451,26 +435,35 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Action Buttons: Wishlist + Add to Cart */}
-            <div className="pdp-actions-row">
-              <button
-                type="button"
-                className={`pdp-heart-btn ${isWishlisted(product._id) ? "active" : ""}`}
-                onClick={() => handleToggle(product._id)}
-                aria-label="Wishlist"
-              >
-                {isWishlisted(product._id) ? <MdFavorite /> : <MdFavoriteBorder />}
-              </button>
+            {/* Action Buttons: Wishlist + Add to Cart OR Notify Me When Available */}
+            {Number(product.stock || 0) <= 0 ? (
+              <NotifyMe
+                productId={product._id}
+                product={product}
+                isWishlisted={isWishlisted(product._id)}
+                onToggleWishlist={() => handleToggle(product._id)}
+              />
+            ) : (
+              <div className="pdp-actions-row">
+                <button
+                  type="button"
+                  className={`pdp-heart-btn ${isWishlisted(product._id) ? "active" : ""}`}
+                  onClick={() => handleToggle(product._id)}
+                  aria-label="Wishlist"
+                >
+                  {isWishlisted(product._id) ? <MdFavorite /> : <MdFavoriteBorder />}
+                </button>
 
-              <button
-                type="button"
-                className="pdp-add-cart-btn-decathlon"
-                onClick={() => handleAddToCart(product)}
-                disabled={addingToCart || product.stock === 0}
-              >
-                {product.stock === 0 ? "Out of Stock" : addingToCart ? "Adding..." : "Add to cart"}
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="pdp-add-cart-btn-decathlon"
+                  onClick={() => handleAddToCart(product)}
+                  disabled={addingToCart}
+                >
+                  {addingToCart ? "Adding..." : "Add to cart"}
+                </button>
+              </div>
+            )}
 
             {/* Guarantees Strip */}
             <div className="pdp-guarantees-strip">
@@ -533,46 +526,6 @@ const ProductDetail = () => {
                 <span>Pay on Delivery available *</span>
               </div>
             </div>
-
-            {/* Complete your kit (Screenshot 2 & 3) */}
-            {categoryProducts.length >= 4 && (
-              <div className="pdp-complete-kit-wrapper">
-                <h4>Complete your kit</h4>
-                <div className="pdp-kit-items-chain">
-                  {categoryProducts.slice(0, 3).map((it) => (
-                    <React.Fragment key={it._id}>
-                      <div className="pdp-kit-thumb">
-                        <img src={getImageUrl(it.images?.[0])} alt={it.name} />
-                      </div>
-                      <div className="pdp-kit-plus-circle">+</div>
-                    </React.Fragment>
-                  ))}
-                  <div className="pdp-kit-thumb">
-                    <img src={getImageUrl(categoryProducts[3]?.images?.[0])} alt="Kit item 4" />
-                  </div>
-                </div>
-
-                <div className="pdp-kit-action-summary">
-                  <div className="pdp-kit-totals">
-                    4 Items in total
-                    <strong>
-                      ₹1,786 <span style={{ textDecoration: "line-through", color: "#888", fontSize: "13px" }}>₹4,296</span>
-                    </strong>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="pdp-kit-select-button"
-                    onClick={() => {
-                      categoryProducts.slice(0, 4).forEach((it) => handleAddToCart(it));
-                      toast.success("Kit products added to cart!");
-                    }}
-                  >
-                    Select products
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
@@ -698,210 +651,18 @@ const ProductDetail = () => {
         </section>
 
         {/* =====================================================
-            SIMILAR PRODUCTS (PDF Page 8)
+            RELATED PRODUCTS ("You May Also Like" - Live API)
         ===================================================== */}
-        {categoryProducts.length > 0 && (
-          <section className="pdp-carousel-section">
-            <div className="pdp-carousel-header">
-              <h3>Similar Products</h3>
-              <div className="pdp-carousel-arrows">
-                <button
-                  type="button"
-                  className="pdp-arrow-circle"
-                  onClick={() => scrollSlider(similarSliderRef, "prev")}
-                  aria-label="Previous products"
-                >
-                  <FiChevronLeft />
-                </button>
-                <button
-                  type="button"
-                  className="pdp-arrow-circle"
-                  onClick={() => scrollSlider(similarSliderRef, "next")}
-                  aria-label="Next products"
-                >
-                  <FiChevronRight />
-                </button>
-              </div>
-            </div>
-
-            <div className="pdp-cards-slider" ref={similarSliderRef}>
-              {categoryProducts.map((prod, idx) => (
-                <div key={prod._id} className="pdp-product-card-decathlon">
-                  {idx === 0 && <span className="pdp-card-tag">Online exclusive</span>}
-
-                  <div className="pdp-card-img-wrap">
-                    <Link to={`/product/${prod._id}`}>
-                      <img src={getImageUrl(prod.images?.[0])} alt={prod.name} />
-                    </Link>
-                  </div>
-
-                  <div className="pdp-card-body">
-                    <Link to={`/product/${prod._id}`} className="pdp-card-brand-title">
-                      <strong>{prod.brand || "DOMYOS"}</strong> {prod.name}
-                    </Link>
-
-                    <div className="pdp-card-rating">
-                      <span className="stars">★★★★★</span>
-                      <span>5.0k</span>
-                    </div>
-
-                    <div className="pdp-card-price-row">
-                      <span className="pdp-card-price">{formatPrice(prod.discountPrice || prod.price)}</span>
-                      {prod.discountPrice && prod.discountPrice < prod.price && (
-                        <span className="pdp-card-mrp">MRP {formatPrice(prod.price)}</span>
-                      )}
-                    </div>
-
-                    <div className="pdp-card-cta-row">
-                      <button
-                        type="button"
-                        className={`pdp-card-wish-btn ${isWishlisted(prod._id) ? "active" : ""}`}
-                        onClick={() => handleToggle(prod._id)}
-                        aria-label="Wishlist"
-                      >
-                        {isWishlisted(prod._id) ? <MdFavorite /> : <MdFavoriteBorder />}
-                      </button>
-
-                      <button
-                        type="button"
-                        className="pdp-card-add-btn"
-                        onClick={() => handleAddToCart(prod)}
-                      >
-                        Add to cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+        <RelatedProducts productId={id} title="You May Also Like" />
 
         {/* =====================================================
-            CUSTOMER REVIEWS & BREAKDOWN (PDF Pages 9 & 10)
+            CUSTOMER REVIEWS & BREAKDOWN (Live API)
         ===================================================== */}
-        <section className="pdp-reviews-section" id="customer-reviews">
-          <div className="pdp-reviews-header-bar">
-            <h3>Reviews</h3>
-          </div>
-
-          <div className="pdp-reviews-layout">
-            <div className="pdp-score-block">
-              <h2>
-                4.4 <span>out of 5</span>
-              </h2>
-              <div className="pdp-score-reviews-count">5,358 reviews</div>
-              <div className="pdp-score-recommend">
-                4,175 customers recommended this product
-              </div>
-            </div>
-
-            <div className="pdp-bars-block">
-              <div className="pdp-bar-line">
-                <span>5 ★</span>
-                <div className="pdp-bar-track">
-                  <div className="pdp-bar-value" style={{ width: "68%" }} />
-                </div>
-                <span className="pdp-bar-count">3,676</span>
-              </div>
-
-              <div className="pdp-bar-line">
-                <span>4 ★</span>
-                <div className="pdp-bar-track">
-                  <div className="pdp-bar-value" style={{ width: "22%" }} />
-                </div>
-                <span className="pdp-bar-count">1,027</span>
-              </div>
-
-              <div className="pdp-bar-line">
-                <span>3 ★</span>
-                <div className="pdp-bar-track">
-                  <div className="pdp-bar-value" style={{ width: "8%" }} />
-                </div>
-                <span className="pdp-bar-count">247</span>
-              </div>
-
-              <div className="pdp-bar-line">
-                <span>2 ★</span>
-                <div className="pdp-bar-track">
-                  <div className="pdp-bar-value" style={{ width: "4%" }} />
-                </div>
-                <span className="pdp-bar-count">117</span>
-              </div>
-
-              <div className="pdp-bar-line">
-                <span>1 ★</span>
-                <div className="pdp-bar-track">
-                  <div className="pdp-bar-value" style={{ width: "6%" }} />
-                </div>
-                <span className="pdp-bar-count">291</span>
-              </div>
-            </div>
-
-            <div className="pdp-metrics-block">
-              <div className="pdp-metric-rings">
-                <div className="pdp-circle-ring-box">
-                  <div className="pdp-circle-ring">4/5</div>
-                  <span>Look / Design</span>
-                </div>
-
-                <div className="pdp-circle-ring-box">
-                  <div className="pdp-circle-ring">4/5</div>
-                  <span>Value for money</span>
-                </div>
-              </div>
-
-              <div className="pdp-fit-poll">
-                <strong>What our users say about the Fit?</strong>
-                <span>88% of users say this fits Just Right</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="pdp-reviews-cards-list">
-            <div className="pdp-review-card-item">
-              <div className="pdp-review-stars-title">
-                <span className="stars">★★★★★</span>
-                <strong>Excellent fit</strong>
-              </div>
-              <div className="pdp-review-body">
-                Very comfortable trackpants for cardio and gym workouts. The fabric is lightweight and breathable, and the zip pockets easily fit my phone.
-              </div>
-              <div className="pdp-review-author-line">
-                <span>jawahar</span>
-                <span>•</span>
-                <span className="pdp-verified-badge">Verified User</span>
-                <span>•</span>
-                <span>India</span>
-              </div>
-            </div>
-
-            <div className="pdp-review-card-item">
-              <div className="pdp-review-stars-title">
-                <span className="stars">★★★★★</span>
-                <strong>Great Pants</strong>
-              </div>
-              <div className="pdp-review-body">
-                Materials are good for any cardio related exercise. The ventilation is good and dry quicker if getting wet or washed.
-              </div>
-              <div className="pdp-review-author-line">
-                <span>Hasnul Azizi</span>
-                <span>•</span>
-                <span className="pdp-verified-badge">Verified User</span>
-                <span>•</span>
-                <span>India</span>
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            className="pdp-view-all-reviews-btn"
-            onClick={() => toast.info("Displaying latest verified customer reviews")}
-          >
-            View all reviews
-          </button>
-        </section>
+        <ProductReviews
+          productId={id}
+          product={product}
+          onRatingUpdate={handleRatingUpdate}
+        />
 
         {/* =====================================================
             BOTTOM PERKS STRIP (PDF Page 10)
@@ -916,69 +677,21 @@ const ProductDetail = () => {
       </main>
 
       {/* =====================================================
-          SIZE CHART MODAL
+          CATEGORY-BASED SIZE GUIDE MODAL
       ===================================================== */}
       {showSizeModal && (
-        <div className="pdp-modal-overlay" onClick={() => setShowSizeModal(false)}>
-          <div className="pdp-modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="pdp-modal-close-icon"
-              onClick={() => setShowSizeModal(false)}
-              aria-label="Close"
-            >
-              <FiX />
-            </button>
-
-            <h3 style={{ margin: "0 0 6px", fontSize: "18px" }}>Decathlon Size Chart</h3>
-            <p style={{ color: "#777", fontSize: "12px", margin: "0 0 16px" }}>
-              Measurements in centimeters (cm).
-            </p>
-
-            <table className="pdp-modal-table">
-              <thead>
-                <tr>
-                  <th>Size</th>
-                  <th>Waist (cm)</th>
-                  <th>Hips (cm)</th>
-                  <th>Length (cm)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>S</strong></td>
-                  <td>74 - 77</td>
-                  <td>88 - 91</td>
-                  <td>98</td>
-                </tr>
-                <tr>
-                  <td><strong>M</strong></td>
-                  <td>78 - 81</td>
-                  <td>92 - 95</td>
-                  <td>100</td>
-                </tr>
-                <tr>
-                  <td><strong>L</strong></td>
-                  <td>86 - 89</td>
-                  <td>100 - 103</td>
-                  <td>102</td>
-                </tr>
-                <tr>
-                  <td><strong>XL</strong></td>
-                  <td>96 - 100</td>
-                  <td>108 - 113</td>
-                  <td>104</td>
-                </tr>
-                <tr>
-                  <td><strong>2XL</strong></td>
-                  <td>104 - 109</td>
-                  <td>116 - 121</td>
-                  <td>106</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <SizeGuide
+          product={product}
+          categoryId={
+            product.category?._id ||
+            product.category ||
+            (Array.isArray(product.categories) && product.categories[0]?._id) ||
+            (Array.isArray(product.categories) && product.categories[0])
+          }
+          gender={product.gender}
+          isOpen={showSizeModal}
+          onClose={() => setShowSizeModal(false)}
+        />
       )}
 
       <Footer />

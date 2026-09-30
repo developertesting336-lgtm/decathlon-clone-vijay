@@ -4,7 +4,7 @@ import { MdChevronLeft, MdChevronRight } from "react-icons/md";
 import "./EverydayEssentials.css";
 import api from "../../../api/axios";
 
-const EverydayEssentials = ({ subcategory, title, pageSlug }) => {
+const EverydayEssentials = ({ subcategory, title }) => {
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState([]);

@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 
 import api from "../api/axios";
 import socket from "../socket/socket";
+import { getPaginationRange } from "../utils/pagination";
 import "../styles/Categories.css";
 
 const CATEGORIES_PER_PAGE = 20;
@@ -430,30 +431,45 @@ const Categories = () => {
                 className="pagination-arrow"
                 disabled={currentPage === 1}
                 onClick={() => handlePageChange(currentPage - 1)}
+                title="Previous Page"
+                aria-label="Previous Page"
               >
                 <MdChevronLeft />
               </button>
 
               <div className="pagination-pages">
-                {Array.from(
-                  {
-                    length: totalPages,
-                  },
-                  (_, index) => index + 1,
-                ).map((page) => (
-                  <button
-                    type="button"
-                    key={page}
-                    className={
-                      currentPage === page
-                        ? "pagination-page active"
-                        : "pagination-page"
+                {getPaginationRange(currentPage, totalPages).map(
+                  (item, index) => {
+                    if (typeof item === "string") {
+                      return (
+                        <span
+                          key={`dots-${index}`}
+                          className="pagination-ellipsis"
+                        >
+                          ...
+                        </span>
+                      );
                     }
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </button>
-                ))}
+                    return (
+                      <button
+                        type="button"
+                        key={item}
+                        className={
+                          currentPage === item
+                            ? "pagination-page active"
+                            : "pagination-page"
+                        }
+                        onClick={() => handlePageChange(item)}
+                        aria-label={`Page ${item}`}
+                        aria-current={
+                          currentPage === item ? "page" : undefined
+                        }
+                      >
+                        {item}
+                      </button>
+                    );
+                  }
+                )}
               </div>
 
               <button
@@ -461,6 +477,8 @@ const Categories = () => {
                 className="pagination-arrow"
                 disabled={currentPage === totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
+                title="Next Page"
+                aria-label="Next Page"
               >
                 <MdChevronRight />
               </button>

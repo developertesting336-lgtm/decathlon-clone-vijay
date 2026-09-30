@@ -9,6 +9,7 @@ import Users from "./pages/Users";
 
 import AddProduct from "./components/product/AddProduct";
 import EditProduct from "./components/product/EditProduct";
+import ViewProduct from "./components/product/ViewProduct";
 
 import Categories from "./pages/Categories";
 import AddCategory from "./components/category/AddCategory";
@@ -75,6 +76,28 @@ function App() {
             <AdminProtectedRoute>
               <AdminLayout>
                 <AddProduct />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/products/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <ViewProduct />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/products/view/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <ViewProduct />
               </AdminLayout>
             </AdminProtectedRoute>
           }

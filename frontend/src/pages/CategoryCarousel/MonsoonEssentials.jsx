@@ -20,11 +20,11 @@ const MonsoonEssentials = () => {
       <CategoryNav />
 
       <main className="monsoon-essentials-container home-container">
-        <HeroBanner pageSlug="monsoon-essentials" />
-        <CategoryCarousel pageSlug="monsoon-essentials" />
-        <PromoBanner pageSlug="monsoon-essentials" />
-        <ProductSection pageSlug="monsoon-essentials" />
-        <EverydayEssentials pageSlug="monsoon-essentials" />
+        <HeroBanner category="monsoon-essentials" />
+        <CategoryCarousel />
+        <PromoBanner />
+        <ProductSection />
+        <EverydayEssentials />
       </main>
 
       <Footer />

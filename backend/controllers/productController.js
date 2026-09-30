@@ -3,8 +3,10 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import { emitHomepageUpdate, emitProductUpdate } from "../socket/socketManager.js";
 import { checkAndNotifyLowStock } from "../services/notificationService.js";
+import { notifyRestockedSubscribers } from "../services/restockNotificationService.js";
 
 import { getMultipleImageUrls } from "../utils/uploadToCloudinary.js";
+import { clearCategoriesCache } from "./categoryController.js";
 
 /*
 ========================================
@@ -342,6 +344,8 @@ const createProduct = async (req, res) => {
     /*
     RESPONSE
     */
+
+    clearCategoriesCache();
 
     return res.status(201).json({
       message: "Product created successfully",
@@ -788,7 +792,8 @@ const getProducts = async (req, res) => {
       // Fetch all matching products to score relevance
       const allMatching = await Product.find(filter)
         .populate("category", "name image")
-        .populate("categories", "name image");
+        .populate("categories", "name image")
+        .lean();
 
       const scoringQuery =
         remainingQuery && remainingQuery.length > 0
@@ -824,13 +829,18 @@ const getProducts = async (req, res) => {
         .slice(skip, skip + limitNumber)
         .map((item) => item.product);
     } else {
-      totalProducts = await Product.countDocuments(filter);
-      products = await Product.find(filter)
-        .populate("category", "name image")
-        .populate("categories", "name image")
-        .sort(sortOption)
-        .skip(skip)
-        .limit(limitNumber);
+      const [totalCount, productList] = await Promise.all([
+        Product.countDocuments(filter),
+        Product.find(filter)
+          .populate("category", "name image")
+          .populate("categories", "name image")
+          .sort(sortOption)
+          .skip(skip)
+          .limit(limitNumber)
+          .lean(),
+      ]);
+      totalProducts = totalCount;
+      products = productList;
     }
 
     /*
@@ -913,6 +923,8 @@ const updateProduct = async (req, res) => {
         message: "Product not found",
       });
     }
+
+    const oldStock = Number(product.stock || 0);
 
     /*
     REQUEST DATA
@@ -1086,8 +1098,21 @@ const updateProduct = async (req, res) => {
 
     await product.save();
 
+    let restockResult = null;
     if (stock !== undefined) {
       checkAndNotifyLowStock(product);
+
+      // Trigger restock alerts if stock transitioned from <= 0 to > 0
+      if (oldStock <= 0 && Number(product.stock || 0) > 0) {
+        try {
+          restockResult = await notifyRestockedSubscribers(product, oldStock);
+          console.log(
+            `📢 Restock alert sent for "${product.name}": ${restockResult?.notifiedCount || 0} subscriber(s) notified.`
+          );
+        } catch (restockErr) {
+          console.error("Restock notification error in updateProduct:", restockErr);
+        }
+      }
     }
 
     /*
@@ -1112,10 +1137,19 @@ const updateProduct = async (req, res) => {
     ========================================
     */
 
+    clearCategoriesCache();
+
     return res.status(200).json({
       message: "Product updated successfully",
-
       product,
+      ...(restockResult && restockResult.notifiedCount !== undefined
+        ? {
+            restockNotification: {
+              triggered: true,
+              subscriberCount: restockResult.notifiedCount,
+            },
+          }
+        : {}),
     });
   } catch (error) {
     console.error("Update Product Error:", error);
@@ -1163,6 +1197,8 @@ const deleteProduct = async (req, res) => {
       categoryId,
     });
 
+    clearCategoriesCache();
+
     return res.status(200).json({
       message: "Product deleted successfully",
     });
@@ -1171,6 +1207,171 @@ const deleteProduct = async (req, res) => {
 
     return res.status(500).json({
       message: error.message,
+    });
+  }
+};
+
+/*
+========================================
+GET RELATED PRODUCTS
+GET /api/products/:id/related or /products/:productId/related
+========================================
+*/
+
+const getRelatedProducts = async (req, res) => {
+  try {
+    const productId = req.params.productId || req.params.id;
+
+    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    const currentProduct = await Product.findById(productId);
+
+    if (!currentProduct) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 6, 4), 8);
+
+    // Build category list from primary category and categories array
+    const categoryIds = [];
+    if (currentProduct.category) {
+      categoryIds.push(currentProduct.category.toString());
+    }
+    if (Array.isArray(currentProduct.categories)) {
+      currentProduct.categories.forEach((cat) => {
+        if (cat) categoryIds.push(cat.toString());
+      });
+    }
+    const uniqueCategoryIds = [...new Set(categoryIds)];
+
+    const currentSubcategory = String(currentProduct.subcategory || "").trim().toLowerCase();
+    const currentGender = String(currentProduct.gender || "Unisex").trim().toLowerCase();
+    const currentPrice = Number(currentProduct.price || 0);
+
+    // Find candidate products: active, not deleted, excluding current product
+    const candidateQuery = {
+      _id: { $ne: currentProduct._id },
+      isActive: { $ne: false },
+    };
+
+    // Filter candidates matching category or subcategory
+    const orConditions = [];
+    if (uniqueCategoryIds.length > 0) {
+      orConditions.push({ category: { $in: uniqueCategoryIds } });
+      orConditions.push({ categories: { $in: uniqueCategoryIds } });
+    }
+    if (currentSubcategory) {
+      orConditions.push({ subcategory: new RegExp(`^${escapeRegex(currentSubcategory)}$`, "i") });
+    }
+
+    if (orConditions.length > 0) {
+      candidateQuery.$or = orConditions;
+    }
+
+    let candidates = await Product.find(candidateQuery)
+      .populate("category", "name")
+      .populate("categories", "name")
+      .lean();
+
+    // Fallback: if fewer candidates found than limit, pull broader active products
+    if (candidates.length < limit) {
+      const existingIds = [currentProduct._id, ...candidates.map((c) => c._id)];
+      const fallbackProducts = await Product.find({
+        _id: { $nin: existingIds },
+        isActive: { $ne: false },
+      })
+        .populate("category", "name")
+        .populate("categories", "name")
+        .limit(limit - candidates.length)
+        .lean();
+
+      candidates = [...candidates, ...fallbackProducts];
+    }
+
+    // Score and rank candidates based on priority:
+    // 1. Same category
+    // 2. Same subcategory
+    // 3. Same gender
+    // 4. In-stock products
+    // 5. Similar price range
+    const scoredCandidates = candidates.map((item) => {
+      let score = 0;
+
+      // 1. Category match (+5 for primary, +4 for array)
+      const itemCat = item.category ? (item.category._id || item.category).toString() : "";
+      const itemCats = Array.isArray(item.categories)
+        ? item.categories.map((c) => (c._id || c).toString())
+        : [];
+
+      if (uniqueCategoryIds.includes(itemCat)) {
+        score += 5;
+      } else if (itemCats.some((c) => uniqueCategoryIds.includes(c))) {
+        score += 4;
+      }
+
+      // 2. Subcategory match (+4)
+      const itemSub = String(item.subcategory || "").trim().toLowerCase();
+      if (currentSubcategory && itemSub && itemSub === currentSubcategory) {
+        score += 4;
+      }
+
+      // 3. Gender match (+3 exact, +2 unisex)
+      const itemGender = String(item.gender || "Unisex").trim().toLowerCase();
+      if (itemGender === currentGender) {
+        score += 3;
+      } else if (itemGender === "unisex" || currentGender === "unisex") {
+        score += 2;
+      }
+
+      // 4. In-stock products (+2)
+      if (Number(item.stock || 0) > 0) {
+        score += 2;
+      }
+
+      // 5. Similar price range (+2 for within 30%, +1 for within 50%)
+      if (currentPrice > 0 && item.price > 0) {
+        const priceDiffRatio = Math.abs(item.price - currentPrice) / currentPrice;
+        if (priceDiffRatio <= 0.3) {
+          score += 2;
+        } else if (priceDiffRatio <= 0.5) {
+          score += 1;
+        }
+      }
+
+      return { product: item, score };
+    });
+
+    // Sort by score descending, then by averageRating/review descending
+    scoredCandidates.sort((a, b) => {
+      if (b.score !== a.score) {
+        return b.score - a.score;
+      }
+      const ratingB = Number(b.product.averageRating || b.product.review || 0);
+      const ratingA = Number(a.product.averageRating || a.product.review || 0);
+      return ratingB - ratingA;
+    });
+
+    // Limit to requested count (clamped 4-8)
+    const finalProducts = scoredCandidates.slice(0, limit).map((sc) => sc.product);
+
+    return res.status(200).json({
+      success: true,
+      count: finalProducts.length,
+      products: finalProducts,
+    });
+  } catch (error) {
+    console.error("Get Related Products Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch related products",
     });
   }
 };
@@ -1187,4 +1388,5 @@ export {
   getProductById,
   updateProduct,
   deleteProduct,
+  getRelatedProducts,
 };

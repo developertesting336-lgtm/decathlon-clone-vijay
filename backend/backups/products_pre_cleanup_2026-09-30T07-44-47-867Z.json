@@ -1,0 +1,6309 @@
+[
+  {
+    "_id": "6a8d24ab29893c5c4080e99b",
+    "name": "DOMYOS Men Gym Trackpants Slim Fit Jogger",
+    "description": "Men's gym trackpants with a slim fit design, suitable for workouts, training, and everyday sports activities.",
+    "price": 899,
+    "discountPrice": 699,
+    "category": "6aa287eb1d0bc0afb05cba94",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788253274/products/ka77yhcwtxgrafptzmjq.jpg"
+    ],
+    "stock": 30,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T05:14:19.226Z",
+    "updatedAt": "2026-09-30T03:35:00.384Z",
+    "__v": 5,
+    "categories": [
+      "6aa287eb1d0bc0afb05cba94"
+    ],
+    "discountPercent": 0,
+    "gender": "Men",
+    "onSale": false,
+    "review": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Checklist",
+    "averageRating": 0,
+    "reviewCount": 0
+  },
+  {
+    "_id": "6a8d25b629893c5c4080e99d",
+    "name": "DOMYOS Men Gym Trackpant Convertible, Joggers",
+    "description": "Men's gym trackpants designed for workouts and training, featuring a versatile convertible design and comfortable fit.",
+    "price": 999,
+    "discountPrice": 849,
+    "category": "6a8bff4c1fc7712c89c86057",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788253248/products/qw7ah49myjtlsfcsqhll.jpg"
+    ],
+    "stock": 46,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "BLACK"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T05:18:46.846Z",
+    "updatedAt": "2026-09-28T09:09:20.690Z",
+    "__v": 2,
+    "categories": [
+      "6a8bff4c1fc7712c89c86057"
+    ],
+    "gender": "Men",
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Workout Checklist"
+  },
+  {
+    "_id": "6a8d25f329893c5c4080e99e",
+    "name": "DOMYOS Men Gym Shorts Stretchable, Quick Dry",
+    "description": "Men's gym shorts made for workouts and sports activities, featuring stretchable fabric and quick-dry technology for improved comfort.",
+    "price": 599,
+    "discountPrice": 499,
+    "category": "6a8bff311fc7712c89c86056",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788253223/products/nayqlryawmorvqyz4rtu.jpg"
+    ],
+    "stock": 48,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T05:19:47.736Z",
+    "updatedAt": "2026-09-28T09:09:36.994Z",
+    "__v": 2,
+    "gender": "Men",
+    "categories": [
+      "6a8bff311fc7712c89c86056"
+    ],
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Workout Checklist"
+  },
+  {
+    "_id": "6a8d265229893c5c4080e99f",
+    "name": "DOMYOS Men Gym Shorts, Stretchable, Quick Dry",
+    "description": "Men's gym shorts with stretchable and quick-dry fabric, designed for comfortable movement during workouts, running, and training.",
+    "price": 399,
+    "discountPrice": 349,
+    "category": "6a8bff311fc7712c89c86056",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788253020/products/zwkc8snymodvay7lei68.jpg"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T05:21:22.132Z",
+    "updatedAt": "2026-09-28T09:09:51.439Z",
+    "__v": 2,
+    "gender": "Men",
+    "categories": [
+      "6a8bff311fc7712c89c86056"
+    ],
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Workout Checklist"
+  },
+  {
+    "_id": "6a8d272129893c5c4080e9a0",
+    "name": "DOMYOS Men's Fitness Cotton T-Shirt 100 Sportee",
+    "description": "Men's fitness cotton T-shirt designed for comfortable sports and everyday workouts.",
+    "price": 299,
+    "discountPrice": 199,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252991/products/dcyvmmgyxenpais5wmjn.jpg"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Grey"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T05:24:49.395Z",
+    "updatedAt": "2026-09-28T09:10:08.120Z",
+    "__v": 2,
+    "gender": "Men",
+    "categories": [
+      "6a8bff5f1fc7712c89c86058"
+    ],
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Workout Checklist"
+  },
+  {
+    "_id": "6a8d276929893c5c4080e9a1",
+    "name": "DOMYOS Men Fitness Cardio Training Shorts, Quick Dry",
+    "description": "Men's fitness cardio training shorts with quick-dry fabric, designed for comfortable workouts and training.",
+    "price": 999,
+    "discountPrice": 700,
+    "category": "6a8bff311fc7712c89c86056",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252965/products/vkvctjfou80hvpujs0fi.jpg"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T05:26:01.925Z",
+    "updatedAt": "2026-09-30T05:27:28.891Z",
+    "__v": 2,
+    "gender": "Men",
+    "categories": [
+      "6a8bff311fc7712c89c86056"
+    ],
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 3,
+    "subcategory": "Workout Checklist",
+    "averageRating": 3,
+    "reviewCount": 1
+  },
+  {
+    "_id": "6a8d341867f7b4140e155f27",
+    "name": "DECATHLON Umbrella Unisex ProFilter Small Eco-Friendly Lightweight Compact Travel Weather Protection - Black",
+    "description": "Small, lightweight and compact umbrella designed for everyday travel and protection from rain and sun. Eco-designed with a compact format that makes it easy to carry.",
+    "price": 799,
+    "discountPrice": 0,
+    "category": "6a97efe796bb5fefc988faa9",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252921/products/udmusqdfbty8aolvusnt.jpg"
+    ],
+    "stock": 49,
+    "brand": "DECATHLON",
+    "size": [],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T06:20:08.337Z",
+    "updatedAt": "2026-09-25T08:18:31.182Z",
+    "__v": 2,
+    "categories": [
+      "6a97efe796bb5fefc988faa9"
+    ]
+  },
+  {
+    "_id": "6a8d347667f7b4140e155f28",
+    "name": "QUECHUA Rain Poncho Unisex Hiking Lightweight Waterproof 0-10L - Blue",
+    "description": "Lightweight waterproof rain poncho for hiking and outdoor activities. Provides protection from rain and can accommodate a small 0-10L backpack.",
+    "price": 1499,
+    "discountPrice": 799,
+    "category": "6a97ef9b96bb5fefc988fa9a",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252842/products/n1jk7pkxk7mf3ghr8b48.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "S/M",
+      "L/XL"
+    ],
+    "color": [
+      "Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T06:21:42.173Z",
+    "updatedAt": "2026-09-14T10:21:50.335Z",
+    "__v": 3,
+    "categories": [
+      "6a97ef9b96bb5fefc988fa9a"
+    ],
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a8d34ca67f7b4140e155f29",
+    "name": "INESIS Umbrella Unisex MICROPLUS Lightweight Compact Travel Sun and Rain Weather Protection - Light Khaki",
+    "description": "Compact and lightweight umbrella designed for everyday travel and protection from sun and rain.",
+    "price": 999,
+    "discountPrice": 699,
+    "category": "6a97efe796bb5fefc988faa9",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252821/products/q0jdzuffebj27786trfp.jpg"
+    ],
+    "stock": 50,
+    "brand": "INESIS",
+    "size": [
+      "Compact"
+    ],
+    "color": [
+      "Light Khaki"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T06:23:06.114Z",
+    "updatedAt": "2026-09-04T02:22:56.553Z",
+    "__v": 2,
+    "categories": [
+      "6a97efe796bb5fefc988faa9"
+    ]
+  },
+  {
+    "_id": "6a8d35a967f7b4140e155f2a",
+    "name": "CAPERLAN Rain Poncho Unisex Outdoor Lightweight Waterproof - Black",
+    "description": "Lightweight waterproof rain poncho designed for outdoor activities and protection from rain. Compact and easy to store.",
+    "price": 1399,
+    "discountPrice": 999,
+    "category": "6a97efe796bb5fefc988faa9",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252795/products/d4wspo4hosrkohuplfua.jpg"
+    ],
+    "stock": 49,
+    "brand": "CAPERLAN",
+    "size": [
+      "Free Size"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T06:26:49.617Z",
+    "updatedAt": "2026-09-25T09:08:02.346Z",
+    "__v": 2,
+    "categories": [
+      "6a97efe796bb5fefc988faa9"
+    ]
+  },
+  {
+    "_id": "6a8d365167f7b4140e155f2b",
+    "name": "INESIS Umbrella Unisex ProFilter Medium Eco-Friendly - Red",
+    "description": "Medium-sized lightweight umbrella designed for everyday protection from rain and sun. Eco-friendly construction with a practical design for outdoor and travel use.",
+    "price": 1499,
+    "discountPrice": 699,
+    "category": "6a97de4d96bb5fefc988f98b",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252773/products/pk4jx47pze0xqkoue5zl.jpg"
+    ],
+    "stock": 50,
+    "brand": "INESIS",
+    "size": [
+      "Medium"
+    ],
+    "color": [
+      "Navy Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T06:29:37.001Z",
+    "updatedAt": "2026-09-14T09:36:56.712Z",
+    "__v": 3,
+    "categories": [
+      "6a97de4d96bb5fefc988f98b"
+    ],
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a8d36ad67f7b4140e155f2c",
+    "name": "INESIS Umbrella Unisex ProFilter Medium Eco-Friendly - Red",
+    "description": "Medium-sized lightweight umbrella designed for everyday protection from rain and sun. Eco-friendly construction with a practical design for outdoor and travel use.",
+    "price": 1499,
+    "discountPrice": 699,
+    "category": "6a97de4d96bb5fefc988f98b",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252727/products/xptsw3yg8jabi2hfv0ca.jpg"
+    ],
+    "stock": 50,
+    "brand": "INESIS",
+    "size": [
+      "Medium"
+    ],
+    "color": [
+      "Red"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T06:31:09.338Z",
+    "updatedAt": "2026-09-23T09:10:06.876Z",
+    "__v": 3,
+    "categories": [
+      "6a97de4d96bb5fefc988f98b"
+    ],
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a8d59aa67f7b4140e155f38",
+    "name": "QUECHUA Men's Warm and Waterproof Hiking Boots - Black",
+    "description": "Warm and waterproof hiking boots designed for men. They provide protection from rain, cold and wet conditions while offering comfortable support for hiking and outdoor activities.",
+    "price": 5999,
+    "discountPrice": 3999,
+    "category": "6a97df5896bb5fefc988f98f",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252654/products/snfqdk4hcbgyzyvyqwc3.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T09:00:26.482Z",
+    "updatedAt": "2026-09-28T19:09:59.195Z",
+    "__v": 3,
+    "categories": [
+      "6a97df5896bb5fefc988f98f"
+    ],
+    "discountPercent": 0,
+    "gender": "Men",
+    "onSale": false,
+    "review": 0,
+    "lowStockNotified": false,
+    "subcategory": "Outdoor Products"
+  },
+  {
+    "_id": "6a8d5a0f67f7b4140e155f39",
+    "name": "QUECHUA Men's Leather High Trekking Shoes - Black Grey",
+    "description": "Durable leather high trekking shoes designed for demanding outdoor adventures. They provide ankle support, grip and protection on uneven terrain while maintaining comfort during long hikes.",
+    "price": 12999,
+    "discountPrice": 9999,
+    "category": "6a8bffa21fc7712c89c8605b",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252619/products/tucodfkndbvjywlw2sgn.jpg"
+    ],
+    "stock": 54,
+    "brand": "QUECHUA",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T09:02:07.054Z",
+    "updatedAt": "2026-09-28T19:10:20.341Z",
+    "__v": 3,
+    "gender": "Men",
+    "lowStockNotified": false,
+    "categories": [
+      "6a8bffa21fc7712c89c8605b"
+    ],
+    "discountPercent": 0,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Outdoor Products"
+  },
+  {
+    "_id": "6a8d5a6a67f7b4140e155f3a",
+    "name": "QUECHUA Women's Warm and Waterproof Snow Hiking Boots - Navy Blue",
+    "description": "Warm and waterproof snow hiking boots designed for women. They provide insulation, protection and reliable grip in cold, snowy and wet outdoor conditions.",
+    "price": 6999,
+    "discountPrice": 3999,
+    "category": "6a8bffa21fc7712c89c8605b",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252592/products/c6thwtrp2raokjeitryg.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Navy Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T09:03:38.842Z",
+    "updatedAt": "2026-09-28T19:10:41.342Z",
+    "__v": 2,
+    "categories": [
+      "6a8bffa21fc7712c89c8605b"
+    ],
+    "discountPercent": 0,
+    "gender": "Women",
+    "onSale": false,
+    "review": 0,
+    "lowStockNotified": false,
+    "subcategory": "Outdoor Products"
+  },
+  {
+    "_id": "6a8d5acb67f7b4140e155f3b",
+    "name": "DECATHLON Men's CJ80 Leather Trainers - White",
+    "description": "Classic leather trainers designed for everyday casual wear. The clean and comfortable design makes them suitable for daily activities, walking and casual outdoor use.",
+    "price": 5999,
+    "discountPrice": 2999,
+    "category": "6a8bff211fc7712c89c86055",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252574/products/nytsetcdfvpzb9ovjnyv.jpg"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T09:05:15.992Z",
+    "updatedAt": "2026-09-28T19:11:03.440Z",
+    "__v": 2,
+    "categories": [
+      "6a8bff211fc7712c89c86055"
+    ],
+    "gender": "Men",
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Outdoor Products"
+  },
+  {
+    "_id": "6a8d5b2767f7b4140e155f3c",
+    "name": "QUECHUA Men's Waterproof Winter Hiking Shoes NH100 - Black",
+    "description": "Waterproof winter hiking shoes designed for men, providing protection from rain, cold and wet conditions. Comfortable and durable for hiking and outdoor activities.",
+    "price": 4999,
+    "discountPrice": 2999,
+    "category": "6a8bff211fc7712c89c86055",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252477/products/fxrv4k2tdsnrslmasimu.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T09:06:47.789Z",
+    "updatedAt": "2026-09-28T19:11:23.330Z",
+    "__v": 2,
+    "categories": [
+      "6a8bff211fc7712c89c86055"
+    ],
+    "gender": "Men",
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Outdoor Products"
+  },
+  {
+    "_id": "6a8d5b7b67f7b4140e155f3d",
+    "name": "QUECHUA Women's Waterproof Mountain Hiking Shoes - Black",
+    "description": "Waterproof mountain hiking shoes designed for women. They provide reliable grip, protection and comfort for hiking on uneven and wet outdoor terrain.",
+    "price": 10999,
+    "discountPrice": 6999,
+    "category": "6a8d4eb467f7b4140e155f36",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252453/products/vczwdgx1fu0ayuftvoz2.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-25T09:08:11.400Z",
+    "updatedAt": "2026-09-28T19:11:43.341Z",
+    "__v": 2,
+    "categories": [
+      "6a8d4eb467f7b4140e155f36"
+    ],
+    "gender": "Women",
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Outdoor Products"
+  },
+  {
+    "_id": "6a8fab1951827ac2653d68e3",
+    "name": "Men's Fitness Cotton T-Shirt 100 Sportee – White",
+    "description": "Men's fitness T-shirt made from comfortable cotton fabric. Lightweight and suitable for gym, fitness workouts and everyday wear. Features a simple sporty design with a comfortable fit.",
+    "price": 399,
+    "discountPrice": 199,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252409/products/xfpomfnyqtx6eepjnfmc.jpg"
+    ],
+    "stock": 49,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-27T03:12:25.704Z",
+    "updatedAt": "2026-09-01T08:46:49.617Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a8fab7451827ac2653d68e4",
+    "name": "Men Gym Sports T-Shirt Polyester – Mottled Grey",
+    "description": "Men's sports T-shirt designed for gym and fitness activities. Made from lightweight polyester fabric for comfortable movement during workouts. Suitable for regular training and sports activities.",
+    "price": 699,
+    "discountPrice": 499,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252356/products/v8zcxf8mzfkeyzp9xkby.jpg"
+    ],
+    "stock": 46,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Mottled Grey"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-27T03:13:56.199Z",
+    "updatedAt": "2026-09-01T08:45:57.216Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a8fabe651827ac2653d68e5",
+    "name": "KIPRUN Men's Running Breathable T-Shirt Run 500 Dry – Green",
+    "description": "Breathable men's running T-shirt designed for regular running and sports activities. Lightweight fabric helps provide comfort and efficient moisture management during workouts.",
+    "price": 949,
+    "discountPrice": 799,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252040/products/zbfavk0acrgtzepnnpqu.jpg"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Green"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-27T03:15:50.521Z",
+    "updatedAt": "2026-09-01T08:40:40.859Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a8fac2951827ac2653d68e6",
+    "name": "Men Running T-Shirt Breathable, Quick Dry – Black",
+    "description": "Breathable men's running T-shirt designed for running and sports activities. Quick-dry fabric helps keep you comfortable during workouts. Lightweight design provides freedom of movement.",
+    "price": 799,
+    "discountPrice": 299,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788252021/products/khx19fgbswnfwdnjwc0n.jpg"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-27T03:16:57.710Z",
+    "updatedAt": "2026-09-01T08:40:21.513Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a8fac8051827ac2653d68e7",
+    "name": "DOMYOS Tee Shirt Cardio Vayu – Black",
+    "description": "Men's cardio T-shirt designed for fitness and cardio workouts. Lightweight and comfortable design allows easy movement during training and everyday sports activities.",
+    "price": 499,
+    "discountPrice": 299,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788251998/products/dop9efa14zrdtmv46hdr.jpg"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-27T03:18:24.494Z",
+    "updatedAt": "2026-09-01T08:39:58.608Z",
+    "__v": 1
+  },
+  {
+    "_id": "6a8facd751827ac2653d68e8",
+    "name": "Men Running T-Shirt Breathable, Quick Dry – Black",
+    "description": "Breathable and quick-dry men's running T-shirt designed for running and sports activities. Lightweight fabric provides comfort and freedom of movement during workouts",
+    "price": 799,
+    "discountPrice": 299,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788251782/products/anb8uawaclvsu38rwpwt.jpg"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-08-27T03:19:51.181Z",
+    "updatedAt": "2026-09-01T08:36:22.656Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a98d7260b1fa12c72d160f6",
+    "name": "KIPSTA Raincoat Men Waterproof Hooded Football Rain Jacket",
+    "description": "Waterproof hooded rain jacket designed for football and outdoor activities. Lightweight, comfortable and provides protection from rain and wind.",
+    "price": 1999,
+    "discountPrice": 1299,
+    "category": "6a97efe796bb5fefc988faa9",
+    "categories": [
+      "6a97efe796bb5fefc988faa9",
+      "6a97ddb596bb5fefc988f988"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788401446/products/uhdmkh4hzf2abxkthit4.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPSTA",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:10:46.485Z",
+    "updatedAt": "2026-09-04T02:20:18.354Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a98d8be0b1fa12c72d160f7",
+    "name": "DECATHLON Raincoat Men Sailing Lightweight Waterproof Jacket",
+    "description": "Lightweight waterproof rain jacket for men, designed for sailing and outdoor activities. Provides protection from rain and wind while remaining comfortable and easy to wear.",
+    "price": 3999,
+    "discountPrice": 1999,
+    "category": "6a97efe796bb5fefc988faa9",
+    "categories": [
+      "6a97efe796bb5fefc988faa9",
+      "6a8d449467f7b4140e155f2e"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788401853/products/cjmnnq6rkz0fiaxadpkr.jpg"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Blue",
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:17:34.096Z",
+    "updatedAt": "2026-09-04T02:05:00.674Z",
+    "__v": 1,
+    "gender": "Men"
+  },
+  {
+    "_id": "6a98d9830b1fa12c72d160f8",
+    "name": "VAN RYSEL Raincoat Men Waterproof with Windproof Jacket",
+    "description": "Waterproof and windproof rain jacket for men, designed for cycling and outdoor activities. Lightweight construction provides protection from rain and wind with comfortable movement.",
+    "price": 1999,
+    "discountPrice": 999,
+    "category": "6a97ddb596bb5fefc988f988",
+    "categories": [
+      "6a97ddb596bb5fefc988f988",
+      "6a97df0796bb5fefc988f98d",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788402051/products/j3zixier1qcrvphzet3d.jpg"
+    ],
+    "stock": 52,
+    "brand": "VAN RYSEL",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:20:51.631Z",
+    "updatedAt": "2026-09-15T05:17:33.013Z",
+    "__v": 1,
+    "discountPercent": 0,
+    "gender": "Men",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98da630b1fa12c72d160f9",
+    "name": "QUECHUA Raincoat Men Hiking Lightweight Waterproof Jacket",
+    "description": "Lightweight waterproof rain jacket for men, ideal for hiking and outdoor activities. Designed to protect against rain and wind while providing comfortable movement.",
+    "price": 999,
+    "discountPrice": 699,
+    "category": "6a97ddb596bb5fefc988f988",
+    "categories": [
+      "6a97ddb596bb5fefc988f988",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788402274/products/bmm4g4iwwkmpnm3cygih.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:24:35.318Z",
+    "updatedAt": "2026-09-14T10:20:59.684Z",
+    "__v": 2,
+    "discountPercent": 0,
+    "gender": "Men",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98db744fcd2333d8243739",
+    "name": "QUECHUA Raincoat Men Hiking Lightweight Waterproof Jacket",
+    "description": "Lightweight waterproof rain jacket for men, suitable for hiking and outdoor activities. Designed to provide protection from rain and wind with a comfortable fit.",
+    "price": 1699,
+    "discountPrice": 1299,
+    "category": "6a97efe796bb5fefc988faa9",
+    "categories": [
+      "6a97efe796bb5fefc988faa9",
+      "6a97ef9b96bb5fefc988fa9a",
+      "6aa380435e5de9c0eb90a3a3"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788402548/products/m4kx3bpl5uyv7hfr91x8.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:29:09.000Z",
+    "updatedAt": "2026-09-15T05:19:47.907Z",
+    "__v": 3,
+    "discountPercent": 0,
+    "gender": "Men",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98dd1a4fcd2333d824373a",
+    "name": "QUECHUA Raincoat Men Hiking Waterproof Jacket",
+    "description": "Waterproof rain jacket for men designed for hiking and outdoor activities. Lightweight and comfortable, offering reliable protection from rain and wind.",
+    "price": 1999,
+    "discountPrice": 1299,
+    "category": "6a97ddb596bb5fefc988f988",
+    "categories": [
+      "6a97ddb596bb5fefc988f988",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788402970/products/xjpeyzfqjxszce8whmly.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:36:10.675Z",
+    "updatedAt": "2026-09-15T05:19:06.564Z",
+    "__v": 2,
+    "discountPercent": 0,
+    "gender": "Men",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98e2a82b40002fc193d4cb",
+    "name": "TRIBORD Pouch Unisex Swim 6L Transparent Waterproof",
+    "description": "Compact transparent waterproof pouch for swimming and water activities. 6L capacity, lightweight design and ideal for keeping personal belongings protected from water.",
+    "price": 999,
+    "discountPrice": 499,
+    "category": "6a97de7696bb5fefc988f98c",
+    "categories": [
+      "6a97de7696bb5fefc988f98c",
+      "6a97e3b996bb5fefc988f9e3",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788404392/products/rbrtmrrugecbhs9iitfz.jpg"
+    ],
+    "stock": 50,
+    "brand": "TRIBORD",
+    "size": [],
+    "color": [
+      "Transparent"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T02:59:52.538Z",
+    "updatedAt": "2026-09-14T10:35:08.748Z",
+    "__v": 3,
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98e3312b40002fc193d4cc",
+    "name": "INESIS Umbrella Unisex ProFilter Micro Lightweight",
+    "description": "Lightweight and compact umbrella designed for everyday use. Provides reliable protection from rain and is easy to carry and store.",
+    "price": 599,
+    "discountPrice": 0,
+    "category": "6a97de4d96bb5fefc988f98b",
+    "categories": [
+      "6a97de4d96bb5fefc988f98b",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788404528/products/md7n9feobyc3rp2cswvg.jpg"
+    ],
+    "stock": 50,
+    "brand": "INESIS",
+    "size": [],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:02:09.381Z",
+    "updatedAt": "2026-09-14T09:36:04.933Z",
+    "__v": 2,
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98e4202b40002fc193d4cd",
+    "name": "INESIS Umbrella Unisex MICROPLUS Lightweight",
+    "description": "Lightweight and compact umbrella designed to provide protection from rain. Easy to carry, store and suitable for everyday outdoor use.",
+    "price": 999,
+    "discountPrice": 699,
+    "category": "6a97de4d96bb5fefc988f98b",
+    "categories": [
+      "6a97de4d96bb5fefc988f98b",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788404768/products/lczsmeqlr0ulle5klmfh.jpg"
+    ],
+    "stock": 50,
+    "brand": "Decathlon",
+    "size": [],
+    "color": [
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:06:08.992Z",
+    "updatedAt": "2026-09-14T09:35:46.184Z",
+    "__v": 2,
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98e48d2b40002fc193d4ce",
+    "name": "SOLOGNAC Umbrella Unisex Hunting Camouflage Waterproof",
+    "description": "Waterproof camouflage umbrella designed for hunting and outdoor activities. Durable, practical and provides good protection from rain during outdoor use.",
+    "price": 1499,
+    "discountPrice": 999,
+    "category": "6a97de4d96bb5fefc988f98b",
+    "categories": [
+      "6a97de4d96bb5fefc988f98b",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788404877/products/meyn5fl0xhpbgahivfvj.jpg"
+    ],
+    "stock": 50,
+    "brand": "SOLOGNAC",
+    "size": [],
+    "color": [
+      "Camouflage"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:07:57.563Z",
+    "updatedAt": "2026-09-14T09:35:24.181Z",
+    "__v": 2,
+    "discountPercent": 0,
+    "gender": "Unisex",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98e5142b40002fc193d4cf",
+    "name": "ITIWIT Waterproof Mobile Phone Pouch Large IPX8",
+    "description": "Large waterproof mobile phone pouch designed for outdoor and water activities. IPX8 waterproof protection helps keep your phone safe from water while allowing convenient touchscreen use.",
+    "price": 999,
+    "discountPrice": 499,
+    "category": "6a97df0796bb5fefc988f98d",
+    "categories": [
+      "6a97df0796bb5fefc988f98d",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788405011/products/jyizd4mnfekt2z0ymgup.jpg"
+    ],
+    "stock": 50,
+    "brand": "ITIWIT",
+    "size": [
+      "Large"
+    ],
+    "color": [],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:10:12.283Z",
+    "updatedAt": "2026-09-04T01:59:27.187Z",
+    "__v": 1
+  },
+  {
+    "_id": "6a98e6192b40002fc193d4d0",
+    "name": "DECATHLON Aquashoes Unisex 100 Pool Beach",
+    "description": "Comfortable unisex aquashoes designed for swimming pools, beaches and water activities. Lightweight and flexible design provides protection for your feet on wet and rocky surfaces.",
+    "price": 999,
+    "discountPrice": 499,
+    "category": "6a97df2c96bb5fefc988f98e",
+    "categories": [
+      "6a97df2c96bb5fefc988f98e"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788405273/products/xs3celbh2zeejpkwis2h.jpg"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:14:33.792Z",
+    "updatedAt": "2026-09-04T01:58:48.935Z",
+    "__v": 1
+  },
+  {
+    "_id": "6a98ea940201b7f9311869b4",
+    "name": "QUECHUA Raincoat Women Hiking Lightweight Waterproof",
+    "description": "Lightweight waterproof raincoat for women designed for hiking and outdoor activities. Comfortable and practical design provides protection from rain and wind.",
+    "price": 1699,
+    "discountPrice": 1299,
+    "category": "6a97efb396bb5fefc988fa9f",
+    "categories": [
+      "6a97efb396bb5fefc988fa9f",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788406420/products/vhi9gfaolvzov6oedkui.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Purple",
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:33:40.880Z",
+    "updatedAt": "2026-09-04T01:58:32.968Z",
+    "__v": 1,
+    "gender": "Women"
+  },
+  {
+    "_id": "6a98eb1f0201b7f9311869b5",
+    "name": "QUECHUA Raincoat Women Hiking Lightweight Waterproof",
+    "description": "Lightweight waterproof raincoat for women, designed for hiking and outdoor activities. It provides reliable protection from rain and wind with a comfortable fit and practical hooded design.",
+    "price": 3999,
+    "discountPrice": 1999,
+    "category": "6a97efb396bb5fefc988fa9f",
+    "categories": [
+      "6a97efb396bb5fefc988fa9f",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788406559/products/hrkhe5pa26pwwj88tosr.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Green"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:35:59.571Z",
+    "updatedAt": "2026-09-15T05:15:56.486Z",
+    "__v": 3,
+    "discountPercent": 0,
+    "gender": "Women",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98eb990201b7f9311869b6",
+    "name": "QUECHUA Women’s Water-Repellent Windproof Hiking Jacket",
+    "description": "Water-repellent and windproof jacket for women, designed for hiking and outdoor activities. Lightweight design provides protection from light rain and wind while offering comfortable movement.",
+    "price": 949,
+    "discountPrice": 349,
+    "category": "6a97efb396bb5fefc988fa9f",
+    "categories": [
+      "6a97efb396bb5fefc988fa9f",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788406680/products/cwrj9pqiehioh2mccjxd.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Navy Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:38:01.141Z",
+    "updatedAt": "2026-09-14T10:19:18.134Z",
+    "__v": 2,
+    "discountPercent": 0,
+    "gender": "Women",
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98eccf0201b7f9311869b7",
+    "name": "QUECHUA Women Waistband Rain Jacket",
+    "description": "Comfortable waterproof rain jacket for women designed for hiking and outdoor activities. Lightweight and practical design provides protection from rain and wind.",
+    "price": 2599,
+    "discountPrice": 699,
+    "category": "6a97ddb596bb5fefc988f988",
+    "categories": [
+      "6a97ddb596bb5fefc988f988",
+      "6a97efb396bb5fefc988fa9f",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788406991/products/r4mvedost5ag2j7v4fnw.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Grey"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:43:11.393Z",
+    "updatedAt": "2026-09-14T10:18:56.632Z",
+    "__v": 3,
+    "gender": "Women",
+    "discountPercent": 0,
+    "onSale": false,
+    "review": 0
+  },
+  {
+    "_id": "6a98ed9b0201b7f9311869b8",
+    "name": "QUECHUA Raincoat Women Hiking Lightweight Waterproof",
+    "description": "Lightweight waterproof raincoat for women, designed for hiking and outdoor activities. Provides protection from rain and wind with a comfortable and practical design.",
+    "price": 949,
+    "discountPrice": 699,
+    "category": "6a97efb396bb5fefc988fa9f",
+    "categories": [
+      "6a97efb396bb5fefc988fa9f",
+      "6a97efe796bb5fefc988faa9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788407194/products/cron1tk4uutjm6fpsb0n.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Purple",
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:46:35.138Z",
+    "updatedAt": "2026-09-10T04:24:15.973Z",
+    "__v": 2,
+    "gender": "Women"
+  },
+  {
+    "_id": "6a98ee380201b7f9311869b9",
+    "name": "QUECHUA Women Full Zip Rain Jacket with Storage",
+    "description": "Lightweight full-zip rain jacket for women, designed for hiking and outdoor activities. Water-resistant fabric provides protection from light rain and wind, while the practical design offers comfortable movement and easy storage.",
+    "price": 1299,
+    "discountPrice": 899,
+    "category": "6a97ddb596bb5fefc988f988",
+    "categories": [
+      "6a97ddb596bb5fefc988f988",
+      "6a97efb396bb5fefc988fa9f",
+      "6a97efe796bb5fefc988faa9",
+      "6a8d4eb467f7b4140e155f36"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1788407351/products/wh0g1rghmkeeysf1td2w.jpg"
+    ],
+    "stock": 50,
+    "brand": "QUECHUA",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "White"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-03T03:49:12.080Z",
+    "updatedAt": "2026-09-10T04:22:12.717Z",
+    "__v": 3,
+    "gender": "Women"
+  },
+  {
+    "_id": "6aa233b062dc12badd5e1067",
+    "name": "KIPRUN Women's Breathable Running T-Shirt, Kiprun Run 500 Dry",
+    "description": "Women's breathable running T-shirt designed for comfortable running and sports activities.",
+    "price": 1799,
+    "discountPrice": 799,
+    "category": "6a8bff5f1fc7712c89c86058",
+    "categories": [
+      "6a8bff5f1fc7712c89c86058",
+      "6a8d4eb467f7b4140e155f36"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789014960/products/petfxhoaqcdvzn846blu.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPRUN",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL"
+    ],
+    "color": [
+      "Pink"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-10T04:36:00.948Z",
+    "updatedAt": "2026-09-29T04:25:43.324Z",
+    "__v": 1,
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Women's Activewear"
+  },
+  {
+    "_id": "6aa234bb62dc12badd5e107b",
+    "name": "KIPRUN Kiprun Run 500 Dry Women's Breathable Running T-Shirt",
+    "description": "Designed for active women, the KIPRUN Run 500 Dry Running T-Shirt offers lightweight comfort and breathability during running and workouts. Its moisture-managing fabric helps keep you comfortable while exercising, while the sporty design provides freedom of movement for training, jogging, and other fitness activities.",
+    "price": 1079,
+    "discountPrice": 799,
+    "category": "6a8d4eb467f7b4140e155f36",
+    "categories": [
+      "6a8d4eb467f7b4140e155f36",
+      "6a8bff5f1fc7712c89c86058"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789015226/products/lyiapeygk0vku45uayg1.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPRUN",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Dark Blue",
+      "Teal"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-10T04:40:27.804Z",
+    "updatedAt": "2026-09-29T04:26:34.123Z",
+    "__v": 1,
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Women's Activewear"
+  },
+  {
+    "_id": "6aa2352362dc12badd5e108f",
+    "name": "KIPRUN KIPRUN Run 500 Dry Women's Breathable Running T-Shirt",
+    "description": "Stay cool and comfortable during your workouts with the KIPRUN Run 500 Dry Women's Breathable Running T-Shirt. Made for running and fitness activities, its lightweight breathable fabric helps manage moisture while providing comfortable movement. The sporty design makes it suitable for jogging, training, gym sessions, and everyday activewear.",
+    "price": 1049,
+    "discountPrice": 799,
+    "category": "6a8d4eb467f7b4140e155f36",
+    "categories": [
+      "6a8d4eb467f7b4140e155f36",
+      "6a8bff5f1fc7712c89c86058"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789015331/products/sx4lgb4vkejdhthtc35n.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPRUN",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Light Green"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-10T04:42:11.604Z",
+    "updatedAt": "2026-09-29T04:27:00.945Z",
+    "__v": 0,
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Women's Activewear"
+  },
+  {
+    "_id": "6aa236a662dc12badd5e10a3",
+    "name": "KIPRUN Kiprun Run 500 Dry Women's Breathable Running T-Shirt",
+    "description": "Enjoy lightweight comfort and breathability with the KIPRUN Run 500 Dry Women's Running T-Shirt. Designed for running, jogging, workouts, and training, it provides freedom of movement and helps manage moisture during physical activity. Its sporty design makes it a practical choice for everyday fitness and",
+    "price": 1049,
+    "discountPrice": 799,
+    "category": "6a8d4eb467f7b4140e155f36",
+    "categories": [
+      "6a8d4eb467f7b4140e155f36",
+      "6a8bff5f1fc7712c89c86058"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789015718/products/iv0qxvqigisvwkjyfdor.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPRUN",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Blue",
+      "Purple"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-10T04:48:38.888Z",
+    "updatedAt": "2026-09-29T04:27:38.367Z",
+    "__v": 0,
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Women's Activewear"
+  },
+  {
+    "_id": "6aa2378162dc12badd5e10b7",
+    "name": "KIPRUN Women's Breathable Running T-Shirt, Kiprun Run 500",
+    "description": "The KIPRUN Run 500 Women's Running T-Shirt is designed to provide lightweight comfort and breathability during sports and fitness activities. Its comfortable fabric allows easy movement and helps manage moisture while you run or work out. Ideal for running, jogging, gym sessions, training, and everyday activewear.",
+    "price": 1049,
+    "discountPrice": 799,
+    "category": "6a8d4eb467f7b4140e155f36",
+    "categories": [
+      "6a8d4eb467f7b4140e155f36",
+      "6a8bff5f1fc7712c89c86058"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789015936/products/msg0u60ipxw8q8frddbj.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPRUN",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Light Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-10T04:52:17.309Z",
+    "updatedAt": "2026-09-29T04:27:53.731Z",
+    "__v": 0,
+    "discountPercent": 0,
+    "onSale": false,
+    "review": 0,
+    "lowStockNotified": false,
+    "subcategory": "Women's Activewear"
+  },
+  {
+    "_id": "6aa237fb62dc12badd5e10cb",
+    "name": "KIPRUN KIPRUN Run 500 Dry Women's Breathable Running T-Shirt",
+    "description": "Stay comfortable and confident during your workouts with the KIPRUN Run 500 Dry Women's Breathable Running T-Shirt. Made with lightweight, breathable fabric, it helps manage moisture and provides comfortable movement during running and training. Perfect for jogging, gym workouts, fitness sessions, and other sports activities.",
+    "price": 1049,
+    "discountPrice": 399,
+    "category": "6a8d4eb467f7b4140e155f36",
+    "categories": [
+      "6a8d4eb467f7b4140e155f36",
+      "6a8bff5f1fc7712c89c86058"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789016058/products/wa4g3nslnm13u519mzrb.jpg"
+    ],
+    "stock": 50,
+    "brand": "KIPRUN",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Light Green"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-10T04:54:19.229Z",
+    "updatedAt": "2026-09-29T04:28:12.404Z",
+    "__v": 0,
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Women's Activewear"
+  },
+  {
+    "_id": "6aa38e2c5e5de9c0eb90a8ac",
+    "name": "Road Bike Triban RC100 Flat Bar - Aluminium Frame, 7 Speed, Caliper Brakes",
+    "description": "We've designed this bike especially for and with beginners: reassuring tires, simple speed changes, and straight handlebars! Discover the ideal bike for starting out: with only one chainring, you'll never end up in the wrong gear! The 32mm tires, allow you to take on any road with more efficiency.",
+    "price": 34999,
+    "discountPrice": 21999,
+    "category": "6aa385a85e5de9c0eb90a584",
+    "categories": [
+      "6aa385a85e5de9c0eb90a584",
+      "6aa385ea5e5de9c0eb90a5cc"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789104772/products/ggvvrewvrfjwwbuqymur.png"
+    ],
+    "stock": 50,
+    "brand": "Triban",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L"
+    ],
+    "color": [
+      "Grey"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-11T05:14:20.400Z",
+    "updatedAt": "2026-09-29T07:26:05.008Z",
+    "__v": 1,
+    "discountPercent": 0,
+    "lowStockNotified": false,
+    "onSale": false,
+    "review": 0,
+    "subcategory": "Cycle-Store"
+  },
+  {
+    "_id": "6aa38edb5e5de9c0eb90a8b7",
+    "name": "Play 5 Kids' Inline Skates - Blue/Lemon yellow",
+    "description": "These inline skates are perfect for kids who want to start out, by gradually gaining speed. A bearing suitable for longer rides! These skates are comfy, sturdy and adjustable to 3 sizes! The support and the bearing have been developed for starting out in total safety.",
+    "price": 3999,
+    "discountPrice": 2199,
+    "category": "6a8d2bb329893c5c4080e9a6",
+    "categories": [
+      "6a8d2bb329893c5c4080e9a6",
+      "6a8d2bef29893c5c4080e9a9"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789103834/products/mrppwufqaxpe5eco7yfa.jpg"
+    ],
+    "stock": 50,
+    "brand": "OXELO",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "Lemon Yellow",
+      "Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-11T05:17:15.830Z",
+    "updatedAt": "2026-09-29T07:26:24.211Z",
+    "__v": 0,
+    "discountPercent": 45,
+    "onSale": true,
+    "review": 4.8,
+    "reviewCount": "2.8k",
+    "lowStockNotified": false,
+    "subcategory": "Cycle-Store"
+  },
+  {
+    "_id": "6aa38fb35e5de9c0eb90a8c2",
+    "name": "Rockrider EXPL 10 High Frame Single-Speed Bicycle - Hurricane Blue",
+    "description": "A gear-less, suspension-free bicycle with wide MTB tires, engineered for rugged, low-maintenance versatility across diverse Indian terrains. Built tough for India’s unpredictable roads, this single-speed bicycle relies on a resilient frame and wide, high-volume tires to naturally cushion deep pothole",
+    "price": 12999,
+    "discountPrice": 8999,
+    "category": "6aa385a85e5de9c0eb90a584",
+    "categories": [
+      "6aa385a85e5de9c0eb90a584",
+      "6aa385da5e5de9c0eb90a5b4"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789104049/products/yvbntjecqs11ga8p6cwh.jpg"
+    ],
+    "stock": 50,
+    "brand": "ROCKRIDER",
+    "gender": "Unisex",
+    "size": [
+      "S - 150-164CM",
+      "M - 165-174CM",
+      "L - 175-184CM"
+    ],
+    "color": [
+      "Blue"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-11T05:20:51.373Z",
+    "updatedAt": "2026-09-29T07:26:41.948Z",
+    "__v": 0,
+    "discountPercent": 31,
+    "onSale": false,
+    "review": 4,
+    "reviewCount": "26",
+    "lowStockNotified": false,
+    "subcategory": "Cycle-Store"
+  },
+  {
+    "_id": "6aa390515e5de9c0eb90a8cd",
+    "name": "Adult Inline Skates MF140 Hard Shell - Grey",
+    "description": "Perfect skates for beginning and improving with a hard shell for good support and an optimal position for learning to skate. Everything has been designed on this skate to optimise learning and quick progress: stronger support for an ideal position, a double sizing system for perfect comfort, and a brake included.",
+    "price": 11199,
+    "discountPrice": 5999,
+    "category": "6a8d2bb329893c5c4080e9a6",
+    "categories": [
+      "6a8d2bb329893c5c4080e9a6"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789104207/products/jclxajw817svcjhyyu32.jpg"
+    ],
+    "stock": 50,
+    "brand": "OXELO",
+    "gender": "Unisex",
+    "size": [
+      "UK 5.5-6.5 EU39-40",
+      "45846",
+      "UK 8.5-9.5 EU43-44"
+    ],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-11T05:23:29.638Z",
+    "updatedAt": "2026-09-29T07:27:06.340Z",
+    "__v": 0,
+    "discountPercent": 46,
+    "onSale": false,
+    "review": 4.8,
+    "reviewCount": "252",
+    "lowStockNotified": false,
+    "subcategory": "Cycle-Store"
+  },
+  {
+    "_id": "6aa390e35e5de9c0eb90a8d8",
+    "name": "Rockrider EXPL 10 Low Frame Single-Speed Bicycle - Green Black",
+    "description": "A gear-less, suspension-free bicycle with wide MTB tires, engineered with a ow frame which make getting on and off the bicycle easy. Built tough for India’s unpredictable roads, this single-speed bicycle relies on a resilient frame and wide, high-volume tires to naturally cushion deep pothole",
+    "price": 12999,
+    "discountPrice": 8999,
+    "category": "6aa385a85e5de9c0eb90a584",
+    "categories": [
+      "6aa385a85e5de9c0eb90a584",
+      "6aa385da5e5de9c0eb90a5b4",
+      "6aa385fa5e5de9c0eb90a5e4"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789104354/products/ycjnjf1yb2zzev5tvifd.jpg"
+    ],
+    "stock": 50,
+    "brand": "ROCKRIDER",
+    "gender": "Unisex",
+    "size": [
+      "S - 150-164CM",
+      "M - 165-174CM",
+      "L - 175-184CM"
+    ],
+    "color": [
+      "Green",
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-11T05:25:55.751Z",
+    "updatedAt": "2026-09-29T07:27:32.703Z",
+    "__v": 0,
+    "discountPercent": 31,
+    "onSale": false,
+    "review": 4.3,
+    "reviewCount": "38",
+    "lowStockNotified": false,
+    "subcategory": "Cycle-Store"
+  },
+  {
+    "_id": "6aa3919d5e5de9c0eb90a8e3",
+    "name": "Waveboard 100",
+    "description": "Designed for getting started with waveboarding: learn to surf the road! Get started with waveboarding and learn the thrills of surfing the road.",
+    "price": 5999,
+    "discountPrice": 3599,
+    "category": "6a8d2bb329893c5c4080e9a6",
+    "categories": [
+      "6a8d2bb329893c5c4080e9a6"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789104539/products/nakljuuhgwqzk8eztfu5.jpg"
+    ],
+    "stock": 50,
+    "brand": "OXELO",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "Black"
+    ],
+    "isActive": true,
+    "createdAt": "2026-09-11T05:29:01.127Z",
+    "updatedAt": "2026-09-29T07:27:50.228Z",
+    "__v": 0,
+    "discountPercent": 40,
+    "onSale": false,
+    "review": 4.9,
+    "reviewCount": "139",
+    "lowStockNotified": false,
+    "subcategory": "Cycle-Store"
+  },
+  {
+    "_id": "6aa777a121e36c4a88fbccfd",
+    "name": "Adult Punching Wall Bag, Quick Setup, Compact Design - White/Red",
+    "description": "Boost your fitness boxing training with our innovative product! With its suction effect, it attaches easily to smooth surfaces! Perfect for training anywhere! Once inflated, simply press in the centre and it will stick to smooth walls. Easy to remove and move from one wall to another in a matter of seconds",
+    "price": 2599,
+    "discountPrice": 1997,
+    "category": "6aa3762b5e5de9c0eb90a135",
+    "categories": [
+      "6aa3762b5e5de9c0eb90a135"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789360031/products/jv8n2wvp5j9uigjbjlyt.avif"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "White",
+      "Red"
+    ],
+    "discountPercent": 23,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T04:27:13.569Z",
+    "updatedAt": "2026-09-29T05:56:25.301Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Essentials-Product"
+  },
+  {
+    "_id": "6aa7783221e36c4a88fbcd1c",
+    "name": "25 kg Medium-Resistance Weight Training Handgrip - Orange",
+    "description": "This 25 kg medium-resistance ring is easy to use and designed to strengthen your forearm or help you regain grip strength during physical therapy. Compact, light and easy to use, this ring slips in your bag or pocket so you can train your grip anywhere. It's easy to improve your performance with just this small accessory!",
+    "price": 299,
+    "discountPrice": 99,
+    "category": "6aa3761a5e5de9c0eb90a120",
+    "categories": [
+      "6aa3761a5e5de9c0eb90a120"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789360178/products/kb2nn2ywcl4a3wgs4pos.avif"
+    ],
+    "stock": 50,
+    "brand": "CORENGTH",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "Orange"
+    ],
+    "discountPercent": 67,
+    "review": 4.8,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T04:29:38.904Z",
+    "updatedAt": "2026-09-29T05:57:09.366Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Essentials-Product"
+  },
+  {
+    "_id": "6aa778e521e36c4a88fbcd3b",
+    "name": "Vibrating electronic massage tool",
+    "description": "Designed for relaxing your muscles and trigger points with a self-massage. The massage tool can be used on many body areas: legs, arms, pectorals, neck. The massage tool can be used on many body areas: legs, arms, pectorals, neck.The manual massage is enhanced by vibrations.",
+    "price": 1199,
+    "discountPrice": 899,
+    "category": "6a8bff921fc7712c89c8605a",
+    "categories": [
+      "6a8bff921fc7712c89c8605a"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789360356/products/ogfcs4chuhiz4kb7hsik.avif"
+    ],
+    "stock": 501,
+    "brand": "DECATHLON",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "White",
+      "Blue"
+    ],
+    "discountPercent": 0,
+    "review": 4.5,
+    "onSale": false,
+    "isActive": true,
+    "createdAt": "2026-09-14T04:32:37.257Z",
+    "updatedAt": "2026-09-29T05:57:29.940Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Essentials-Product"
+  },
+  {
+    "_id": "6aa7797321e36c4a88fbcd5a",
+    "name": "Adjustable Weighted Vest 6Kg with 4 Plates of 1Kg each, Expandable upto 14kg",
+    "description": "Increase the intensity of your workouts with this adjustable weighted vest (6 to 10kg). Check out this product on the Freeletics app and customise your sessions Adjustable at the shoulders and the width of the chest, it adapts to your body shape and can support up to 14 kg. Discover a variety of exercises with the Freeletics app!",
+    "price": 6249,
+    "discountPrice": 4599,
+    "category": "6aa3761a5e5de9c0eb90a120",
+    "categories": [
+      "6aa3761a5e5de9c0eb90a120"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789360498/products/o90ziqhqibwxkxcmoj1e.avif"
+    ],
+    "stock": 50,
+    "brand": "DOMYOS",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 26,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T04:34:59.274Z",
+    "updatedAt": "2026-09-29T05:57:55.597Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Essentials-Product"
+  },
+  {
+    "_id": "6aa77b0121e36c4a88fbcd79",
+    "name": "Push-Up Bar Grips 500 - Blue",
+    "description": "Want to do push-ups without \"breaking\" your wrists? These ergonomic push-up bar grips are made for you! Maximise your performance without pain. Our compact push-up grips are easy to store. Their non-slip feet mean they don't slide and remain very stable, even during your most intense workouts.",
+    "price": 699,
+    "discountPrice": 499,
+    "category": "6aa3761a5e5de9c0eb90a120",
+    "categories": [
+      "6aa3761a5e5de9c0eb90a120"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789360897/products/dje0smjqhghjrpcxhnih.avif"
+    ],
+    "stock": 50,
+    "brand": "CORENGTH",
+    "gender": "Unisex",
+    "size": [],
+    "color": [
+      "Blue",
+      "Black"
+    ],
+    "discountPercent": 29,
+    "review": 4.8,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T04:41:37.639Z",
+    "updatedAt": "2026-09-29T05:58:19.711Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Essentials-Product"
+  },
+  {
+    "_id": "6aa77bba21e36c4a88fbcd98",
+    "name": "Pull Up Bar 70cm Door Lockable, Supports upto 120kg - Black/Blue",
+    "description": "Want a bar that's quick to put up? Try our Pull-Up Bar: it can be installed without any screws for an upper body workout in a flash. Our passionate weight training team designed this pull-up bar for easy bodyweight workouts at home.",
+    "price": 3499,
+    "discountPrice": 2599,
+    "category": "6aa3761a5e5de9c0eb90a120",
+    "categories": [
+      "6aa3761a5e5de9c0eb90a120"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789361082/products/dbyuioovc8ciu3skh9yx.avif"
+    ],
+    "stock": 50,
+    "brand": "CORENGTH",
+    "gender": "Unisex",
+    "size": [
+      "70 cm"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 26,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T04:44:42.619Z",
+    "updatedAt": "2026-09-29T05:58:42.689Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "Workout Essentials-Product"
+  },
+  {
+    "_id": "6aa7b46de3d25630d078c330",
+    "name": "Slipon Skateboarding Canvas shoe - Khaki",
+    "description": "We designed this vulcanised skate shoe for skaters seeking a very soft, streamlined shoe for a good feel on the board. Skateboard shoes without laces. The vulcanised construction offers excellent flexibility while the cup sole provides superior traction.",
+    "price": 1999,
+    "discountPrice": 699,
+    "category": "6aa7b3b1e3d25630d078c187",
+    "categories": [
+      "6aa7b3b1e3d25630d078c187",
+      "6aa7b3a7e3d25630d078c15c"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789375596/products/bglwosb3t4jvucsuz0h3.avif"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Khaki",
+      "Green"
+    ],
+    "discountPercent": 65,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T08:46:37.188Z",
+    "updatedAt": "2026-09-15T06:08:40.847Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa7b4d3e3d25630d078c35b",
+    "name": "Slipon Skateboarding Canvas shoe- Black",
+    "description": "We designed this vulcanised skate shoe for skaters seeking a very soft, streamlined shoe for a good feel on the board. Skateboard shoes without laces. The vulcanised construction offers excellent flexibility while the cup sole provides superior traction.",
+    "price": 1999,
+    "discountPrice": 699,
+    "category": "6aa7b3a7e3d25630d078c15c",
+    "categories": [
+      "6aa7b3a7e3d25630d078c15c",
+      "6aa7b3b1e3d25630d078c187"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789375699/products/eey286cjmadyv9swppnx.avif"
+    ],
+    "stock": 52,
+    "brand": "DECATHLON",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 65,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T08:48:19.941Z",
+    "updatedAt": "2026-09-15T06:08:40.847Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa7b551e3d25630d078c386",
+    "name": "Kids' Futsal Trainers 100",
+    "description": "We developed these trainers for young indoor football (or futsal) beginners who are learning their first technical moves. Looking for durable shoes for starting indoor football? Our teams have designed this model that will help you learn your first technical moves in complete safety.",
+    "price": 2999,
+    "discountPrice": 799,
+    "category": "6aa7b3a7e3d25630d078c15c",
+    "categories": [
+      "6aa7b3a7e3d25630d078c15c",
+      "6a8bff761fc7712c89c86059"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789375824/products/q8dxritmmzjewt1sxihf.avif"
+    ],
+    "stock": 50,
+    "brand": "KIPSTA",
+    "gender": "Kids",
+    "size": [
+      "8C",
+      "9C",
+      "9.5C",
+      "10.5C",
+      "11.5C",
+      "12C",
+      "13C",
+      "1",
+      "1.5",
+      "2.5",
+      "3",
+      "4",
+      "5"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 73,
+    "review": 4.8,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T08:50:25.220Z",
+    "updatedAt": "2026-09-14T08:50:25.220Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa7b5d8e3d25630d078c3b1",
+    "name": "Unisex Skating Canvas Shoes Low Top Vulca 100 - Blue",
+    "description": "We made these skate shoes out of canvas for longboarders and beginner skaters (no ollies or flips). Skate shoes with a canvas upper and vulcanised sole, perfect for skateboarding, longboarding, or cruising",
+    "price": 2499,
+    "discountPrice": 799,
+    "category": "6aa7b3a7e3d25630d078c15c",
+    "categories": [
+      "6aa7b3a7e3d25630d078c15c",
+      "6a8d2bb329893c5c4080e9a6"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789375959/products/js4nn5el62bshtouyokz.png"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "gender": "Unisex",
+    "size": [
+      "3",
+      "4",
+      "5",
+      "5.5",
+      "6.5",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Light Blue"
+    ],
+    "discountPercent": 71,
+    "review": 4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T08:52:40.441Z",
+    "updatedAt": "2026-09-15T06:27:44.854Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa7b795e3d25630d078c3dc",
+    "name": "Unisex Skating Canvas Shoes Low Top Vulca 100 - Brown",
+    "description": "We made these skate shoes out of canvas for longboarders and beginner skaters (no ollies or flips). Skate shoes with a canvas upper and vulcanised sole, perfect for skateboarding, longboarding, or cruising.",
+    "price": 2499,
+    "discountPrice": 796,
+    "category": "6a8d2bb329893c5c4080e9a6",
+    "categories": [
+      "6a8d2bb329893c5c4080e9a6",
+      "6aa7b3a7e3d25630d078c15c"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789376404/products/nilxvv5jbm7wxqdigiis.avif"
+    ],
+    "stock": 50,
+    "brand": "DECATHLON",
+    "gender": "Unisex",
+    "size": [
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9"
+    ],
+    "color": [
+      "Brown",
+      "Pink"
+    ],
+    "discountPercent": 68,
+    "review": 4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T09:00:05.288Z",
+    "updatedAt": "2026-09-14T09:00:05.288Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa7b865e3d25630d078c407",
+    "name": "Futsal Shoes Sala Club - Yellow/White",
+    "description": "Designed for futsal players looking for flexible, lightweight shoes and who've mastered most technical moves. Looking for dynamic, durable futsal shoes? This shoe is supple and pleasant to wear. It's light and flexible for a fast game.",
+    "price": 4999,
+    "discountPrice": 1699,
+    "category": "6a8bff761fc7712c89c86059",
+    "categories": [
+      "6a8bff761fc7712c89c86059",
+      "6aa7b3a7e3d25630d078c15c"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1789376612/products/gkj4kx9wo3awhxsdbzjz.avif"
+    ],
+    "stock": 50,
+    "brand": "KIPSTA",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Yellow",
+      "White"
+    ],
+    "discountPercent": 66,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-14T09:03:33.693Z",
+    "updatedAt": "2026-09-14T09:03:33.693Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2a4791649bb3f03bab",
+    "name": "Men's Running Shoes Run 100",
+    "description": "Lightweight running shoes designed for everyday jogging and running.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6a8bff211fc7712c89c86055",
+    "categories": [
+      "6a8bff211fc7712c89c86055"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:42.749Z",
+    "updatedAt": "2026-09-15T08:00:42.749Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2a4791649bb3f03bac",
+    "name": "Women's Running Shoes Run Active",
+    "description": "Comfortable and lightweight running shoes for daily training.",
+    "price": 2299,
+    "discountPrice": 1849,
+    "category": "6a8bff211fc7712c89c86055",
+    "categories": [
+      "6a8bff211fc7712c89c86055"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Pink",
+      "Black",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:42.831Z",
+    "updatedAt": "2026-09-15T08:00:42.831Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2a4791649bb3f03bad",
+    "name": "Kids Running Shoes Active",
+    "description": "Comfortable sports shoes for kids during running and outdoor activities.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6a8bff211fc7712c89c86055",
+    "categories": [
+      "6a8bff211fc7712c89c86055"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "color": [
+      "Blue",
+      "Red",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.2,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:42.907Z",
+    "updatedAt": "2026-09-15T08:00:42.907Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03baf",
+    "name": "Running Phone Pocket Shorts",
+    "description": "Lightweight running shorts with a secure pocket for your phone.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa8fb2a4791649bb3f03bae",
+    "categories": [
+      "6aa8fb2a4791649bb3f03bae"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Navy"
+    ],
+    "discountPercent": 20,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.055Z",
+    "updatedAt": "2026-09-15T08:00:43.055Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb1",
+    "name": "High Visibility Running Vest",
+    "description": "Reflective running vest designed to improve visibility during low-light runs.",
+    "price": 899,
+    "discountPrice": 699,
+    "category": "6aa8fb2b4791649bb3f03bb0",
+    "categories": [
+      "6aa8fb2b4791649bb3f03bb0"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Yellow",
+      "Orange"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.255Z",
+    "updatedAt": "2026-09-15T08:00:43.255Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb2",
+    "name": "Colorful Running T-Shirt",
+    "description": "Breathable sports t-shirt designed for comfortable running sessions.",
+    "price": 799,
+    "discountPrice": 599,
+    "category": "6a8eb0e279c601a693a8c820",
+    "categories": [
+      "6a8eb0e279c601a693a8c820"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Blue",
+      "Green",
+      "Red",
+      "Black"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.362Z",
+    "updatedAt": "2026-09-15T08:00:43.362Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb3",
+    "name": "Men's Fitness T-Shirt Dry",
+    "description": "Breathable quick-dry t-shirt suitable for gym and fitness training.",
+    "price": 799,
+    "discountPrice": 599,
+    "category": "6a8d4e6867f7b4140e155f33",
+    "categories": [
+      "6a8d4e6867f7b4140e155f33"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Blue"
+    ],
+    "discountPercent": 25,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.471Z",
+    "updatedAt": "2026-09-15T08:00:43.471Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb4",
+    "name": "Women's Fitness T-Shirt",
+    "description": "Lightweight breathable t-shirt for workouts and fitness activities.",
+    "price": 799,
+    "discountPrice": 649,
+    "category": "6a8d4e6867f7b4140e155f33",
+    "categories": [
+      "6a8d4e6867f7b4140e155f33"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Pink",
+      "Black",
+      "Purple"
+    ],
+    "discountPercent": 19,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.550Z",
+    "updatedAt": "2026-09-15T08:00:43.550Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb5",
+    "name": "Men's Training Shorts",
+    "description": "Comfortable quick-dry shorts for gym and outdoor sports.",
+    "price": 899,
+    "discountPrice": 699,
+    "category": "6aa37e9e5e5de9c0eb90a369",
+    "categories": [
+      "6aa37e9e5e5de9c0eb90a369"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Navy"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.702Z",
+    "updatedAt": "2026-09-15T08:00:50.032Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb6",
+    "name": "Women's Fitness Shorts",
+    "description": "Lightweight comfortable shorts designed for fitness and training.",
+    "price": 799,
+    "discountPrice": 599,
+    "category": "6aa380b35e5de9c0eb90a3df",
+    "categories": [
+      "6aa380b35e5de9c0eb90a3df"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L"
+    ],
+    "color": [
+      "Black",
+      "Pink",
+      "Purple"
+    ],
+    "discountPercent": 25,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.792Z",
+    "updatedAt": "2026-09-15T08:00:51.081Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb7",
+    "name": "Men's Training Trackpants",
+    "description": "Comfortable trackpants suitable for gym, running and training.",
+    "price": 1299,
+    "discountPrice": 999,
+    "category": "6a8d4e8867f7b4140e155f35",
+    "categories": [
+      "6a8d4e8867f7b4140e155f35"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "Grey",
+      "Navy"
+    ],
+    "discountPercent": 23,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.906Z",
+    "updatedAt": "2026-09-15T08:00:43.906Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2b4791649bb3f03bb8",
+    "name": "Women's Training Trackpants",
+    "description": "Stretchable trackpants designed for comfortable fitness workouts.",
+    "price": 1299,
+    "discountPrice": 999,
+    "category": "6a8d4e8867f7b4140e155f35",
+    "categories": [
+      "6a8d4e8867f7b4140e155f35"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 23,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:43.978Z",
+    "updatedAt": "2026-09-15T08:00:43.978Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bb9",
+    "name": "Football Training Ball Size 5",
+    "description": "Durable football designed for training and recreational matches.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6a8bff761fc7712c89c86059",
+    "categories": [
+      "6a8bff761fc7712c89c86059"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1511886929837-354d827aae26?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "5"
+    ],
+    "color": [
+      "White",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.103Z",
+    "updatedAt": "2026-09-15T08:00:44.103Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bba",
+    "name": "Football Match Ball",
+    "description": "High-quality football suitable for competitive matches and training.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6a8bff761fc7712c89c86059",
+    "categories": [
+      "6a8bff761fc7712c89c86059"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1511886929837-354d827aae26?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "5"
+    ],
+    "color": [
+      "White",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.206Z",
+    "updatedAt": "2026-09-15T08:00:44.206Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bbb",
+    "name": "Kids Football Size 3",
+    "description": "Lightweight football designed for young players.",
+    "price": 699,
+    "discountPrice": 549,
+    "category": "6a8bff761fc7712c89c86059",
+    "categories": [
+      "6a8bff761fc7712c89c86059"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1511886929837-354d827aae26?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "3"
+    ],
+    "color": [
+      "Blue",
+      "Red"
+    ],
+    "discountPercent": 21,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.282Z",
+    "updatedAt": "2026-09-15T08:00:44.282Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bbc",
+    "name": "Men's Football Stud Shoes",
+    "description": "Football shoes with durable studs for improved grip on the pitch.",
+    "price": 2499,
+    "discountPrice": 1999,
+    "category": "6aa3b6b335ea4a9d925dd8c5",
+    "categories": [
+      "6aa3b6b335ea4a9d925dd8c5"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.393Z",
+    "updatedAt": "2026-09-15T08:00:44.393Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bbd",
+    "name": "Kids Football Shoes",
+    "description": "Comfortable football shoes designed for young players.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa3b6b335ea4a9d925dd8c5",
+    "categories": [
+      "6aa3b6b335ea4a9d925dd8c5"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "color": [
+      "Blue",
+      "Black"
+    ],
+    "discountPercent": 22,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.538Z",
+    "updatedAt": "2026-09-15T08:00:44.538Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bbe",
+    "name": "Adjustable Dumbbell Set 10kg",
+    "description": "Adjustable dumbbell set suitable for strength training at home.",
+    "price": 1999,
+    "discountPrice": 1699,
+    "category": "6a97f13696bb5fefc988fabd",
+    "categories": [
+      "6a97f13696bb5fefc988fabd"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 50,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "10kg"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 15,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.643Z",
+    "updatedAt": "2026-09-15T08:00:44.643Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bbf",
+    "name": "Kettlebell 8kg",
+    "description": "Durable kettlebell for strength, conditioning and functional workouts.",
+    "price": 1299,
+    "discountPrice": 1099,
+    "category": "6a97f13696bb5fefc988fabd",
+    "categories": [
+      "6a97f13696bb5fefc988fabd"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "8kg"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 15,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.721Z",
+    "updatedAt": "2026-09-15T08:00:44.721Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bc0",
+    "name": "Adjustable Dumbbell Set 20kg",
+    "description": "Adjustable dumbbell set for strength training and home workouts.",
+    "price": 2999,
+    "discountPrice": 2499,
+    "category": "6a97f13696bb5fefc988fabd",
+    "categories": [
+      "6a97f13696bb5fefc988fabd"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 50,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "20kg"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 17,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.795Z",
+    "updatedAt": "2026-09-15T08:00:44.795Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bc1",
+    "name": "Kettlebell 12kg",
+    "description": "Durable kettlebell for strength, conditioning and functional workouts.",
+    "price": 1799,
+    "discountPrice": 1499,
+    "category": "6a97f13696bb5fefc988fabd",
+    "categories": [
+      "6a97f13696bb5fefc988fabd"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "12kg"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 17,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.867Z",
+    "updatedAt": "2026-09-15T08:00:44.867Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2c4791649bb3f03bc2",
+    "name": "Weight Training Bench",
+    "description": "Sturdy workout bench for home strength training exercises.",
+    "price": 4999,
+    "discountPrice": 4199,
+    "category": "6a97f13696bb5fefc988fabd",
+    "categories": [
+      "6a97f13696bb5fefc988fabd"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 25,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 16,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:44.940Z",
+    "updatedAt": "2026-09-15T08:00:44.940Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc3",
+    "name": "Hex Dumbbell 5kg",
+    "description": "Compact hex dumbbell suitable for strength training and fitness workouts.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa3752d5e5de9c0eb90a0cc",
+    "categories": [
+      "6aa3752d5e5de9c0eb90a0cc"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "5kg"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.050Z",
+    "updatedAt": "2026-09-15T08:00:45.050Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc4",
+    "name": "Hex Dumbbell 10kg",
+    "description": "Heavy-duty dumbbell designed for strength and muscle training.",
+    "price": 1799,
+    "discountPrice": 1499,
+    "category": "6aa3752d5e5de9c0eb90a0cc",
+    "categories": [
+      "6aa3752d5e5de9c0eb90a0cc"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "10kg"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 17,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.124Z",
+    "updatedAt": "2026-09-15T08:00:45.124Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc5",
+    "name": "Resistance Elastic Band Light",
+    "description": "Light resistance band for stretching, mobility and beginner workouts.",
+    "price": 299,
+    "discountPrice": 249,
+    "category": "6aa3753b5e5de9c0eb90a0e1",
+    "categories": [
+      "6aa3753b5e5de9c0eb90a0e1"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Light"
+    ],
+    "color": [
+      "Yellow"
+    ],
+    "discountPercent": 17,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.231Z",
+    "updatedAt": "2026-09-15T08:00:45.231Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc6",
+    "name": "Resistance Elastic Band Heavy",
+    "description": "Heavy resistance band for strength and advanced training.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa3753b5e5de9c0eb90a0e1",
+    "categories": [
+      "6aa3753b5e5de9c0eb90a0e1"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Heavy"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.304Z",
+    "updatedAt": "2026-09-15T08:00:45.304Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc7",
+    "name": "Gym Training Gloves",
+    "description": "Comfortable training gloves providing grip and protection during workouts.",
+    "price": 599,
+    "discountPrice": 449,
+    "category": "6aa375585e5de9c0eb90a0f6",
+    "categories": [
+      "6aa375585e5de9c0eb90a0f6"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.416Z",
+    "updatedAt": "2026-09-15T08:00:45.416Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc8",
+    "name": "Resistance Training Band",
+    "description": "Elastic resistance band for strength and mobility exercises.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa375585e5de9c0eb90a0f6",
+    "categories": [
+      "6aa375585e5de9c0eb90a0f6"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Light",
+      "Medium",
+      "Heavy"
+    ],
+    "color": [
+      "Yellow",
+      "Red",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.493Z",
+    "updatedAt": "2026-09-15T08:00:45.493Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bc9",
+    "name": "Training Gym Gloves",
+    "description": "Comfortable workout gloves providing grip and hand protection.",
+    "price": 599,
+    "discountPrice": 449,
+    "category": "6aa375585e5de9c0eb90a0f6",
+    "categories": [
+      "6aa375585e5de9c0eb90a0f6"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.579Z",
+    "updatedAt": "2026-09-15T08:00:45.579Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bca",
+    "name": "Workout Wrist Support",
+    "description": "Wrist support designed for weight training and gym workouts.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa375585e5de9c0eb90a0f6",
+    "categories": [
+      "6aa375585e5de9c0eb90a0f6"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.650Z",
+    "updatedAt": "2026-09-15T08:00:45.650Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bcb",
+    "name": "Speed Skipping Rope",
+    "description": "Lightweight skipping rope designed for cardio and fitness training.",
+    "price": 399,
+    "discountPrice": 299,
+    "category": "6aa375f65e5de9c0eb90a10b",
+    "categories": [
+      "6aa375f65e5de9c0eb90a10b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 200,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Red"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.758Z",
+    "updatedAt": "2026-09-15T08:00:45.758Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bcc",
+    "name": "Weighted Skipping Rope",
+    "description": "Weighted skipping rope for intense cardio and endurance training.",
+    "price": 699,
+    "discountPrice": 549,
+    "category": "6aa375f65e5de9c0eb90a10b",
+    "categories": [
+      "6aa375f65e5de9c0eb90a10b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 21,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.838Z",
+    "updatedAt": "2026-09-15T08:00:45.838Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2d4791649bb3f03bcd",
+    "name": "Lifting Straps",
+    "description": "Durable lifting straps designed to improve grip during strength training.",
+    "price": 399,
+    "discountPrice": 299,
+    "category": "6aa3761a5e5de9c0eb90a120",
+    "categories": [
+      "6aa3761a5e5de9c0eb90a120"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:45.989Z",
+    "updatedAt": "2026-09-15T08:00:45.989Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bce",
+    "name": "Weight Lifting Belt",
+    "description": "Supportive training belt designed for heavy lifting and strength workouts.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa3761a5e5de9c0eb90a120",
+    "categories": [
+      "6aa3761a5e5de9c0eb90a120"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.115Z",
+    "updatedAt": "2026-09-15T08:00:46.115Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bcf",
+    "name": "Boxing Training Gloves 10oz",
+    "description": "Padded boxing gloves suitable for training and fitness boxing.",
+    "price": 1299,
+    "discountPrice": 999,
+    "category": "6aa3762b5e5de9c0eb90a135",
+    "categories": [
+      "6aa3762b5e5de9c0eb90a135"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "10oz"
+    ],
+    "color": [
+      "Black",
+      "Red"
+    ],
+    "discountPercent": 23,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.274Z",
+    "updatedAt": "2026-09-15T08:00:46.274Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd0",
+    "name": "Punching Bag 20kg",
+    "description": "Durable punching bag for boxing, cardio and combat training.",
+    "price": 3999,
+    "discountPrice": 3299,
+    "category": "6aa3762b5e5de9c0eb90a135",
+    "categories": [
+      "6aa3762b5e5de9c0eb90a135"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 30,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "20kg"
+    ],
+    "color": [
+      "Black",
+      "Red"
+    ],
+    "discountPercent": 18,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.343Z",
+    "updatedAt": "2026-09-15T08:00:46.343Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd1",
+    "name": "Sports Water Bottle 1L",
+    "description": "Reusable sports bottle suitable for gym, running and outdoor activities.",
+    "price": 399,
+    "discountPrice": 299,
+    "category": "6aa3763d5e5de9c0eb90a14a",
+    "categories": [
+      "6aa3763d5e5de9c0eb90a14a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 200,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "1L"
+    ],
+    "color": [
+      "Blue",
+      "Black",
+      "Red"
+    ],
+    "discountPercent": 25,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.452Z",
+    "updatedAt": "2026-09-15T08:00:46.452Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd2",
+    "name": "Sports Sipper Bottle 750ml",
+    "description": "Easy-to-carry sipper bottle designed for sports and fitness activities.",
+    "price": 349,
+    "discountPrice": 279,
+    "category": "6aa3763d5e5de9c0eb90a14a",
+    "categories": [
+      "6aa3763d5e5de9c0eb90a14a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 180,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "750ml"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Green"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.524Z",
+    "updatedAt": "2026-09-15T08:00:46.524Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd3",
+    "name": "Yoga Mat 6mm Comfort",
+    "description": "Non-slip yoga mat providing comfort and stability during yoga sessions.",
+    "price": 699,
+    "discountPrice": 549,
+    "category": "6aa3750d5e5de9c0eb90a0b7",
+    "categories": [
+      "6aa3750d5e5de9c0eb90a0b7"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6mm"
+    ],
+    "color": [
+      "Purple",
+      "Blue",
+      "Black"
+    ],
+    "discountPercent": 21,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.630Z",
+    "updatedAt": "2026-09-15T08:00:46.630Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd4",
+    "name": "Premium Yoga Mat 8mm",
+    "description": "Extra-cushioned yoga mat suitable for yoga, stretching and floor exercises.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa3750d5e5de9c0eb90a0b7",
+    "categories": [
+      "6aa3750d5e5de9c0eb90a0b7"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "8mm"
+    ],
+    "color": [
+      "Purple",
+      "Green",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.720Z",
+    "updatedAt": "2026-09-15T08:00:46.720Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd5",
+    "name": "Women's Yoga Leggings",
+    "description": "Stretchable and comfortable leggings for yoga, fitness and everyday workouts.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa3690e5e5de9c0eb909dec",
+    "categories": [
+      "6aa3690e5e5de9c0eb909dec"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Purple",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.830Z",
+    "updatedAt": "2026-09-15T08:00:46.830Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2e4791649bb3f03bd6",
+    "name": "Essential Gym Duffle Bag 40L",
+    "description": "Spacious duffle bag with multiple compartments for gym essentials.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6aa797c6e3d25630d078b683",
+    "categories": [
+      "6aa797c6e3d25630d078b683"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "40L"
+    ],
+    "color": [
+      "Black",
+      "Grey",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:46.946Z",
+    "updatedAt": "2026-09-15T08:00:46.946Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bd7",
+    "name": "Large Sports Duffle Bag 60L",
+    "description": "Large capacity sports bag suitable for gym, travel and training equipment.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa797c6e3d25630d078b683",
+    "categories": [
+      "6aa797c6e3d25630d078b683"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "60L"
+    ],
+    "color": [
+      "Black",
+      "Navy"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.033Z",
+    "updatedAt": "2026-09-15T08:00:47.033Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bd8",
+    "name": "Trekking Backpack 40L",
+    "description": "Spacious trekking backpack with multiple compartments for outdoor trips.",
+    "price": 2499,
+    "discountPrice": 1999,
+    "category": "6aa7982fe3d25630d078b6eb",
+    "categories": [
+      "6aa7982fe3d25630d078b6eb"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "40L"
+    ],
+    "color": [
+      "Black",
+      "Green"
+    ],
+    "discountPercent": 20,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.155Z",
+    "updatedAt": "2026-09-15T08:00:47.155Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bd9",
+    "name": "Hiking Backpack 20L",
+    "description": "Compact backpack suitable for day hikes and outdoor activities.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6aa7982fe3d25630d078b6eb",
+    "categories": [
+      "6aa7982fe3d25630d078b6eb"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 90,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "20L"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.241Z",
+    "updatedAt": "2026-09-15T08:00:47.241Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bda",
+    "name": "Compact Gym Bag 25L",
+    "description": "Compact sports bag for gym clothes, shoes and everyday essentials.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa782a1e3d25630d078ab53",
+    "categories": [
+      "6aa782a1e3d25630d078ab53"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "25L"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.410Z",
+    "updatedAt": "2026-09-15T08:00:47.410Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bdb",
+    "name": "Trekking Backpack 50L",
+    "description": "Large trekking backpack designed for multi-day outdoor adventures.",
+    "price": 2999,
+    "discountPrice": 2499,
+    "category": "6aa782bde3d25630d078ab73",
+    "categories": [
+      "6aa782bde3d25630d078ab73"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 50,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "50L"
+    ],
+    "color": [
+      "Green",
+      "Black"
+    ],
+    "discountPercent": 17,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.557Z",
+    "updatedAt": "2026-09-15T08:00:47.557Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bdc",
+    "name": "Travel Rucksack 30L",
+    "description": "Durable rucksack suitable for travel, hiking and daily outdoor use.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa782d8e3d25630d078ab93",
+    "categories": [
+      "6aa782d8e3d25630d078ab93"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "30L"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.683Z",
+    "updatedAt": "2026-09-15T08:00:47.683Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bdd",
+    "name": "Everyday Sports Tote Bag",
+    "description": "Lightweight reusable tote bag for everyday shopping and sports essentials.",
+    "price": 599,
+    "discountPrice": 449,
+    "category": "6aa78320e3d25630d078abb3",
+    "categories": [
+      "6aa78320e3d25630d078abb3"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "White"
+    ],
+    "discountPercent": 25,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.831Z",
+    "updatedAt": "2026-09-15T08:00:47.831Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb2f4791649bb3f03bde",
+    "name": "15 Inch Laptop Backpack",
+    "description": "Protective laptop backpack with dedicated compartments for everyday use.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa7836ae3d25630d078ac13",
+    "categories": [
+      "6aa7836ae3d25630d078ac13"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "15 inch"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:47.934Z",
+    "updatedAt": "2026-09-15T08:00:47.934Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03bdf",
+    "name": "Football Boot Bag",
+    "description": "Compact football bag designed to carry boots and sports accessories.",
+    "price": 699,
+    "discountPrice": 549,
+    "category": "6aa78dabe3d25630d078b136",
+    "categories": [
+      "6aa78dabe3d25630d078b136"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 21,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.041Z",
+    "updatedAt": "2026-09-15T08:00:48.041Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be0",
+    "name": "Badminton Racket Bag 3R",
+    "description": "Compact racket bag designed to carry badminton rackets and accessories.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa78debe3d25630d078b160",
+    "categories": [
+      "6aa78debe3d25630d078b160",
+      "6a8d2ba229893c5c4080e9a5"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "3 Rackets"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.147Z",
+    "updatedAt": "2026-09-16T04:19:35.107Z",
+    "__v": 1
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be1",
+    "name": "Skating Gear Backpack",
+    "description": "Sports backpack with space for skates, protective gear and accessories.",
+    "price": 1299,
+    "discountPrice": 999,
+    "category": "6aa78e23e3d25630d078b175",
+    "categories": [
+      "6aa78e23e3d25630d078b175"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "25L"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 23,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.256Z",
+    "updatedAt": "2026-09-15T08:00:48.256Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be2",
+    "name": "Golf Club Carry Bag",
+    "description": "Lightweight golf bag designed for carrying clubs and essential accessories.",
+    "price": 2999,
+    "discountPrice": 2499,
+    "category": "6aa78e35e3d25630d078b18a",
+    "categories": [
+      "6aa78e35e3d25630d078b18a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 40,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Green"
+    ],
+    "discountPercent": 17,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.369Z",
+    "updatedAt": "2026-09-15T08:00:48.369Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be3",
+    "name": "Running Waist Bag",
+    "description": "Compact running bag for carrying phone, keys and small essentials.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa78e65e3d25630d078b19f",
+    "categories": [
+      "6aa78e65e3d25630d078b19f"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.471Z",
+    "updatedAt": "2026-09-15T08:00:48.471Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be4",
+    "name": "Basketball Carry Bag",
+    "description": "Durable sports bag for carrying basketball equipment and accessories.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa78e7ae3d25630d078b1b4",
+    "categories": [
+      "6aa78e7ae3d25630d078b1b4"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.573Z",
+    "updatedAt": "2026-09-15T08:00:48.573Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be5",
+    "name": "Tennis Racket Bag 6R",
+    "description": "Spacious tennis racket bag with dedicated racket compartments.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa78e8ee3d25630d078b1c9",
+    "categories": [
+      "6aa78e8ee3d25630d078b1c9",
+      "6a8d2bc929893c5c4080e9a7"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 59,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6 Rackets"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 22,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.679Z",
+    "updatedAt": "2026-09-17T02:13:18.842Z",
+    "__v": 1
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be6",
+    "name": "Sports Microfibre Towel",
+    "description": "Quick-drying lightweight towel suitable for gym, running and travel.",
+    "price": 399,
+    "discountPrice": 299,
+    "category": "6aa7976de3d25630d078b61b",
+    "categories": [
+      "6aa7976de3d25630d078b61b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 200,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Blue",
+      "Grey",
+      "Black"
+    ],
+    "discountPercent": 25,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.786Z",
+    "updatedAt": "2026-09-15T08:00:48.786Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb304791649bb3f03be7",
+    "name": "UV Protection Sports Sunglasses",
+    "description": "Lightweight sports sunglasses with UV protection for outdoor activities.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa79782e3d25630d078b635",
+    "categories": [
+      "6aa79782e3d25630d078b635"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:48.889Z",
+    "updatedAt": "2026-09-15T08:00:48.889Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03be8",
+    "name": "Running Waist Pouch",
+    "description": "Compact waist pouch for carrying phone, keys and personal essentials.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa797e8e3d25630d078b69d",
+    "categories": [
+      "6aa797e8e3d25630d078b69d"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.013Z",
+    "updatedAt": "2026-09-15T08:00:49.013Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03be9",
+    "name": "Knee Support for Weight Training",
+    "description": "Supportive knee sleeves designed for gym and strength training.",
+    "price": 799,
+    "discountPrice": 599,
+    "category": "6aa797fce3d25630d078b6b7",
+    "categories": [
+      "6aa797fce3d25630d078b6b7"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 25,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.138Z",
+    "updatedAt": "2026-09-15T08:00:49.138Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bea",
+    "name": "Energy Bar Pack",
+    "description": "Convenient energy snack suitable for sports and outdoor activities.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa79814e3d25630d078b6d1",
+    "categories": [
+      "6aa79814e3d25630d078b6d1"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Pack"
+    ],
+    "color": [
+      "Mixed"
+    ],
+    "discountPercent": 20,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.244Z",
+    "updatedAt": "2026-09-15T08:00:49.244Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03beb",
+    "name": "Kids UV Protection Sunglasses",
+    "description": "Lightweight sunglasses designed to protect children's eyes during outdoor activities.",
+    "price": 599,
+    "discountPrice": 449,
+    "category": "6aa7a680e3d25630d078bbf9",
+    "categories": [
+      "6aa7a680e3d25630d078bbf9"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "Kids"
+    ],
+    "color": [
+      "Blue",
+      "Pink",
+      "Black"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.364Z",
+    "updatedAt": "2026-09-15T08:00:49.364Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bec",
+    "name": "Multi Sport Training Gloves",
+    "description": "Comfortable gloves suitable for gym and outdoor sports activities.",
+    "price": 599,
+    "discountPrice": 449,
+    "category": "6aa7a734e3d25630d078bd18",
+    "categories": [
+      "6aa7a734e3d25630d078bd18"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.472Z",
+    "updatedAt": "2026-09-15T08:00:49.472Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bed",
+    "name": "Replacement Sports Shoe Laces",
+    "description": "Durable replacement laces suitable for sports and casual shoes.",
+    "price": 199,
+    "discountPrice": 149,
+    "category": "6aa7a723e3d25630d078bcef",
+    "categories": [
+      "6aa7a723e3d25630d078bcef"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 200,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black",
+      "White"
+    ],
+    "discountPercent": 25,
+    "review": 4.2,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.583Z",
+    "updatedAt": "2026-09-15T08:00:49.583Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bee",
+    "name": "Comfort Sports Insoles",
+    "description": "Cushioned replacement insoles designed for everyday comfort.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa7a723e3d25630d078bcef",
+    "categories": [
+      "6aa7a723e3d25630d078bcef"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.663Z",
+    "updatedAt": "2026-09-15T08:00:49.663Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bef",
+    "name": "Men's Regular Fit Trousers",
+    "description": "Comfortable regular fit trousers suitable for everyday wear and travel.",
+    "price": 1299,
+    "discountPrice": 999,
+    "category": "6aa37e875e5de9c0eb90a35a",
+    "categories": [
+      "6aa37e875e5de9c0eb90a35a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36",
+      "38"
+    ],
+    "color": [
+      "Black",
+      "Navy",
+      "Beige"
+    ],
+    "discountPercent": 23,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.775Z",
+    "updatedAt": "2026-09-15T08:00:49.775Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bf0",
+    "name": "Men's Stretch Trousers",
+    "description": "Stretchable trousers designed for comfort during everyday activities.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6aa37e875e5de9c0eb90a35a",
+    "categories": [
+      "6aa37e875e5de9c0eb90a35a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36",
+      "38"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.851Z",
+    "updatedAt": "2026-09-15T08:00:49.851Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb314791649bb3f03bf1",
+    "name": "Men's Sports Shorts",
+    "description": "Lightweight shorts designed for running, training and fitness.",
+    "price": 799,
+    "discountPrice": 599,
+    "category": "6aa37e9e5e5de9c0eb90a369",
+    "categories": [
+      "6aa37e9e5e5de9c0eb90a369"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:49.962Z",
+    "updatedAt": "2026-09-15T08:00:49.962Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf2",
+    "name": "Men's Essential Sports T-Shirt",
+    "description": "Breathable lightweight t-shirt suitable for sports and everyday activities.",
+    "price": 799,
+    "discountPrice": 599,
+    "category": "6aa380285e5de9c0eb90a394",
+    "categories": [
+      "6aa380285e5de9c0eb90a394"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 25,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.152Z",
+    "updatedAt": "2026-09-15T08:00:50.152Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf3",
+    "name": "Men's Quick Dry T-Shirt",
+    "description": "Quick-drying t-shirt designed for comfortable workouts and training.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa380285e5de9c0eb90a394",
+    "categories": [
+      "6aa380285e5de9c0eb90a394"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Red",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.232Z",
+    "updatedAt": "2026-09-15T08:00:50.232Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf4",
+    "name": "Men's Lightweight Sports Jacket",
+    "description": "Lightweight jacket suitable for outdoor activities and everyday use.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa380435e5de9c0eb90a3a3",
+    "categories": [
+      "6aa380435e5de9c0eb90a3a3"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.349Z",
+    "updatedAt": "2026-09-15T08:00:50.349Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf5",
+    "name": "Men's Waterproof Jacket",
+    "description": "Waterproof jacket designed to protect against rain and wind.",
+    "price": 2999,
+    "discountPrice": 2399,
+    "category": "6aa380435e5de9c0eb90a3a3",
+    "categories": [
+      "6aa380435e5de9c0eb90a3a3"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Navy"
+    ],
+    "discountPercent": 20,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.421Z",
+    "updatedAt": "2026-09-15T08:00:50.421Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf6",
+    "name": "Women's Training Leggings",
+    "description": "Stretchable leggings designed for yoga, gym and fitness training.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa380595e5de9c0eb90a3b2",
+    "categories": [
+      "6aa380595e5de9c0eb90a3b2"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 130,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Purple",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.538Z",
+    "updatedAt": "2026-09-15T08:00:50.538Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf7",
+    "name": "Women's Running Leggings",
+    "description": "Comfortable running leggings with flexible stretch fabric.",
+    "price": 1199,
+    "discountPrice": 949,
+    "category": "6aa380595e5de9c0eb90a3b2",
+    "categories": [
+      "6aa380595e5de9c0eb90a3b2"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 21,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.608Z",
+    "updatedAt": "2026-09-15T08:00:50.608Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf8",
+    "name": "Women's Sports Training Top",
+    "description": "Breathable sports top suitable for workouts and training.",
+    "price": 899,
+    "discountPrice": 699,
+    "category": "6aa3806d5e5de9c0eb90a3c1",
+    "categories": [
+      "6aa3806d5e5de9c0eb90a3c1"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Pink",
+      "Black",
+      "Purple"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.722Z",
+    "updatedAt": "2026-09-15T08:00:50.722Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bf9",
+    "name": "Women's Running Top",
+    "description": "Lightweight running top designed for comfortable outdoor workouts.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa3806d5e5de9c0eb90a3c1",
+    "categories": [
+      "6aa3806d5e5de9c0eb90a3c1"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Blue",
+      "Pink",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.793Z",
+    "updatedAt": "2026-09-15T08:00:50.793Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bfa",
+    "name": "Women's Lightweight Jacket",
+    "description": "Lightweight sports jacket suitable for outdoor activities and travel.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa380885e5de9c0eb90a3d0",
+    "categories": [
+      "6aa380885e5de9c0eb90a3d0"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Pink",
+      "Purple"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.901Z",
+    "updatedAt": "2026-09-15T08:00:50.901Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb324791649bb3f03bfb",
+    "name": "Women's Waterproof Rain Jacket",
+    "description": "Waterproof jacket designed for rainy outdoor activities.",
+    "price": 2999,
+    "discountPrice": 2399,
+    "category": "6aa380885e5de9c0eb90a3d0",
+    "categories": [
+      "6aa380885e5de9c0eb90a3d0"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:50.972Z",
+    "updatedAt": "2026-09-15T08:00:50.972Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb334791649bb3f03bfd",
+    "name": "Unisex Sports T-Shirt",
+    "description": "Breathable everyday sports t-shirt suitable for multiple activities.",
+    "price": 699,
+    "discountPrice": 549,
+    "category": "6aa8fb334791649bb3f03bfc",
+    "categories": [
+      "6aa8fb334791649bb3f03bfc"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Blue"
+    ],
+    "discountPercent": 21,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:51.224Z",
+    "updatedAt": "2026-09-15T08:00:51.224Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb334791649bb3f03bfe",
+    "name": "Sports Running Cap",
+    "description": "Lightweight breathable cap suitable for running and outdoor activities.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa2892b1d0bc0afb05cba97",
+    "categories": [
+      "6aa2892b1d0bc0afb05cba97"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Adjustable"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:51.339Z",
+    "updatedAt": "2026-09-15T08:00:51.339Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb334791649bb3f03bff",
+    "name": "Men's Essential Polo Shirt",
+    "description": "Comfortable polo shirt suitable for sports and casual everyday wear.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa289521d0bc0afb05cba98",
+    "categories": [
+      "6aa289521d0bc0afb05cba98"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Blue",
+      "Navy"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:51.452Z",
+    "updatedAt": "2026-09-15T08:00:51.452Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb334791649bb3f03c00",
+    "name": "Women's Sports Polo Shirt",
+    "description": "Lightweight polo shirt designed for comfortable sports and casual wear.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa289521d0bc0afb05cba98",
+    "categories": [
+      "6aa289521d0bc0afb05cba98"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "White",
+      "Pink",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:51.524Z",
+    "updatedAt": "2026-09-15T08:00:51.524Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb334791649bb3f03c01",
+    "name": "Unisex Outdoor Jacket",
+    "description": "Versatile lightweight jacket for outdoor sports and travel.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6a97ddb596bb5fefc988f988",
+    "categories": [
+      "6a97ddb596bb5fefc988f988"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:51.630Z",
+    "updatedAt": "2026-09-15T08:00:51.630Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb344791649bb3f03c02",
+    "name": "Men's Sports Trackpants",
+    "description": "Comfortable trackpants suitable for running, gym and training.",
+    "price": 1199,
+    "discountPrice": 899,
+    "category": "6aa287eb1d0bc0afb05cba94",
+    "categories": [
+      "6aa287eb1d0bc0afb05cba94"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "Grey",
+      "Navy"
+    ],
+    "discountPercent": 25,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:52.334Z",
+    "updatedAt": "2026-09-15T08:00:52.334Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb344791649bb3f03c03",
+    "name": "Unisex Outdoor Trousers",
+    "description": "Comfortable durable trousers designed for outdoor activities.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6aa288c91d0bc0afb05cba95",
+    "categories": [
+      "6aa288c91d0bc0afb05cba95"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "30",
+      "32",
+      "34",
+      "36",
+      "38"
+    ],
+    "color": [
+      "Black",
+      "Beige",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:52.437Z",
+    "updatedAt": "2026-09-15T08:00:52.437Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb344791649bb3f03c04",
+    "name": "Comfort Sports Sandals",
+    "description": "Lightweight sandals designed for everyday comfort and outdoor activities.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6a97df2c96bb5fefc988f98e",
+    "categories": [
+      "6a97df2c96bb5fefc988f98e"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Brown"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:52.546Z",
+    "updatedAt": "2026-09-15T08:00:52.546Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb344791649bb3f03c05",
+    "name": "Outdoor Comfort Flip Flops",
+    "description": "Comfortable lightweight flip flops suitable for everyday use.",
+    "price": 599,
+    "discountPrice": 449,
+    "category": "6aa3b6e735ea4a9d925dd8c7",
+    "categories": [
+      "6aa3b6e735ea4a9d925dd8c7"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 25,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:52.660Z",
+    "updatedAt": "2026-09-15T08:00:52.660Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb344791649bb3f03c06",
+    "name": "Men's Everyday Sports Shoes",
+    "description": "Versatile sports shoes designed for everyday training and activities.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa7b3a7e3d25630d078c15c",
+    "categories": [
+      "6aa7b3a7e3d25630d078c15c"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Blue"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:52.778Z",
+    "updatedAt": "2026-09-15T08:00:52.778Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb354791649bb3f03c07",
+    "name": "Women's Everyday Sports Shoes",
+    "description": "Lightweight sports shoes suitable for walking, training and everyday use.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa7b3a7e3d25630d078c15c",
+    "categories": [
+      "6aa7b3a7e3d25630d078c15c"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 90,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Black",
+      "Pink",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:53.347Z",
+    "updatedAt": "2026-09-15T08:00:53.347Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb354791649bb3f03c08",
+    "name": "Men's Casual Everyday Shoes",
+    "description": "Comfortable casual shoes suitable for everyday wear and travel.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa7b3b1e3d25630d078c187",
+    "categories": [
+      "6aa7b3b1e3d25630d078c187"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Brown"
+    ],
+    "discountPercent": 22,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:53.454Z",
+    "updatedAt": "2026-09-15T08:00:53.454Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb354791649bb3f03c09",
+    "name": "Women's Casual Shoes",
+    "description": "Comfortable everyday casual shoes with a lightweight design.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa7b3b1e3d25630d078c187",
+    "categories": [
+      "6aa7b3b1e3d25630d078c187"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 90,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "White",
+      "Black",
+      "Pink"
+    ],
+    "discountPercent": 22,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:53.530Z",
+    "updatedAt": "2026-09-15T08:00:53.530Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb354791649bb3f03c0a",
+    "name": "Men's Basketball Shoes Grip 100",
+    "description": "Basketball shoes designed with a grippy sole for court performance.",
+    "price": 2499,
+    "discountPrice": 1999,
+    "category": "6aa3b74c35ea4a9d925dd8c9",
+    "categories": [
+      "6aa3b74c35ea4a9d925dd8c9"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black",
+      "Red",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:53.643Z",
+    "updatedAt": "2026-09-15T08:00:53.643Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb354791649bb3f03c0b",
+    "name": "Men's Cricket Shoes",
+    "description": "Cricket shoes designed for stability and grip during matches and training.",
+    "price": 2299,
+    "discountPrice": 1799,
+    "category": "6aa3b73235ea4a9d925dd8c8",
+    "categories": [
+      "6aa3b73235ea4a9d925dd8c8",
+      "6a8d2b8f29893c5c4080e9a4"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "White",
+      "Black"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:53.758Z",
+    "updatedAt": "2026-09-16T04:16:31.916Z",
+    "__v": 1
+  },
+  {
+    "_id": "6aa8fb354791649bb3f03c0c",
+    "name": "Indoor Court Racket Shoes",
+    "description": "Lightweight court shoes designed for badminton and racket sports.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa3b6c435ea4a9d925dd8c6",
+    "categories": [
+      "6aa3b6c435ea4a9d925dd8c6"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "White",
+      "Blue",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:53.863Z",
+    "updatedAt": "2026-09-15T08:00:53.863Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c0e",
+    "name": "Kids Adjustable Roller Skates",
+    "description": "Adjustable roller skates designed for beginners and young skaters.",
+    "price": 2499,
+    "discountPrice": 1999,
+    "category": "6aa8fb354791649bb3f03c0d",
+    "categories": [
+      "6aa8fb354791649bb3f03c0d"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 50,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "Adjustable"
+    ],
+    "color": [
+      "Blue",
+      "Pink",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.016Z",
+    "updatedAt": "2026-09-15T08:00:54.016Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c0f",
+    "name": "Men's Comfort Walking Shoes",
+    "description": "Lightweight walking shoes designed for daily walking and travel.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa3b69e35ea4a9d925dd8c4",
+    "categories": [
+      "6aa3b69e35ea4a9d925dd8c4"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Grey",
+      "Navy"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.138Z",
+    "updatedAt": "2026-09-15T08:00:54.138Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c10",
+    "name": "Men's Waterproof Outdoor Shoes",
+    "description": "Water-resistant outdoor shoes designed for wet weather and trails.",
+    "price": 2499,
+    "discountPrice": 1999,
+    "category": "6a97df5896bb5fefc988f98f",
+    "categories": [
+      "6a97df5896bb5fefc988f98f"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.247Z",
+    "updatedAt": "2026-09-15T08:00:54.247Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c11",
+    "name": "Unisex Everyday Sports Shoes",
+    "description": "Comfortable versatile shoes suitable for sports, walking and everyday activities.",
+    "price": 1799,
+    "discountPrice": 1399,
+    "category": "6aa367b15e5de9c0eb909d52",
+    "categories": [
+      "6aa367b15e5de9c0eb909d52"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 120,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10"
+    ],
+    "color": [
+      "Black",
+      "White",
+      "Blue"
+    ],
+    "discountPercent": 22,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.356Z",
+    "updatedAt": "2026-09-15T08:00:54.356Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c12",
+    "name": "Cycling Bottle Holder",
+    "description": "Lightweight bottle holder designed for bicycles.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6aa7a6a2e3d25630d078bc22",
+    "categories": [
+      "6aa7a6a2e3d25630d078bc22"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80"
+    ],
+    "stock": 100,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.468Z",
+    "updatedAt": "2026-09-15T08:00:54.468Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c13",
+    "name": "Cycling Repair Kit",
+    "description": "Compact bicycle repair kit for basic roadside maintenance.",
+    "price": 899,
+    "discountPrice": 699,
+    "category": "6aa7a6a2e3d25630d078bc22",
+    "categories": [
+      "6aa7a6a2e3d25630d078bc22"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Black"
+    ],
+    "discountPercent": 22,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.539Z",
+    "updatedAt": "2026-09-15T08:00:54.539Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c14",
+    "name": "Adult Cycling Helmet",
+    "description": "Lightweight cycling helmet designed for everyday riding.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6aa7a6cee3d25630d078bc4b",
+    "categories": [
+      "6aa7a6cee3d25630d078bc4b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80"
+    ],
+    "stock": 80,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "M",
+      "L"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "White"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.650Z",
+    "updatedAt": "2026-09-15T08:00:54.650Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c15",
+    "name": "Kids Cycling Helmet",
+    "description": "Protective lightweight helmet designed for young cyclists.",
+    "price": 999,
+    "discountPrice": 799,
+    "category": "6aa7a6cee3d25630d078bc4b",
+    "categories": [
+      "6aa7a6cee3d25630d078bc4b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "S",
+      "M"
+    ],
+    "color": [
+      "Blue",
+      "Red",
+      "Pink"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.723Z",
+    "updatedAt": "2026-09-15T08:00:54.723Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c16",
+    "name": "Men's Waterproof Hiking Shoes",
+    "description": "Durable hiking shoes with strong grip for outdoor trails.",
+    "price": 2999,
+    "discountPrice": 2399,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black",
+      "Brown"
+    ],
+    "discountPercent": 20,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.857Z",
+    "updatedAt": "2026-09-15T08:00:54.857Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb364791649bb3f03c17",
+    "name": "Women's Hiking Shoes",
+    "description": "Comfortable and durable hiking shoes for outdoor adventures.",
+    "price": 2999,
+    "discountPrice": 2399,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Grey",
+      "Purple",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:54.932Z",
+    "updatedAt": "2026-09-29T07:46:01.408Z",
+    "__v": 0,
+    "lowStockNotified": false,
+    "subcategory": "hiking-trekking-store"
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c18",
+    "name": "Men's Warm Fleece Jacket",
+    "description": "Warm lightweight fleece jacket suitable for hiking and winter activities.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa3b1f503781f162de2f13d",
+    "categories": [
+      "6aa3b1f503781f162de2f13d"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "color": [
+      "Black",
+      "Blue",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.055Z",
+    "updatedAt": "2026-09-15T08:00:55.055Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c19",
+    "name": "Women's Warm Fleece Jacket",
+    "description": "Soft fleece jacket designed to provide warmth during outdoor activities.",
+    "price": 1999,
+    "discountPrice": 1599,
+    "category": "6aa3b1f503781f162de2f13d",
+    "categories": [
+      "6aa3b1f503781f162de2f13d"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1544441893-675973e31985?w=800&q=80"
+    ],
+    "stock": 70,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Pink",
+      "Purple",
+      "Black"
+    ],
+    "discountPercent": 20,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.128Z",
+    "updatedAt": "2026-09-15T08:00:55.128Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c1a",
+    "name": "Men's Waterproof Rain Pants",
+    "description": "Waterproof rain pants designed to keep you dry during heavy rain.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6a97ddf996bb5fefc988f98a",
+    "categories": [
+      "6a97ddf996bb5fefc988f98a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Navy"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.236Z",
+    "updatedAt": "2026-09-15T08:00:55.236Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c1b",
+    "name": "Women's Waterproof Rain Pants",
+    "description": "Lightweight waterproof pants for rainy outdoor activities.",
+    "price": 1499,
+    "discountPrice": 1199,
+    "category": "6a97ddf996bb5fefc988f98a",
+    "categories": [
+      "6a97ddf996bb5fefc988f98a"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80"
+    ],
+    "stock": 60,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 20,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.306Z",
+    "updatedAt": "2026-09-15T08:00:55.306Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c1c",
+    "name": "Backpack Rain Cover 30L",
+    "description": "Waterproof rain cover designed to protect backpacks from rain.",
+    "price": 499,
+    "discountPrice": 399,
+    "category": "6a97df0796bb5fefc988f98d",
+    "categories": [
+      "6a97df0796bb5fefc988f98d"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80"
+    ],
+    "stock": 150,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "20-30L"
+    ],
+    "color": [
+      "Black",
+      "Orange"
+    ],
+    "discountPercent": 20,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.413Z",
+    "updatedAt": "2026-09-15T08:00:55.413Z",
+    "__v": 0
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c1d",
+    "name": "2 Person Camping Tent",
+    "description": "Compact waterproof tent suitable for camping and outdoor trips.",
+    "price": 3999,
+    "discountPrice": 3299,
+    "category": "6a97e3cd96bb5fefc988f9e6",
+    "categories": [
+      "6a97e3cd96bb5fefc988f9e6",
+      "6a8d2b7729893c5c4080e9a3"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80"
+    ],
+    "stock": 40,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "2 Person"
+    ],
+    "color": [
+      "Green",
+      "Blue"
+    ],
+    "discountPercent": 18,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.517Z",
+    "updatedAt": "2026-09-16T04:15:50.571Z",
+    "__v": 1
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c1e",
+    "name": "4 Person Family Camping Tent",
+    "description": "Spacious camping tent designed for family outdoor adventures.",
+    "price": 5999,
+    "discountPrice": 4999,
+    "category": "6a97e3cd96bb5fefc988f9e6",
+    "categories": [
+      "6a97e3cd96bb5fefc988f9e6",
+      "6a8d2b7729893c5c4080e9a3"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80"
+    ],
+    "stock": 30,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "4 Person"
+    ],
+    "color": [
+      "Green",
+      "Blue"
+    ],
+    "discountPercent": 17,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.588Z",
+    "updatedAt": "2026-09-16T04:15:36.536Z",
+    "__v": 1
+  },
+  {
+    "_id": "6aa8fb374791649bb3f03c1f",
+    "name": "3 Person Waterproof Camping Tent",
+    "description": "Waterproof family camping tent for outdoor adventures.",
+    "price": 4999,
+    "discountPrice": 4199,
+    "category": "6a97e3cd96bb5fefc988f9e6",
+    "categories": [
+      "6a97e3cd96bb5fefc988f9e6",
+      "6a8d2b7729893c5c4080e9a3"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80"
+    ],
+    "stock": 35,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "3 Person"
+    ],
+    "color": [
+      "Green",
+      "Grey"
+    ],
+    "discountPercent": 16,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "createdAt": "2026-09-15T08:00:55.666Z",
+    "updatedAt": "2026-09-25T09:14:16.375Z",
+    "__v": 1
+  },
+  {
+    "_id": "6ab241f669d5c00e284e488f",
+    "name": "Waterproof Mountain Hiking Shoes",
+    "description": "High-grip waterproof hiking shoes suitable for mountains, trekking and rainy conditions.",
+    "price": 4299,
+    "discountPrice": 3799,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1790067368/products/nponyygt2uyh8bxrj46q.avif"
+    ],
+    "stock": 25,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Grey",
+      "Black"
+    ],
+    "discountPercent": 12,
+    "review": 4.7,
+    "onSale": true,
+    "isActive": true,
+    "__v": 1,
+    "createdAt": "2026-09-22T08:53:10.338Z",
+    "updatedAt": "2026-09-29T07:44:23.776Z",
+    "lowStockNotified": false,
+    "subcategory": "hiking-trekking-store"
+  },
+  {
+    "_id": "6ab241f669d5c00e284e488c",
+    "name": "Women's Lightweight Hiking Shoes",
+    "description": "Lightweight and comfortable hiking shoes for trekking and outdoor activities.",
+    "price": 2799,
+    "discountPrice": 2299,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1790067450/products/zdzl6tbm14v4e2et3cbx.avif",
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1790067450/products/efqhy7bgvvjffrkmwfh8.avif"
+    ],
+    "stock": 40,
+    "brand": "Decathlon",
+    "gender": "Women",
+    "size": [
+      "4",
+      "5",
+      "6",
+      "7",
+      "8"
+    ],
+    "color": [
+      "Blue",
+      "Black"
+    ],
+    "discountPercent": 18,
+    "review": 4.4,
+    "onSale": true,
+    "isActive": true,
+    "__v": 1,
+    "createdAt": "2026-09-22T08:53:10.338Z",
+    "updatedAt": "2026-09-29T07:45:08.328Z",
+    "lowStockNotified": false,
+    "subcategory": "hiking-trekking-store"
+  },
+  {
+    "_id": "6ab241f669d5c00e284e488e",
+    "name": "Hiking Shoes For Kids",
+    "description": "Comfortable and durable hiking shoes designed for kids outdoor adventures.",
+    "price": 1999,
+    "discountPrice": 1699,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1790067385/products/l2gd3zemac7473h8thwy.avif"
+    ],
+    "stock": 30,
+    "brand": "Decathlon",
+    "gender": "Kids",
+    "size": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "color": [
+      "Blue",
+      "Green"
+    ],
+    "discountPercent": 15,
+    "review": 4.3,
+    "onSale": true,
+    "isActive": true,
+    "__v": 1,
+    "createdAt": "2026-09-22T08:53:10.338Z",
+    "updatedAt": "2026-09-29T07:44:39.575Z",
+    "lowStockNotified": false,
+    "subcategory": "hiking-trekking-store"
+  },
+  {
+    "_id": "6ab241f669d5c00e284e488b",
+    "name": "Men's Waterproof Hiking Shoes",
+    "description": "Durable waterproof hiking shoes designed for trekking, hiking and outdoor adventures.",
+    "price": 2999,
+    "discountPrice": 2499,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1790068057/products/dcjksy370bpicehfoqsi.avif"
+    ],
+    "stock": 50,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Black",
+      "Grey"
+    ],
+    "discountPercent": 17,
+    "review": 4.5,
+    "onSale": true,
+    "isActive": true,
+    "__v": 1,
+    "createdAt": "2026-09-22T08:53:10.336Z",
+    "updatedAt": "2026-09-29T07:45:29.692Z",
+    "lowStockNotified": false,
+    "subcategory": "hiking-trekking-store"
+  },
+  {
+    "_id": "6ab241f669d5c00e284e488d",
+    "name": "Men's Trekking Shoes",
+    "description": "Strong and comfortable trekking shoes with excellent grip for hiking trails.",
+    "price": 3499,
+    "discountPrice": 2999,
+    "category": "6aa3af9d03781f162de2f04b",
+    "categories": [
+      "6aa3af9d03781f162de2f04b"
+    ],
+    "images": [
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1790067408/products/zctzcfqlowuyzo5ydfsj.avif"
+    ],
+    "stock": 35,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "7",
+      "8",
+      "9",
+      "10",
+      "11"
+    ],
+    "color": [
+      "Brown",
+      "Black"
+    ],
+    "discountPercent": 14,
+    "review": 4.6,
+    "onSale": true,
+    "isActive": true,
+    "__v": 1,
+    "createdAt": "2026-09-22T08:53:10.338Z",
+    "updatedAt": "2026-09-29T07:44:53.931Z",
+    "lowStockNotified": false,
+    "subcategory": "hiking-trekking-store"
+  },
+  {
+    "_id": "6ab38b948c1dbdab50dc37a4",
+    "name": "Order Test Hiking Shoes",
+    "description": "Durable waterproof hiking shoes",
+    "price": 3000,
+    "discountPrice": 2800,
+    "categories": [],
+    "images": [],
+    "stock": 12,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "UK 7",
+      "UK 8",
+      "UK 9",
+      "UK 10"
+    ],
+    "color": [
+      "Black",
+      "Blue"
+    ],
+    "discountPercent": 0,
+    "review": 0,
+    "onSale": false,
+    "isActive": true,
+    "createdAt": "2026-09-23T08:19:32.794Z",
+    "updatedAt": "2026-09-23T08:19:32.881Z",
+    "__v": 0
+  },
+  {
+    "_id": "6ab38c2c1ec1e6da0fca1d56",
+    "name": "Decathlon Trail Running Shoes",
+    "description": "Rugged grip trail running shoes",
+    "price": 3499,
+    "discountPrice": 2999,
+    "categories": [],
+    "images": [],
+    "stock": 21,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "UK 7",
+      "UK 8",
+      "UK 9",
+      "UK 10"
+    ],
+    "color": [
+      "Black",
+      "Neon Green"
+    ],
+    "discountPercent": 0,
+    "review": 0,
+    "onSale": false,
+    "isActive": true,
+    "createdAt": "2026-09-23T08:22:04.920Z",
+    "updatedAt": "2026-09-23T08:33:19.084Z",
+    "__v": 0
+  },
+  {
+    "_id": "6ab38c2c1ec1e6da0fca1d57",
+    "name": "Decathlon Pro Trail Running Shoes",
+    "description": "Carbon plate trail running shoes",
+    "price": 5499,
+    "discountPrice": 4999,
+    "categories": [],
+    "images": [],
+    "stock": 8,
+    "brand": "Decathlon",
+    "gender": "Men",
+    "size": [
+      "UK 7",
+      "UK 8",
+      "UK 9",
+      "UK 10"
+    ],
+    "color": [
+      "Neon Yellow"
+    ],
+    "discountPercent": 0,
+    "review": 0,
+    "onSale": false,
+    "isActive": true,
+    "createdAt": "2026-09-23T08:22:04.987Z",
+    "updatedAt": "2026-09-23T08:22:04.987Z",
+    "__v": 0
+  },
+  {
+    "_id": "6ab38c2d1ec1e6da0fca1d58",
+    "name": "Decathlon Out of Stock Cap",
+    "description": "Breathable running cap",
+    "price": 499,
+    "discountPrice": 399,
+    "categories": [],
+    "images": [],
+    "stock": 15,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "Standard"
+    ],
+    "color": [
+      "Navy"
+    ],
+    "discountPercent": 0,
+    "review": 0,
+    "onSale": false,
+    "isActive": true,
+    "createdAt": "2026-09-23T08:22:05.052Z",
+    "updatedAt": "2026-09-29T13:17:41.735Z",
+    "__v": 0,
+    "averageRating": 0,
+    "lowStockNotified": false,
+    "reviewCount": 0,
+    "subcategory": ""
+  },
+  {
+    "_id": "6ab393f8385a8678c68baa28",
+    "name": "Admin Test Backpack 30L",
+    "description": "Hiking mountain backpack",
+    "price": 1999,
+    "discountPrice": 1799,
+    "categories": [],
+    "images": [],
+    "stock": 21,
+    "brand": "Decathlon",
+    "gender": "Unisex",
+    "size": [
+      "30L",
+      "40L"
+    ],
+    "color": [
+      "Grey",
+      "Black"
+    ],
+    "discountPercent": 0,
+    "review": 0,
+    "onSale": false,
+    "isActive": true,
+    "createdAt": "2026-09-23T08:55:20.038Z",
+    "updatedAt": "2026-09-24T10:37:06.396Z",
+    "__v": 0
+  }
+]

@@ -1,0 +1,477 @@
+/* ==========================================================================
+   DECATHLON CLONE - SIZE GUIDE MODAL STYLING
+   ========================================================================== */
+
+.pdp-size-guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 16px;
+  box-sizing: border-box;
+  animation: pdpModalFadeIn 0.2s ease-out;
+}
+
+@keyframes pdpModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.pdp-size-guide-dialog {
+  background: #ffffff;
+  width: 100%;
+  max-width: 620px;
+  border-radius: 8px;
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  animation: pdpModalScaleUp 0.2s ease-out;
+  font-family: inherit;
+  color: #111111;
+}
+
+@keyframes pdpModalScaleUp {
+  from {
+    transform: scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   CLOSE BUTTON
+   -------------------------------------------------------------------------- */
+.pdp-size-guide-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  z-index: 10;
+}
+
+.pdp-size-guide-close-btn:hover {
+  background: #f3f4f6;
+  color: #111111;
+}
+
+/* --------------------------------------------------------------------------
+   HEADER
+   -------------------------------------------------------------------------- */
+.pdp-size-guide-header {
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #ebebeb;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.pdp-size-guide-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 32px;
+  margin-bottom: 14px;
+}
+
+.pdp-size-guide-icon-badge {
+  font-size: 24px;
+  line-height: 1;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pdp-size-guide-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0 0 3px;
+  letter-spacing: -0.2px;
+}
+
+.pdp-size-guide-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   TABS
+   -------------------------------------------------------------------------- */
+.pdp-size-guide-tabs {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.pdp-size-guide-tab {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #6b7280;
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.pdp-size-guide-tab:hover {
+  color: #111111;
+}
+
+.pdp-size-guide-tab.active {
+  color: #0082c3;
+  border-bottom-color: #0082c3;
+}
+
+/* --------------------------------------------------------------------------
+   BODY & SCROLL AREA
+   -------------------------------------------------------------------------- */
+.pdp-size-guide-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Loading, Error & Empty States */
+.pdp-size-guide-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.pdp-size-guide-spinner {
+  width: 34px;
+  height: 34px;
+  border: 3.5px solid #e5e7eb;
+  border-top-color: #0082c3;
+  border-radius: 50%;
+  animation: pdpSpin 0.75s linear infinite;
+  margin-bottom: 14px;
+}
+
+@keyframes pdpSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pdp-size-guide-state p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+.pdp-size-guide-state.error .state-icon {
+  color: #dc2626;
+  margin-bottom: 12px;
+}
+
+.pdp-size-guide-state.error h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111111;
+  margin: 0 0 6px;
+}
+
+.pdp-size-guide-state.empty .empty-ruler-emoji {
+  font-size: 38px;
+  margin-bottom: 12px;
+}
+
+.pdp-size-guide-state.empty h4 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111111;
+  margin: 0 0 6px;
+}
+
+.pdp-size-guide-state.empty p {
+  max-width: 400px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.pdp-size-guide-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+  margin-top: 14px;
+}
+
+.pdp-size-guide-action-btn.primary {
+  background: #0082c3;
+  color: #ffffff;
+}
+
+.pdp-size-guide-action-btn.primary:hover {
+  background: #006ba6;
+}
+
+.pdp-size-guide-action-btn.secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.pdp-size-guide-action-btn.secondary:hover {
+  background: #e5e7eb;
+}
+
+/* --------------------------------------------------------------------------
+   DYNAMIC TABLE SECTION
+   -------------------------------------------------------------------------- */
+.pdp-size-guide-desc {
+  font-size: 13.5px;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+.pdp-size-guide-unit-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #0369a1;
+  background: #f0f9ff;
+  border: 1px solid #e0f2fe;
+  padding: 6px 10px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+
+.pdp-size-guide-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.pdp-size-guide-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 13px;
+}
+
+.pdp-size-guide-table th,
+.pdp-size-guide-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #ebebeb;
+  border-right: 1px solid #f3f4f6;
+  white-space: nowrap;
+}
+
+.pdp-size-guide-table th:last-child,
+.pdp-size-guide-table td:last-child {
+  border-right: none;
+}
+
+.pdp-size-guide-table thead th {
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.pdp-size-guide-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pdp-size-guide-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.pdp-size-badge-pill {
+  display: inline-block;
+  background: #111111;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 3px;
+  min-width: 24px;
+}
+
+.pdp-size-guide-fit-tip {
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.5;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-left: 3px solid #0082c3;
+  padding: 10px 12px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   HOW TO MEASURE CONTENT
+   -------------------------------------------------------------------------- */
+.pdp-how-to-measure-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pdp-measure-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 6px;
+}
+
+.pdp-measure-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #0082c3;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pdp-measure-info strong {
+  display: block;
+  font-size: 13.5px;
+  color: #111111;
+  margin-bottom: 2px;
+}
+
+.pdp-measure-info p {
+  font-size: 12.5px;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* --------------------------------------------------------------------------
+   FOOTER
+   -------------------------------------------------------------------------- */
+.pdp-size-guide-footer {
+  padding: 14px 24px;
+  border-top: 1px solid #ebebeb;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.pdp-returns-guarantee-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.pdp-size-guide-done-btn {
+  background: #0082c3;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-family: inherit;
+}
+
+.pdp-size-guide-done-btn:hover {
+  background: #006ba6;
+}
+
+/* --------------------------------------------------------------------------
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .pdp-size-guide-dialog {
+    max-width: 95vw;
+    max-height: 88vh;
+  }
+
+  .pdp-size-guide-header {
+    padding: 18px 16px 12px;
+  }
+
+  .pdp-size-guide-title {
+    font-size: 17px;
+  }
+
+  .pdp-size-guide-body {
+    padding: 16px;
+  }
+
+  .pdp-size-guide-footer {
+    padding: 12px 16px;
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .pdp-size-guide-done-btn {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .pdp-returns-guarantee-text {
+    text-align: center;
+  }
+}

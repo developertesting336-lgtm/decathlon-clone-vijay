@@ -612,7 +612,8 @@ const getAllOrders = async (req, res) => {
       .populate("orderItems.product", "name images")
       .sort({
         createdAt: -1,
-      });
+      })
+      .lean();
 
     // Ensure deduplication by MongoDB _id
     const uniqueMap = new Map();

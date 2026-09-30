@@ -26,6 +26,9 @@ import userRoutes from "./routes/userRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import reviewRoutes from "./routes/reviewRoutes.js";
+import sizeGuideRoutes from "./routes/sizeGuideRoutes.js";
+import stockNotificationRoutes from "./routes/stockNotificationRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 
 /*
@@ -103,14 +106,14 @@ const connectDB = async () => {
   if (!mongoPromise) {
     mongoPromise = mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 10000,
-      maxPoolSize: 10,
+      maxPoolSize: 50,
     });
   }
 
   await mongoPromise;
 
   console.log("MongoDB Connected");
-  await seedAiKnowledge();
+  seedAiKnowledge().catch((err) => console.error("Background AI Seed error:", err));
 };
 
 /*
@@ -162,6 +165,17 @@ app.use("/api/banners", bannerRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/reviews", reviewRoutes);
+app.use("/reviews", reviewRoutes);
+
+app.use("/api/size-guides", sizeGuideRoutes);
+app.use("/size-guides", sizeGuideRoutes);
+
+app.use("/api/stock-notifications", stockNotificationRoutes);
+app.use("/stock-notifications", stockNotificationRoutes);
+
+app.use("/products", productRoutes);
 
 /*
 ========================================

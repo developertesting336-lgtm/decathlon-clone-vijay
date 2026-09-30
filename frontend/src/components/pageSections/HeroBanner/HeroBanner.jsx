@@ -7,7 +7,8 @@ import socket from "../../../socket/socket";
 
 const HeroBanner = ({
   customBanners,
-  pageSlug,
+  categoryName,
+  category,
   subcategory,
   getImageUrl: propGetImageUrl,
   navigate: propNavigate,
@@ -80,32 +81,32 @@ const HeroBanner = ({
         return;
       }
 
-      const slugKey = (pageSlug || "").toLowerCase().replace(/[-_\s]+/g, "");
+      const categoryKey = (categoryName || category || "").toLowerCase().replace(/[-_\s]+/g, "");
 
       let matched = activeBanners.filter((b) => {
         const title = (b.title || "").toLowerCase().replace(/[-_\s]+/g, "");
         const sub = (b.subcategory || "").toLowerCase().replace(/[-_\s]+/g, "");
         const type = (b.type || "").toLowerCase().replace(/[-_\s]+/g, "");
 
-        if (slugKey.includes("monsoon") && (title.includes("monsoon") || sub.includes("monsoon"))) return true;
-        if (slugKey.includes("activewear") && (title.includes("activewear") || sub.includes("activewear"))) return true;
+        if (categoryKey.includes("monsoon") && (title.includes("monsoon") || sub.includes("monsoon"))) return true;
+        if (categoryKey.includes("activewear") && (title.includes("activewear") || sub.includes("activewear"))) return true;
         if (
-          (slugKey.includes("cycling") || slugKey.includes("cycle")) &&
+          (categoryKey.includes("cycling") || categoryKey.includes("cycle")) &&
           (title.includes("cycle") || sub.includes("cycle") || title.includes("cycling") || sub.includes("cycling"))
         )
           return true;
         if (
-          (slugKey.includes("hiking") || slugKey.includes("trekking")) &&
+          (categoryKey.includes("hiking") || categoryKey.includes("trekking")) &&
           (title.includes("hiking") || title.includes("trekking") || sub.includes("hiking") || sub.includes("trekking"))
         )
           return true;
-        if ((slugKey.includes("shoe") || slugKey.includes("footwear")) && (title.includes("shoe") || sub.includes("shoe")))
+        if ((categoryKey.includes("shoe") || categoryKey.includes("footwear")) && (title.includes("shoe") || sub.includes("shoe")))
           return true;
-        if (slugKey.includes("bag") && (title.includes("bag") || sub.includes("bag"))) return true;
-        if (slugKey.includes("accessories") && (title.includes("accessories") || sub.includes("accessories"))) return true;
-        if (slugKey.includes("workout") && (title.includes("workout") || sub.includes("workout"))) return true;
+        if (categoryKey.includes("bag") && (title.includes("bag") || sub.includes("bag"))) return true;
+        if (categoryKey.includes("accessories") && (title.includes("accessories") || sub.includes("accessories"))) return true;
+        if (categoryKey.includes("workout") && (title.includes("workout") || sub.includes("workout"))) return true;
 
-        return slugKey && (title.includes(slugKey) || sub.includes(slugKey) || type.includes(slugKey));
+        return categoryKey && (title.includes(categoryKey) || sub.includes(categoryKey) || type.includes(categoryKey));
       });
 
       if (matched.length === 0 && activeBanners.length > 0) {
@@ -122,7 +123,7 @@ const HeroBanner = ({
     } finally {
       setLoading(false);
     }
-  }, [pageSlug, subcategory]);
+  }, [categoryName, category, subcategory]);
 
   useEffect(() => {
     if (customBanners && Array.isArray(customBanners) && customBanners.length > 0) {

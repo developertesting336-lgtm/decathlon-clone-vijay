@@ -20,7 +20,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["ORDER", "RETURN", "EXCHANGE", "REFUND", "LOW_STOCK"],
+      enum: ["ORDER", "RETURN", "EXCHANGE", "REFUND", "LOW_STOCK", "BACK_IN_STOCK"],
       required: true,
       index: true,
     },

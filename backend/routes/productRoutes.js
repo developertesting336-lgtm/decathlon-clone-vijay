@@ -6,6 +6,7 @@ import {
   getProductById,
   updateProduct,
   deleteProduct,
+  getRelatedProducts,
 } from "../controllers/productController.js";
 
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -13,6 +14,8 @@ import adminMiddleware from "../middleware/adminMiddleware.js";
 import upload from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
+
+router.get("/:productId/related", getRelatedProducts);
 
 router.post(
   "/",

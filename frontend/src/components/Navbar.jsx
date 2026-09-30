@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import {
   FiSearch,
   FiUser,
@@ -20,7 +20,10 @@ import {
   FiX,
   FiGrid,
   FiEdit2,
+  FiBell,
+  FiPackage,
 } from "react-icons/fi";
+import socket from "../socket/socket";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import api, {
@@ -39,6 +42,13 @@ const Navbar = () => {
 
   const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
+
+  // NOTIFICATION STATES
+  const [notifications, setNotifications] = useState([]);
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const notificationRef = useRef(null);
 
   // DECATHLON SEARCH MODAL STATES
   const [searchQuery, setSearchQuery] = useState("");
@@ -143,6 +153,110 @@ const Navbar = () => {
     }
   };
 
+  // FETCH NOTIFICATIONS
+  const fetchNotifications = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      setNotifications([]);
+      setUnreadNotificationsCount(0);
+      return;
+    }
+
+    try {
+      setLoadingNotifications(true);
+      const res = await api.get("/notifications?limit=20");
+      const list = res.data?.notifications || [];
+      setNotifications(list);
+      setUnreadNotificationsCount(
+        res.data?.unreadCount !== undefined
+          ? res.data.unreadCount
+          : list.filter((n) => !n.read).length
+      );
+    } catch (err) {
+      if (err.response?.status !== 401) {
+        console.error("Navbar Notifications Error:", err);
+      }
+    } finally {
+      setLoadingNotifications(false);
+    }
+  }, []);
+
+  const handleMarkAllRead = async () => {
+    try {
+      await api.patch("/notifications/read-all");
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadNotificationsCount(0);
+      toast.success("All notifications marked as read");
+    } catch (err) {
+      console.error("Mark all read error:", err);
+    }
+  };
+
+  const handleNotificationItemClick = async (notif) => {
+    if (!notif.read && notif._id) {
+      try {
+        await api.patch(`/notifications/${notif._id}/read`);
+        setNotifications((prev) =>
+          prev.map((n) => (n._id === notif._id ? { ...n, read: true } : n))
+        );
+        setUnreadNotificationsCount((prev) => Math.max(0, prev - 1));
+      } catch (err) {
+        console.error("Mark read error:", err);
+      }
+    }
+    setShowNotifications(false);
+    if (notif.url) {
+      navigate(notif.url);
+    }
+  };
+
+  const formatTimeAgo = (dateStr) => {
+    if (!dateStr) return "";
+    const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+    if (seconds < 60) return "Just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ago`;
+  };
+
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case "RESTOCK":
+      case "STOCK":
+        return <FiBell style={{ color: "#2563eb" }} />;
+      case "ORDER":
+      case "ORDER_PLACED":
+      case "ORDER_DELIVERED":
+        return <FiPackage style={{ color: "#16a34a" }} />;
+      case "OFFER":
+        return <FiAward style={{ color: "#ea580c" }} />;
+      default:
+        return <FiBell style={{ color: "#3643ba" }} />;
+    }
+  };
+
+  // Close notifications on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(e.target)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showNotifications]);
+
   // FETCH POPULAR PRODUCTS FOR SEARCH MODAL
   useEffect(() => {
     const fetchPopular = async () => {
@@ -159,24 +273,56 @@ const Navbar = () => {
   useEffect(() => {
     loadUser();
     fetchCartCount();
+    fetchNotifications();
 
     const handleAuthChange = () => {
       loadUser();
       fetchCartCount();
+      fetchNotifications();
     };
 
     const handleCartChange = () => {
       fetchCartCount();
     };
 
+    const handleNewNotification = (newNotif) => {
+      if (newNotif) {
+        setNotifications((prev) => [newNotif, ...prev]);
+        setUnreadNotificationsCount((prev) => prev + 1);
+        toast((t) => (
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              toast.dismiss(t.id);
+              if (newNotif.url) navigate(newNotif.url);
+            }}
+          >
+            <div style={{ fontWeight: 700, fontSize: "13px" }}>{newNotif.title}</div>
+            <div style={{ fontSize: "12px", color: "#555" }}>{newNotif.message}</div>
+          </div>
+        ), { icon: "🔔", duration: 5000 });
+      }
+    };
+
+    const handleRestock = () => {
+      fetchNotifications();
+    };
+
     window.addEventListener("authChanged", handleAuthChange);
     window.addEventListener("cartUpdated", handleCartChange);
+    window.addEventListener("notificationsUpdated", fetchNotifications);
+
+    socket.on("notification", handleNewNotification);
+    socket.on("product_restocked", handleRestock);
 
     return () => {
       window.removeEventListener("authChanged", handleAuthChange);
       window.removeEventListener("cartUpdated", handleCartChange);
+      window.removeEventListener("notificationsUpdated", fetchNotifications);
+      socket.off("notification", handleNewNotification);
+      socket.off("product_restocked", handleRestock);
     };
-  }, []);
+  }, [fetchNotifications, navigate]);
 
   // DEBOUNCED SEARCH API CALL
   useEffect(() => {
@@ -867,6 +1013,119 @@ const Navbar = () => {
               {isOrdersPage ? <FiMessageSquare /> : <FiHelpCircle />}
               <span>Support</span>
             </Link>
+
+            {/* NOTIFICATIONS */}
+            <div className="account-wrapper notification-wrapper" ref={notificationRef}>
+              <button
+                type="button"
+                className={`navbar-action notification-action ${showNotifications ? "active" : ""}`}
+                onClick={() => setShowNotifications((prev) => !prev)}
+                aria-label="Notifications"
+                aria-expanded={showNotifications}
+              >
+                <div className="notification-icon-wrapper">
+                  <FiBell />
+                  {unreadNotificationsCount > 0 && (
+                    <span className="notification-count-badge">
+                      {unreadNotificationsCount > 9 ? "9+" : unreadNotificationsCount}
+                    </span>
+                  )}
+                </div>
+                <span>Notification</span>
+              </button>
+
+              {showNotifications && (
+                <div className="notification-dropdown">
+                  <div className="notification-dropdown-header">
+                    <div className="notification-title-row">
+                      <h3>Notifications</h3>
+                      {unreadNotificationsCount > 0 && (
+                        <span className="notification-badge-pill">
+                          {unreadNotificationsCount} new
+                        </span>
+                      )}
+                    </div>
+                    {unreadNotificationsCount > 0 && (
+                      <button
+                        type="button"
+                        className="notification-mark-all"
+                        onClick={handleMarkAllRead}
+                      >
+                        Mark all as read
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="notification-dropdown-body">
+                    {!user ? (
+                      <div className="notification-guest-box">
+                        <FiBell className="notif-empty-icon" />
+                        <p className="notif-guest-title">Stay up to date</p>
+                        <p className="notif-guest-desc">
+                          Sign in to view your restock alerts, delivery updates, and exclusive offers.
+                        </p>
+                        <Link
+                          to="/login"
+                          className="notif-signin-btn"
+                          onClick={() => setShowNotifications(false)}
+                        >
+                          Sign In
+                        </Link>
+                      </div>
+                    ) : loadingNotifications ? (
+                      <div className="notification-loading">
+                        <div className="notif-shimmer-item" />
+                        <div className="notif-shimmer-item" />
+                      </div>
+                    ) : notifications.length === 0 ? (
+                      <div className="notification-empty">
+                        <FiBell className="notif-empty-icon" />
+                        <p className="notif-empty-title">No notifications yet</p>
+                        <p className="notif-empty-subtitle">
+                          We'll alert you about restocks, order tracking, and exclusive sports deals.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="notification-list">
+                        {notifications.map((item) => (
+                          <div
+                            key={item._id}
+                            className={`notification-item ${!item.read ? "unread" : ""}`}
+                            onClick={() => handleNotificationItemClick(item)}
+                          >
+                            <div className="notification-item-icon">
+                              {getNotificationIcon(item.type)}
+                            </div>
+                            <div className="notification-item-content">
+                              <div className="notif-item-header">
+                                <span className="notif-item-title">{item.title}</span>
+                                <span className="notif-item-time">
+                                  {formatTimeAgo(item.createdAt)}
+                                </span>
+                              </div>
+                              <p className="notif-item-message">{item.message}</p>
+                            </div>
+                            {!item.read && <span className="notif-unread-dot" />}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {user && (
+                    <div className="notification-dropdown-footer">
+                      <Link
+                        to="/profile?tab=notifications-preferences"
+                        className="notif-footer-link"
+                        onClick={() => setShowNotifications(false)}
+                      >
+                        Notification preferences
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {/* WISHLIST */}
             <Link to="/wishlist" className="navbar-action">
