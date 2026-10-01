@@ -333,7 +333,7 @@ const StripePaymentForm = ({
             onClick={onClose}
             disabled={processing}
           >
-            ×
+            Ã—
           </button>
         </div>
 
@@ -358,7 +358,7 @@ const StripePaymentForm = ({
               </div>
             ) : selectedMethod === "upi" ? (
               <div className="custom-modal-panel">
-                <div className="modal-method-icon upi-icon">📲</div>
+                <div className="modal-method-icon upi-icon">ðŸ“²</div>
                 <h4>Paying via {getUpiDisplayName()}</h4>
                 {upiOption === "vpa" && (
                   <p className="vpa-display">
@@ -388,7 +388,7 @@ const StripePaymentForm = ({
               </div>
             ) : selectedMethod === "netbanking" ? (
               <div className="custom-modal-panel">
-                <div className="modal-method-icon bank-icon">🏦</div>
+                <div className="modal-method-icon bank-icon">ðŸ¦</div>
                 <h4>
                   Paying via {(selectedBank || "Bank").toUpperCase()} Netbanking
                 </h4>
@@ -399,7 +399,7 @@ const StripePaymentForm = ({
               </div>
             ) : (
               <div className="custom-modal-panel">
-                <div className="modal-method-icon paylater-icon">💳</div>
+                <div className="modal-method-icon paylater-icon">ðŸ’³</div>
                 <h4>Paying via {selectedPayLater.toUpperCase()} Pay Later</h4>
                 {payLaterMobile && (
                   <p className="mobile-display">
@@ -808,11 +808,16 @@ const Payment = () => {
 
   const discount = Number(order?.discount || 0);
 
+  const couponDiscount = Number(order?.couponDiscount || 0);
+
+  const couponCode = order?.couponCode || "";
+
   const deliveryCharge = Number(order?.deliveryCharge || 0);
 
   const totalAmount = Number(order?.totalAmount || 0);
 
-  const totalMRP = subtotal + discount;
+  const totalMRP =
+    subtotal + (discount > couponDiscount ? discount - couponDiscount : 0);
 
   const pincode = order?.shippingAddress?.pincode || "";
 
@@ -867,9 +872,9 @@ const Payment = () => {
 
                 <button
                   type="button"
-                  onClick={() => toast.info("Gift card coming soon")}
+                  onClick={() => toast("Gift card coming soon")}
                 >
-                  <span>＋</span>
+                  <span>ï¼‹</span>
                   ADD A GIFT CARD
                 </button>
 
@@ -1051,7 +1056,7 @@ const Payment = () => {
                     </div>
 
                     <div className="card-security-note">
-                      🔒 Payments are 256-bit SSL encrypted &amp; PCI-DSS compliant.
+                      ðŸ”’ Payments are 256-bit SSL encrypted &amp; PCI-DSS compliant.
                     </div>
 
                     <button
@@ -1251,17 +1256,34 @@ const Payment = () => {
                   <strong>{formatPrice(totalMRP)}</strong>
                 </div>
 
-                <div className="payment-summary-row">
-                  <span>Discount</span>
+                {discount > couponDiscount && (
+                  <div className="payment-summary-row">
+                    <span>Discount on MRP</span>
 
-                  <strong>-{formatPrice(discount)}</strong>
-                </div>
+                    <strong>-{formatPrice(discount - couponDiscount)}</strong>
+                  </div>
+                )}
+
+                {couponCode && (couponDiscount > 0 || discount > 0) && (
+                  <div
+                    className="payment-summary-row"
+                    style={{ color: "#008c3a" }}
+                  >
+                    <span>Coupon Discount ({couponCode})</span>
+
+                    <strong style={{ color: "#008c3a" }}>
+                      -{formatPrice(couponDiscount || discount)}
+                    </strong>
+                  </div>
+                )}
 
                 <div className="payment-summary-row">
                   <span>Convenience fee</span>
 
                   <strong>
-                    {formatPrice(deliveryCharge)} <del>₹100</del>
+                    {deliveryCharge > 0
+                      ? formatPrice(deliveryCharge)
+                      : "FREE"}
                   </strong>
                 </div>
 
@@ -1273,10 +1295,15 @@ const Payment = () => {
                   <strong>{formatPrice(totalAmount)}</strong>
                 </div>
 
-                <div className="payment-save-box">
-                  You save <strong>{formatPrice(discount)}</strong> in this
-                  order
-                </div>
+                {(discount > 0 || couponDiscount > 0) && (
+                  <div className="payment-save-box">
+                    You save{" "}
+                    <strong>
+                      {formatPrice(Math.max(discount, couponDiscount))}
+                    </strong>{" "}
+                    in this order
+                  </div>
+                )}
               </div>
 
               <div className="payment-reward-box">
@@ -1357,3 +1384,4 @@ const Payment = () => {
 };
 
 export default Payment;
+

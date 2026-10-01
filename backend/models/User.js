@@ -73,6 +73,16 @@ const userSchema = new mongoose.Schema(
       default: true,
     },
 
+    lastLoginAt: {
+      type: Date,
+      default: null,
+    },
+
+    previousLoginAt: {
+      type: Date,
+      default: null,
+    },
+
     communicationPreferences: {
       abandonedCartAndRecommendations: {
         type: Boolean,
@@ -104,6 +114,30 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+userSchema.methods.recordLogin = async function () {
+  const now = new Date();
+  if (this.lastLoginAt) {
+    const hoursSinceLast =
+      (now.getTime() - new Date(this.lastLoginAt).getTime()) / (1000 * 60 * 60);
+    if (hoursSinceLast >= 20 || !this.previousLoginAt) {
+      this.previousLoginAt = this.lastLoginAt;
+    }
+  }
+  this.lastLoginAt = now;
+  return await this.save();
+};
+
+export const calculateUserInactivityDays = (user) => {
+  if (!user || !user.lastLoginAt) return -1;
+  const now = Date.now();
+  const lastLoginDiff =
+    (now - new Date(user.lastLoginAt).getTime()) / (1000 * 60 * 60 * 24);
+  const prevLoginDiff = user.previousLoginAt
+    ? (now - new Date(user.previousLoginAt).getTime()) / (1000 * 60 * 60 * 24)
+    : -1;
+  return Math.max(lastLoginDiff, prevLoginDiff);
+};
 
 const User = mongoose.model(
   "User",

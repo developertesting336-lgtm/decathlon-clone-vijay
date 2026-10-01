@@ -89,12 +89,27 @@ const loginUser = async (req, res) => {
       });
     }
 
+    // Guard: Google-only accounts have no password stored
+    if (!user.password) {
+      return res.status(401).json({
+        message: "This account uses Google Sign-In. Please login with Google.",
+      });
+    }
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
       return res.status(401).json({
         message: "Invalid email/phone or password",
       });
+    }
+
+    // Record login timestamp for returning user coupon eligibility
+    if (typeof user.recordLogin === "function") {
+      await user.recordLogin();
+    } else {
+      user.lastLoginAt = new Date();
+      await user.save();
     }
 
     const token = jwt.sign(

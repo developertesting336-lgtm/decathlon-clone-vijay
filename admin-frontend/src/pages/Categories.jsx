@@ -20,7 +20,7 @@ import socket from "../socket/socket";
 import { getPaginationRange } from "../utils/pagination";
 import "../styles/Categories.css";
 
-const CATEGORIES_PER_PAGE = 20;
+const CATEGORIES_PER_PAGE = 50;
 
 const Categories = () => {
   const navigate = useNavigate();

@@ -279,6 +279,14 @@ const loginWithOtp = async (req, res) => {
 
     await Otp.findByIdAndDelete(otpRecord._id);
 
+    // Record login timestamp for returning user coupon eligibility
+    if (typeof user.recordLogin === "function") {
+      await user.recordLogin();
+    } else {
+      user.lastLoginAt = new Date();
+      await user.save();
+    }
+
     const token = jwt.sign(
       {
         id: user._id,

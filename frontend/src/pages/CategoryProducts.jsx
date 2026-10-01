@@ -172,13 +172,13 @@ function CategoryProducts() {
         setLoading(true);
         setError("");
 
-        let endpoint = "/products?limit=48";
+        let endpoint = "/products?limit=50";
         if (searchQuery) {
-          endpoint = `/products?search=${encodeURIComponent(searchQuery)}&limit=48`;
+          endpoint = `/products?search=${encodeURIComponent(searchQuery)}&limit=50`;
         } else if (activeCategoryId) {
-          endpoint = `/products?category=${encodeURIComponent(activeCategoryId)}&limit=48`;
+          endpoint = `/products?category=${encodeURIComponent(activeCategoryId)}&limit=50`;
         } else if (category || queryCategory) {
-          endpoint = `/products?category=${encodeURIComponent(category || queryCategory)}&limit=48`;
+          endpoint = `/products?category=${encodeURIComponent(category || queryCategory)}&limit=50`;
         }
 
         const response = await api.get(endpoint);

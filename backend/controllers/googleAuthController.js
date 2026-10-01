@@ -221,6 +221,14 @@ export const confirmGoogleLogin = async (req, res) => {
       }
     }
 
+    // Record login timestamp for returning user coupon eligibility
+    if (typeof user.recordLogin === "function") {
+      await user.recordLogin();
+    } else {
+      user.lastLoginAt = new Date();
+      await user.save();
+    }
+
     // Generate JWT token with identical format to existing login system
     const authToken = jwt.sign(
       {

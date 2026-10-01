@@ -16,6 +16,9 @@ import AddCategory from "./components/category/AddCategory";
 import EditCategory from "./components/category/EditCategory";
 
 import Orders from "./pages/Orders";
+import Coupons from "./pages/Coupons";
+import AddCoupon from "./components/coupon/AddCoupon";
+import EditCoupon from "./components/coupon/EditCoupon";
 import Banners from "./pages/Banners";
 import AddBanner from "./components/banners/AddBanner";
 import EditBanner from "./components/banners/EditBanner";
@@ -153,6 +156,39 @@ function App() {
             <AdminProtectedRoute>
               <AdminLayout>
                 <Orders />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/coupons"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <Coupons />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/coupons/add"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AddCoupon />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/coupons/edit/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <EditCoupon />
               </AdminLayout>
             </AdminProtectedRoute>
           }

@@ -5,6 +5,12 @@ import Order from "../models/Order.js";
 import Cart from "../models/cart.js";
 import Product from "../models/Product.js";
 import Address from "../models/Address.js";
+import Coupon from "../models/Coupon.js";
+import CouponUsage from "../models/CouponUsage.js";
+import {
+  isUserEligibleForCoupon,
+  calculateCartEligibleSubtotal,
+} from "./couponController.js";
 import {
   emitOrderUpdate,
   emitTrackingUpdateToUser,
@@ -73,6 +79,7 @@ const createOrder = async (req, res) => {
       addressId,
       paymentMethod = "COD",
       deliveryOption = "standard",
+      couponCode,
     } = req.body;
 
     if (!addressId) {
@@ -156,9 +163,158 @@ const createOrder = async (req, res) => {
       });
     }
 
-    const discount = 0;
+    // Reject multiple coupon codes / stacking (Step 13.3)
+    if (Array.isArray(req.body.couponCodes) && req.body.couponCodes.length > 1) {
+      return res.status(400).json({
+        success: false,
+        message: "Only one coupon can be applied to an order",
+      });
+    }
+    if (typeof couponCode === "string" && couponCode.includes(",")) {
+      return res.status(400).json({
+        success: false,
+        message: "Only one coupon can be applied to an order",
+      });
+    }
 
-    const totalAmount = subtotal - discount + deliveryCharge;
+    let verifiedCouponDiscount = 0;
+    let normalizedCouponCode = "";
+    let matchedCoupon = null;
+
+    if (couponCode && typeof couponCode === "string" && couponCode.trim()) {
+      normalizedCouponCode = couponCode.trim().toUpperCase();
+      matchedCoupon = await Coupon.findOne({ code: normalizedCouponCode });
+
+      if (!matchedCoupon) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid coupon code",
+        });
+      }
+
+      if (!matchedCoupon.isActive) {
+        return res.status(400).json({
+          success: false,
+          message: "Coupon is inactive",
+        });
+      }
+
+      const now = new Date();
+      if (new Date(matchedCoupon.expiryDate) < now) {
+        return res.status(400).json({
+          success: false,
+          message: "Coupon has expired",
+        });
+      }
+
+      const usageLimit = Number(matchedCoupon.usageLimit) || 0;
+      const usedCount = Number(matchedCoupon.usedCount) || 0;
+      if (usageLimit > 0 && usedCount >= usageLimit) {
+        return res.status(400).json({
+          success: false,
+          message: "Coupon usage limit reached",
+        });
+      }
+
+      // Check distribution type & eligibility rules (Step 1 - Step 7)
+      const currentUserId = req.user?.id || req.user?._id;
+      const eligibilityCheck = await isUserEligibleForCoupon({
+        coupon: matchedCoupon,
+        userId: currentUserId,
+        cartItems: cart.items,
+      });
+
+      if (!eligibilityCheck.eligible) {
+        return res.status(400).json({
+          success: false,
+          message: eligibilityCheck.reason || "You are not eligible to use this coupon",
+        });
+      }
+
+      // Check per-user usage limit (Step 8.2)
+      if (currentUserId) {
+        const perUserLimit = Number(matchedCoupon.perUserLimit) || 1;
+        const userUsageCount = await CouponUsage.countDocuments({
+          couponId: matchedCoupon._id,
+          userId: currentUserId,
+        });
+
+        if (userUsageCount >= perUserLimit) {
+          return res.status(400).json({
+            success: false,
+            message: "You have already used this coupon the maximum number of times",
+          });
+        }
+      }
+
+      // Calculate eligible subtotal for category/product based coupons (Step 7.3 & Step 7.6)
+      const { eligibleSubtotal, hasEligibleItems } = await calculateCartEligibleSubtotal({
+        coupon: matchedCoupon,
+        cartItems: cart.items,
+        fallbackCartTotal: subtotal,
+      });
+
+      if (
+        (matchedCoupon.distributionType === "category_based" || matchedCoupon.distributionType === "product_based") &&
+        (!hasEligibleItems || eligibleSubtotal <= 0)
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "You are not eligible to use this coupon",
+        });
+      }
+
+      const minOrderValue = Number(matchedCoupon.minimumOrderValue) || 0;
+      const comparisonSubtotal =
+        matchedCoupon.distributionType === "category_based" || matchedCoupon.distributionType === "product_based"
+          ? eligibleSubtotal
+          : subtotal;
+
+      if (comparisonSubtotal < minOrderValue) {
+        return res.status(400).json({
+          success: false,
+          message: "Minimum order value not reached",
+        });
+      }
+
+      const baseSubtotal =
+        matchedCoupon.distributionType === "category_based" || matchedCoupon.distributionType === "product_based"
+          ? eligibleSubtotal
+          : subtotal;
+
+      if (matchedCoupon.discountType === "flat") {
+        verifiedCouponDiscount = Number(matchedCoupon.discountValue);
+      } else if (matchedCoupon.discountType === "percentage") {
+        verifiedCouponDiscount =
+          (baseSubtotal * Number(matchedCoupon.discountValue)) / 100;
+        const maxDiscount = Number(matchedCoupon.maximumDiscount);
+        if (
+          matchedCoupon.maximumDiscount !== null &&
+          matchedCoupon.maximumDiscount !== undefined &&
+          !isNaN(maxDiscount) &&
+          maxDiscount > 0
+        ) {
+          if (verifiedCouponDiscount > maxDiscount) {
+            verifiedCouponDiscount = maxDiscount;
+          }
+        }
+      }
+
+      if (verifiedCouponDiscount > baseSubtotal) {
+        verifiedCouponDiscount = baseSubtotal;
+      }
+      if (verifiedCouponDiscount > subtotal) {
+        verifiedCouponDiscount = subtotal;
+      }
+
+      verifiedCouponDiscount = Math.round(verifiedCouponDiscount * 100) / 100;
+    }
+
+    const discount = verifiedCouponDiscount;
+    const totalAmount = Math.max(
+      0,
+      Math.round((subtotal - discount + deliveryCharge) * 100) / 100
+    );
 
     const trackingNumber = await generateUniqueTrackingNumber();
     const demoDeliveryDate = new Date();
@@ -195,13 +351,14 @@ const createOrder = async (req, res) => {
       },
       subtotal,
       discount,
+      couponDiscount: verifiedCouponDiscount,
       deliveryCharge,
       totalAmount,
       paymentMethod,
       paymentStatus: "pending",
       orderStatus: "pending",
       stripePaymentIntentId: "",
-      couponCode: "",
+      couponCode: normalizedCouponCode,
       deliveryOption,
       trackingNumber,
       carrier: "Decathlon Demo Logistics",
@@ -209,6 +366,23 @@ const createOrder = async (req, res) => {
       currentLocation: initialLocation,
       trackingHistory: initialHistory,
     });
+
+    // Increment coupon usedCount and record CouponUsage only after order is successfully created
+    if (matchedCoupon) {
+      await Coupon.findByIdAndUpdate(matchedCoupon._id, {
+        $inc: { usedCount: 1 },
+      });
+      try {
+        await CouponUsage.create({
+          couponId: matchedCoupon._id,
+          userId: req.user.id,
+          orderId: order._id,
+          usedAt: new Date(),
+        });
+      } catch (usageErr) {
+        console.error("Failed to record CouponUsage:", usageErr.message);
+      }
+    }
 
     for (const item of cart.items) {
       await Product.findByIdAndUpdate(item.product._id, {
@@ -507,6 +681,19 @@ const cancelOrder = async (req, res) => {
     order.cancelledAt = new Date();
     order.cancellationReason =
       req.body?.reason || req.body?.cancellationReason || "Cancelled by customer";
+
+    // Revert coupon usage on cancelled order (Step 8.3 & Step 14.8)
+    if (order.couponCode) {
+      try {
+        await Coupon.findOneAndUpdate(
+          { code: order.couponCode.trim().toUpperCase(), usedCount: { $gt: 0 } },
+          { $inc: { usedCount: -1 } }
+        );
+        await CouponUsage.deleteMany({ orderId: order._id });
+      } catch (couponRevertErr) {
+        console.error("Failed to revert coupon usage on order cancellation:", couponRevertErr.message);
+      }
+    }
 
     const hasCancelledEntry = (order.trackingHistory || []).some(
       (h) => h.status === "CANCELLED"

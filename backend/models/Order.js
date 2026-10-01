@@ -210,6 +210,12 @@ const orderSchema = new mongoose.Schema(
       default: "",
     },
 
+    couponDiscount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
     deliveryOption: {
       type: String,
       enum: ["standard", "pickup"],

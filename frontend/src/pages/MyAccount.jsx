@@ -1062,7 +1062,7 @@ const MyAccount = () => {
 
               <button
                 type="button"
-                onClick={() => toast.info("Loyalty program coming soon")}
+                onClick={() => toast("Loyalty program coming soon")}
               >
                 LEARN MORE
               </button>
@@ -1090,7 +1090,7 @@ const MyAccount = () => {
 
               <div
                 className="sidebar-item"
-                onClick={() => toast.info("Wallet features coming soon")}
+                onClick={() => toast("Wallet features coming soon")}
               >
                 <FiCreditCard />
                 <span>Wallet</span>
@@ -1099,7 +1099,7 @@ const MyAccount = () => {
 
               <div
                 className="sidebar-item"
-                onClick={() => toast.info("Rewards coming soon")}
+                onClick={() => toast("Rewards coming soon")}
               >
                 <FiTarget />
                 <span>Sporty Rewards</span>
@@ -1312,7 +1312,7 @@ const MyAccount = () => {
                               Order #{order._id.slice(-8).toUpperCase()}
                             </span>
                             <span className="order-card-date">
-                              Placed on {formatDate(order.createdAt)} •{" "}
+                              Placed on {formatDate(order.createdAt)} â€¢{" "}
                               {order.orderItems?.length || 0} item(s)
                             </span>
                           </div>
@@ -1368,7 +1368,7 @@ const MyAccount = () => {
                           <div className="order-card-return-note">
                             <strong>Return Details:</strong> {order.returnRequest.reason}
                             {order.returnRequest.refundAmount > 0 && (
-                              <span> • Refund Amount: {formatPrice(order.returnRequest.refundAmount)}</span>
+                              <span> â€¢ Refund Amount: {formatPrice(order.returnRequest.refundAmount)}</span>
                             )}
                           </div>
                         )} */}
@@ -1389,7 +1389,7 @@ const MyAccount = () => {
                                 <h4 className="order-item-name">{item.name}</h4>
                                 <span className="order-item-meta">
                                   Qty: {item.quantity}{" "}
-                                  {item.size ? `• Size: ${item.size}` : ""}
+                                  {item.size ? `â€¢ Size: ${item.size}` : ""}
                                 </span>
                               </div>
                               <div className="order-item-price">
@@ -1541,10 +1541,10 @@ const MyAccount = () => {
 
       <div
         className="floating-close"
-        onClick={() => toast.info("Decathlon Support")}
+        onClick={() => toast("Decathlon Support")}
         style={{ cursor: "pointer" }}
       >
-        ×
+        Ã—
       </div>
 
       <div
@@ -1571,7 +1571,7 @@ const MyAccount = () => {
               <div className="return-modal-title-box">
                 <h3>Return Product</h3>
                 <span className="return-modal-subtitle">
-                  Order #{returnModalOrder._id.slice(-8).toUpperCase()} •{" "}
+                  Order #{returnModalOrder._id.slice(-8).toUpperCase()} â€¢{" "}
                   Placed on {formatDate(returnModalOrder.createdAt)}
                 </span>
               </div>
@@ -1581,7 +1581,7 @@ const MyAccount = () => {
                 onClick={handleCloseReturnModal}
                 disabled={submittingReturn}
               >
-                ×
+                Ã—
               </button>
             </div>
 
@@ -1631,7 +1631,7 @@ const MyAccount = () => {
                             </span>
                             <span className="return-item-details">
                               Purchased: {item.quantity}{" "}
-                              {item.size ? `• Size: ${item.size}` : ""} •{" "}
+                              {item.size ? `â€¢ Size: ${item.size}` : ""} â€¢{" "}
                               {formatPrice(item.price)} each
                             </span>
                           </div>
@@ -1765,7 +1765,7 @@ const MyAccount = () => {
               <div className="return-modal-title-box">
                 <h3>Exchange Product</h3>
                 <span className="return-modal-subtitle">
-                  Order #{exchangeModalOrder._id.slice(-8).toUpperCase()} • Placed on{" "}
+                  Order #{exchangeModalOrder._id.slice(-8).toUpperCase()} â€¢ Placed on{" "}
                   {formatDate(exchangeModalOrder.createdAt)}
                 </span>
               </div>
@@ -1775,7 +1775,7 @@ const MyAccount = () => {
                 onClick={handleCloseExchangeModal}
                 disabled={submittingExchange}
               >
-                ×
+                Ã—
               </button>
             </div>
 
@@ -1967,7 +1967,7 @@ const MyAccount = () => {
                       </div>
                     ) : (
                       <div className="exchange-diff-alert same">
-                        ✓ No price difference
+                        âœ“ No price difference
                       </div>
                     )}
                   </div>
@@ -2479,7 +2479,7 @@ const MyAccount = () => {
                                 {(trackingData?.paymentStatus === "refunded" ||
                                   trackingModalOrder.paymentStatus === "refunded") && (
                                   <div className="cancelled-refund-badge-note">
-                                    ✓ Full refund has been initiated to your original payment method.
+                                    âœ“ Full refund has been initiated to your original payment method.
                                   </div>
                                 )}
                               </div>
@@ -2744,7 +2744,7 @@ const MyAccount = () => {
                               )}
                               {method === "COD" && (
                                 <div className="cod-refund-note">
-                                  ℹ️ COD refunds are verified at warehouse and paid directly to your registered bank account or in cash.
+                                  â„¹ï¸ COD refunds are verified at warehouse and paid directly to your registered bank account or in cash.
                                 </div>
                               )}
                             </div>
@@ -2922,7 +2922,7 @@ const MyAccount = () => {
                                 </span>
                               </div>
                               <div className="exchange-payment-note">
-                                ℹ️ No additional payment required. Original order payment status is maintained.
+                                â„¹ï¸ No additional payment required. Original order payment status is maintained.
                               </div>
                             </div>
                           </div>
@@ -3041,3 +3041,4 @@ const MyAccount = () => {
 };
 
 export default MyAccount;
+

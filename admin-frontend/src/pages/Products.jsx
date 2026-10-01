@@ -25,7 +25,7 @@ import socket from "../socket/socket";
 import { getPaginationRange } from "../utils/pagination";
 import "../styles/Products.css";
 
-const PRODUCTS_PER_PAGE = 20;
+const PRODUCTS_PER_PAGE = 50;
 
 const Products = () => {
   const navigate = useNavigate();

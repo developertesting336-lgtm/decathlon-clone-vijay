@@ -167,7 +167,7 @@ export const toggleWishlist = async (productId) => {
         },
       }
     );
-    toast.success(response.data?.message || "Added to wishlist ❤️");
+    toast.success(response.data?.message || "Added to wishlist â¤ï¸");
     return true;
   } catch (error) {
     if (error.response?.data?.message === "Product already in wishlist") {
@@ -180,7 +180,7 @@ export const toggleWishlist = async (productId) => {
         toast.success("Removed from wishlist");
         return false;
       } catch (delErr) {
-        toast.info("Product is already in your wishlist");
+        toast("Product is already in your wishlist");
         return true;
       }
     }
@@ -240,3 +240,4 @@ export const useWishlist = () => {
 };
 
 export default api;
+

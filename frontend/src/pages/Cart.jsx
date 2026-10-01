@@ -9,12 +9,14 @@ import {
   FiChevronRight,
   FiPlus,
   FiMinus,
+  FiCheck,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import CartSizeModal from "../components/CartSizeModal";
 import AddressDrawer from "../components/AddressDrawer";
+import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
 import "../styles/Cart.css";
 
 const getProduct = (item) => item?.product || {};
@@ -39,6 +41,23 @@ const Cart = () => {
   const [updatingSize, setUpdatingSize] = useState(false);
   const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const [couponModalOpen, setCouponModalOpen] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem("applied_coupon");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (appliedCoupon) {
+      sessionStorage.setItem("applied_coupon", JSON.stringify(appliedCoupon));
+    } else {
+      sessionStorage.removeItem("applied_coupon");
+    }
+  }, [appliedCoupon]);
 
   const getImageUrl = (image) => {
     if (!image) return "";
@@ -158,6 +177,69 @@ const Cart = () => {
 
   const totalSavings = totalMRP - totalAmount;
 
+  const couponDiscount = appliedCoupon
+    ? Number(appliedCoupon.discount || 0)
+    : 0;
+  const finalPayable = appliedCoupon
+    ? Number(appliedCoupon.finalAmount || 0)
+    : totalAmount;
+  const totalSavedOverall = totalSavings + couponDiscount;
+
+  const activeCouponCode = appliedCoupon?.couponCode;
+
+  // Auto-revalidate or remove coupon if cart total or items change
+  useEffect(() => {
+    if (cartItems.length === 0 && activeCouponCode) {
+      setAppliedCoupon(null);
+      return;
+    }
+
+    if (activeCouponCode && totalAmount > 0) {
+      let isCancelled = false;
+      const revalidate = async () => {
+        try {
+          const response = await api.post("/coupons/validate", {
+            code: activeCouponCode,
+            cartTotal: totalAmount,
+          });
+
+          if (!isCancelled && response.data?.success) {
+            const { coupon, discount, finalAmount: calculatedFinal } =
+              response.data;
+            setAppliedCoupon({
+              couponCode: coupon?.code || activeCouponCode,
+              discount: Number(discount || 0),
+              finalAmount: Number(calculatedFinal || 0),
+              discountType: coupon?.discountType || "flat",
+              discountValue: Number(coupon?.discountValue || 0),
+            });
+          }
+        } catch (err) {
+          if (!isCancelled) {
+            const reason =
+              err.response?.data?.message || "Coupon criteria no longer met";
+            toast.error(`Coupon removed: ${reason}`);
+            setAppliedCoupon(null);
+          }
+        }
+      };
+
+      revalidate();
+      return () => {
+        isCancelled = true;
+      };
+    }
+  }, [totalAmount, cartItems.length, activeCouponCode]);
+
+  const handleCouponApplied = (couponData) => {
+    setAppliedCoupon(couponData);
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    toast.success("Coupon removed");
+  };
+
   const formatPrice = (price) =>
     `₹${Number(price || 0).toLocaleString("en-IN")}`;
 
@@ -246,7 +328,7 @@ const Cart = () => {
 
   const clearCart = async () => {
     if (!cartItems.length) {
-      toast.info("Cart is already empty");
+      toast("Cart is already empty");
       return;
     }
     try {
@@ -274,7 +356,7 @@ const Cart = () => {
   const openSizeModal = (item) => {
     const product = getProduct(item);
     if (!Array.isArray(product.size) || product.size.length === 0) {
-      toast.info("This product has no size options");
+      toast("This product has no size options");
       return;
     }
     setSelectedCartItem(item);
@@ -338,7 +420,15 @@ const Cart = () => {
       return;
     }
 
-    navigate("/checkout/cart/delivery");
+    navigate("/checkout/cart/delivery", {
+      state: {
+        appliedCoupon,
+        originalCartTotal: totalAmount,
+        finalAmount: finalPayable,
+        couponDiscount: couponDiscount,
+        couponCode: appliedCoupon?.couponCode || "",
+      },
+    });
   };
   if (loading) {
     return (
@@ -510,7 +600,7 @@ const Cart = () => {
                         <div className="cart-item-actions">
                           <button
                             type="button"
-                            onClick={() => toast.info("Wishlist coming soon")}
+                            onClick={() => toast("Wishlist coming soon")}
                           >
                             <FiHeart />
                           </button>
@@ -537,17 +627,50 @@ const Cart = () => {
 
           <aside className="cart-right">
             <div className="cart-right-sticky">
-              <button
-                type="button"
-                className="cart-side-card"
-                onClick={() => toast.info("Coupon selection coming soon")}
-              >
-                <div className="cart-side-icon">
-                  <FiTag />
+              {appliedCoupon ? (
+                <div className="cart-applied-coupon-card">
+                  <div className="applied-coupon-left">
+                    <div className="applied-coupon-icon">
+                      <FiCheck />
+                    </div>
+                    <div className="applied-coupon-info">
+                      <div className="applied-coupon-code">
+                        <strong>{appliedCoupon.couponCode}</strong>
+                        <span className="applied-badge">APPLIED</span>
+                      </div>
+                      <p className="applied-coupon-savings">
+                        {formatPrice(appliedCoupon.discount)} coupon discount
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="remove-coupon-btn"
+                    onClick={handleRemoveCoupon}
+                    title="Remove coupon"
+                  >
+                    Remove
+                  </button>
                 </div>
-                <span>Apply Coupon</span>
-                <FiChevronRight />
-              </button>
+              ) : (
+                <button
+                  type="button"
+                  className="cart-side-card"
+                  onClick={() => {
+                    if (!cartItems.length) {
+                      toast("Add items to your cart before applying a coupon");
+                      return;
+                    }
+                    setCouponModalOpen(true);
+                  }}
+                >
+                  <div className="cart-side-icon">
+                    <FiTag />
+                  </div>
+                  <span>Apply Coupon</span>
+                  <FiChevronRight />
+                </button>
+              )}
 
               <div className="cart-rewards-card">
                 <div className="cart-rewards-top">
@@ -586,17 +709,24 @@ const Cart = () => {
                   </div>
                 )}
 
+                {appliedCoupon && couponDiscount > 0 && (
+                  <div className="summary-row summary-saving summary-coupon-row">
+                    <span>Coupon Discount</span>
+                    <strong>-{formatPrice(couponDiscount)}</strong>
+                  </div>
+                )}
+
                 <small>Convenience fee will be calculated on next step</small>
                 <div className="summary-divider"></div>
 
                 <div className="summary-total">
                   <span>Total</span>
-                  <strong>{formatPrice(totalAmount)}</strong>
+                  <strong>{formatPrice(finalPayable)}</strong>
                 </div>
 
-                {totalSavings > 0 && (
+                {totalSavedOverall > 0 && (
                   <div className="summary-saved">
-                    You saved <strong>{formatPrice(totalSavings)}</strong> on
+                    You saved <strong>{formatPrice(totalSavedOverall)}</strong> on
                     this order
                   </div>
                 )}
@@ -639,7 +769,7 @@ const Cart = () => {
             <a href="#privacy">Privacy policy</a>
           </div>
 
-          <span className="cart-footer-copy">©2026 Decathlon</span>
+          <span className="cart-footer-copy">Â©2026 Decathlon</span>
         </footer>
       </main>
 
@@ -663,8 +793,18 @@ const Cart = () => {
         onClose={() => setAddressDrawerOpen(false)}
         onAddressSaved={handleAddressSaved}
       />
+
+      <ApplyCoupon
+        isOpen={couponModalOpen}
+        onClose={() => setCouponModalOpen(false)}
+        cartTotal={totalAmount}
+        appliedCoupon={appliedCoupon}
+        onCouponApplied={handleCouponApplied}
+        onRemoveCoupon={handleRemoveCoupon}
+      />
     </>
   );
 };
 
 export default Cart;
+

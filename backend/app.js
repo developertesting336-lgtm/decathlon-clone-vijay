@@ -29,6 +29,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import reviewRoutes from "./routes/reviewRoutes.js";
 import sizeGuideRoutes from "./routes/sizeGuideRoutes.js";
 import stockNotificationRoutes from "./routes/stockNotificationRoutes.js";
+import couponRoutes from "./routes/couponRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 
 /*
@@ -174,6 +175,9 @@ app.use("/size-guides", sizeGuideRoutes);
 
 app.use("/api/stock-notifications", stockNotificationRoutes);
 app.use("/stock-notifications", stockNotificationRoutes);
+
+app.use("/api/coupons", couponRoutes);
+app.use("/coupons", couponRoutes);
 
 app.use("/products", productRoutes);
 

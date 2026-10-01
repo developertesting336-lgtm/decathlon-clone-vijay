@@ -8,11 +8,13 @@ import {
   FiTruck,
   FiHome,
   FiChevronUp,
+  FiCheck,
 } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import AddressDrawer from "../components/AddressDrawer";
+import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
 import "../styles/Delivery.css";
 
 const getProduct = (item) => item?.product || {};
@@ -29,27 +31,40 @@ const getMRP = (item) => Number(getProduct(item).price || 0);
 
 const Delivery = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [cartItems, setCartItems] = useState([]);
-
   const [selectedAddress, setSelectedAddress] = useState(null);
-
   const [rewardEnabled, setRewardEnabled] = useState(false);
-
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
-
   const [billingSame, setBillingSame] = useState(true);
-
   const [loading, setLoading] = useState(true);
-
   const [creatingOrder, setCreatingOrder] = useState(false);
-
   const [deliveryInfoOpen, setDeliveryInfoOpen] = useState(true);
-
   const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
+  const [couponModalOpen, setCouponModalOpen] = useState(false);
+
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    if (location.state?.appliedCoupon) {
+      return location.state.appliedCoupon;
+    }
+    try {
+      const saved = sessionStorage.getItem("applied_coupon");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    if (appliedCoupon) {
+      sessionStorage.setItem("applied_coupon", JSON.stringify(appliedCoupon));
+    } else {
+      sessionStorage.removeItem("applied_coupon");
+    }
+  }, [appliedCoupon]);
 
   const rewardBalance = 0;
-  const convenienceFee = 49;
 
   const getAuthConfig = () => {
     const token = localStorage.getItem("token");
@@ -138,9 +153,64 @@ const Delivery = () => {
     );
   }, [cartItems]);
 
-  const discount = totalMRP - totalAmount;
+  const discountOnMRP = totalMRP - totalAmount;
 
-  const total = totalAmount + convenienceFee;
+  const couponDiscount = appliedCoupon
+    ? Number(appliedCoupon.discount || 0)
+    : 0;
+
+  const deliveryFee =
+    deliveryMethod === "standard" ? (totalAmount >= 999 ? 0 : 49) : 0;
+
+  const payableTotal = Math.max(0, totalAmount - couponDiscount + deliveryFee);
+
+  const totalSaved = discountOnMRP + couponDiscount;
+
+  // Revalidate coupon if cart total changes while on checkout
+  const activeCouponCode = appliedCoupon?.couponCode;
+  useEffect(() => {
+    if (cartItems.length === 0 && activeCouponCode) {
+      setAppliedCoupon(null);
+      return;
+    }
+
+    if (activeCouponCode && totalAmount > 0) {
+      let isCancelled = false;
+      const revalidate = async () => {
+        try {
+          const response = await api.post("/coupons/validate", {
+            code: activeCouponCode,
+            cartTotal: totalAmount,
+          });
+
+          if (!isCancelled && response.data?.success) {
+            const { coupon, discount, finalAmount: calculatedFinal } =
+              response.data;
+            setAppliedCoupon({
+              couponCode: coupon?.code || activeCouponCode,
+              discount: Number(discount || 0),
+              finalAmount: Number(calculatedFinal || 0),
+              discountType: coupon?.discountType || "flat",
+              discountValue: Number(coupon?.discountValue || 0),
+            });
+          }
+        } catch (err) {
+          if (!isCancelled) {
+            const reason =
+              err.response?.data?.message || "Coupon criteria no longer met";
+            toast.error(`Coupon removed: ${reason}`);
+            setAppliedCoupon(null);
+            sessionStorage.removeItem("applied_coupon");
+          }
+        }
+      };
+
+      revalidate();
+      return () => {
+        isCancelled = true;
+      };
+    }
+  }, [totalAmount, cartItems.length, activeCouponCode]);
 
   const handleAddressChange = () => {
     setAddressDrawerOpen(true);
@@ -152,9 +222,10 @@ const Delivery = () => {
   };
 
   const handleProceed = async () => {
+    if (creatingOrder) return;
+
     if (!selectedAddress?._id) {
       toast.error("Please select a delivery address");
-
       setAddressDrawerOpen(true);
       return;
     }
@@ -166,7 +237,6 @@ const Delivery = () => {
 
     if (!cartItems.length) {
       toast.error("Your cart is empty");
-
       navigate("/cart");
       return;
     }
@@ -180,6 +250,7 @@ const Delivery = () => {
           addressId: selectedAddress._id,
           paymentMethod: "UPI",
           deliveryOption: deliveryMethod,
+          couponCode: appliedCoupon?.couponCode || "",
         },
         getAuthConfig(),
       );
@@ -191,20 +262,29 @@ const Delivery = () => {
         return;
       }
 
-      toast.success("Order created successfully");
+      sessionStorage.removeItem("applied_coupon");
 
+      toast.success("Order created successfully");
       navigate(`/payment/${order._id}`);
     } catch (error) {
       console.error("Create Order Error:", error);
 
       if (error.response?.status === 401) {
         toast.error("Please login first");
-
         navigate("/login");
         return;
       }
 
-      toast.error(error.response?.data?.message || "Failed to create order");
+      const errorMsg =
+        error.response?.data?.message || "Failed to create order";
+      toast.error(errorMsg);
+
+      if (
+        errorMsg.toLowerCase().includes("coupon") ||
+        errorMsg.toLowerCase().includes("minimum order")
+      ) {
+        toast.error("Please remove or reapply a valid coupon.");
+      }
     } finally {
       setCreatingOrder(false);
     }
@@ -465,19 +545,48 @@ const Delivery = () => {
 
           <aside className="delivery-right">
             <div className="delivery-sticky">
-              <button
-                type="button"
-                className="delivery-coupon"
-                onClick={() => toast.info("Coupon selection coming soon")}
-              >
-                <div className="delivery-side-icon">
-                  <FiTag />
+              {appliedCoupon ? (
+                <div className="delivery-coupon-applied">
+                  <div className="applied-coupon-left">
+                    <div className="applied-coupon-icon">
+                      <FiCheck />
+                    </div>
+                    <div className="applied-coupon-info">
+                      <div className="applied-coupon-code">
+                        <strong>{appliedCoupon.couponCode}</strong>
+                        <span className="applied-badge">APPLIED</span>
+                      </div>
+                      <p className="applied-coupon-savings">
+                        {formatPrice(appliedCoupon.discount)} coupon discount
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="remove-coupon-btn"
+                    onClick={() => {
+                      setAppliedCoupon(null);
+                      sessionStorage.removeItem("applied_coupon");
+                      toast.success("Coupon removed");
+                    }}
+                    title="Remove coupon"
+                  >
+                    Remove
+                  </button>
                 </div>
-
-                <span>Apply Coupon</span>
-
-                <FiChevronRight />
-              </button>
+              ) : (
+                <button
+                  type="button"
+                  className="delivery-coupon"
+                  onClick={() => setCouponModalOpen(true)}
+                >
+                  <div className="delivery-side-icon">
+                    <FiTag />
+                  </div>
+                  <span>Apply Coupon</span>
+                  <FiChevronRight />
+                </button>
+              )}
 
               <div className="delivery-rewards">
                 <div className="delivery-rewards-row">
@@ -509,26 +618,38 @@ const Delivery = () => {
               <div className="delivery-summary">
                 <div className="summary-row">
                   <span>Total MRP</span>
-
                   <strong>{formatPrice(totalMRP)}</strong>
                 </div>
 
-                <div className="summary-row">
-                  <span>Discount on MRP</span>
+                {discountOnMRP > 0 && (
+                  <div className="summary-row">
+                    <span>Discount on MRP</span>
+                    <strong className="summary-discount">
+                      -{formatPrice(discountOnMRP)}
+                    </strong>
+                  </div>
+                )}
 
-                  <strong className="summary-discount">
-                    -{formatPrice(discount)}
-                  </strong>
-                </div>
+                {appliedCoupon && couponDiscount > 0 && (
+                  <div className="summary-row summary-coupon-row">
+                    <span>Coupon Discount</span>
+                    <strong className="summary-discount">
+                      -{formatPrice(couponDiscount)}
+                    </strong>
+                  </div>
+                )}
 
                 <div className="summary-row">
                   <span>
                     Convenience fee
                     <span className="summary-arrow">⌄</span>
                   </span>
-
                   <strong>
-                    ₹49 <del>₹100</del>
+                    {deliveryFee > 0 ? (
+                      formatPrice(deliveryFee)
+                    ) : (
+                      "FREE"
+                    )}
                   </strong>
                 </div>
 
@@ -536,14 +657,15 @@ const Delivery = () => {
 
                 <div className="summary-total">
                   <span>Total</span>
-
-                  <strong>{formatPrice(total)}</strong>
+                  <strong>{formatPrice(payableTotal)}</strong>
                 </div>
 
-                <div className="summary-saved">
-                  You saved <strong>{formatPrice(discount)}</strong> on this
-                  order
-                </div>
+                {totalSaved > 0 && (
+                  <div className="summary-saved">
+                    You saved <strong>{formatPrice(totalSaved)}</strong> on this
+                    order
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -564,6 +686,21 @@ const Delivery = () => {
         onClose={() => setAddressDrawerOpen(false)}
         selectedAddress={selectedAddress}
         onAddressSaved={handleAddressSaved}
+      />
+
+      <ApplyCoupon
+        isOpen={couponModalOpen}
+        onClose={() => setCouponModalOpen(false)}
+        cartTotal={totalAmount}
+        appliedCoupon={appliedCoupon}
+        onCouponApplied={(couponData) => {
+          setAppliedCoupon(couponData);
+        }}
+        onRemoveCoupon={() => {
+          setAppliedCoupon(null);
+          sessionStorage.removeItem("applied_coupon");
+          toast.success("Coupon removed");
+        }}
       />
     </>
   );

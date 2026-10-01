@@ -395,7 +395,7 @@ const ProductDetail = () => {
                     id="pdp-size-guide-trigger"
                     aria-label="Open size guide"
                   >
-                    📏 Size Guide
+                    ðŸ“ Size Guide
                   </button>
                 )}
               </div>
@@ -472,7 +472,7 @@ const ProductDetail = () => {
                   <FiShield /> <span>2 year warranty</span>
                 </div>
                 <div className="pdp-guarantee-item">
-                  <span>🇮🇳</span> <span>Made In India</span>
+                  <span>ðŸ‡®ðŸ‡³</span> <span>Made In India</span>
                 </div>
               </div>
               <div className="pdp-guarantee-line">
@@ -514,7 +514,7 @@ const ProductDetail = () => {
                   <strong>Pick up from store within 2 Hours for FREE</strong>
                   <span
                     className="pdp-view-stores-link"
-                    onClick={() => toast.info("Pickup available at nearest Decathlon store")}
+                    onClick={() => toast("Pickup available at nearest Decathlon store")}
                   >
                     View stores
                   </span>
@@ -612,7 +612,7 @@ const ProductDetail = () => {
                 )}
                 {openAccordion === "tech" && (
                   <div>
-                    <strong>Care Advice:</strong> Wash inside out at 30°C. Quick-dry synthetic mesh. Do not dry clean or bleach.
+                    <strong>Care Advice:</strong> Wash inside out at 30Â°C. Quick-dry synthetic mesh. Do not dry clean or bleach.
                   </div>
                 )}
               </div>
@@ -700,3 +700,4 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
+

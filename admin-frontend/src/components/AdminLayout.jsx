@@ -16,6 +16,7 @@ import {
   MdStorefront,
   MdSupportAgent,
   MdNotifications,
+  MdLocalOffer,
 } from "react-icons/md";
 
 import api from "../api/axios";
@@ -118,6 +119,7 @@ const AdminLayout = ({ children }) => {
   const isProductsActive = location.pathname.startsWith("/products");
   const isCategoriesActive = location.pathname.startsWith("/categories");
   const isOrdersActive = location.pathname.startsWith("/orders");
+  const isCouponsActive = location.pathname.startsWith("/coupons");
   const isUsersActive = location.pathname.startsWith("/users");
   const isBannersActive = location.pathname.startsWith("/banners");
   const isAiActive = location.pathname.startsWith("/ai-knowledge");
@@ -245,6 +247,16 @@ const AdminLayout = ({ children }) => {
           >
             <MdShoppingBag />
             {sidebarOpen && <span>Orders</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isCouponsActive ? "active" : ""}
+            onClick={() => handleNav("/coupons")}
+            title="Discount Coupons"
+          >
+            <MdLocalOffer />
+            {sidebarOpen && <span>Coupons</span>}
           </button>
 
           <button
