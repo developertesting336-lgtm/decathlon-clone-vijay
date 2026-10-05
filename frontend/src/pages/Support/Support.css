@@ -1231,9 +1231,69 @@ body.support-drawer-body-locked {
   .support-quick-help-buttons {
     width: 100%;
     flex-direction: column;
+    gap: 10px;
   }
 
   .support-order-btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .support-tickets-section {
+    padding: 0 14px 36px;
+  }
+
+  .support-tickets-card {
+    padding: 18px 16px;
+    border-radius: 12px;
+  }
+
+  .support-tickets-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .support-tickets-header > div:last-child {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .support-tickets-chat-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .ticket-subject-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .ticket-meta-row {
+    gap: 8px;
+    font-size: 11.5px;
+  }
+
+  .support-quick-help-card {
+    padding: 20px 14px;
+  }
+
+  .support-quick-help-title {
+    font-size: 20px;
+  }
+
+  .support-quick-help-desc {
+    font-size: 13.5px;
+  }
+
+  .support-order-btn {
+    padding: 11px 16px;
+    font-size: 14px;
   }
 }

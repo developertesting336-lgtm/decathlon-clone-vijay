@@ -656,6 +656,7 @@
 
   .admin-content {
     width: 100% !important;
+    max-width: 100% !important;
     margin-left: 0 !important;
   }
 

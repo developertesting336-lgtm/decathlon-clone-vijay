@@ -695,6 +695,63 @@
 }
 
 /* Responsive Overrides */
+@media (max-width: 768px) {
+  .support-section-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .btn-create-ticket-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .support-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px 18px;
+  }
+
+  .support-details-actions-area {
+    width: 100%;
+  }
+
+  .btn-close-ticket {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .ticket-info-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .ticket-linked-order-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .btn-view-order-link {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .support-form-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .btn-form-cancel,
+  .btn-form-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 640px) {
   .support-tickets-page-wrapper {
     padding: 20px 12px 48px;
@@ -702,10 +759,6 @@
 
   .support-ticket-form-card {
     padding: 20px 16px;
-  }
-
-  .support-details-header {
-    padding: 18px 16px;
   }
 
   .support-details-body {
@@ -725,5 +778,28 @@
     align-items: center;
     border-top: 1px solid #f1f5f9;
     padding-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .support-tickets-page-wrapper {
+    padding: 16px 10px 40px;
+  }
+
+  .support-header-text h1 {
+    font-size: 22px;
+  }
+
+  .ticket-card-title {
+    font-size: 15px;
+  }
+
+  .ticket-info-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-user-message-card,
+  .ticket-admin-response-card {
+    padding: 14px 16px;
   }
 }

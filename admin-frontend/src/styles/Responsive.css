@@ -86,6 +86,7 @@
 .modal-content,
 .delete-modal-content,
 .support-modal-window,
+.support-modal-card,
 .user-modal,
 .banner-view-modal,
 .banner-delete-modal,
@@ -106,6 +107,7 @@
 .orders-main-tabs,
 .inbox-filter-tabs,
 .profile-tabs,
+.support-tabs-nav,
 .admin-tabs {
   display: flex !important;
   align-items: center !important;
