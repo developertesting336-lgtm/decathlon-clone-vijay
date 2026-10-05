@@ -86,7 +86,6 @@
 .modal-content,
 .delete-modal-content,
 .support-modal-window,
-.support-modal-card,
 .user-modal,
 .banner-view-modal,
 .banner-delete-modal,
@@ -99,6 +98,27 @@
   overflow-y: auto !important;
   border-radius: 14px !important;
   box-sizing: border-box !important;
+}
+
+.support-modal-card {
+  width: 100% !important;
+  max-width: 600px !important;
+  max-height: 92vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border-radius: 14px !important;
+  box-sizing: border-box !important;
+}
+
+.support-modal-card .support-modal-header {
+  flex-shrink: 0 !important;
+}
+
+.support-modal-card .support-modal-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  padding: 20px 24px 28px !important;
 }
 
 /* =========================================================

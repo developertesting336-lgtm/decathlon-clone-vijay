@@ -293,7 +293,7 @@ const AdminSupportTicketDetails = () => {
             </div>
 
             <div className="support-card-box-body">
-              <form onSubmit={handleSendResponse}>
+              <form onSubmit={handleSendResponse} noValidate>
                 <label className="support-field-label" htmlFor="admin-response-input">
                   Write a response to the customer:
                 </label>
@@ -304,7 +304,6 @@ const AdminSupportTicketDetails = () => {
                   value={responseText}
                   onChange={(e) => setResponseText(e.target.value)}
                   rows={6}
-                  required
                   disabled={sendingResponse}
                 />
 
@@ -322,7 +321,7 @@ const AdminSupportTicketDetails = () => {
                   <button
                     type="submit"
                     className="support-btn-primary"
-                    disabled={sendingResponse || !responseText.trim()}
+                    disabled={sendingResponse}
                   >
                     <FiSend /> {sendingResponse ? "Sending..." : "Send Response"}
                   </button>

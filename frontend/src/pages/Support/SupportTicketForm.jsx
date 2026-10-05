@@ -104,6 +104,11 @@ const SupportTicketForm = () => {
       return;
     }
 
+    if (!issueType) {
+      toast.error("Please select an issue type");
+      return;
+    }
+
     if (!subject.trim()) {
       toast.error("Please enter a subject for your request");
       return;
@@ -214,7 +219,7 @@ const SupportTicketForm = () => {
 
         {/* Main Form Card */}
         <div className="support-ticket-form-card">
-          <form onSubmit={handleSubmit} className="support-form-grid">
+          <form onSubmit={handleSubmit} noValidate className="support-form-grid">
             {/* 1. Issue Category */}
             <div className="support-form-group">
               <label htmlFor="category" className="support-form-label">
@@ -249,7 +254,6 @@ const SupportTicketForm = () => {
                 className="support-form-select"
                 value={issueType}
                 onChange={(e) => setIssueType(e.target.value)}
-                required
                 disabled={submitting}
               >
                 {ISSUE_TYPE_OPTIONS.map((opt) => (
@@ -310,7 +314,6 @@ const SupportTicketForm = () => {
                 placeholder="Brief summary of your issue (e.g. Payment deducted but order not confirmed)"
                 value={subject}
                 onChange={(e) => setSubject(e.target.value.slice(0, 120))}
-                required
                 maxLength={120}
                 disabled={submitting}
               />
@@ -330,7 +333,6 @@ const SupportTicketForm = () => {
                 placeholder="Please describe your issue in detail. If this is about payment, mention your transaction ID or payment method..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value.slice(0, 2000))}
-                required
                 rows={5}
                 maxLength={2000}
                 disabled={submitting}

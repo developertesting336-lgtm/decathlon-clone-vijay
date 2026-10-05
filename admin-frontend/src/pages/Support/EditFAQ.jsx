@@ -60,15 +60,15 @@ const EditFAQ = ({ faqId: propId, isModal = false, onClose, onSuccess }) => {
     e.preventDefault();
 
     if (!formData.category) {
-      toast.error("Please select a category");
+      toast.error("Please select a support category");
       return;
     }
     if (!formData.question.trim()) {
-      toast.error("Question is required");
+      toast.error("Please enter the FAQ question");
       return;
     }
     if (!formData.answer.trim()) {
-      toast.error("Answer is required");
+      toast.error("Please enter the FAQ answer");
       return;
     }
 
@@ -96,7 +96,7 @@ const EditFAQ = ({ faqId: propId, isModal = false, onClose, onSuccess }) => {
       Loading FAQ details...
     </div>
   ) : (
-    <form onSubmit={handleSubmit} className="support-form-grid">
+    <form onSubmit={handleSubmit} noValidate className="support-form-grid">
       <div className="support-form-group">
         <label htmlFor="edit-faq-category">Support Category *</label>
         <select
@@ -105,7 +105,6 @@ const EditFAQ = ({ faqId: propId, isModal = false, onClose, onSuccess }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, category: e.target.value }))
           }
-          required
         >
           {categories.map((c) => (
             <option key={c._id} value={c._id}>
@@ -124,7 +123,6 @@ const EditFAQ = ({ faqId: propId, isModal = false, onClose, onSuccess }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, question: e.target.value }))
           }
-          required
           autoFocus
         />
       </div>
@@ -138,7 +136,6 @@ const EditFAQ = ({ faqId: propId, isModal = false, onClose, onSuccess }) => {
             setFormData((prev) => ({ ...prev, answer: e.target.value }))
           }
           rows={5}
-          required
         />
       </div>
 
@@ -172,7 +169,7 @@ const EditFAQ = ({ faqId: propId, isModal = false, onClose, onSuccess }) => {
         </div>
       </div>
 
-      <div className="support-modal-footer" style={{ padding: "16px 0 0" }}>
+      <div className="support-modal-footer" style={{ padding: "18px 0 10px", marginTop: "6px" }}>
         {isModal ? (
           <button
             type="button"

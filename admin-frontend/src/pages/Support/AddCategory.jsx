@@ -37,7 +37,7 @@ const AddCategory = ({ isModal = false, onClose, onSuccess }) => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error("Category name is required");
+      toast.error("Please enter a category name");
       return;
     }
 
@@ -69,7 +69,7 @@ const AddCategory = ({ isModal = false, onClose, onSuccess }) => {
   };
 
   const formContent = (
-    <form onSubmit={handleSubmit} className="support-form-grid">
+    <form onSubmit={handleSubmit} noValidate className="support-form-grid">
       <div className="support-form-group">
         <label htmlFor="cat-name">Category Name *</label>
         <input
@@ -80,7 +80,6 @@ const AddCategory = ({ isModal = false, onClose, onSuccess }) => {
           onChange={(e) =>
             setFormData((prev) => ({ ...prev, name: e.target.value }))
           }
-          required
           autoFocus
         />
       </div>
@@ -145,7 +144,7 @@ const AddCategory = ({ isModal = false, onClose, onSuccess }) => {
         </label>
       </div>
 
-      <div className="support-modal-footer" style={{ padding: "16px 0 0" }}>
+      <div className="support-modal-footer" style={{ padding: "18px 0 10px", marginTop: "6px" }}>
         {isModal ? (
           <button
             type="button"
