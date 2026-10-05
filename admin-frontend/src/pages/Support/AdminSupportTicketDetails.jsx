@@ -208,7 +208,7 @@ const AdminSupportTicketDetails = () => {
           <FiAlertCircle style={{ fontSize: 48, color: "#e11d48", marginBottom: 12 }} />
           <h2>Ticket Not Found</h2>
           <p>{error || "The requested support ticket could not be found."}</p>
-          <Link to="/admin/support/tickets" className="support-btn-primary" style={{ marginTop: 16 }}>
+          <Link to="/admin/support?tab=tickets" className="support-btn-primary" style={{ marginTop: 16 }}>
             <FiArrowLeft /> Back to Support Tickets
           </Link>
         </div>
@@ -226,7 +226,7 @@ const AdminSupportTicketDetails = () => {
       {/* 1. Header & Navigation */}
       <div className="support-admin-header">
         <div>
-          <Link to="/admin/support/tickets" className="support-back-link">
+          <Link to="/admin/support?tab=tickets" className="support-back-link">
             <FiArrowLeft /> Back to All Tickets
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8, flexWrap: "wrap" }}>

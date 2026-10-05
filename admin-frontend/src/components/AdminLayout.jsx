@@ -14,7 +14,6 @@ import {
   MdKeyboardDoubleArrowLeft,
   MdAccountCircle,
   MdStorefront,
-  MdSupportAgent,
   MdNotifications,
   MdLocalOffer,
   MdHelpCenter,
@@ -124,14 +123,9 @@ const AdminLayout = ({ children }) => {
   const isUsersActive = location.pathname.startsWith("/users");
   const isBannersActive = location.pathname.startsWith("/banners");
   const isAiActive = location.pathname.startsWith("/ai-knowledge");
-  const isTicketsActive =
-    location.pathname.startsWith("/admin/support/tickets") ||
-    location.pathname.startsWith("/support/tickets") ||
-    location.pathname.startsWith("/support-tickets");
   const isSupportActive =
-    (location.pathname.startsWith("/admin/support") ||
-      location.pathname.startsWith("/support")) &&
-    !isTicketsActive;
+    location.pathname.startsWith("/admin/support") ||
+    location.pathname.startsWith("/support");
   const isProfileActive = location.pathname.startsWith("/profile");
 
   return (
@@ -292,19 +286,9 @@ const AdminLayout = ({ children }) => {
 
           <button
             type="button"
-            className={isTicketsActive ? "active" : ""}
-            onClick={() => handleNav("/admin/support/tickets")}
-            title="Customer Support Tickets"
-          >
-            <MdSupportAgent />
-            {sidebarOpen && <span>Support Tickets</span>}
-          </button>
-
-          <button
-            type="button"
             className={isSupportActive ? "active" : ""}
             onClick={() => handleNav("/admin/support")}
-            title="Help Center Categories & FAQs"
+            title="Help Center Categories, FAQs & Tickets"
           >
             <MdHelpCenter />
             {sidebarOpen && <span>Support</span>}

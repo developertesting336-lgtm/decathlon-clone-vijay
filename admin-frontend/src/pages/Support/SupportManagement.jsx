@@ -79,6 +79,13 @@ const SupportManagement = () => {
   };
 
   useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl && ["categories", "faqs", "tickets"].includes(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     fetchOverviewStats();
   }, [activeTab]);
 

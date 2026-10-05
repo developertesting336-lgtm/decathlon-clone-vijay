@@ -376,6 +376,20 @@ const SupportTickets = ({ embedded = false }) => {
             ))}
           </select>
 
+          <button
+            type="button"
+            className="support-btn-secondary"
+            onClick={() => {
+              fetchTickets();
+              fetchStats();
+              toast.success("Tickets refreshed");
+            }}
+            title="Refresh tickets"
+          >
+            <FiRefreshCw className={loading ? "spin" : ""} />
+            <span>Refresh</span>
+          </button>
+
           {(search || statusFilter !== "all" || priorityFilter !== "all" || issueTypeFilter !== "all") && (
             <button
               type="button"

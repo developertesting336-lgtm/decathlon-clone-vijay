@@ -31,7 +31,6 @@ import AddSupportCategory from "./pages/Support/AddCategory";
 import EditSupportCategory from "./pages/Support/EditCategory";
 import AddFAQ from "./pages/Support/AddFAQ";
 import EditFAQ from "./pages/Support/EditFAQ";
-import AdminSupportTickets from "./pages/Support/SupportTickets";
 import AdminSupportTicketDetails from "./pages/Support/AdminSupportTicketDetails";
 
 import AdminLayout from "./components/AdminLayout";
@@ -346,13 +345,7 @@ function App() {
 
         <Route
           path="/admin/support/tickets"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <AdminSupportTickets />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
+          element={<Navigate to="/admin/support?tab=tickets" replace />}
         />
 
         <Route
@@ -424,13 +417,7 @@ function App() {
 
         <Route
           path="/support/tickets"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <AdminSupportTickets />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
+          element={<Navigate to="/admin/support?tab=tickets" replace />}
         />
 
         <Route
