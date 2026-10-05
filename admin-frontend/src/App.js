@@ -256,13 +256,7 @@ function App() {
 
         <Route
           path="/support-tickets"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <AdminSupportTickets />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
+          element={<Navigate to="/admin/support?tab=tickets" replace />}
         />
 
         <Route
