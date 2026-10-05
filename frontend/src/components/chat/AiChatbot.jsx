@@ -247,6 +247,25 @@ const AiChatbot = () => {
     }
   }, [isOpen, messages, scrollToBottom]);
 
+  // Support Step 9: Listen for global openLiveChat events with order context
+  useEffect(() => {
+    const handleOpenLiveChat = (e) => {
+      setIsOpen(true);
+      setShowTooltip(false);
+      setHasUnread(false);
+      const orderId = e.detail?.orderId;
+      const orderNumber =
+        e.detail?.orderNumber || (orderId ? orderId.slice(-8).toUpperCase() : "");
+      if (orderId) {
+        setInputMessage(`I need help with my Order #${orderNumber}`);
+      }
+      setTimeout(() => inputRef.current?.focus(), 250);
+    };
+
+    window.addEventListener("openLiveChat", handleOpenLiveChat);
+    return () => window.removeEventListener("openLiveChat", handleOpenLiveChat);
+  }, []);
+
   const handleToggleChat = () => {
     setIsOpen((prev) => !prev);
     setShowTooltip(false);

@@ -3113,4 +3113,116 @@
   }
 }
 
+/* ========================================================
+   ORDER SPECIFIC SUPPORT (Step 9 Requirement 3)
+   ======================================================== */
+.order-card-help-bar {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 0 0 8px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-help-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #02529c;
+}
+
+.order-help-icon {
+  font-size: 16px;
+}
+
+.order-card-help-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e293b;
+  letter-spacing: -0.2px;
+}
+
+.order-card-help-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.order-help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.order-help-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+  transform: translateY(-1px);
+}
+
+.order-help-btn.highlight {
+  background: #02529c;
+  border-color: #02529c;
+  color: #ffffff;
+}
+
+.order-help-btn.highlight:hover {
+  background: #003666;
+  border-color: #003666;
+}
+
+/* Order Details Modal Support Bar */
+.modal-order-help-bar {
+  margin-top: 24px;
+  padding: 16px 20px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-order-help-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #166534;
+}
+
+.modal-order-help-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .order-card-help-actions,
+  .modal-order-help-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-help-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 8px 12px;
+  }
+}
+
 

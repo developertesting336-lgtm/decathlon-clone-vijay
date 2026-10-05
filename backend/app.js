@@ -30,7 +30,10 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import sizeGuideRoutes from "./routes/sizeGuideRoutes.js";
 import stockNotificationRoutes from "./routes/stockNotificationRoutes.js";
 import couponRoutes from "./routes/couponRoutes.js";
+import supportRoutes from "./routes/supportRoutes.js";
+import supportTicketRoutes from "./routes/supportTicketRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
+import { seedSupportData } from "./seedSupportData.js";
 
 /*
 ========================================
@@ -83,6 +86,17 @@ app.use(
   }),
 );
 
+// Gracefully handle malformed JSON syntax errors in request bodies
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid JSON format in request body",
+    });
+  }
+  next(err);
+});
+
 /*
 ========================================
 STATIC FILES
@@ -115,6 +129,7 @@ const connectDB = async () => {
 
   console.log("MongoDB Connected");
   seedAiKnowledge().catch((err) => console.error("Background AI Seed error:", err));
+  seedSupportData().catch((err) => console.error("Background Support Seed error:", err));
 };
 
 /*
@@ -178,6 +193,12 @@ app.use("/stock-notifications", stockNotificationRoutes);
 
 app.use("/api/coupons", couponRoutes);
 app.use("/coupons", couponRoutes);
+
+app.use("/api/support", supportRoutes);
+app.use("/support", supportRoutes);
+
+app.use("/api/support/tickets", supportTicketRoutes);
+app.use("/support/tickets", supportTicketRoutes);
 
 app.use("/products", productRoutes);
 

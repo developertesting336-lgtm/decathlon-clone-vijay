@@ -24,9 +24,15 @@ import AddBanner from "./components/banners/AddBanner";
 import EditBanner from "./components/banners/EditBanner";
 
 import AiKnowledgeManager from "./pages/AiKnowledgeManager";
-import SupportTickets from "./pages/SupportTickets";
 import AdminProfile from "./pages/AdminProfile";
 import NotificationInbox from "./pages/NotificationInbox";
+import SupportManagement from "./pages/Support/SupportManagement";
+import AddSupportCategory from "./pages/Support/AddCategory";
+import EditSupportCategory from "./pages/Support/EditCategory";
+import AddFAQ from "./pages/Support/AddFAQ";
+import EditFAQ from "./pages/Support/EditFAQ";
+import AdminSupportTickets from "./pages/Support/SupportTickets";
+import AdminSupportTicketDetails from "./pages/Support/AdminSupportTicketDetails";
 
 import AdminLayout from "./components/AdminLayout";
 import AdminProtectedRoute from "./components/AdminProtectedRoute";
@@ -254,7 +260,7 @@ function App() {
           element={
             <AdminProtectedRoute>
               <AdminLayout>
-                <SupportTickets />
+                <AdminSupportTickets />
               </AdminLayout>
             </AdminProtectedRoute>
           }
@@ -277,6 +283,162 @@ function App() {
             <AdminProtectedRoute>
               <AdminLayout>
                 <NotificationInbox />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        {/* SUPPORT & FAQ MANAGEMENT */}
+        <Route
+          path="/admin/support"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <SupportManagement />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/support/categories/add"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AddSupportCategory />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/support/categories/edit/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <EditSupportCategory />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/support/faqs/add"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AddFAQ />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/support/faqs/edit/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <EditFAQ />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/support/tickets"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminSupportTickets />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/support/tickets/:ticketId"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminSupportTicketDetails />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        {/* Alias routes for /support */}
+        <Route
+          path="/support"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <SupportManagement />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/support/categories/add"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AddSupportCategory />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/support/categories/edit/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <EditSupportCategory />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/support/faqs/add"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AddFAQ />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/support/faqs/edit/:id"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <EditFAQ />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/support/tickets"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminSupportTickets />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/support/tickets/:ticketId"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <AdminSupportTicketDetails />
               </AdminLayout>
             </AdminProtectedRoute>
           }

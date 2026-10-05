@@ -12,6 +12,7 @@
 .categories-table-container,
 .users-table-container,
 .support-table-container,
+.support-table-responsive,
 .ai-table-container,
 .banners-table-container,
 .pages-table-container,
@@ -30,6 +31,7 @@
 .categories-table-container::-webkit-scrollbar,
 .users-table-container::-webkit-scrollbar,
 .support-table-container::-webkit-scrollbar,
+.support-table-responsive::-webkit-scrollbar,
 .ai-table-container::-webkit-scrollbar {
   height: 5px;
 }
@@ -39,6 +41,7 @@
 .categories-table-container::-webkit-scrollbar-thumb,
 .users-table-container::-webkit-scrollbar-thumb,
 .support-table-container::-webkit-scrollbar-thumb,
+.support-table-responsive::-webkit-scrollbar-thumb,
 .ai-table-container::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
@@ -62,7 +65,7 @@
 }
 
 .support-tickets-table {
-  min-width: 800px !important;
+  min-width: 680px !important;
 }
 
 .ai-knowledge-table {

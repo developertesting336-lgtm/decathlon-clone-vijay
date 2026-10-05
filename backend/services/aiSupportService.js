@@ -529,17 +529,34 @@ export async function createSupportRequest(userId, ticketData) {
       orderObjectId = new mongoose.Types.ObjectId(orderId);
     }
 
+    let validIssueType = "other";
+    const catLower = String(category || "").toLowerCase();
+    if (catLower.includes("pay")) validIssueType = "payment";
+    else if (catLower.includes("order")) validIssueType = "order";
+    else if (catLower.includes("return")) validIssueType = "return";
+    else if (catLower.includes("refund")) validIssueType = "refund";
+    else if (catLower.includes("exchang")) validIssueType = "exchange";
+    else if (catLower.includes("deliv")) validIssueType = "delivery";
+    else if (catLower.includes("product")) validIssueType = "product";
+    else if (catLower.includes("account")) validIssueType = "account";
+
+    let categoryObjectId = null;
+    if (category && mongoose.Types.ObjectId.isValid(category)) {
+      categoryObjectId = new mongoose.Types.ObjectId(category);
+    }
+
     const newTicket = await SupportTicket.create({
       user: userId || null,
       guestName: ticketData.guestName || "",
       guestEmail: ticketData.guestEmail || "",
       ticketId,
       subject,
-      category,
+      category: categoryObjectId,
+      issueType: validIssueType,
       message,
-      priority,
+      priority: (priority || "medium").toLowerCase(),
       order: orderObjectId,
-      status: "OPEN",
+      status: "open",
     });
 
     // Populate user info for admin

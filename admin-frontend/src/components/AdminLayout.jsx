@@ -17,6 +17,7 @@ import {
   MdSupportAgent,
   MdNotifications,
   MdLocalOffer,
+  MdHelpCenter,
 } from "react-icons/md";
 
 import api from "../api/axios";
@@ -123,7 +124,14 @@ const AdminLayout = ({ children }) => {
   const isUsersActive = location.pathname.startsWith("/users");
   const isBannersActive = location.pathname.startsWith("/banners");
   const isAiActive = location.pathname.startsWith("/ai-knowledge");
-  const isTicketsActive = location.pathname.startsWith("/support-tickets");
+  const isTicketsActive =
+    location.pathname.startsWith("/admin/support/tickets") ||
+    location.pathname.startsWith("/support/tickets") ||
+    location.pathname.startsWith("/support-tickets");
+  const isSupportActive =
+    (location.pathname.startsWith("/admin/support") ||
+      location.pathname.startsWith("/support")) &&
+    !isTicketsActive;
   const isProfileActive = location.pathname.startsWith("/profile");
 
   return (
@@ -285,11 +293,21 @@ const AdminLayout = ({ children }) => {
           <button
             type="button"
             className={isTicketsActive ? "active" : ""}
-            onClick={() => handleNav("/support-tickets")}
+            onClick={() => handleNav("/admin/support/tickets")}
             title="Customer Support Tickets"
           >
             <MdSupportAgent />
             {sidebarOpen && <span>Support Tickets</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isSupportActive ? "active" : ""}
+            onClick={() => handleNav("/admin/support")}
+            title="Help Center Categories & FAQs"
+          >
+            <MdHelpCenter />
+            {sidebarOpen && <span>Support</span>}
           </button>
 
           {/* SECTION: SETTINGS */}

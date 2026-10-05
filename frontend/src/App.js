@@ -18,6 +18,11 @@ import Profile from "./pages/Profile";
 import MyAccount from "./pages/MyAccount";
 import Wishlist from "./pages/Wishlist";
 import ProductDetail from "./pages/ProductDetail";
+import Support from "./pages/Support/Support";
+import SupportCategory from "./pages/Support/SupportCategory";
+import SupportTickets from "./pages/Support/SupportTickets";
+import SupportTicketForm from "./pages/Support/SupportTicketForm";
+import SupportTicketDetails from "./pages/Support/SupportTicketDetails";
 import CategoryRoutes from "./routes/categoryRoutes";
 import ScrollToTop from "./components/ScrollToTop";
 import AiChatbot from "./components/chat/AiChatbot";
@@ -125,6 +130,14 @@ function App() {
             <Route path="/account" element={<MyAccount />} />
 
             <Route path="/account/orders-returns" element={<MyAccount />} />
+
+            <Route path="/support" element={<Support />} />
+            <Route path="/support/tickets" element={<SupportTickets />} />
+            <Route path="/support/tickets/new" element={<SupportTicketForm />} />
+            <Route path="/support/tickets/create" element={<SupportTicketForm />} />
+            <Route path="/support/tickets/:ticketId" element={<SupportTicketDetails />} />
+            <Route path="/support/category/:categoryId" element={<SupportCategory />} />
+            <Route path="/support/:id" element={<SupportCategory />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -14,6 +14,10 @@ import {
   FiX,
   FiCopy,
   FiCheck,
+  FiRotateCcw,
+  FiRefreshCw,
+  FiMessageSquare,
+  FiHelpCircle,
 } from "react-icons/fi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -120,6 +124,12 @@ const MyAccount = () => {
   const [trackingData, setTrackingData] = useState(null);
   const [loadingTracking, setLoadingTracking] = useState(false);
   const [copiedTracking, setCopiedTracking] = useState(false);
+
+  // Payment Issue Modal State (Step 9 Requirement 7)
+  const [paymentIssueOrder, setPaymentIssueOrder] = useState(null);
+  const [paymentIssueType, setPaymentIssueType] = useState("Payment Failed");
+  const [paymentIssueMessage, setPaymentIssueMessage] = useState("");
+  const [submittingPaymentIssue, setSubmittingPaymentIssue] = useState(false);
 
   const TRACKING_STEPS = [
     {
@@ -529,6 +539,105 @@ const MyAccount = () => {
       order.exchangeStatus &&
       !["NONE", "REJECTED", "CANCELLED"].includes(order.exchangeStatus);
     return !hasActiveExchange && !hasActiveReturn;
+  };
+
+  // Step 9: Ineligible explanation helpers
+  const getOrderReturnIneligibleReason = (order) => {
+    if (!order) return "Return is not available for this order.";
+    const status = (order.orderStatus || "").toLowerCase();
+    if (status === "cancelled") return "This order has been cancelled.";
+    if (status !== "delivered") return "Returns are only available once the order has been delivered.";
+    if (!isOrderDeliveredWithinWindow(order)) return "Return window of 30 days has expired.";
+    if (order.returnStatus && !["NONE", "REJECTED", "CANCELLED"].includes(order.returnStatus)) {
+      return `Return request is currently ${order.returnStatus.replace(/_/g, " ")}.`;
+    }
+    if (order.exchangeStatus && !["NONE", "REJECTED", "CANCELLED"].includes(order.exchangeStatus)) {
+      return "An exchange request is currently in progress for this order.";
+    }
+    return "This order is not eligible for return.";
+  };
+
+  const getOrderExchangeIneligibleReason = (order) => {
+    if (!order) return "Exchange is not available for this order.";
+    const status = (order.orderStatus || "").toLowerCase();
+    if (status === "cancelled") return "This order has been cancelled.";
+    if (status !== "delivered") return "Exchanges are only available once the order has been delivered.";
+    if (!isOrderDeliveredWithinWindow(order)) return "Exchange window of 30 days has expired.";
+    if (order.exchangeStatus && !["NONE", "REJECTED", "CANCELLED"].includes(order.exchangeStatus)) {
+      return `Exchange request is currently ${order.exchangeStatus.replace(/_/g, " ")}.`;
+    }
+    if (order.returnStatus && !["NONE", "REJECTED", "CANCELLED"].includes(order.returnStatus)) {
+      return "A return request is currently in progress for this order.";
+    }
+    return "This order is not eligible for exchange.";
+  };
+
+  // Step 9: Payment Issue Handlers (Requirement 7)
+  const handleOpenPaymentIssueModal = (order) => {
+    setPaymentIssueOrder(order);
+    setPaymentIssueType("Payment Failed");
+    setPaymentIssueMessage("");
+  };
+
+  const handleClosePaymentIssueModal = () => {
+    if (submittingPaymentIssue) return;
+    setPaymentIssueOrder(null);
+    setPaymentIssueType("Payment Failed");
+    setPaymentIssueMessage("");
+  };
+
+  const handleSubmitPaymentIssue = async (e) => {
+    e.preventDefault();
+    if (!paymentIssueOrder) return;
+    if (!paymentIssueMessage.trim()) {
+      toast.error("Please describe your payment issue");
+      return;
+    }
+
+    try {
+      setSubmittingPaymentIssue(true);
+      // Support Ticket API Integration for Payment Issues
+      const res = await api.post(
+        "/ai/support-ticket",
+        {
+          orderId: paymentIssueOrder._id,
+          subject: `Payment Issue: ${paymentIssueType}`,
+          category: "payment",
+          message: paymentIssueMessage.trim(),
+          priority: "HIGH",
+        },
+        getAuthConfig()
+      );
+
+      if (res.data?.success) {
+        toast.success(
+          "Payment issue reported successfully. Our support team will contact you shortly."
+        );
+      } else {
+        toast.success("Payment issue submitted successfully.");
+      }
+      handleClosePaymentIssueModal();
+    } catch (err) {
+      console.error("Payment issue submit error:", err);
+      toast.error(
+        err.response?.data?.message ||
+          "Unable to report payment issue at this time. Please try live chat."
+      );
+    } finally {
+      setSubmittingPaymentIssue(false);
+    }
+  };
+
+  // Step 9: Live Chat Integration for Order Context (Requirement 8 & 9)
+  const handleOpenLiveChatForOrder = (order) => {
+    window.dispatchEvent(
+      new CustomEvent("openLiveChat", {
+        detail: {
+          orderId: order._id,
+          orderNumber: order._id.slice(-8).toUpperCase(),
+        },
+      })
+    );
   };
 
   const handleOpenReturnModal = (order) => {
@@ -1516,6 +1625,68 @@ const MyAccount = () => {
                                 )}
                               </div>
                             ) : null}
+                          </div>
+                        </div>
+
+                        {/* NEED HELP WITH THIS ORDER SECTION (Step 9 Requirement 3) */}
+                        <div className="order-card-help-bar">
+                          <div className="order-help-title-wrap">
+                            <FiHelpCircle className="order-help-icon" />
+                            <span className="order-card-help-title">Need help with this order?</span>
+                          </div>
+                          <div className="order-card-help-actions">
+                            <button
+                              type="button"
+                              className="order-help-btn"
+                              onClick={() => handleOpenTrackingModal(order)}
+                              title="Track delivery milestones"
+                            >
+                              <FiTruck /> Track Order
+                            </button>
+                            <button
+                              type="button"
+                              className="order-help-btn"
+                              onClick={() => {
+                                if (isOrderReturnEligible(order)) {
+                                  handleOpenReturnModal(order);
+                                } else {
+                                  toast(getOrderReturnIneligibleReason(order), { icon: "ℹ️" });
+                                }
+                              }}
+                              title="Initiate return"
+                            >
+                              <FiRotateCcw /> Return Order
+                            </button>
+                            <button
+                              type="button"
+                              className="order-help-btn"
+                              onClick={() => {
+                                if (isOrderExchangeEligible(order)) {
+                                  handleOpenExchangeModal(order);
+                                } else {
+                                  toast(getOrderExchangeIneligibleReason(order), { icon: "ℹ️" });
+                                }
+                              }}
+                              title="Request size exchange"
+                            >
+                              <FiRefreshCw /> Exchange Product
+                            </button>
+                            <button
+                              type="button"
+                              className="order-help-btn"
+                              onClick={() => handleOpenPaymentIssueModal(order)}
+                              title="Report payment or refund issue"
+                            >
+                              <FiCreditCard /> Payment Issue
+                            </button>
+                            <button
+                              type="button"
+                              className="order-help-btn highlight"
+                              onClick={() => handleOpenLiveChatForOrder(order)}
+                              title="Chat live with Decathlon support"
+                            >
+                              <FiMessageSquare /> Contact Support
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -3024,11 +3195,173 @@ const MyAccount = () => {
                     </p>
                   </div>
                 )}
+
+                {/* 5. Order Details Support Bar (Step 9 Requirement 3) */}
+                <div className="modal-order-help-bar">
+                  <div className="order-help-title-wrap">
+                    <FiHelpCircle className="order-help-icon" />
+                    <span className="modal-order-help-title">Need help with this order?</span>
+                  </div>
+                  <div className="modal-order-help-actions">
+                    <button
+                      type="button"
+                      className="order-help-btn"
+                      onClick={() => {
+                        if (isOrderReturnEligible(trackingModalOrder)) {
+                          handleCloseTrackingModal();
+                          handleOpenReturnModal(trackingModalOrder);
+                        } else {
+                          toast(getOrderReturnIneligibleReason(trackingModalOrder), { icon: "ℹ️" });
+                        }
+                      }}
+                      title="Initiate return"
+                    >
+                      <FiRotateCcw /> Return Order
+                    </button>
+                    <button
+                      type="button"
+                      className="order-help-btn"
+                      onClick={() => {
+                        if (isOrderExchangeEligible(trackingModalOrder)) {
+                          handleCloseTrackingModal();
+                          handleOpenExchangeModal(trackingModalOrder);
+                        } else {
+                          toast(getOrderExchangeIneligibleReason(trackingModalOrder), { icon: "ℹ️" });
+                        }
+                      }}
+                      title="Request size exchange"
+                    >
+                      <FiRefreshCw /> Exchange Product
+                    </button>
+                    <button
+                      type="button"
+                      className="order-help-btn"
+                      onClick={() => handleOpenPaymentIssueModal(trackingModalOrder)}
+                      title="Report payment or refund issue"
+                    >
+                      <FiCreditCard /> Payment Issue
+                    </button>
+                    <button
+                      type="button"
+                      className="order-help-btn highlight"
+                      onClick={() => handleOpenLiveChatForOrder(trackingModalOrder)}
+                      title="Chat live with Decathlon support"
+                    >
+                      <FiMessageSquare /> Contact Support
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
         </div>
       )}
+
+      {/* PAYMENT ISSUE SUPPORT MODAL (Step 9 Requirement 7) */}
+      {paymentIssueOrder && (
+        <div
+          className="decathlon-modal-backdrop"
+          onClick={handleClosePaymentIssueModal}
+        >
+          <div
+            className="decathlon-return-modal"
+            style={{ maxWidth: 500 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="return-modal-header">
+              <div className="return-modal-title-box">
+                <h3>Report Payment Issue</h3>
+                <span className="return-modal-subtitle">
+                  Order #{paymentIssueOrder._id.slice(-8).toUpperCase()} •{" "}
+                  Placed on {formatDate(paymentIssueOrder.createdAt)}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="return-modal-close"
+                onClick={handleClosePaymentIssueModal}
+                disabled={submittingPaymentIssue}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitPaymentIssue} className="return-modal-body">
+              <div className="return-form-section">
+                <label className="return-section-label">Order</label>
+                <input
+                  type="text"
+                  value={`Order #${paymentIssueOrder._id.slice(-8).toUpperCase()} (${formatPrice(paymentIssueOrder.totalAmount)})`}
+                  readOnly
+                  disabled
+                  style={{
+                    background: "#f1f5f9",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: 6,
+                    padding: "8px 12px",
+                    width: "100%",
+                    fontWeight: 600,
+                    color: "#334155",
+                  }}
+                />
+              </div>
+
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Issue Type <span className="required-star">*</span>
+                </label>
+                <select
+                  className="return-reason-select"
+                  value={paymentIssueType}
+                  onChange={(e) => setPaymentIssueType(e.target.value)}
+                  disabled={submittingPaymentIssue}
+                  required
+                >
+                  <option value="Payment Failed">Payment Failed</option>
+                  <option value="Payment Pending">Payment Pending</option>
+                  <option value="Amount Deducted">Amount Deducted</option>
+                  <option value="Refund Not Received">Refund Not Received</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Message <span className="required-star">*</span>
+                </label>
+                <textarea
+                  className="return-details-textarea"
+                  value={paymentIssueMessage}
+                  onChange={(e) => setPaymentIssueMessage(e.target.value)}
+                  placeholder="Describe what happened (transaction ID, deducted amount, bank name, etc.)..."
+                  rows={4}
+                  disabled={submittingPaymentIssue}
+                  required
+                />
+              </div>
+
+              <div className="return-modal-actions">
+                <button
+                  type="button"
+                  className="btn-return-cancel"
+                  onClick={handleClosePaymentIssueModal}
+                  disabled={submittingPaymentIssue}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-return-submit"
+                  disabled={submittingPaymentIssue || !paymentIssueMessage.trim()}
+                >
+                  {submittingPaymentIssue ? "Submitting..." : "Submit Payment Issue"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <AddressDrawer
         isOpen={isAddressDrawerOpen}
         onClose={() => setIsAddressDrawerOpen(false)}
