@@ -4,7 +4,7 @@ import React, {
   useState,
 } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import {
   MdAdd,
@@ -29,6 +29,7 @@ const PRODUCTS_PER_PAGE = 50;
 
 const Products = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,6 +39,13 @@ const Products = () => {
     useState("all");
   const [subcategoryFilter, setSubcategoryFilter] =
     useState("all");
+  const [stockFilter, setStockFilter] = useState(() => searchParams.get("stock") || "all");
+  useEffect(() => {
+    const stockParam = searchParams.get("stock");
+    if (stockParam && ["all", "low", "out", "in"].includes(stockParam)) {
+      setStockFilter(stockParam);
+    }
+  }, [searchParams]);
   const [statusFilter, setStatusFilter] =
     useState("all");
 
@@ -231,7 +239,11 @@ const Products = () => {
         matchesSearch &&
         matchesCategory &&
         matchesSubcategory &&
-        matchesStatus
+        matchesStatus &&
+        (stockFilter === "all" ||
+          (stockFilter === "low" && Number(product.stock ?? 0) <= 15) ||
+          (stockFilter === "out" && Number(product.stock ?? 0) === 0) ||
+          (stockFilter === "in" && Number(product.stock ?? 0) > 15))
       );
     });
   }, [
@@ -240,6 +252,7 @@ const Products = () => {
     categoryFilter,
     subcategoryFilter,
     statusFilter,
+    stockFilter,
   ]);
 
   useEffect(() => {
@@ -249,6 +262,7 @@ const Products = () => {
     categoryFilter,
     subcategoryFilter,
     statusFilter,
+    stockFilter,
   ]);
 
   const totalPages = Math.ceil(
@@ -289,6 +303,10 @@ const Products = () => {
     setCategoryFilter("all");
     setSubcategoryFilter("all");
     setStatusFilter("all");
+    setStockFilter("all");
+    if (searchParams.get("stock")) {
+      setSearchParams({});
+    }
     setCurrentPage(1);
   };
 
@@ -518,10 +536,30 @@ const Products = () => {
             </option>
           </select>
 
+          <select
+            className="products-filter"
+            value={stockFilter}
+            onChange={(e) => {
+              const val = e.target.value;
+              setStockFilter(val);
+              if (val === "all") {
+                setSearchParams({});
+              } else {
+                setSearchParams({ stock: val });
+              }
+            }}
+          >
+            <option value="all">All Stock</option>
+            <option value="low">Low Stock (≤ 15)</option>
+            <option value="out">Out of Stock (0)</option>
+            <option value="in">In Stock (&gt; 15)</option>
+          </select>
+
           {(search ||
             categoryFilter !== "all" ||
             subcategoryFilter !== "all" ||
-            statusFilter !== "all") && (
+            statusFilter !== "all" ||
+            stockFilter !== "all") && (
             <button
               type="button"
               className="clear-product-filters"
@@ -574,6 +612,7 @@ const Products = () => {
                         "all" ||
                       subcategoryFilter !==
                         "all" ||
+                      stockFilter !== "all" ||
                       statusFilter !==
                         "all"
                         ? "No products match your filters"

@@ -374,7 +374,15 @@ const Dashboard = () => {
               <MdInventory2 />
             </div>
             {metrics.lowStockCount > 0 && (
-              <span className="kpi-trend warning">
+              <span
+                className="kpi-trend warning"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/products?stock=low");
+                }}
+                title="View low stock products"
+                style={{ cursor: "pointer" }}
+              >
                 <MdWarning /> {metrics.lowStockCount} low stock
               </span>
             )}
