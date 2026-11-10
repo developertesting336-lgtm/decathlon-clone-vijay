@@ -428,7 +428,14 @@ const AdminProfile = () => {
             <MdCameraAlt /> Change Photo
           </button>
           <a
-            href="http://localhost:3000"
+            href={
+              typeof window !== "undefined" &&
+              (window.location.hostname === "localhost" ||
+                window.location.hostname === "127.0.0.1" ||
+                window.location.hostname.startsWith("192.168."))
+                ? "http://localhost:3000"
+                : "https://decathlon-clone-store.vercel.app"
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="btn-profile-hero btn-hero-secondary"
@@ -866,10 +873,17 @@ const AdminProfile = () => {
                 </div>
                 <div className="session-details">
                   <div className="session-title-line">
-                    <h4>Current Chrome Session (Windows)</h4>
+                    <h4>
+                      Current Browser Session (
+                      {typeof navigator !== "undefined" ? navigator.platform || "Web" : "Web"})
+                    </h4>
                     <span className="badge-active-now">Active Now</span>
                   </div>
-                  <p>IP: 127.0.0.1 • Authorized via Decathlon Enterprise JWT</p>
+                  <p>
+                    Host:{" "}
+                    {typeof window !== "undefined" ? window.location.hostname : "localhost"} •
+                    Authorized via Decathlon Enterprise JWT
+                  </p>
                   <span className="session-time">
                     Token expires in 24 hours (automatic sliding refresh)
                   </span>

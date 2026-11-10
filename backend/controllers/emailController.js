@@ -118,8 +118,13 @@ export const sendSupportEmail = async (req, res) => {
     // Email recipient (store support / admin email)
     const recipientEmail =
       process.env.SUPPORT_RECEIVER_EMAIL ||
-      process.env.SMTP_USER ||
-      "developertesting336@gmail.com";
+      process.env.SMTP_USER;
+    if (!recipientEmail) {
+      return res.status(503).json({
+        success: false,
+        message: "Support email receiver is not configured",
+      });
+    }
 
     // Plain text version
     const textContent = `New Customer Support Message - Decathlon Clone

@@ -25,9 +25,11 @@ export const getCategories = async (req, res) => {
     if (!isAdmin && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
       try {
         const token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret");
-        if (decoded && (decoded.role === "admin" || decoded.isAdmin)) {
-          isAdmin = true;
+        if (process.env.JWT_SECRET) {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          if (decoded && (decoded.role === "admin" || decoded.isAdmin)) {
+            isAdmin = true;
+          }
         }
       } catch (e) {}
     }
@@ -137,9 +139,11 @@ export const getCategoryById = async (req, res) => {
     if (!isAdmin && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
       try {
         const token = req.headers.authorization.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret");
-        if (decoded && (decoded.role === "admin" || decoded.isAdmin)) {
-          isAdmin = true;
+        if (process.env.JWT_SECRET) {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          if (decoded && (decoded.role === "admin" || decoded.isAdmin)) {
+            isAdmin = true;
+          }
         }
       } catch (e) {}
     }

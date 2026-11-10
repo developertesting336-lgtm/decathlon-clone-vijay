@@ -336,7 +336,7 @@ const deleteCategory = async (req, res) => {
     */
 
     const productsCount = await Product.countDocuments({
-      category: id,
+      $or: [{ category: id }, { categories: id }],
     });
 
     if (productsCount > 0) {

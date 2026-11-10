@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   FiRotateCcw,
   FiPackage,
@@ -14,10 +15,7 @@ import "./Footer.css";
 const Footer = () => {
   return (
     <footer className="footer">
-      {/* =========================
-          TOP BENEFITS
-      ========================= */}
-
+      {/* TOP BENEFITS */}
       <div className="footer-benefits">
         <div className="footer-benefit">
           <FiRotateCcw />
@@ -45,39 +43,52 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* =========================
-          FOOTER CONTENT
-      ========================= */}
-
+      {/* FOOTER CONTENT */}
       <div className="footer-content">
-        {/* LEFT COLUMN */}
-
         <div className="footer-left">
-          <a href="#download" className="footer-main-link">
+          <Link to="/stores" className="footer-main-link">
             Download the app
-          </a>
+          </Link>
 
-          <a href="#membership" className="footer-main-link">
+          <Link to="/register" className="footer-main-link">
             Become a member
-          </a>
-
-          {/* SOCIAL ICONS */}
+          </Link>
 
           <div className="footer-socials">
-            <a href="#facebook" aria-label="Facebook" className="footer-social">
+            <a
+              href="https://www.facebook.com/DecathlonIndia/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="footer-social"
+            >
               <FiFacebook />
             </a>
 
-            <a href="#twitter" aria-label="X" className="footer-social">
+            <a
+              href="https://x.com/Decathlon_India"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="X"
+              className="footer-social"
+            >
               <FaXTwitter />
             </a>
 
-            <a href="#youtube" aria-label="YouTube" className="footer-social">
+            <a
+              href="https://www.youtube.com/user/DecathlonIndia"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="footer-social"
+            >
               <FaYoutube />
             </a>
 
             <a
-              href="#instagram"
+              href="https://www.instagram.com/decathlonsportsindia/"
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label="Instagram"
               className="footer-social"
             >
@@ -87,69 +98,43 @@ const Footer = () => {
         </div>
 
         {/* SERVICES */}
-
         <div className="footer-column">
           <h3>SERVICES</h3>
-
-          <a href="#schools">Decathlon for Schools</a>
-
-          <a href="#corporates">Decathlon for Corporates</a>
-
-          <a href="#clubs">Decathlon for Sport Clubs</a>
-
-          <a href="#giftcard">Giftcard</a>
-
-          <a href="#affiliate">Affiliate Program</a>
-
-          <a href="#playo">Playo Summer</a>
-
-          <a href="#second-life">Second life</a>
-
-          <a href="#buy-back">Buy back</a>
-
-          <a href="#installation">Installation &amp; assembly</a>
+          <Link to="/all-sports">All Sports Gear</Link>
+          <Link to="/workout-essentials">Workout Essentials</Link>
+          <Link to="/cycling">Cycling Store</Link>
+          <Link to="/hiking-trekking">Hiking &amp; Trekking</Link>
+          <Link to="/shoes">Sports Footwear</Link>
+          <Link to="/bags-backpacks">Bags &amp; Backpacks</Link>
+          <Link to="/sports-accessories">Sports Accessories</Link>
+          <Link to="/stores">In-Store Pickup</Link>
+          <Link to="/support">Installation &amp; Assembly</Link>
         </div>
 
         {/* HELP */}
-
         <div className="footer-column">
           <h3>HELP</h3>
-
-          <a href="#find-store">Find a store</a>
-
-          <a href="#return-policy">Return Policy</a>
-
-          <a href="#shipping-policy">Shipping policy</a>
-
-          <a href="#sitemap">Sitemap</a>
-
-          <a href="#product-recall">Product recall</a>
+          <Link to="/stores">Find a store</Link>
+          <Link to="/account/orders-returns">Orders &amp; Returns</Link>
+          <Link to="/support">Help Center &amp; FAQs</Link>
+          <Link to="/support/tickets">Support Tickets</Link>
+          <Link to="/wishlist">Saved Wishlist</Link>
         </div>
 
         {/* ABOUT */}
-
         <div className="footer-column">
           <h3>ABOUT</h3>
-
-          <a href="#about-us">About us</a>
-
-          <a href="#made-in-india">Made In India</a>
-
-          <a href="#social-csr">Social &amp; CSR Initiatives</a>
-
-          <a href="#careers">Careers</a>
-
-          <a href="#blog">Blog</a>
+          <Link to="/stores">About Decathlon</Link>
+          <Link to="/all-sports">Made In India</Link>
+          <Link to="/terms">Terms &amp; Conditions</Link>
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/support/tickets/new">Contact Us</Link>
         </div>
       </div>
 
-      {/* =========================
-          BOTTOM
-      ========================= */}
-
+      {/* BOTTOM */}
       <div className="footer-bottom">
         <div className="footer-bottom-main">
-          {/* LOGO */}
           <div className="footer-logo">
             <svg
               viewBox="0 0 188 28"
@@ -171,13 +156,11 @@ const Footer = () => {
             </svg>
           </div>
 
-          {/* LINKS */}
           <div className="footer-legal">
-            <a href="#terms">Terms and Conditions</a>
-            <a href="#privacy">Privacy Policy</a>
+            <Link to="/terms">Terms and Conditions</Link>
+            <Link to="/privacy">Privacy Policy</Link>
           </div>
 
-          {/* COUNTRY */}
           <div className="footer-country">
             <span className="footer-flag">🇮🇳</span>
             <span>India</span>
@@ -185,7 +168,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* COPYRIGHT */}
         <div className="footer-copyright">
           © 2026 Decathlon Sports India Pvt Ltd. All rights reserved.
         </div>

@@ -1,5 +1,6 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
+import adminMiddleware from "../middleware/adminMiddleware.js";
 import {
   getVapidPublicKey,
   subscribePush,
@@ -29,6 +30,6 @@ router.delete("/clear-read", authMiddleware, clearReadNotifications);
 router.delete("/:id", authMiddleware, deleteNotification);
 
 // Testing endpoint for Admin popups & notifications
-router.post("/test-admin", authMiddleware, testAdminNotification);
+router.post("/test-admin", authMiddleware, adminMiddleware, testAdminNotification);
 
 export default router;

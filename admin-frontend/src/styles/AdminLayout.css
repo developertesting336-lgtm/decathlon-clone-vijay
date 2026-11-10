@@ -54,8 +54,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
   margin-bottom: 12px;
   padding: 0 4px;
+}
+
+.sidebar-closed .sidebar-header {
+  min-height: auto;
+  justify-content: center;
+  margin-bottom: 10px;
+  padding: 0;
 }
 
 .sidebar-brand {
@@ -155,6 +163,15 @@
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+
+.sidebar-menu::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar-menu button {
@@ -263,10 +280,11 @@
 .sidebar-logout {
   width: 100%;
   min-height: 38px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: auto;
+  margin-top: 8px;
   padding: 7px 10px;
   border: 1px solid #fee2e2;
   border-radius: 8px;

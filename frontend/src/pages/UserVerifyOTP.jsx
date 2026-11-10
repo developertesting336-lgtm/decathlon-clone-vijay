@@ -156,7 +156,7 @@ const UserVerifyOTP = () => {
           : response.data.message || "Logged in successfully!"
       );
 
-      navigate("/");
+      navigate(location.state?.from || "/");
     } catch (error) {
       console.error("OTP Verification Error:", error);
 

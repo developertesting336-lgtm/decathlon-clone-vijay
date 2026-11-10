@@ -296,6 +296,17 @@ const Cart = () => {
     }
   };
 
+  const saveToWishlist = async (item) => {
+    const productId = getProductId(item);
+    if (!productId) return;
+    try {
+      await api.post("/wishlist", { productId }, getAuthConfig());
+      toast.success("Saved to wishlist");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to save to wishlist");
+    }
+  };
+
   const removeItem = async (item) => {
     const productId = getProductId(item);
     if (!productId) {
@@ -600,7 +611,7 @@ const Cart = () => {
                         <div className="cart-item-actions">
                           <button
                             type="button"
-                            onClick={() => toast("Wishlist coming soon")}
+                            onClick={() => saveToWishlist(item)}
                           >
                             <FiHeart />
                           </button>
@@ -615,7 +626,7 @@ const Cart = () => {
 
                         <div className="cart-delivery">
                           <span></span>
-                          Delivery by <strong>02nd Sep 2026</strong>
+                          Delivery by <strong>{new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</strong>
                         </div>
                       </div>
                     </article>

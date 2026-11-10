@@ -164,12 +164,25 @@ const ProductDetail = () => {
     });
   }, []);
 
-  const handleCheckPincode = () => {
-    if (!pincode || pincode.trim().length !== 6 || isNaN(pincode)) {
+  const handleCheckPincode = async () => {
+    const cleanPin = pincode.trim();
+    if (!cleanPin || cleanPin.length !== 6 || isNaN(cleanPin)) {
       toast.error("Please enter a valid 6-digit Pincode");
       return;
     }
-    toast.success("Delivery is available for this pincode!");
+    try {
+      const res = await api.get(`/location/pincode/${cleanPin}`);
+      const city = res.data?.city || res.data?.district || res.data?.cityState;
+      const state = res.data?.state || "";
+      const locLabel = [city, state].filter(Boolean).join(", ");
+      toast.success(
+        locLabel
+          ? `Delivery available to ${locLabel} (${cleanPin})`
+          : `Delivery is available for pincode ${cleanPin}`
+      );
+    } catch {
+      toast.success(`Delivery is available for pincode ${cleanPin}`);
+    }
   };
 
   const handleShare = () => {
@@ -259,7 +272,7 @@ const ProductDetail = () => {
     );
   }
 
-  const images = Array.isArray(product.images) && product.images.length > 0 ? product.images : [""];
+  const images = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
   const displayImages = images.slice(0, 4);
   const remainingImagesCount = images.length > 4 ? images.length - 4 : 0;
 
@@ -273,10 +286,10 @@ const ProductDetail = () => {
         ===================================================== */}
         <div className="pdp-subnav-bar">
           <div className="pdp-sports-categories">
-            <Link to="/monsoon-essentials">All Sports</Link>
-            <Link to="/monsoon-essentials">Men</Link>
-            <Link to="/monsoon-essentials">Women</Link>
-            <Link to="/monsoon-essentials">Kids</Link>
+            <Link to="/all-sports">All Sports</Link>
+            <Link to="/category/men">Men</Link>
+            <Link to="/category/women">Women</Link>
+            <Link to="/category/kids">Kids</Link>
           </div>
 
           <div className="pdp-location-indicator">
@@ -290,14 +303,32 @@ const ProductDetail = () => {
         <div className="pdp-main-grid">
           {/* LEFT: 2-COLUMN IMAGE MOSAIC (SCREENSHOT 1 & 3) */}
           <div className="pdp-mosaic-container">
-            {displayImages.map((img, idx) => (
-              <div key={idx} className="pdp-mosaic-item">
-                <img src={getImageUrl(img)} alt={`${product.name} view ${idx + 1}`} />
-                {idx === 3 && remainingImagesCount > 0 && (
-                  <span className="pdp-mosaic-badge-more">{remainingImagesCount} more</span>
-                )}
+            {displayImages.length > 0 ? (
+              displayImages.map((img, idx) => (
+                <div key={idx} className="pdp-mosaic-item">
+                  <img src={getImageUrl(img)} alt={`${product.name} view ${idx + 1}`} />
+                  {idx === 3 && remainingImagesCount > 0 && (
+                    <span className="pdp-mosaic-badge-more">{remainingImagesCount} more</span>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div
+                className="pdp-mosaic-item"
+                style={{
+                  gridColumn: "1 / -1",
+                  minHeight: "340px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#f4f6f8",
+                  color: "#64748b",
+                  fontWeight: 600,
+                }}
+              >
+                No product image available
               </div>
-            ))}
+            )}
           </div>
 
           {/* RIGHT: STICKY BUY BOX (SCREENSHOT 1 & 2) */}
@@ -363,7 +394,11 @@ const ProductDetail = () => {
                       }}
                       title={color}
                     >
-                      <img src={getImageUrl(images[idx % images.length])} alt={color} />
+                      {images.length > 0 ? (
+                        <img src={getImageUrl(images[idx % images.length])} alt={color} />
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#64748b" }}>{color}</span>
+                      )}
                     </button>
                   ))
                 ) : (
@@ -373,7 +408,11 @@ const ProductDetail = () => {
                       type="button"
                       className={`pdp-colour-card-btn ${idx === 0 ? "active" : ""}`}
                     >
-                      <img src={getImageUrl(images[idx % images.length])} alt={`Color option ${idx + 1}`} />
+                      {images.length > 0 ? (
+                        <img src={getImageUrl(images[idx % images.length])} alt={`Color option ${idx + 1}`} />
+                      ) : (
+                        <span style={{ fontSize: 11, color: "#64748b" }}>Option {idx + 1}</span>
+                      )}
                     </button>
                   ))
                 )}
@@ -395,7 +434,7 @@ const ProductDetail = () => {
                     id="pdp-size-guide-trigger"
                     aria-label="Open size guide"
                   >
-                    ðŸ“ Size Guide
+                    📏 Size Guide
                   </button>
                 )}
               </div>
@@ -472,7 +511,7 @@ const ProductDetail = () => {
                   <FiShield /> <span>2 year warranty</span>
                 </div>
                 <div className="pdp-guarantee-item">
-                  <span>ðŸ‡®ðŸ‡³</span> <span>Made In India</span>
+                  <span>🇮🇳</span> <span>Made In India</span>
                 </div>
               </div>
               <div className="pdp-guarantee-line">

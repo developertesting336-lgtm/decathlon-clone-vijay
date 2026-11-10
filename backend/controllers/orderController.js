@@ -24,7 +24,9 @@ import {
   checkAndNotifyLowStock,
 } from "../services/notificationService.js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "sk_test_placeholder");
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : null;
 
 const TRACKING_FLOW = [
   "ORDER_PLACED",
@@ -510,9 +512,18 @@ const confirmOnlineOrder = async (req, res) => {
       });
     }
 
-    order.paymentMethod = paymentMethod.toUpperCase();
+    const normalizedMethod = String(paymentMethod || "").trim().toUpperCase();
+    const allowSimulatedMethods =
+      process.env.NODE_ENV !== "production" ||
+      process.env.ALLOW_SIMULATED_PAYMENTS === "true";
+    if (!allowSimulatedMethods || !["NETBANKING", "PAYLATER"].includes(normalizedMethod)) {
+      return res.status(400).json({
+        message: "Unsupported or unverified online payment method. Please complete payment via Stripe or COD.",
+      });
+    }
+    order.paymentMethod = normalizedMethod;
     order.paymentStatus =
-      paymentMethod.toUpperCase() === "COD" ? "pending" : "paid";
+      "paid";
     order.orderStatus = "confirmed";
 
     await order.save();
@@ -634,6 +645,7 @@ const cancelOrder = async (req, res) => {
 
       let stripeRefund = null;
       try {
+        if (!stripe) throw new Error("Stripe is not configured");
         stripeRefund = await stripe.refunds.create(
           {
             payment_intent: order.stripePaymentIntentId,
@@ -1686,6 +1698,7 @@ const processReturnRefund = async (req, res) => {
     let stripeRefund = null;
 
     try {
+      if (!stripe) throw new Error("Stripe is not configured");
       stripeRefund = await stripe.refunds.create(
         {
           payment_intent: order.stripePaymentIntentId,

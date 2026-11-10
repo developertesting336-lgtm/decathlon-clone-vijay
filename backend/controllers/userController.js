@@ -1,11 +1,6 @@
 import User from "../models/User.js";
 
 export const generateCardNumberForUser = (user) => {
-  // Preserve original card number for primary test account
-  if (user.email === "vk7184192@gmail.com") {
-    return "2 094724 479967";
-  }
-
   // Derive unique 13-digit Decathlon card number: 2 XXXXXX XXXXXX from user._id
   const idStr = user._id ? user._id.toString() : "user" + Date.now();
   let hash1 = 0;
@@ -30,8 +25,7 @@ export const getUserProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Assign unique card number if missing or default on different user
-    if (!user.cardNumber || (user.cardNumber === "2 094724 479967" && user.email !== "vk7184192@gmail.com")) {
+    if (!user.cardNumber) {
       user.cardNumber = generateCardNumberForUser(user);
       await user.save();
     }

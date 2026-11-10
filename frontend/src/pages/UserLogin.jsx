@@ -49,17 +49,13 @@ const UserLogin = () => {
               phone: value,
             };
 
-      console.log("Sending Login OTP:", payload);
+      // Sending login OTP request
 
       const response = await api.post(
         "/login/send-otp",
         payload,
       );
 
-      console.log(
-        "Login OTP Response:",
-        response.data,
-      );
 
       toast.success(
         response.data.message ||
@@ -230,6 +226,7 @@ const UserLogin = () => {
           <button
             type="button"
             className="social-login-btn"
+            onClick={() => toast("Please use Google Sign-In or Email OTP to log in.")}
             disabled={loading}
           >
             <FaFacebook className="social-facebook-icon" />
@@ -242,6 +239,7 @@ const UserLogin = () => {
           <button
             type="button"
             className="social-login-btn"
+            onClick={() => toast("Please use Google Sign-In or Email OTP to log in.")}
             disabled={loading}
           >
             <FaApple className="social-apple-icon" />

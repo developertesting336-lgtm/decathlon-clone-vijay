@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiX } from "react-icons/fi";
 import toast from "react-hot-toast";
+import SizeGuide from "./SizeGuide/SizeGuide";
 
 const CartSizeModal = ({
   item,
@@ -14,6 +15,8 @@ const CartSizeModal = ({
   formatPrice,
   getSellingPrice,
 }) => {
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+
   if (!item || !product) {
     return null;
   }
@@ -23,7 +26,7 @@ const CartSizeModal = ({
   }
 
   const handleSizeChart = () => {
-    toast("Size chart coming soon", { icon: "📏" });
+    setShowSizeGuide(true);
   };
 
   const handleSelectSize = (size) => {
@@ -111,6 +114,13 @@ const CartSizeModal = ({
           {updating ? "Updating..." : "Update"}
         </button>
       </div>
+      {showSizeGuide && (
+        <SizeGuide
+          isOpen={showSizeGuide}
+          onClose={() => setShowSizeGuide(false)}
+          product={product}
+        />
+      )}
     </div>
   );
 };

@@ -975,17 +975,17 @@ const Navbar = () => {
                     <span>Orders & Returns</span>
                   </Link>
 
-                  <Link to="/wallet" className="account-dropdown-item">
+                  <Link to="/account" className="account-dropdown-item">
                     <FiCreditCard />
                     <span>Wallet</span>
                   </Link>
 
-                  <Link to="/rewards" className="account-dropdown-item">
+                  <Link to="/account" className="account-dropdown-item">
                     <FiAward />
                     <span>Sporty Rewards</span>
                   </Link>
 
-                  <Link to="/addresses" className="account-dropdown-item">
+                  <Link to="/account?tab=address" className="account-dropdown-item">
                     <FiMail />
                     <span>My Addresses</span>
                   </Link>

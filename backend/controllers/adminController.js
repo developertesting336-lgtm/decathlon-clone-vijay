@@ -296,6 +296,12 @@ const changeAdminPassword = async (req, res) => {
       });
     }
 
+    if (!user.password) {
+      return res.status(400).json({
+        message: "This account does not have a password set",
+      });
+    }
+
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {

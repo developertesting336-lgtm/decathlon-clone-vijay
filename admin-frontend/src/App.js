@@ -26,6 +26,9 @@ import EditBanner from "./components/banners/EditBanner";
 import AiKnowledgeManager from "./pages/AiKnowledgeManager";
 import AdminProfile from "./pages/AdminProfile";
 import NotificationInbox from "./pages/NotificationInbox";
+import Reviews from "./pages/Reviews";
+import SizeGuides from "./pages/SizeGuides";
+import StockAlerts from "./pages/StockAlerts";
 import SupportManagement from "./pages/Support/SupportManagement";
 import AddSupportCategory from "./pages/Support/AddCategory";
 import EditSupportCategory from "./pages/Support/EditCategory";
@@ -425,7 +428,38 @@ function App() {
           }
         />
 
+        <Route
+          path="/reviews"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <Reviews />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/size-guides"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <SizeGuides />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
+        <Route
+          path="/stock-alerts"
+          element={
+            <AdminProtectedRoute>
+              <AdminLayout>
+                <StockAlerts />
+              </AdminLayout>
+            </AdminProtectedRoute>
+          }
+        />
         <Route path="/homepage-sections" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );

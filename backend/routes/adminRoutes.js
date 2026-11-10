@@ -31,7 +31,7 @@ router.post("/google/confirm", confirmGoogleLogin);
 
 router.get("/me", authMiddleware, getMe);
 
-router.get("/profile", authMiddleware, getAdminProfile);
+router.get("/profile", authMiddleware, adminMiddleware, getAdminProfile);
 
 router.put(
   "/profile",

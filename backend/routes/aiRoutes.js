@@ -53,12 +53,12 @@ router.delete("/history", optionalAuth, clearUserChatHistory);
 // Live Dynamic Database Statistics
 router.get("/stats", getAiLiveStats);
 
-// Dynamic AI Knowledge CRUD Endpoints (MongoDB backed)
-router.get("/knowledge", getKnowledgeList);
-router.get("/knowledge/:id", getKnowledgeById);
-router.post("/knowledge", createKnowledge);
-router.put("/knowledge/:id", updateKnowledge);
-router.delete("/knowledge/:id", deleteKnowledge);
+// Dynamic AI Knowledge CRUD Endpoints (MongoDB backed, Admin protected)
+router.get("/knowledge", authMiddleware, adminMiddleware, getKnowledgeList);
+router.get("/knowledge/:id", authMiddleware, adminMiddleware, getKnowledgeById);
+router.post("/knowledge", authMiddleware, adminMiddleware, createKnowledge);
+router.put("/knowledge/:id", authMiddleware, adminMiddleware, updateKnowledge);
+router.delete("/knowledge/:id", authMiddleware, adminMiddleware, deleteKnowledge);
 
 // Support Ticket Endpoints
 router.post("/support-ticket", optionalAuth, createUserSupportTicket);

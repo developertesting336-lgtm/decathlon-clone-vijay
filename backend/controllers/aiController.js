@@ -544,23 +544,7 @@ export const handleAIChat = async (req, res) => {
       }
     }
 
-    // =========================================================
-    // TEMPORARY SERVER-SIDE DEBUG LOGGING (REQUIREMENT 11)
-    // =========================================================
-    console.log("\n================ AI CHAT DEBUG ================");
-    console.log(`User Query:        "${userQuery}"`);
-    console.log(`Normalized Query:  "${normalizeText(effectiveQuery || userQuery)}"`);
-    console.log(`Detected Intent:   ${detectedIntent}`);
-    console.log(`Detected Gender:   ${detectedGender || "None"}`);
-    console.log(`Detected Category: ${detectedCategory || "None"}`);
-    console.log(`Matched Keywords:  ${matchedKeywords.length > 0 ? matchedKeywords.join(", ") : "None"}`);
-    console.log(`Relevance Scores:  ${relevanceScores || "N/A"}`);
-    console.log(`Final Selected:    ${finalSelected}`);
-    console.log("===============================================\n");
-
-    // =========================================================
-    // 10. GEMINI LLM GROUNDED GENERATION (IF CONFIGURED)
-    // =========================================================
+    // Grounded LLM generation (if configured)
     const geminiKey = process.env.GEMINI_API_KEY;
     if (geminiKey && !isOrderQuery && responseType !== "fallback") {
       try {

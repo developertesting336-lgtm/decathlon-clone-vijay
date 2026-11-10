@@ -294,7 +294,7 @@ const CategoryNav = ({ section, data }) => {
 
         <div className="delivery-location">
           <span>Delivery to</span>{" "}
-          <Link to="/delivery">
+          <Link to="/account?tab=address">
             Bangalore Central, Bangalore, 560001, Karnataka
           </Link>
         </div>

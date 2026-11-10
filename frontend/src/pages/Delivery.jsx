@@ -370,7 +370,7 @@ const Delivery = () => {
               <div className="delivery-option-info">
                 <strong>Standard Delivery</strong>
 
-                <b>Delivery by 2nd September</b>
+                <b>Delivery by {new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</b>
 
                 <p>Get your order delivered at your door step.</p>
 
@@ -385,8 +385,9 @@ const Delivery = () => {
 
             <button
               type="button"
-              className="delivery-option unavailable"
-              disabled
+              className={deliveryMethod === "pickup" ? "delivery-option selected" : "delivery-option"}
+              onClick={() => setDeliveryMethod("pickup")}
+              aria-label="Pickup from Store"
             >
               <div className="delivery-option-icon">
                 <FiHome />
@@ -400,13 +401,13 @@ const Delivery = () => {
                   you.
                 </p>
 
-                <span className="delivery-unavailable">
+                <span className="delivery-available">
                   <i />
-                  Unavailable
+                  Ready in 2 hours (Free)
                 </span>
               </div>
 
-              <span className="delivery-option-check disabled">✓</span>
+              <span className="delivery-option-check">✓</span>
             </button>
 
             <div className="delivery-order-section">
@@ -418,7 +419,7 @@ const Delivery = () => {
                 <div className="delivery-item-title">
                   {cartItems.length} Item
                   {cartItems.length !== 1 ? "s" : ""} - Delivery by{" "}
-                  <strong>02nd Sep 2026</strong>
+                  <strong>{new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</strong>
                 </div>
 
                 <div className="delivery-items-list">

@@ -47,6 +47,24 @@ try {
   console.warn("Could not set custom DNS servers:", error.message);
 }
 
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  const extraOrigins = [process.env.FRONTEND_URL, process.env.ADMIN_URL].filter(Boolean);
+  if (extraOrigins.includes(origin)) return true;
+  try {
+    const { hostname } = new URL(origin);
+    return (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.startsWith("192.168.") ||
+      hostname.endsWith(".vercel.app") ||
+      hostname.endsWith(".onrender.com")
+    );
+  } catch {
+    return false;
+  }
+};
+
 const app = express();
 
 /*
@@ -59,10 +77,10 @@ app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin or any localhost/vercel domain
-      if (!origin || origin.includes("localhost") || origin.includes("127.0.0.1") || origin.includes("vercel.app")) {
-        callback(null, true);
+      if (isAllowedOrigin(origin)) {
+        callback(isAllowedOrigin(origin) ? null : new Error("Not allowed by CORS"), isAllowedOrigin(origin));
       } else {
-        callback(null, true);
+        callback(isAllowedOrigin(origin) ? null : new Error("Not allowed by CORS"), isAllowedOrigin(origin));
       }
     },
     credentials: true,
@@ -240,7 +258,7 @@ const server = http.createServer(app);
 // Render.com supports persistent connections and WebSocket upgrades natively.
 const io = new Server(server, {
   cors: {
-    origin: (origin, callback) => callback(null, true),
+    origin: (origin, callback) => (isAllowedOrigin(origin) ? callback(null, true) : callback(new Error("Not allowed by CORS"))),
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
   },
@@ -305,5 +323,5 @@ EXPORT APP & SERVER
 ========================================
 */
 
-export { server, io };
+export { server, io, isAllowedOrigin };
 export default app;

@@ -20,7 +20,7 @@ const getTransporter = () => {
     },
     // Useful options for Gmail SMTP reliability
     tls: {
-      rejectUnauthorized: false,
+      rejectUnauthorized: process.env.SMTP_ALLOW_SELF_SIGNED !== "true",
     },
   });
 };

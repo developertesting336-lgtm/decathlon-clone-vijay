@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Coupon Distribution System — E2E Test Suite (Steps 7–14)
  * =========================================================
  * Run: node tests/test_coupon_e2e.js
@@ -82,7 +82,7 @@ async function testStep7Category() {
     pass("Create category_based coupon");
   } catch (e) { fail("Create category_based coupon", e.message); return; }
 
-  const r = await api("POST", "/coupons/validate", { couponCode: coupon.code, cartItems: [{ product: productId, quantity: 1, price: 500 }], cartTotal: 500 }, custToken);
+  const r = await api("POST", "/coupons/validate", { code: coupon.code, cartItems: [{ product: productId, quantity: 1, price: 500 }], cartTotal: 500 }, custToken);
   if (r.status === 200 && r.data?.success) {
     pass("category_based coupon validates (product might match category)");
     if (r.data.discount > 0) pass("Discount > 0 for category_based"); else fail("Discount for category_based", "discount = 0");
@@ -104,11 +104,11 @@ async function testStep7Product() {
     pass("Create product_based coupon");
   } catch (e) { fail("Create product_based coupon", e.message); return; }
 
-  const r1 = await api("POST", "/coupons/validate", { couponCode: coupon.code, cartItems: [{ product: productId, quantity: 1, price: 800 }], cartTotal: 800 }, custToken);
+  const r1 = await api("POST", "/coupons/validate", { code: coupon.code, cartItems: [{ product: productId, quantity: 1, price: 800 }], cartTotal: 800 }, custToken);
   if (r1.status === 200 && r1.data?.success) pass("product_based validates with correct product in cart");
   else fail("product_based validate with correct product", r1.data?.message || JSON.stringify(r1.data));
 
-  const r2 = await api("POST", "/coupons/validate", { couponCode: coupon.code, cartItems: [{ product: "000000000000000000000001", quantity: 1, price: 800 }], cartTotal: 800 }, custToken);
+  const r2 = await api("POST", "/coupons/validate", { code: coupon.code, cartItems: [{ product: "000000000000000000000001", quantity: 1, price: 800 }], cartTotal: 800 }, custToken);
   if (!r2.data?.success) pass("product_based rejects cart without eligible product");
   else fail("product_based should reject missing product", "Got success");
 }
@@ -121,7 +121,7 @@ async function testStep8PerUserLimit() {
     pass("Create coupon with perUserLimit=1");
   } catch (e) { fail("Create perUserLimit coupon", e.message); return; }
 
-  const r = await api("POST", "/coupons/validate", { couponCode: coupon.code, cartTotal: 1000 }, custToken);
+  const r = await api("POST", "/coupons/validate", { code: coupon.code, cartTotal: 1000 }, custToken);
   if (r.status === 200 && r.data?.success) pass("perUserLimit=1: first validation passes");
   else pass("perUserLimit=1: validation result depends on prior usage");
 }
@@ -183,7 +183,7 @@ async function testStep12Expiry() {
     pass("Create expired coupon (yesterday)");
   } catch (e) { fail("Create expired coupon", e.message); return; }
 
-  const r = await api("POST", "/coupons/validate", { couponCode: coupon.code, cartTotal: 500 }, custToken);
+  const r = await api("POST", "/coupons/validate", { code: coupon.code, cartTotal: 500 }, custToken);
   if (!r.data?.success) pass("Expired coupon rejected by /validate");
   else fail("Expired coupon should fail", "Got success for expired coupon");
 }
@@ -215,7 +215,7 @@ async function testStep13PriorityStacking() {
 
   // Test stacking rejection
   if (low && high) {
-    const r2 = await api("POST", "/coupons/validate", { couponCodes: [low.code, high.code], cartTotal: 500 }, custToken);
+    const r2 = await api("POST", "/coupons/validate", { codes: [low.code, high.code], cartTotal: 500 }, custToken);
     if (!r2.data?.success) {
       if ((r2.data?.message || "").toLowerCase().includes("one coupon")) pass("Stacking rejected with correct message");
       else pass("Stacking rejected (any error is valid)");
@@ -234,7 +234,7 @@ async function testSecurity() {
   } catch (e) { fail("Create security coupon", e.message); return; }
 
   // Tampered discount
-  const r1 = await api("POST", "/coupons/validate", { couponCode: coupon.code, cartTotal: 1000, discount: 9999, totalAmount: 1 }, custToken);
+  const r1 = await api("POST", "/coupons/validate", { code: coupon.code, cartTotal: 1000, discount: 9999, totalAmount: 1 }, custToken);
   if (r1.status === 200 && r1.data?.success) {
     if ((r1.data.discount || 0) <= 100) pass("Backend ignores tampered discount (recalculates 10%)");
     else fail("Server accepted tampered discount", `Got discount: ${r1.data.discount}`);
@@ -248,7 +248,7 @@ async function testSecurity() {
   else fail("Admin route security", `Customer got ${r2.status}`);
 
   // Invalid coupon code
-  const r3 = await api("POST", "/coupons/validate", { couponCode: "FAKE_CODE_XYZ_99999", cartTotal: 500 }, custToken);
+  const r3 = await api("POST", "/coupons/validate", { code: "FAKE_CODE_XYZ_99999", cartTotal: 500 }, custToken);
   if (!r3.data?.success) pass("Invalid coupon code returns error");
   else fail("Invalid coupon should fail", "Got success for nonexistent code");
 }

@@ -90,7 +90,7 @@ decathlonClone/
 │   ├── public/
 │   └── package.json
 │
-├── admin/
+├── admin-frontend/
 │   ├── src/
 │   ├── public/
 │   └── package.json
@@ -131,6 +131,16 @@ STRIPE_SECRET_KEY=your_stripe_secret_key
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+GEMINI_API_KEY=your_gemini_api_key
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+VAPID_PUBLIC_KEY=your_vapid_public_key
+VAPID_PRIVATE_KEY=your_vapid_private_key
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_smtp_email
+SMTP_PASS=your_smtp_app_password
+SUPPORT_RECEIVER_EMAIL=your_support_receiver_email
 ```
 
 > **Important**: Never commit `.env` files to GitHub. Ensure `.gitignore` includes:
@@ -230,7 +240,14 @@ The backend provides RESTful API endpoints for:
 - `/api/orders`
 - `/api/payment`
 - `/api/banners`
-- `/api/homepage-sections`
+- `/api/coupons`
+- `/api/reviews`
+- `/api/size-guides`
+- `/api/stock-notifications`
+- `/api/support`
+- `/api/support/tickets`
+- `/api/ai`
+- `/api/notifications`
 - `/api/registration`
 - `/api/login`
 

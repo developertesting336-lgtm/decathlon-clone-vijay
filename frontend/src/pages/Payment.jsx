@@ -333,7 +333,7 @@ const StripePaymentForm = ({
             onClick={onClose}
             disabled={processing}
           >
-            Ã—
+            ×
           </button>
         </div>
 
@@ -358,7 +358,7 @@ const StripePaymentForm = ({
               </div>
             ) : selectedMethod === "upi" ? (
               <div className="custom-modal-panel">
-                <div className="modal-method-icon upi-icon">ðŸ“²</div>
+                <div className="modal-method-icon upi-icon">📲</div>
                 <h4>Paying via {getUpiDisplayName()}</h4>
                 {upiOption === "vpa" && (
                   <p className="vpa-display">
@@ -388,7 +388,7 @@ const StripePaymentForm = ({
               </div>
             ) : selectedMethod === "netbanking" ? (
               <div className="custom-modal-panel">
-                <div className="modal-method-icon bank-icon">ðŸ¦</div>
+                <div className="modal-method-icon bank-icon">🏦</div>
                 <h4>
                   Paying via {(selectedBank || "Bank").toUpperCase()} Netbanking
                 </h4>
@@ -399,7 +399,7 @@ const StripePaymentForm = ({
               </div>
             ) : (
               <div className="custom-modal-panel">
-                <div className="modal-method-icon paylater-icon">ðŸ’³</div>
+                <div className="modal-method-icon paylater-icon">💳</div>
                 <h4>Paying via {selectedPayLater.toUpperCase()} Pay Later</h4>
                 {payLaterMobile && (
                   <p className="mobile-display">
@@ -874,7 +874,7 @@ const Payment = () => {
                   type="button"
                   onClick={() => toast("Gift card coming soon")}
                 >
-                  <span>ï¼‹</span>
+                  <span>＋</span>
                   ADD A GIFT CARD
                 </button>
 
@@ -1056,7 +1056,7 @@ const Payment = () => {
                     </div>
 
                     <div className="card-security-note">
-                      ðŸ”’ Payments are 256-bit SSL encrypted &amp; PCI-DSS compliant.
+                      🔒 Payments are 256-bit SSL encrypted &amp; PCI-DSS compliant.
                     </div>
 
                     <button

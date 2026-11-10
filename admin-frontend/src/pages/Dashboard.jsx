@@ -51,7 +51,7 @@ const Dashboard = () => {
       else setLoading(true);
 
       const [productsRes, categoriesRes, ordersRes, usersRes] = await Promise.all([
-        api.get("/products?admin=true&limit=100"),
+        api.get("/products?admin=true&limit=1000"),
         api.get("/categories"),
         api.get("/orders/admin/all"),
         api.get("/auth/admin/users"),
@@ -109,7 +109,7 @@ const Dashboard = () => {
   // Computed Financials & Counts
   const metrics = useMemo(() => {
     const validOrders = ordersData.filter(
-      (o) => o.orderStatus !== "cancelled" && o.orderStatus !== "failed"
+      (o) => !["cancelled", "failed", "returned"].includes(o.orderStatus)
     );
 
     const totalRevenue = validOrders.reduce(
@@ -122,18 +122,20 @@ const Dashboard = () => {
 
     const statusCounts = {
       delivered: ordersData.filter((o) => o.orderStatus === "delivered").length,
-      shipped: ordersData.filter((o) => o.orderStatus === "shipped").length,
+      shipped: ordersData.filter((o) =>
+        ["shipped", "packed", "reached_hub", "out_for_delivery"].includes(o.orderStatus)
+      ).length,
       processing: ordersData.filter((o) =>
         ["confirmed", "processing", "pending"].includes(o.orderStatus)
       ).length,
       cancelled: ordersData.filter((o) =>
-        ["cancelled", "refunded", "failed"].includes(o.orderStatus)
+        ["cancelled", "refunded", "failed", "returned"].includes(o.orderStatus)
       ).length,
     };
 
-    const lowStockProducts = productsData.list
-      .filter((p) => (p.stock ?? 0) <= 15)
-      .slice(0, 5);
+    const lowStockList = productsData.list.filter((p) => (p.stock ?? 0) <= 15);
+    const lowStockProducts = lowStockList.slice(0, 5);
+    const lowStockCount = lowStockList.length;
 
     const outOfStockCount = productsData.list.filter(
       (p) => (p.stock ?? 0) === 0
@@ -145,6 +147,7 @@ const Dashboard = () => {
       totalOrders: ordersData.length,
       statusCounts,
       lowStockProducts,
+      lowStockCount,
       outOfStockCount,
       totalProducts: productsData.total,
       totalCategories: categoriesData.length,
@@ -184,36 +187,31 @@ const Dashboard = () => {
       });
     }
 
-    // If no recent orders fall in the last 7 calendar days, construct sensible distribution
-    // from total revenue so the dashboard visualization is always rich and informative
-    const totalRevInWeek = days.reduce((acc, d) => acc + d.revenue, 0);
-    if (totalRevInWeek === 0 && metrics.totalRevenue > 0) {
-      const weights = [0.1, 0.15, 0.08, 0.22, 0.18, 0.12, 0.15];
-      days.forEach((d, idx) => {
-        d.revenue = Math.round(metrics.totalRevenue * weights[idx]);
-        d.orders = Math.max(1, Math.round(metrics.totalOrders * weights[idx]));
-      });
-    }
-
     return days;
-  }, [ordersData, metrics.totalRevenue, metrics.totalOrders]);
+  }, [ordersData]);
 
   // Top Categories Distribution
   const topCategories = useMemo(() => {
     if (!categoriesData.length) return [];
 
-    const counts = {};
+    const countsById = {};
+    const countsByName = {};
     productsData.list.forEach((p) => {
+      const catId = p.category?._id || p.category;
+      if (catId) {
+        countsById[String(catId)] = (countsById[String(catId)] || 0) + 1;
+      }
       const catName =
         p.category?.name ||
         (Array.isArray(p.categories) && p.categories[0]?.name) ||
         "Other";
-      counts[catName] = (counts[catName] || 0) + 1;
+      countsByName[catName] = (countsByName[catName] || 0) + 1;
     });
 
     const list = categoriesData.map((c) => ({
-      name: c.name,
-      count: counts[c.name] || 0,
+      _id: c._id,
+      name: c.subcategory ? `${c.name} (${c.subcategory})` : c.name,
+      count: countsById[String(c._id)] || 0,
       image: c.image,
     }));
 
@@ -297,7 +295,14 @@ const Dashboard = () => {
           </button>
 
           <a
-            href="http://localhost:3000"
+            href={
+              typeof window !== "undefined" &&
+              (window.location.hostname === "localhost" ||
+                window.location.hostname === "127.0.0.1" ||
+                window.location.hostname.startsWith("192.168."))
+                ? "http://localhost:3000"
+                : "https://decathlon-clone-store.vercel.app"
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="btn-dash-action btn-storefront"
@@ -326,8 +331,10 @@ const Dashboard = () => {
             <div className="kpi-icon-wrap icon-revenue">
               <MdCurrencyRupee />
             </div>
-            <span className="kpi-trend positive">
-              <MdTrendingUp /> +14.2%
+            <span className="kpi-chip">
+              {metrics.totalOrders > 0
+                ? `${Math.round((metrics.statusCounts.delivered / metrics.totalOrders) * 100)}% Delivered`
+                : "Live Revenue"}
             </span>
           </div>
           <div className="kpi-body">
@@ -366,9 +373,9 @@ const Dashboard = () => {
             <div className="kpi-icon-wrap icon-products">
               <MdInventory2 />
             </div>
-            {metrics.lowStockProducts.length > 0 && (
+            {metrics.lowStockCount > 0 && (
               <span className="kpi-trend warning">
-                <MdWarning /> {metrics.lowStockProducts.length} low stock
+                <MdWarning /> {metrics.lowStockCount} low stock
               </span>
             )}
           </div>
@@ -426,7 +433,9 @@ const Dashboard = () => {
             <div>
               <h3>Weekly Sales Activity</h3>
               <p className="dash-card-subtitle">
-                Volume breakdown for the past 7 days
+                {chartData.every((d) => d.orders === 0)
+                  ? "No orders placed in the past 7 days"
+                  : "Volume breakdown for the past 7 days"}
               </p>
             </div>
             <div className="chart-metric-toggle">
@@ -451,7 +460,12 @@ const Dashboard = () => {
             <div className="custom-bar-chart">
               {chartData.map((d, index) => {
                 const value = activeChartMetric === "revenue" ? d.revenue : d.orders;
-                const heightPercent = chartMax > 0 ? Math.min(100, Math.max(12, Math.round((value / chartMax) * 100))) : 15;
+                const heightPercent =
+                  value === 0
+                    ? 4
+                    : chartMax > 0
+                    ? Math.min(100, Math.max(12, Math.round((value / chartMax) * 100)))
+                    : 15;
 
                 return (
                   <div key={d.date || index} className="chart-bar-group">
@@ -907,7 +921,7 @@ const Dashboard = () => {
                     : 0;
 
                 return (
-                  <div key={cat.name || idx} className="category-depth-item">
+                  <div key={cat._id || `${cat.name}-${idx}`} className="category-depth-item">
                     <div className="depth-header">
                       <span className="depth-name">{cat.name}</span>
                       <span className="depth-count">

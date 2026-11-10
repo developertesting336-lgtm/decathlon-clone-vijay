@@ -547,7 +547,7 @@ const MyAccount = () => {
     const status = (order.orderStatus || "").toLowerCase();
     if (status === "cancelled") return "This order has been cancelled.";
     if (status !== "delivered") return "Returns are only available once the order has been delivered.";
-    if (!isOrderDeliveredWithinWindow(order)) return "Return window of 30 days has expired.";
+    if (!isOrderDeliveredWithinWindow(order)) return `Return window of ${RETURN_WINDOW_DAYS} days has expired.`;
     if (order.returnStatus && !["NONE", "REJECTED", "CANCELLED"].includes(order.returnStatus)) {
       return `Return request is currently ${order.returnStatus.replace(/_/g, " ")}.`;
     }
@@ -562,7 +562,7 @@ const MyAccount = () => {
     const status = (order.orderStatus || "").toLowerCase();
     if (status === "cancelled") return "This order has been cancelled.";
     if (status !== "delivered") return "Exchanges are only available once the order has been delivered.";
-    if (!isOrderDeliveredWithinWindow(order)) return "Exchange window of 30 days has expired.";
+    if (!isOrderDeliveredWithinWindow(order)) return `Exchange window of ${RETURN_WINDOW_DAYS} days has expired.`;
     if (order.exchangeStatus && !["NONE", "REJECTED", "CANCELLED"].includes(order.exchangeStatus)) {
       return `Exchange request is currently ${order.exchangeStatus.replace(/_/g, " ")}.`;
     }
@@ -1421,7 +1421,7 @@ const MyAccount = () => {
                               Order #{order._id.slice(-8).toUpperCase()}
                             </span>
                             <span className="order-card-date">
-                              Placed on {formatDate(order.createdAt)} â€¢{" "}
+                              Placed on {formatDate(order.createdAt)} •{" "}
                               {order.orderItems?.length || 0} item(s)
                             </span>
                           </div>
@@ -1477,7 +1477,7 @@ const MyAccount = () => {
                           <div className="order-card-return-note">
                             <strong>Return Details:</strong> {order.returnRequest.reason}
                             {order.returnRequest.refundAmount > 0 && (
-                              <span> â€¢ Refund Amount: {formatPrice(order.returnRequest.refundAmount)}</span>
+                              <span> • Refund Amount: {formatPrice(order.returnRequest.refundAmount)}</span>
                             )}
                           </div>
                         )} */}
@@ -1498,7 +1498,7 @@ const MyAccount = () => {
                                 <h4 className="order-item-name">{item.name}</h4>
                                 <span className="order-item-meta">
                                   Qty: {item.quantity}{" "}
-                                  {item.size ? `â€¢ Size: ${item.size}` : ""}
+                                  {item.size ? `• Size: ${item.size}` : ""}
                                 </span>
                               </div>
                               <div className="order-item-price">
@@ -1715,7 +1715,7 @@ const MyAccount = () => {
         onClick={() => toast("Decathlon Support")}
         style={{ cursor: "pointer" }}
       >
-        Ã—
+        ×
       </div>
 
       <div
@@ -1742,7 +1742,7 @@ const MyAccount = () => {
               <div className="return-modal-title-box">
                 <h3>Return Product</h3>
                 <span className="return-modal-subtitle">
-                  Order #{returnModalOrder._id.slice(-8).toUpperCase()} â€¢{" "}
+                  Order #{returnModalOrder._id.slice(-8).toUpperCase()} •{" "}
                   Placed on {formatDate(returnModalOrder.createdAt)}
                 </span>
               </div>
@@ -1752,7 +1752,7 @@ const MyAccount = () => {
                 onClick={handleCloseReturnModal}
                 disabled={submittingReturn}
               >
-                Ã—
+                ×
               </button>
             </div>
 
@@ -1802,7 +1802,7 @@ const MyAccount = () => {
                             </span>
                             <span className="return-item-details">
                               Purchased: {item.quantity}{" "}
-                              {item.size ? `â€¢ Size: ${item.size}` : ""} â€¢{" "}
+                              {item.size ? `• Size: ${item.size}` : ""} •{" "}
                               {formatPrice(item.price)} each
                             </span>
                           </div>
@@ -1936,7 +1936,7 @@ const MyAccount = () => {
               <div className="return-modal-title-box">
                 <h3>Exchange Product</h3>
                 <span className="return-modal-subtitle">
-                  Order #{exchangeModalOrder._id.slice(-8).toUpperCase()} â€¢ Placed on{" "}
+                  Order #{exchangeModalOrder._id.slice(-8).toUpperCase()} • Placed on{" "}
                   {formatDate(exchangeModalOrder.createdAt)}
                 </span>
               </div>
@@ -1946,7 +1946,7 @@ const MyAccount = () => {
                 onClick={handleCloseExchangeModal}
                 disabled={submittingExchange}
               >
-                Ã—
+                ×
               </button>
             </div>
 
@@ -2852,7 +2852,7 @@ const MyAccount = () => {
                                 <span>
                                   {returnReq?.pickupAddress ||
                                     (trackingModalOrder.shippingAddress
-                                      ? `${trackingModalOrder.shippingAddress.address}, ${trackingModalOrder.shippingAddress.city}`
+                                      ? `${trackingModalOrder.shippingAddress.houseBuilding || trackingModalOrder.shippingAddress.address || ""}, ${trackingModalOrder.shippingAddress.streetLocality || ""}, ${trackingModalOrder.shippingAddress.cityState || trackingModalOrder.shippingAddress.city || ""}`.replace(/^,\s*|,\s*,/g, ", ").replace(/^,\s*|\s*,\s*$/g, "")
                                       : "Registered Customer Address")}
                                 </span>
                               </div>
@@ -2873,10 +2873,10 @@ const MyAccount = () => {
                                     ? returnReq.items
                                         .map(
                                           (it) =>
-                                            `${it.title || "Product"} (Qty: ${it.quantity || 1})`
+                                            `${it.name || it.title || "Product"} (Qty: ${it.quantity || 1})`
                                         )
                                         .join(", ")
-                                    : trackingModalOrder.orderItems?.[0]?.title || "Order Product"}
+                                    : trackingModalOrder.orderItems?.[0]?.name || trackingModalOrder.orderItems?.[0]?.title || "Order Product"}
                                 </span>
                               </div>
                             </div>
@@ -2887,7 +2887,7 @@ const MyAccount = () => {
                                 <strong>Refund Amount:</strong>{" "}
                                 <span>
                                   {formatPrice(
-                                    returnReq?.refundAmount || trackingModalOrder.totalPrice
+                                    returnReq?.refundAmount || trackingModalOrder.totalAmount || trackingModalOrder.totalPrice
                                   )}
                                 </span>
                               </div>
@@ -2915,7 +2915,7 @@ const MyAccount = () => {
                               )}
                               {method === "COD" && (
                                 <div className="cod-refund-note">
-                                  â„¹ï¸ COD refunds are verified at warehouse and paid directly to your registered bank account or in cash.
+                                  ℹ️ COD refunds are verified at warehouse and paid directly to your registered bank account or in cash.
                                 </div>
                               )}
                             </div>
@@ -3046,7 +3046,7 @@ const MyAccount = () => {
                                 <span>
                                   {exchangeReq?.pickupAddress ||
                                     (trackingModalOrder.shippingAddress
-                                      ? `${trackingModalOrder.shippingAddress.address}, ${trackingModalOrder.shippingAddress.city}`
+                                      ? `${trackingModalOrder.shippingAddress.houseBuilding || trackingModalOrder.shippingAddress.address || ""}, ${trackingModalOrder.shippingAddress.streetLocality || ""}, ${trackingModalOrder.shippingAddress.cityState || trackingModalOrder.shippingAddress.city || ""}`.replace(/^,\s*|,\s*,/g, ", ").replace(/^,\s*|\s*,\s*$/g, "")
                                       : "Customer Shipping Address")}
                                 </span>
                               </div>
@@ -3093,7 +3093,7 @@ const MyAccount = () => {
                                 </span>
                               </div>
                               <div className="exchange-payment-note">
-                                â„¹ï¸ No additional payment required. Original order payment status is maintained.
+                                ℹ️ No additional payment required. Original order payment status is maintained.
                               </div>
                             </div>
                           </div>
@@ -3172,24 +3172,29 @@ const MyAccount = () => {
                     </h5>
                     <p className="address-card-text">
                       <strong>
-                        {trackingModalOrder.shippingAddress.name ||
+                        {`${trackingModalOrder.shippingAddress.firstName || ""} ${trackingModalOrder.shippingAddress.lastName || ""}`.trim() ||
+                          trackingModalOrder.shippingAddress.name ||
                           trackingModalOrder.shippingAddress.fullName ||
                           "Customer"}
                       </strong>
                       <br />
-                      {trackingModalOrder.shippingAddress.street ||
+                      {trackingModalOrder.shippingAddress.houseBuilding ||
+                        trackingModalOrder.shippingAddress.street ||
                         trackingModalOrder.shippingAddress.addressLine1}
-                      {trackingModalOrder.shippingAddress.addressLine2
-                        ? `, ${trackingModalOrder.shippingAddress.addressLine2}`
+                      {trackingModalOrder.shippingAddress.streetLocality || trackingModalOrder.shippingAddress.addressLine2
+                        ? `, ${trackingModalOrder.shippingAddress.streetLocality || trackingModalOrder.shippingAddress.addressLine2}`
                         : ""}
                       <br />
-                      {trackingModalOrder.shippingAddress.city},{" "}
-                      {trackingModalOrder.shippingAddress.state} -{" "}
+                      {trackingModalOrder.shippingAddress.cityState ||
+                        [trackingModalOrder.shippingAddress.city, trackingModalOrder.shippingAddress.state].filter(Boolean).join(", ")}{" "}
+                      -{" "}
+                      {trackingModalOrder.shippingAddress.state ? "" : ""}
                       {trackingModalOrder.shippingAddress.postalCode ||
                         trackingModalOrder.shippingAddress.pincode}
                       <br />
                       Phone:{" "}
-                      {trackingModalOrder.shippingAddress.phone ||
+                      {trackingModalOrder.shippingAddress.mobile ||
+                        trackingModalOrder.shippingAddress.phone ||
                         trackingModalOrder.shippingAddress.phoneNumber ||
                         "N/A"}
                     </p>

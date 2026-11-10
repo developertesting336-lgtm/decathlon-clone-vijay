@@ -51,7 +51,7 @@ const AdminLogin = () => {
       localStorage.setItem("adminToken", token);
       localStorage.setItem("adminUser", JSON.stringify(user));
 
-      console.log("Admin Login Successful:", user);
+      // Admin session stored
 
       toast.success(`Welcome back, ${user.name || "Admin"}!`);
       navigate("/dashboard");
@@ -134,13 +134,13 @@ const AdminLogin = () => {
           </form>
 
           <div className="login-links">
-            <span>Change my password</span>
+            <span role="button" tabIndex={0} onClick={() => toast("Sign in first, then update your password under Admin Profile → Security.")}>Change my password</span>
             <span>|</span>
-            <span>Forgotten password ?</span>
+            <span role="button" tabIndex={0} onClick={() => toast("Please contact your system administrator to reset admin credentials.")}>Forgotten password ?</span>
           </div>
 
           <div className="language">
-            language⌄
+            English (India)
           </div>
 
         </div>

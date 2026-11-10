@@ -1,285 +1,111 @@
 import User from "../models/User.js";
-import Otp from "../models/Otp.js";
 import jwt from "jsonwebtoken";
-import generateOtp from "../utils/generateOtp.js";
-import { sendEmail } from "../utils/emailService.js";
+import { issueOtp, consumeOtp } from "../utils/otpHelper.js";
+
+const parseAndValidateLoginTarget = (body) => {
+  const { type, email, phone } = body;
+  if (type !== "email" && type !== "phone") {
+    return { error: "Valid login type is required" };
+  }
+  const normalizedEmail = type === "email" ? email?.trim().toLowerCase() : undefined;
+  const normalizedPhone = type === "phone" ? phone?.trim() : undefined;
+  if (type === "email" && !normalizedEmail) return { error: "Email is required" };
+  if (type === "phone" && !normalizedPhone) return { error: "Phone number is required" };
+  return { type, normalizedEmail, normalizedPhone };
+};
 
 const sendLoginOtp = async (req, res) => {
   try {
-    const { type, email, phone } = req.body;
+    const parsed = parseAndValidateLoginTarget(req.body);
+    if (parsed.error) return res.status(400).json({ message: parsed.error });
 
-    if (type !== "email" && type !== "phone") {
-      return res.status(400).json({
-        message: "Valid login type is required",
-      });
-    }
-
-    const normalizedEmail =
-      type === "email" ? email?.trim().toLowerCase() : undefined;
-
-    const normalizedPhone = type === "phone" ? phone?.trim() : undefined;
-
-    if (type === "email" && !normalizedEmail) {
-      return res.status(400).json({
-        message: "Email is required",
-      });
-    }
-
-    if (type === "phone" && !normalizedPhone) {
-      return res.status(400).json({
-        message: "Phone number is required",
-      });
-    }
-
-    const user =
+    const { type, normalizedEmail, normalizedPhone } = parsed;
+    const user = await User.findOne(
       type === "email"
-        ? await User.findOne({
-            email: normalizedEmail,
-            role: "user",
-          })
-        : await User.findOne({
-            phone: normalizedPhone,
-            role: "user",
-          });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found. Please register first.",
-      });
-    }
-
-    const otp = generateOtp();
-
-    await Otp.deleteMany(
-      type === "email"
-        ? { email: normalizedEmail }
-        : { phone: normalizedPhone },
+        ? { email: normalizedEmail, role: "user" }
+        : { phone: normalizedPhone, role: "user" }
     );
 
-    await Otp.create({
-      email: type === "email" ? normalizedEmail : undefined,
-      phone: type === "phone" ? normalizedPhone : undefined,
-      otp,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
-
-    console.log(`Login OTP for ${type}: ${otp}`);
-
-    if (type === "email" && normalizedEmail) {
-      try {
-        await sendEmail({
-          to: normalizedEmail,
-          subject: `Your Decathlon Login OTP: ${otp}`,
-          text: `Your Decathlon login OTP is ${otp}. It is valid for 5 minutes. Please do not share this code with anyone.`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; color: #111;">
-              <h2 style="color: #0082c3; margin: 0 0 10px;">DECATHLON</h2>
-              <h3>Login Verification Code</h3>
-              <p>Your one-time password (OTP) to sign in to Decathlon is:</p>
-              <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #0082c3; margin: 16px 0;">
-                ${otp}
-              </div>
-              <p style="color: #555; font-size: 13px;">This code is valid for 5 minutes. Do not share this OTP with anyone.</p>
-              <p style="color: #888; font-size: 12px; margin-top: 24px;">Decathlon Sports India</p>
-            </div>
-          `,
-        });
-      } catch (mailErr) {
-        console.error("Failed to send login OTP email:", mailErr.message);
-        return res.status(502).json({
-          message: "Failed to send OTP email. Please try again later.",
-        });
-      }
+    if (!user) {
+      return res.status(404).json({ message: "User not found. Please register first." });
     }
 
-    return res.status(200).json({
-      message: "OTP sent successfully",
-      otp,
+    const result = await issueOtp({
+      type,
+      email: normalizedEmail,
+      phone: normalizedPhone,
+      purpose: "Login",
     });
+
+    return res.status(200).json(result);
   } catch (error) {
     console.error("Send Login OTP Error:", error);
-
-    return res.status(500).json({
-      message: "Failed to send login OTP",
+    return res.status(error.statusCode || 500).json({
+      message: error.statusCode ? error.message : "Failed to send login OTP",
     });
   }
 };
 
 const resendLoginOtp = async (req, res) => {
   try {
-    const { type, email, phone } = req.body;
+    const parsed = parseAndValidateLoginTarget(req.body);
+    if (parsed.error) return res.status(400).json({ message: parsed.error });
 
-    if (type !== "email" && type !== "phone") {
-      return res.status(400).json({
-        message: "Valid login type is required",
-      });
-    }
-
-    const normalizedEmail =
-      type === "email" ? email?.trim().toLowerCase() : undefined;
-
-    const normalizedPhone = type === "phone" ? phone?.trim() : undefined;
-
-    const user =
+    const { type, normalizedEmail, normalizedPhone } = parsed;
+    const user = await User.findOne(
       type === "email"
-        ? await User.findOne({
-            email: normalizedEmail,
-            role: "user",
-          })
-        : await User.findOne({
-            phone: normalizedPhone,
-            role: "user",
-          });
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found. Please register first.",
-      });
-    }
-
-    const previousOtp =
-      type === "email"
-        ? await Otp.findOne({
-            email: normalizedEmail,
-          }).sort({ createdAt: -1 })
-        : await Otp.findOne({
-            phone: normalizedPhone,
-          }).sort({ createdAt: -1 });
-
-    if (previousOtp && previousOtp.expiresAt > new Date()) {
-      const remainingSeconds = Math.ceil(
-        (new Date(previousOtp.expiresAt).getTime() - Date.now()) / 1000,
-      );
-
-      return res.status(400).json({
-        message: `Please wait ${remainingSeconds} seconds until the current OTP expires.`,
-        remainingSeconds,
-      });
-    }
-
-    const otp = generateOtp();
-
-    await Otp.deleteMany(
-      type === "email"
-        ? { email: normalizedEmail }
-        : { phone: normalizedPhone },
+        ? { email: normalizedEmail, role: "user" }
+        : { phone: normalizedPhone, role: "user" }
     );
 
-    await Otp.create({
-      email: type === "email" ? normalizedEmail : undefined,
-      phone: type === "phone" ? normalizedPhone : undefined,
-      otp,
-      expiresAt: new Date(Date.now() + 5 * 60 * 1000),
-    });
-
-    console.log(`Resent Login OTP for ${type}: ${otp}`);
-
-    if (type === "email" && normalizedEmail) {
-      try {
-        await sendEmail({
-          to: normalizedEmail,
-          subject: `Your Decathlon Login OTP: ${otp}`,
-          text: `Your Decathlon login OTP is ${otp}. It is valid for 5 minutes. Please do not share this code with anyone.`,
-          html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px; color: #111;">
-              <h2 style="color: #0082c3; margin: 0 0 10px;">DECATHLON</h2>
-              <h3>Login Verification Code</h3>
-              <p>Your one-time password (OTP) to sign in to Decathlon is:</p>
-              <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #0082c3; margin: 16px 0;">
-                ${otp}
-              </div>
-              <p style="color: #555; font-size: 13px;">This code is valid for 5 minutes. Do not share this OTP with anyone.</p>
-              <p style="color: #888; font-size: 12px; margin-top: 24px;">Decathlon Sports India</p>
-            </div>
-          `,
-        });
-      } catch (mailErr) {
-        console.error("Failed to resend login OTP email:", mailErr.message);
-        return res.status(502).json({
-          message: "Failed to resend OTP email. Please try again later.",
-        });
-      }
+    if (!user) {
+      return res.status(404).json({ message: "User not found. Please register first." });
     }
 
-    return res.status(200).json({
-      message: "OTP resent successfully",
-      otp,
+    const result = await issueOtp({
+      type,
+      email: normalizedEmail,
+      phone: normalizedPhone,
+      purpose: "Login",
     });
+
+    return res.status(200).json({ ...result, message: "OTP resent successfully" });
   } catch (error) {
     console.error("Resend Login OTP Error:", error);
-
-    return res.status(500).json({
-      message: "Failed to resend login OTP",
+    return res.status(error.statusCode || 500).json({
+      message: error.statusCode ? error.message : "Failed to resend login OTP",
     });
   }
 };
 
 const loginWithOtp = async (req, res) => {
   try {
-    const { type, email, phone, otp } = req.body;
+    const parsed = parseAndValidateLoginTarget(req.body);
+    if (parsed.error) return res.status(400).json({ message: parsed.error });
+    const { otp } = req.body;
+    if (!otp) return res.status(400).json({ message: "OTP is required" });
 
-    if (type !== "email" && type !== "phone") {
-      return res.status(400).json({
-        message: "Valid login type is required",
-      });
-    }
-
-    if (!otp) {
-      return res.status(400).json({
-        message: "OTP is required",
-      });
-    }
-
-    const normalizedEmail =
-      type === "email" ? email?.trim().toLowerCase() : undefined;
-
-    const normalizedPhone = type === "phone" ? phone?.trim() : undefined;
-
-    const user =
+    const { type, normalizedEmail, normalizedPhone } = parsed;
+    const user = await User.findOne(
       type === "email"
-        ? await User.findOne({
-            email: normalizedEmail,
-            role: "user",
-          })
-        : await User.findOne({
-            phone: normalizedPhone,
-            role: "user",
-          });
+        ? { email: normalizedEmail, role: "user" }
+        : { phone: normalizedPhone, role: "user" }
+    );
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found. Please register first.",
-      });
+      return res.status(404).json({ message: "User not found. Please register first." });
     }
 
-    const otpRecord =
-      type === "email"
-        ? await Otp.findOne({
-            email: normalizedEmail,
-            otp: otp.trim(),
-          })
-        : await Otp.findOne({
-            phone: normalizedPhone,
-            otp: otp.trim(),
-          });
-
-    if (!otpRecord) {
-      return res.status(400).json({
-        message: "Invalid OTP",
-      });
+    const check = await consumeOtp({
+      type,
+      email: normalizedEmail,
+      phone: normalizedPhone,
+      otp,
+    });
+    if (!check.ok) {
+      return res.status(check.status).json({ message: check.message });
     }
 
-    if (otpRecord.expiresAt < new Date()) {
-      await Otp.findByIdAndDelete(otpRecord._id);
-
-      return res.status(400).json({
-        message: "OTP has expired",
-      });
-    }
-
-    await Otp.findByIdAndDelete(otpRecord._id);
-
-    // Record login timestamp for returning user coupon eligibility
     if (typeof user.recordLogin === "function") {
       await user.recordLogin();
     } else {
@@ -288,14 +114,9 @@ const loginWithOtp = async (req, res) => {
     }
 
     const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      {
-        expiresIn: "1d",
-      },
+      { expiresIn: "1d" }
     );
 
     return res.status(200).json({
@@ -311,10 +132,7 @@ const loginWithOtp = async (req, res) => {
     });
   } catch (error) {
     console.error("OTP Login Error:", error);
-
-    return res.status(500).json({
-      message: "Failed to login with OTP",
-    });
+    return res.status(500).json({ message: "Failed to login with OTP" });
   }
 };
 

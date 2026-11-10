@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiX, FiMinus, FiPlus } from "react-icons/fi";
 import toast from "react-hot-toast";
 
+import SizeGuide from "./SizeGuide/SizeGuide";
 import "../styles/ProductSizeModal.css";
 
 const ProductSizeModal = ({
@@ -18,6 +19,7 @@ const ProductSizeModal = ({
   getImageUrl,
   formatPrice,
 }) => {
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
   if (!product) return null;
 
   const convertToArray = (value) => {
@@ -249,7 +251,7 @@ const ProductSizeModal = ({
               <button
                 type="button"
                 className="product-size-chart"
-                onClick={() => toast("Size chart feature coming soon", { icon: "📏" })}
+                onClick={() => setShowSizeGuide(true)}
               >
                 View size chart
               </button>
@@ -280,6 +282,13 @@ const ProductSizeModal = ({
           {adding ? "Adding..." : "Add to Cart"}
         </button>
       </div>
+      {showSizeGuide && (
+        <SizeGuide
+          isOpen={showSizeGuide}
+          onClose={() => setShowSizeGuide(false)}
+          product={product}
+        />
+      )}
     </div>
   );
 };

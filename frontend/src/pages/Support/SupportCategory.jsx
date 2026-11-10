@@ -124,7 +124,7 @@ const SupportCategory = () => {
     if (chatbotBtn) {
       chatbotBtn.click();
     } else {
-      window.dispatchEvent(new CustomEvent("open-support-chat"));
+      window.dispatchEvent(new CustomEvent("openLiveChat"));
     }
   };
 

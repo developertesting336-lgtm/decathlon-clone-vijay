@@ -36,7 +36,12 @@ const NotifyMe = ({
     // Check session storage first for guests
     const guestStored = sessionStorage.getItem(`stock_notif_${productId}`);
     if (guestStored) {
-      setEmailInput(guestStored);
+      try {
+        const parsed = JSON.parse(guestStored);
+        setEmailInput(parsed.email || "");
+      } catch {
+        setEmailInput(guestStored);
+      }
       setIsSubscribed(true);
     }
 
@@ -210,7 +215,13 @@ const NotifyMe = ({
       }
 
       setIsSubscribed(true);
-      sessionStorage.setItem(`stock_notif_${productId}`, cleanEmail);
+      sessionStorage.setItem(
+        `stock_notif_${productId}`,
+        JSON.stringify({
+          email: cleanEmail,
+          subscriptionId: response.data?.subscription?._id || "",
+        })
+      );
       setShowModal(false);
     } catch (err) {
       console.error("Guest Stock Notification Error:", err);
@@ -235,7 +246,18 @@ const NotifyMe = ({
     if (loadingAction) return;
 
     const isAuth = checkIsAuthenticated();
-    const storedGuestEmail = emailInput || sessionStorage.getItem(`stock_notif_${productId}`);
+    let storedGuestEmail = emailInput;
+    let storedSubId = "";
+    const rawGuest = sessionStorage.getItem(`stock_notif_${productId}`);
+    if (rawGuest) {
+      try {
+        const parsed = JSON.parse(rawGuest);
+        storedGuestEmail = storedGuestEmail || parsed.email || "";
+        storedSubId = parsed.subscriptionId || "";
+      } catch {
+        storedGuestEmail = storedGuestEmail || rawGuest;
+      }
+    }
 
     try {
       setLoadingAction(true);
@@ -244,8 +266,10 @@ const NotifyMe = ({
       const config = {};
 
       if (!isAuth && storedGuestEmail) {
-        url += `?email=${encodeURIComponent(storedGuestEmail)}`;
-        config.data = { email: storedGuestEmail };
+        const params = new URLSearchParams({ email: storedGuestEmail });
+        if (storedSubId) params.set("subscriptionId", storedSubId);
+        url += `?${params.toString()}`;
+        config.data = { email: storedGuestEmail, subscriptionId: storedSubId };
       }
 
       await api.delete(url, config);

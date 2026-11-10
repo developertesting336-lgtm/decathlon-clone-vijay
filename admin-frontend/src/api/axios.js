@@ -53,4 +53,20 @@ api.interceptors.request.use(
   },
 );
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const reqUrl = error.config?.url || "";
+    if ((status === 401 || status === 403) && !reqUrl.includes("/auth/login")) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminUser");
+      if (typeof window !== "undefined" && window.location.pathname !== "/") {
+        window.location.href = "/";
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+
 export default api;

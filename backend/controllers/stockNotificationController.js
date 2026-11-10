@@ -215,22 +215,25 @@ export const unsubscribeFromStockNotification = async (req, res) => {
     const optionalUser = req.user || getOptionalUser(req);
     const userId = optionalUser?.id || optionalUser?._id;
     const email = req.query.email || req.body?.email;
+    const subscriptionId = req.query.subscriptionId || req.body?.subscriptionId;
 
     const filter = {
       product: productId,
     };
 
     if (userId) {
+      const userDoc = await User.findById(userId).select("email").lean();
       filter.$or = [
         { user: userId },
-        ...(email ? [{ email: String(email).trim().toLowerCase() }] : []),
+        ...(userDoc?.email ? [{ email: userDoc.email.toLowerCase() }] : []),
       ];
-    } else if (email) {
+    } else if (email && subscriptionId && mongoose.Types.ObjectId.isValid(subscriptionId)) {
+      filter._id = subscriptionId;
       filter.email = String(email).trim().toLowerCase();
     } else {
-      return res.status(400).json({
+      return res.status(401).json({
         success: false,
-        message: "User authentication or email address is required to unsubscribe",
+        message: "Authentication or a valid guest subscription token is required to unsubscribe",
       });
     }
 

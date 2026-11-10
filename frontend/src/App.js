@@ -18,6 +18,7 @@ import Profile from "./pages/Profile";
 import MyAccount from "./pages/MyAccount";
 import Wishlist from "./pages/Wishlist";
 import ProductDetail from "./pages/ProductDetail";
+import InfoPage from "./pages/InfoPage";
 import Support from "./pages/Support/Support";
 import SupportCategory from "./pages/Support/SupportCategory";
 import SupportTickets from "./pages/Support/SupportTickets";
@@ -138,6 +139,9 @@ function App() {
             <Route path="/support/tickets/:ticketId" element={<SupportTicketDetails />} />
             <Route path="/support/category/:categoryId" element={<SupportCategory />} />
             <Route path="/support/:id" element={<SupportCategory />} />
+            <Route path="/privacy" element={<InfoPage type="privacy" />} />
+            <Route path="/terms" element={<InfoPage type="terms" />} />
+            <Route path="/stores" element={<InfoPage type="stores" />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

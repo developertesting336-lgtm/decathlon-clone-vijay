@@ -22,8 +22,8 @@ const UserRegister = () => {
   const handleNext = async () => {
     const value = registerType === "email" ? email.trim() : phone.trim();
 
-    console.log("NEXT CLICKED");
-    console.log("Value:", value);
+    // Validate input
+    // Value extracted
 
     if (!value) {
       toast.error(
@@ -48,11 +48,11 @@ const UserRegister = () => {
               phone: value,
             };
 
-      console.log("Sending OTP:", payload);
+      // Dispatch registration OTP
 
       const response = await api.post("/registration/send-otp", payload);
 
-      console.log("OTP RESPONSE:", response.data);
+      // Registration OTP dispatched
 
       toast.success(response.data.message || "OTP sent successfully");
 
@@ -159,12 +159,12 @@ const UserRegister = () => {
             redirectTo="/"
           />
 
-          <button type="button" className="register-social-btn">
+            <button type="button" className="register-social-btn" onClick={() => toast("Please use Google Sign-In or Email OTP to register.")}>
             <FaFacebook className="register-facebook-icon" />
             <span>Continue with Facebook</span>
           </button>
 
-          <button type="button" className="register-social-btn">
+            <button type="button" className="register-social-btn" onClick={() => toast("Please use Google Sign-In or Email OTP to register.")}>
             <FaApple className="register-apple-icon" />
             <span>Continue with Apple</span>
           </button>

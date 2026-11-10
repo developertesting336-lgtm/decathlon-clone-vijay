@@ -87,10 +87,17 @@ const EXCHANGE_NEXT_ACTIONS = {
 const Orders = () => {
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
+  const searchParam = searchParams.get("search") || "";
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParam);
+
+  useEffect(() => {
+    if (searchParam) {
+      setSearch(searchParam);
+    }
+  }, [searchParam]);
   const [activeTab, setActiveTab] = useState(() => {
     if (tabParam === "returns") return "returns";
     if (tabParam === "exchanges") return "exchanges";
@@ -1152,7 +1159,7 @@ const Orders = () => {
           </div>
           <div className="tracking-meta-item">
             <span>Carrier</span>
-            <strong>{order.carrier || "Decathlon Demo Logistics"}</strong>
+            <strong>{order.carrier || "Decathlon Logistics"}</strong>
           </div>
           <div className="tracking-meta-item">
             <span>Current Location</span>

@@ -17,6 +17,9 @@ import {
   MdNotifications,
   MdLocalOffer,
   MdHelpCenter,
+  MdRateReview,
+  MdStraighten,
+  MdNotificationsActive,
 } from "react-icons/md";
 
 import api from "../api/axios";
@@ -118,6 +121,9 @@ const AdminLayout = ({ children }) => {
   const isNotificationsActive = location.pathname.startsWith("/notifications");
   const isProductsActive = location.pathname.startsWith("/products");
   const isCategoriesActive = location.pathname.startsWith("/categories");
+  const isReviewsActive = location.pathname.startsWith("/reviews");
+  const isSizeGuidesActive = location.pathname.startsWith("/size-guides");
+  const isStockAlertsActive = location.pathname.startsWith("/stock-alerts");
   const isOrdersActive = location.pathname.startsWith("/orders");
   const isCouponsActive = location.pathname.startsWith("/coupons");
   const isUsersActive = location.pathname.startsWith("/users");
@@ -236,6 +242,36 @@ const AdminLayout = ({ children }) => {
           >
             <MdCategory />
             {sidebarOpen && <span>Categories</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isSizeGuidesActive ? "active" : ""}
+            onClick={() => handleNav("/size-guides")}
+            title="Manage Size Guides"
+          >
+            <MdStraighten />
+            {sidebarOpen && <span>Size Guides</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isReviewsActive ? "active" : ""}
+            onClick={() => handleNav("/reviews")}
+            title="Customer Product Reviews"
+          >
+            <MdRateReview />
+            {sidebarOpen && <span>Reviews</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isStockAlertsActive ? "active" : ""}
+            onClick={() => handleNav("/stock-alerts")}
+            title="Restock Alert Subscribers"
+          >
+            <MdNotificationsActive />
+            {sidebarOpen && <span>Stock Alerts</span>}
           </button>
 
           {/* SECTION: COMMERCE & SALES */}

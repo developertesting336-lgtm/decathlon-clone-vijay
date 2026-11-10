@@ -101,7 +101,7 @@ export const createReview = async (req, res) => {
     try {
       const orderMatch = await Order.exists({
         user: userId,
-        "items.product": productId,
+        "orderItems.product": productId,
       });
       if (orderMatch) isVerifiedPurchase = true;
     } catch (orderErr) {
