@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   IoClose,
   IoSend,
@@ -112,6 +113,11 @@ const AiChatbot = () => {
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
   const [submittingTicket, setSubmittingTicket] = useState(false);
+  const [ticketContext, setTicketContext] = useState({
+    categoryId: null,
+    categoryTitle: "",
+    orderId: null,
+  });
 
   const [messages, setMessages] = useState(() => {
     try {
@@ -247,18 +253,59 @@ const AiChatbot = () => {
     }
   }, [isOpen, messages, scrollToBottom]);
 
-  // Support Step 9: Listen for global openLiveChat events with order context
+  // Support Step 9: Listen for global openLiveChat events with order or support category context
   useEffect(() => {
     const handleOpenLiveChat = (e) => {
       setIsOpen(true);
       setShowTooltip(false);
       setHasUnread(false);
-      const orderId = e.detail?.orderId;
+      const {
+        orderId = null,
+        orderNumber: rawOrderNumber = "",
+        categoryId = null,
+        categoryTitle = "",
+        openTicketForm = false,
+      } = e.detail || {};
+
       const orderNumber =
-        e.detail?.orderNumber || (orderId ? orderId.slice(-8).toUpperCase() : "");
+        rawOrderNumber || (orderId ? orderId.slice(-8).toUpperCase() : "");
+
+      setTicketContext({
+        categoryId: categoryId || null,
+        categoryTitle: categoryTitle || "",
+        orderId: orderId || null,
+      });
+
       if (orderId) {
         setInputMessage(`I need help with my Order #${orderNumber}`);
+        setTicketSubject(`Help with Order #${orderNumber}`);
+      } else if (categoryId || categoryTitle) {
+        const topicLabel = categoryTitle || "Customer Support";
+        const contextKey = `support_cat_${categoryId || topicLabel}`;
+        setTicketSubject(`${topicLabel} Assistance`);
+        setMessages((prev) => {
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg?.contextKey === contextKey) return prev;
+          return [
+            ...prev,
+            {
+              sender: "ai",
+              type: "human_support",
+              contextKey,
+              text: `You're connected to **${topicLabel}** Live Support.\n\nAsk your question below for instant help, or open an official support ticket directly with our team.`,
+              products: [],
+              orders: [],
+              suggestions: ["Track My Order", "Return a Product", "Talk to Support"],
+              timestamp: new Date().toISOString(),
+            },
+          ];
+        });
       }
+
+      if (openTicketForm) {
+        setShowTicketForm(true);
+      }
+
       setTimeout(() => inputRef.current?.focus(), 250);
     };
 
@@ -358,6 +405,9 @@ const AiChatbot = () => {
         subject: ticketSubject.trim(),
         message: ticketMessage.trim(),
         priority: "MEDIUM",
+        category: ticketContext.categoryId || ticketContext.categoryTitle || "general",
+        categoryTitle: ticketContext.categoryTitle || "",
+        orderId: ticketContext.orderId || null,
         guestName: currentUser ? currentUser.name || "" : guestName.trim(),
         guestEmail: currentUser ? currentUser.email || "" : guestEmail.trim(),
       };
@@ -368,7 +418,7 @@ const AiChatbot = () => {
         const confirmMsg = {
           sender: "ai",
           type: "human_support",
-          text: `✅ **Support Ticket Created!**\n\nYour Ticket ID is **#${ticket?.ticketId || "CONFIRMED"}**.\n\nOur Decathlon customer support team has received your request and will follow up with you promptly.`,
+          text: `✅ **Support Ticket Created!**\n\nYour Ticket ID is **#${ticket?.ticketId || "CONFIRMED"}**.\n\n${ticket?.autoReply ? `**${ticket.autoReply}**\n\n` : ""}Our Decathlon customer support team has received your request and will follow up with you promptly.`,
           ticket,
           products: [],
           orders: [],
@@ -379,13 +429,15 @@ const AiChatbot = () => {
         setShowTicketForm(false);
         setTicketSubject("");
         setTicketMessage("");
+        toast.success(`Support ticket #${ticket?.ticketId || "CONFIRMED"} created`);
       } else {
-        alert(res.data?.message || "Could not create support ticket");
+        toast.error(res.data?.message || "Could not create support ticket");
       }
     } catch (err) {
       console.error("Failed to submit support ticket:", err);
-      alert(
-        "Failed to submit ticket. Please check your connection or contact care.india@decathlon.com",
+      toast.error(
+        err.response?.data?.message ||
+          "Failed to submit ticket. Please check your connection or contact care.india@decathlon.com",
       );
     } finally {
       setSubmittingTicket(false);
@@ -912,6 +964,16 @@ const AiChatbot = () => {
                               Your support request is logged in our system. A
                               sports specialist will contact you shortly!
                             </p>
+                            {currentUser && (msg.ticket._id || msg.ticket.ticketId) && (
+                              <Link
+                                to={`/support/tickets/${msg.ticket._id || msg.ticket.ticketId}`}
+                                onClick={() => setIsOpen(false)}
+                                className="ai-chat-internal-link"
+                                style={{ display: "inline-block", marginTop: "8px" }}
+                              >
+                                View Ticket Status →
+                              </Link>
+                            )}
                           </div>
                         ) : (
                           <div className="ai-support-card-actions">

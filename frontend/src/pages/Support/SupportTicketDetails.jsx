@@ -50,12 +50,14 @@ const SupportTicketDetails = () => {
         setLoading(true);
         setError(null);
         const res = await api.get(`/support/tickets/${ticketId}`);
-        if (isMounted && res.data?.success && res.data?.ticket) {
+        if (!isMounted) return;
+        if (res.data?.success && res.data?.ticket) {
           setTicket(res.data.ticket);
         } else {
-          setError("Support ticket not found");
+          setError("Support ticket not found.");
         }
       } catch (err) {
+        if (!isMounted) return;
         console.error("Error fetching ticket details:", err);
         const status = err.response?.status;
         if (status === 403) {

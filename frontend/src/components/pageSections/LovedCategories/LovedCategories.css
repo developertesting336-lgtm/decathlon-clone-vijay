@@ -72,11 +72,35 @@
   text-align: center;
 }
 
-/* TABLET */
+/* TABLET & MOBILE - Smooth Horizontal Slide Track */
 @media (max-width: 900px) {
   .loved-categories-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+    padding: 2px 0 6px;
+  }
+
+  .loved-categories-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .loved-category-card {
+    flex: 0 0 220px;
+    width: 220px;
+    scroll-snap-align: start;
+  }
+
+  .loved-category-card:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
 
@@ -92,11 +116,12 @@
   }
 
   .loved-categories-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    gap: 10px;
   }
 
   .loved-category-card {
+    flex: 0 0 165px;
+    width: 165px;
     border-radius: 10px;
   }
 }
@@ -104,10 +129,12 @@
 /* SMALL MOBILE */
 @media (max-width: 360px) {
   .loved-categories-grid {
-    gap: 6px;
+    gap: 8px;
   }
 
   .loved-category-card {
+    flex: 0 0 148px;
+    width: 148px;
     border-radius: 8px;
   }
 }

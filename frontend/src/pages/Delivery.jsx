@@ -13,6 +13,7 @@ import {
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import AddressDrawer from "../components/AddressDrawer";
 import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
 import "../styles/Delivery.css";
@@ -308,8 +309,7 @@ const Delivery = () => {
           </button>
 
           <Link to="/" className="delivery-logo">
-            <span>D</span>
-            <strong>DECATHLON</strong>
+            <DecathlonLogo height={22} />
           </Link>
 
           <div />
@@ -517,31 +517,6 @@ const Delivery = () => {
               </div>
             </div>
 
-            <footer className="delivery-footer">
-              <Link to="/" className="delivery-footer-logo">
-                <span>D</span>
-                <strong>DECATHLON</strong>
-              </Link>
-
-              <div className="delivery-footer-links">
-                <a href="#terms">
-                  Terms of use
-                  <FiChevronRight />
-                </a>
-
-                <a href="#supply">
-                  Terms of supply
-                  <FiChevronRight />
-                </a>
-
-                <a href="#privacy">
-                  Privacy policy
-                  <FiChevronRight />
-                </a>
-              </div>
-
-              <span className="delivery-footer-copy">©2026 Decathlon</span>
-            </footer>
           </section>
 
           <aside className="delivery-right">
@@ -680,6 +655,31 @@ const Delivery = () => {
             </div>
           </aside>
         </div>
+
+          <footer className="delivery-footer">
+            <Link to="/" className="delivery-footer-logo">
+              <DecathlonLogo height={18} />
+            </Link>
+
+            <div className="delivery-footer-links">
+              <a href="#terms">
+                Terms of use
+                <FiChevronRight />
+              </a>
+
+              <a href="#supply">
+                Terms of supply
+                <FiChevronRight />
+              </a>
+
+              <a href="#privacy">
+                Privacy policy
+                <FiChevronRight />
+              </a>
+            </div>
+
+            <span className="delivery-footer-copy">©2026 Decathlon</span>
+          </footer>
       </main>
 
       <AddressDrawer

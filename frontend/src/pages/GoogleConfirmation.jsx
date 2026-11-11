@@ -5,6 +5,7 @@ import { FiCheck } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import "../styles/GoogleConfirmation.css";
 
 const GoogleConfirmation = () => {
@@ -114,8 +115,7 @@ const GoogleConfirmation = () => {
         </button>
 
         <Link to="/" className="google-confirm-logo">
-          <span className="google-confirm-logo-mark">D</span>
-          <span>DECATHLON</span>
+          <DecathlonLogo height={24} />
         </Link>
       </header>
 

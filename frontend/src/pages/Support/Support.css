@@ -125,6 +125,7 @@ body.support-drawer-body-locked {
   cursor: pointer;
   padding: 4px 0;
   text-decoration: none;
+  white-space: nowrap;
   font-family: inherit;
   transition: opacity 0.15s ease;
 }
@@ -823,18 +824,25 @@ body.support-drawer-body-locked {
   .support-header-container {
     padding: 0 12px;
     height: 52px;
+    gap: 8px;
+  }
+
+  .support-header-left {
+    gap: 10px;
+    flex-shrink: 0;
   }
 
   .support-decathlon-logo {
-    height: 20px;
+    height: 17px;
   }
 
   .support-header-right {
-    gap: 14px;
+    gap: 10px;
+    flex-shrink: 0;
   }
 
   .support-nav-text {
-    font-size: 13.5px;
+    font-size: 12.5px;
   }
 
   .support-search-hero {
@@ -874,6 +882,35 @@ body.support-drawer-body-locked {
   .support-category-card {
     min-height: unset;
     padding: 18px;
+  }
+}
+
+/* Narrow Mobile (max-width: 380px) */
+@media (max-width: 380px) {
+  .support-header-container {
+    padding: 0 10px;
+    gap: 6px;
+  }
+
+  .support-header-left {
+    gap: 8px;
+  }
+
+  .support-hamburger-bars {
+    width: 18px;
+    height: 12px;
+  }
+
+  .support-decathlon-logo {
+    height: 15px;
+  }
+
+  .support-header-right {
+    gap: 8px;
+  }
+
+  .support-nav-text {
+    font-size: 11.5px;
   }
 }
 
@@ -1241,31 +1278,79 @@ body.support-drawer-body-locked {
 }
 
 @media (max-width: 768px) {
+  .support-page {
+    overflow-x: hidden;
+  }
+
   .support-tickets-section {
-    padding: 0 14px 36px;
+    padding: 0 12px 28px;
   }
 
   .support-tickets-card {
-    padding: 18px 16px;
+    padding: 16px 14px;
     border-radius: 12px;
   }
 
   .support-tickets-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
   }
 
   .support-tickets-header > div:last-child {
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
 
   .support-tickets-chat-link {
     width: 100%;
     justify-content: center;
+    padding: 8px 10px;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 580px) {
+  .support-categories-section {
+    padding: 20px 12px 28px;
+  }
+
+  .support-quick-help-section {
+    padding: 14px 12px 24px;
+  }
+
+  .support-page-footer {
+    padding: 18px 14px 72px;
+  }
+
+  .support-page-footer-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .support-footer-right {
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .support-contact-btn {
+    padding: 6px 18px;
+    white-space: nowrap;
+  }
+
+  .support-legal-links {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 12px;
   }
 }
 
@@ -1276,25 +1361,30 @@ body.support-drawer-body-locked {
     gap: 6px;
   }
 
+  .support-ticket-item {
+    padding: 12px;
+  }
+
   .ticket-meta-row {
     gap: 8px;
     font-size: 11.5px;
   }
 
   .support-quick-help-card {
-    padding: 20px 14px;
+    padding: 18px 14px;
+    gap: 14px;
   }
 
   .support-quick-help-title {
-    font-size: 20px;
+    font-size: 19px;
   }
 
   .support-quick-help-desc {
-    font-size: 13.5px;
+    font-size: 13px;
   }
 
   .support-order-btn {
-    padding: 11px 16px;
-    font-size: 14px;
+    padding: 10px 14px;
+    font-size: 13.5px;
   }
 }

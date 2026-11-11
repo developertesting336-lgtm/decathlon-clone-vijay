@@ -14,7 +14,7 @@ import {
   getUserProfileHelp,
   createSupportRequest,
 } from "../services/aiSupportService.js";
-import { getIO } from "../socket/socketManager.js";
+import { emitSupportTicketUpdate } from "../socket/socketManager.js";
 
 /*
 =========================================================
@@ -1607,8 +1607,18 @@ SUPPORT TICKET CONTROLLERS
 // POST /api/ai/support-ticket
 export async function createUserSupportTicket(req, res) {
   try {
-    const userId = req.user?.id || null;
-    const { subject, category, message, priority, orderId, guestName, guestEmail } = req.body;
+    const userId = req.user?.id || req.user?._id || null;
+    const {
+      subject,
+      category,
+      categoryTitle,
+      issueType,
+      message,
+      priority,
+      orderId,
+      guestName,
+      guestEmail,
+    } = req.body;
 
     if (!subject || !message) {
       return res.status(400).json({
@@ -1617,9 +1627,18 @@ export async function createUserSupportTicket(req, res) {
       });
     }
 
+    if (!userId && !guestEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "Please log in or provide your email address to submit a support request.",
+      });
+    }
+
     const result = await createSupportRequest(userId, {
       subject,
       category: category || "general",
+      categoryTitle: categoryTitle || "",
+      issueType: issueType || "",
       message,
       priority: priority || "MEDIUM",
       orderId: orderId || null,
@@ -1628,7 +1647,7 @@ export async function createUserSupportTicket(req, res) {
     });
 
     if (!result.success) {
-      return res.status(500).json({ success: false, message: result.message });
+      return res.status(result.statusCode || 400).json({ success: false, message: result.message });
     }
 
     return res.status(201).json(result);
@@ -1648,7 +1667,7 @@ export async function getAdminSupportTickets(req, res) {
     const filter = {};
 
     if (status && status !== "ALL") {
-      filter.status = status.toUpperCase();
+      filter.status = status.toLowerCase();
     }
     if (category && category !== "ALL") {
       filter.category = category.toLowerCase();
@@ -1697,9 +1716,9 @@ export async function updateSupportTicketStatus(req, res) {
       });
     }
 
-    if (status) ticket.status = status.toUpperCase();
+    if (status) ticket.status = status.toLowerCase();
     if (adminNotes !== undefined) ticket.adminNotes = adminNotes;
-    if (priority) ticket.priority = priority.toUpperCase();
+    if (priority) ticket.priority = priority.toLowerCase();
 
     await ticket.save();
 
@@ -1709,13 +1728,7 @@ export async function updateSupportTicketStatus(req, res) {
 
     // Emit live update
     try {
-      const io = getIO();
-      if (io) {
-        io.emit("support_ticket_updated", {
-          ticket: updated,
-          timestamp: Date.now(),
-        });
-      }
+      emitSupportTicketUpdate("status_updated", updated);
     } catch (e) {}
 
     return res.json({

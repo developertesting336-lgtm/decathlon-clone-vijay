@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { openLocationPickerModal, useDeliveryLocation } from "../../../utils/deliveryLocation";
 import "./CategoryNav.css";
 
 const defaultMegaMenuData = {
@@ -231,6 +232,7 @@ const defaultMegaMenuData = {
 const CategoryNav = ({ section, data }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const navRef = useRef(null);
+  const { location: deliveryLocation, detecting: detectingLocation } = useDeliveryLocation();
 
   const megaMenuData = data?.megaMenu || section?.data?.megaMenu || defaultMegaMenuData;
 
@@ -294,9 +296,15 @@ const CategoryNav = ({ section, data }) => {
 
         <div className="delivery-location">
           <span>Delivery to</span>{" "}
-          <Link to="/account?tab=address">
-            Bangalore Central, Bangalore, 560001, Karnataka
-          </Link>
+          <button
+            type="button"
+            className="delivery-location-btn"
+            onClick={openLocationPickerModal}
+          >
+            {detectingLocation
+              ? "Detecting your location..."
+              : deliveryLocation.label}
+          </button>
         </div>
       </div>
 

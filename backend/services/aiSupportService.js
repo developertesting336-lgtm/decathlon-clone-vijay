@@ -4,8 +4,9 @@ import Category from "../models/Category.js";
 import Order from "../models/Order.js";
 import User from "../models/User.js";
 import AiKnowledge from "../models/AiKnowledge.js";
+import SupportCategory from "../models/SupportCategory.js";
 import SupportTicket from "../models/SupportTicket.js";
-import { getIO } from "../socket/socketManager.js";
+import { emitSupportTicketUpdate } from "../socket/socketManager.js";
 
 /*
 =========================================================
@@ -504,6 +505,49 @@ export async function getUserProfileHelp(userId) {
 8. SUPPORT TICKET CREATION & ESCALATION SERVICE
 =========================================================
 */
+const VALID_TICKET_ISSUE_TYPES = new Set([
+  "order",
+  "payment",
+  "delivery",
+  "return",
+  "exchange",
+  "refund",
+  "product",
+  "account",
+  "other",
+]);
+
+const ISSUE_TYPE_KEYWORDS = [
+  ["payment", "pay"],
+  ["order", "order"],
+  ["return", "return"],
+  ["refund", "refund"],
+  ["exchange", "exchang"],
+  ["delivery", "deliv"],
+  ["product", "product"],
+  ["account", "account"],
+];
+
+/**
+ * Resolve a normalized SupportTicket issueType from an explicit value or category/subject hints.
+ */
+export function resolveSupportIssueType(explicitIssueType, ...hints) {
+  const normalized = String(explicitIssueType || "").toLowerCase().trim();
+  if (VALID_TICKET_ISSUE_TYPES.has(normalized)) {
+    return normalized;
+  }
+
+  const combinedHint = hints
+    .filter(Boolean)
+    .map((h) => String(h).toLowerCase())
+    .join(" ");
+
+  const matched = ISSUE_TYPE_KEYWORDS.find(([, keyword]) =>
+    combinedHint.includes(keyword)
+  );
+  return matched ? matched[0] : "other";
+}
+
 export async function createSupportRequest(userId, ticketData) {
   if (!userId && !ticketData?.guestEmail) {
     return {
@@ -515,6 +559,8 @@ export async function createSupportRequest(userId, ticketData) {
   const {
     subject = "Customer Support Assistance",
     category = "general",
+    categoryTitle = "",
+    issueType = "",
     message = "Assistance requested via AI Support Assistant",
     priority = "MEDIUM",
     orderId = null,
@@ -525,25 +571,66 @@ export async function createSupportRequest(userId, ticketData) {
     const ticketId = `TIC-${randomCode}`;
 
     let orderObjectId = null;
-    if (orderId && mongoose.Types.ObjectId.isValid(orderId)) {
-      orderObjectId = new mongoose.Types.ObjectId(orderId);
-    }
+    if (orderId) {
+      if (!mongoose.Types.ObjectId.isValid(orderId)) {
+        return {
+          success: false,
+          statusCode: 400,
+          message: "Invalid order ID format.",
+        };
+      }
 
-    let validIssueType = "other";
-    const catLower = String(category || "").toLowerCase();
-    if (catLower.includes("pay")) validIssueType = "payment";
-    else if (catLower.includes("order")) validIssueType = "order";
-    else if (catLower.includes("return")) validIssueType = "return";
-    else if (catLower.includes("refund")) validIssueType = "refund";
-    else if (catLower.includes("exchang")) validIssueType = "exchange";
-    else if (catLower.includes("deliv")) validIssueType = "delivery";
-    else if (catLower.includes("product")) validIssueType = "product";
-    else if (catLower.includes("account")) validIssueType = "account";
+      if (!userId) {
+        return {
+          success: false,
+          statusCode: 401,
+          message: "Please log in to attach an order to a support request.",
+        };
+      }
+
+      const orderDoc = await Order.findById(orderId).select("user userId customer");
+      if (!orderDoc) {
+        return {
+          success: false,
+          statusCode: 400,
+          message: "Specified order was not found.",
+        };
+      }
+
+      const orderUserStr = (
+        orderDoc.user?._id ||
+        orderDoc.user ||
+        orderDoc.userId ||
+        orderDoc.customer
+      )?.toString();
+
+      if (!orderUserStr || orderUserStr !== String(userId)) {
+        return {
+          success: false,
+          statusCode: 403,
+          message: "You do not have permission to reference this order.",
+        };
+      }
+
+      orderObjectId = orderDoc._id;
+    }
 
     let categoryObjectId = null;
+    let resolvedCategoryTitle = categoryTitle;
     if (category && mongoose.Types.ObjectId.isValid(category)) {
-      categoryObjectId = new mongoose.Types.ObjectId(category);
+      const catDoc = await SupportCategory.findById(category).select("name title");
+      if (catDoc) {
+        categoryObjectId = catDoc._id;
+        resolvedCategoryTitle = resolvedCategoryTitle || catDoc.name || catDoc.title || "";
+      }
     }
+
+    const validIssueType = resolveSupportIssueType(
+      issueType,
+      resolvedCategoryTitle,
+      category,
+      subject
+    );
 
     const newTicket = await SupportTicket.create({
       user: userId || null,
@@ -559,20 +646,15 @@ export async function createSupportRequest(userId, ticketData) {
       status: "open",
     });
 
-    // Populate user info for admin
+    // Populate user, category, and order info for admin and customer dashboards
     const populated = await SupportTicket.findById(newTicket._id)
       .populate("user", "name email phone")
+      .populate("category", "name title")
       .populate("order", "totalAmount orderStatus");
 
-    // Real-time notification to store administrators via Socket.IO
+    // Real-time notification to store administrators & customer ticket views via Socket.IO
     try {
-      const io = getIO();
-      if (io) {
-        io.emit("support_ticket_created", {
-          ticket: populated,
-          timestamp: Date.now(),
-        });
-      }
+      emitSupportTicketUpdate("support_ticket_created", populated);
     } catch (socketErr) {
       // Non-fatal if socket not yet connected
     }
@@ -580,9 +662,11 @@ export async function createSupportRequest(userId, ticketData) {
     return {
       success: true,
       ticket: {
+        _id: newTicket._id,
         ticketId: newTicket.ticketId,
         subject: newTicket.subject,
         category: newTicket.category,
+        issueType: newTicket.issueType,
         status: newTicket.status,
         priority: newTicket.priority,
         createdAt: newTicket.createdAt,

@@ -115,17 +115,18 @@ const SupportCategory = () => {
     setOpenFaqId((prevId) => (prevId === id ? null : id));
   };
 
-  // Live Chat handler: Trigger existing AiChatbot launcher
-  // TODO (Step 6+): Connect directly with backend live chat ticketing API when ready
+  const categoryTitle = category?.name || category?.title || "Support Category";
+
+  // Live Chat handler: Open AiChatbot with category context and inline ticketing
   const handleLiveChat = () => {
-    const chatbotBtn = document.querySelector(
-      ".ai-chat-fab, .ai-launcher-btn, .ai-floating-trigger"
+    window.dispatchEvent(
+      new CustomEvent("openLiveChat", {
+        detail: {
+          categoryId: category?._id || targetCategoryId || null,
+          categoryTitle,
+        },
+      })
     );
-    if (chatbotBtn) {
-      chatbotBtn.click();
-    } else {
-      window.dispatchEvent(new CustomEvent("openLiveChat"));
-    }
   };
 
   const handleMyOrdersClick = () => {
@@ -145,8 +146,6 @@ const SupportCategory = () => {
       navigate("/login");
     }
   };
-
-  const categoryTitle = category?.name || category?.title || "Support Category";
 
   return (
     <div className="support-category-page">

@@ -14,6 +14,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import CartSizeModal from "../components/CartSizeModal";
 import AddressDrawer from "../components/AddressDrawer";
 import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
@@ -275,7 +276,7 @@ const Cart = () => {
       return;
     }
     if (quantity <= 1) {
-      toast.warning("Quantity cannot be less than 1");
+      toast.error("Quantity cannot be less than 1");
       return;
     }
     try {
@@ -386,7 +387,7 @@ const Cart = () => {
       return;
     }
     if (!selectedSize) {
-      toast.warning("Please select a size");
+      toast.error("Please select a size");
       return;
     }
     const productId = getProductId(selectedCartItem);
@@ -462,8 +463,7 @@ const Cart = () => {
             <span>Back to Shop</span>
           </button>
           <Link to="/" className="cart-logo">
-            <span className="cart-logo-mark">D</span>
-            <span>DECATHLON</span>
+            <DecathlonLogo height={22} />
           </Link>
         </header>
 
@@ -770,8 +770,7 @@ const Cart = () => {
 
         <footer className="cart-footer">
           <Link to="/" className="cart-footer-logo">
-            <span>D</span>
-            <strong>DECATHLON</strong>
+            <DecathlonLogo height={18} />
           </Link>
 
           <div className="cart-footer-links">

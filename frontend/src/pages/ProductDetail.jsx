@@ -21,6 +21,7 @@ import ProductReviews, { StarRating } from "../components/ProductReviews/Product
 import SizeGuide from "../components/SizeGuide/SizeGuide";
 import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
 import NotifyMe from "../components/NotifyMe/NotifyMe";
+import { openLocationPickerModal, useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/ProductDetail.css";
 
 const ProductDetail = () => {
@@ -38,8 +39,15 @@ const ProductDetail = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
 
-  // Pincode check
-  const [pincode, setPincode] = useState("560001");
+  // Pincode check synced with real-time delivery location
+  const { location: deliveryLocation, detecting: detectingLocation } = useDeliveryLocation();
+  const [pincode, setPincode] = useState(() => deliveryLocation.pincode || "560001");
+
+  useEffect(() => {
+    if (deliveryLocation?.pincode) {
+      setPincode(deliveryLocation.pincode);
+    }
+  }, [deliveryLocation?.pincode]);
 
   // Accordion triggers
   const [openAccordion, setOpenAccordion] = useState(null);
@@ -292,8 +300,17 @@ const ProductDetail = () => {
             <Link to="/category/kids">Kids</Link>
           </div>
 
-          <div className="pdp-location-indicator">
-            Delivery to <span className="blue-loc">Bangalore Central, Bangalore, {pincode}, Karnataka</span>
+          <div
+            className="pdp-location-indicator"
+            onClick={openLocationPickerModal}
+            style={{ cursor: "pointer" }}
+          >
+            Delivery to{" "}
+            <span className="blue-loc">
+              {detectingLocation
+                ? "Detecting your location..."
+                : deliveryLocation.label}
+            </span>
           </div>
         </div>
 

@@ -72,11 +72,35 @@
   font-size: 14px;
 }
 
-/* TABLET */
+/* TABLET & MOBILE - Smooth Horizontal Slide Track */
 @media (max-width: 900px) {
   .equipping-champions-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+    padding: 2px 0 6px;
+  }
+
+  .equipping-champions-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .equipping-champion-card {
+    flex: 0 0 220px;
+    width: 220px;
+    scroll-snap-align: start;
+  }
+
+  .equipping-champion-card:hover {
+    transform: none;
+    box-shadow: none;
   }
 }
 
@@ -92,11 +116,25 @@
   }
 
   .equipping-champions-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .equipping-champion-card {
+    flex: 0 0 165px;
+    width: 165px;
+    border-radius: 6px;
+  }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 360px) {
+  .equipping-champions-grid {
     gap: 8px;
   }
 
   .equipping-champion-card {
+    flex: 0 0 148px;
+    width: 148px;
     border-radius: 6px;
   }
 }

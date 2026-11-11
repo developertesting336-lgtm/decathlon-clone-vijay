@@ -24,6 +24,17 @@ const VALID_ISSUE_TYPES = [
 const VALID_STATUSES = ["open", "in_progress", "resolved", "closed"];
 const VALID_PRIORITIES = ["low", "medium", "high"];
 
+/**
+ * Look up a SupportTicket by MongoDB _id or custom ticketId (e.g. TIC-123456).
+ */
+export const findSupportTicketByIdentifier = async (ticketId) => {
+  if (!ticketId) return null;
+  if (mongoose.Types.ObjectId.isValid(ticketId)) {
+    return SupportTicket.findById(ticketId);
+  }
+  return SupportTicket.findOne({ ticketId });
+};
+
 /*
 ==================================================
 CUSTOMER CONTROLLERS
@@ -285,12 +296,7 @@ export const closeTicket = async (req, res) => {
     const userId = req.user?.id || req.user?._id;
     const { ticketId } = req.params;
 
-    let ticket = null;
-    if (mongoose.Types.ObjectId.isValid(ticketId)) {
-      ticket = await SupportTicket.findById(ticketId);
-    } else {
-      ticket = await SupportTicket.findOne({ ticketId });
-    }
+    const ticket = await findSupportTicketByIdentifier(ticketId);
 
     if (!ticket) {
       return res.status(404).json({
@@ -507,7 +513,7 @@ export const updateTicketStatus = async (req, res) => {
       });
     }
 
-    const ticket = await SupportTicket.findById(ticketId);
+    const ticket = await findSupportTicketByIdentifier(ticketId);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -605,7 +611,7 @@ export const updateTicketPriority = async (req, res) => {
       });
     }
 
-    const ticket = await SupportTicket.findById(ticketId);
+    const ticket = await findSupportTicketByIdentifier(ticketId);
     if (!ticket) {
       return res.status(404).json({
         success: false,
@@ -660,7 +666,7 @@ export const respondToTicket = async (req, res) => {
       });
     }
 
-    const ticket = await SupportTicket.findById(ticketId);
+    const ticket = await findSupportTicketByIdentifier(ticketId);
     if (!ticket) {
       return res.status(404).json({
         success: false,

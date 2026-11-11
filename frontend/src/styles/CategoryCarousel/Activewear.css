@@ -614,124 +614,132 @@
 @media (max-width: 768px) {
   .activewear-container {
     width: 100%;
-
-    padding:
-      10px
-      12px
-      28px;
-
-    gap: 22px;
+    padding: 10px 12px 28px;
+    gap: 18px;
   }
-
 
   /* CATEGORY */
 
-  .activewear-container
-  .category-carousel-title {
+  .activewear-container .category-carousel-title {
     margin-bottom: 10px;
-    font-size: 17px;
+    font-size: 16px;
   }
 
-  .activewear-container
-  .category-carousel-track--circle {
+  .activewear-container .category-carousel-track--circle {
     gap: 10px;
-
     padding-bottom: 2px;
-
     justify-content: flex-start;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .activewear-container
-  .category-carousel-card--circle {
-    min-width: 78px;
-    max-width: 82px;
-
-    flex: 0 0 78px;
+  .activewear-container .category-carousel-card--circle {
+    min-width: 74px;
+    max-width: 78px;
+    flex: 0 0 74px;
+    scroll-snap-align: start;
   }
 
-  .activewear-container
-  .category-carousel-circle-avatar {
-    width: 78px;
-    height: 78px;
-
+  .activewear-container .category-carousel-circle-avatar {
+    width: 74px;
+    height: 74px;
     margin-bottom: 6px;
   }
 
-  .activewear-container
-  .category-carousel-name {
+  .activewear-container .category-carousel-name {
     font-size: 11.5px;
   }
 
-
   /* BANNER */
 
-  .activewear-container
-  .promo-banner {
-    aspect-ratio: 3.25 / 1;
-
-    min-height: 140px;
-
+  .activewear-container .promo-banner {
+    aspect-ratio: 3 / 1;
+    min-height: 116px;
     border-radius: 10px;
   }
 
-  .activewear-container
-  .promo-slide img {
+  .activewear-container .promo-slide img {
     border-radius: 10px;
+    object-fit: cover;
+    object-position: left center;
   }
 
-  .activewear-container
-  .promo-arrow {
-    width: 30px;
-    height: 30px;
-
-    font-size: 13px;
+  .activewear-container .promo-arrow {
+    width: 24px;
+    height: 24px;
+    font-size: 11px;
+    background: rgba(255, 255, 255, 0.88);
   }
-
 
   /* PRODUCT SECTION */
 
-  .activewear-container
-  .product-section {
+  .activewear-container .product-section {
     flex-direction: column;
-
-    gap: 12px;
+    gap: 10px;
   }
 
-  .activewear-container
-  .product-section__sidebar,
-  .activewear-container
-  .product-section-left {
+  .activewear-container .product-section__sidebar,
+  .activewear-container .product-section-left {
     width: 100%;
     min-width: 0;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 10px;
   }
 
-  .activewear-container
-  .product-section__subtitle {
-    font-size: 14px;
-    margin-bottom: 4px;
+  .activewear-container .product-section__navigation,
+  .activewear-container .product-section-arrows {
+    margin-top: 0;
+    flex-shrink: 0;
   }
 
-  .activewear-container
-  .product-section__title {
-    font-size: 24px;
+  .activewear-container .product-section__nav-btn,
+  .activewear-container .product-arrow {
+    width: 30px;
+    height: 30px;
   }
 
+  .activewear-container .product-section__subtitle {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
 
-  /* STYLE CARDS */
+  .activewear-container .product-section__title {
+    font-size: 20px;
+    line-height: 1.15;
+    white-space: normal;
+  }
 
-  .activewear-container
-  .everyday-essentials-grid {
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
+  /* STYLE CARDS: SINGLE-ROW HORIZONTAL SWIPE TRACK */
 
+  .activewear-container .everyday-essentials-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .activewear-container .everyday-essentials-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     gap: 8px;
   }
 
-  .activewear-container
-  .everyday-essentials-card {
-    aspect-ratio: 1 / 1.05;
+  .activewear-container .everyday-essentials-grid::-webkit-scrollbar {
+    display: none;
+  }
 
+  .activewear-container .everyday-essentials-card {
+    flex: 0 0 calc((100% - 10px) / 2.2);
+    width: auto;
+    min-width: 0;
+    aspect-ratio: 1 / 1.05;
     border-radius: 10px;
+    scroll-snap-align: start;
   }
 }
 
@@ -742,57 +750,64 @@
 
 @media (max-width: 480px) {
   .activewear-container {
-    padding-left: 10px;
-    padding-right: 10px;
-
-    gap: 20px;
+    padding: 8px 10px 24px;
+    gap: 16px;
   }
 
-  .activewear-container
-  .category-carousel-card--circle {
-    min-width: 72px;
-    max-width: 74px;
-
-    flex-basis: 72px;
+  .activewear-container .category-carousel-track--circle {
+    gap: 8px;
   }
 
-  .activewear-container
-  .category-carousel-circle-avatar {
-    width: 72px;
-    height: 72px;
+  .activewear-container .category-carousel-card--circle {
+    min-width: 66px;
+    max-width: 68px;
+    flex: 0 0 66px;
   }
 
-  .activewear-container
-  .category-carousel-name {
+  .activewear-container .category-carousel-circle-avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .activewear-container .category-carousel-name {
     font-size: 11px;
   }
 
-  .activewear-container
-  .promo-banner {
+  .activewear-container .promo-banner {
     aspect-ratio: 3 / 1;
-
-    min-height: 120px;
-
+    min-height: 104px;
     border-radius: 8px;
   }
 
-  .activewear-container
-  .promo-slide img {
+  .activewear-container .promo-slide img {
     border-radius: 8px;
   }
 
-  .activewear-container
-  .product-section__title {
-    font-size: 21px;
+  .activewear-container .promo-arrow {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
   }
 
-  .activewear-container
-  .everyday-essentials-grid {
-    gap: 7px;
+  .activewear-container .promo-dot {
+    width: 5px;
+    height: 5px;
   }
 
-  .activewear-container
-  .everyday-essentials-card {
+  .activewear-container .promo-dot.active {
+    width: 12px;
+  }
+
+  .activewear-container .product-section__title {
+    font-size: 18px;
+  }
+
+  .activewear-container .everyday-essentials-grid {
+    gap: 8px;
+  }
+
+  .activewear-container .everyday-essentials-card {
+    flex: 0 0 calc((100% - 10px) / 2.2);
     border-radius: 8px;
   }
 }

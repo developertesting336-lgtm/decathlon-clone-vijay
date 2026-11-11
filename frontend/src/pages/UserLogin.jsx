@@ -8,6 +8,7 @@ import { FaFacebook, FaApple } from "react-icons/fa";
 import toast from "react-hot-toast";
 
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import GoogleAuthButton from "../components/auth/GoogleAuthButton";
 import "../styles/UserLogin.css";
 
@@ -112,15 +113,7 @@ const UserLogin = () => {
         </button>
 
         <div className="user-login-logo">
-
-          <span className="user-login-logo-mark">
-            D
-          </span>
-
-          <span>
-            DECATHLON
-          </span>
-
+          <DecathlonLogo height={24} />
         </div>
 
       </header>

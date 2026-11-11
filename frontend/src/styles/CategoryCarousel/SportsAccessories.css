@@ -402,3 +402,68 @@
     font-size: 9px;
   }
 }
+
+/* === MOBILE ROW CONSISTENCY OVERRIDES === */
+.sports-accessories-page {
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .sports-accessories-container {
+    width: calc(100% - 20px);
+    padding-bottom: 28px;
+  }
+
+  .sports-accessories-categories-section {
+    padding: 12px 0 18px;
+  }
+
+  .sports-accessories-categories-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 10px;
+  }
+
+  .sports-accessories-categories-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sports-accessories-category-card {
+    flex: 0 0 calc((100% - 20px) / 3.2);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .sports-accessories-category-title {
+    font-size: 11px;
+    line-height: 1.25;
+    margin-top: 6px;
+  }
+
+  .sports-accessories-banner-section {
+    margin-bottom: 18px;
+  }
+
+  .sports-accessories-banner-container {
+    aspect-ratio: 3 / 1;
+    min-height: 104px;
+    border-radius: 8px;
+  }
+
+  .sports-accessories-banner-image {
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+  }
+
+  .sports-accessories-banner-arrow {
+    width: 22px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.88);
+  }
+}

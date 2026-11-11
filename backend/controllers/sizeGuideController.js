@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import SizeGuide from "../models/SizeGuide.js";
 import Category from "../models/Category.js";
+import { isRequestAdmin } from "../middleware/authMiddleware.js";
 
 /**
  * GET ALL SIZE GUIDES
@@ -10,7 +11,7 @@ import Category from "../models/Category.js";
 export const getSizeGuides = async (req, res) => {
   try {
     const filter = {};
-    if (req.query.all !== "true" && req.user?.role !== "admin") {
+    if (!(req.query.all === "true" && isRequestAdmin(req))) {
       filter.isActive = true;
     }
     if (req.query.gender) {

@@ -403,3 +403,68 @@
     font-size: 9px;
   }
 }
+
+/* === MOBILE ROW CONSISTENCY OVERRIDES === */
+.bags-backpacks-page {
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .bags-backpacks-container {
+    width: calc(100% - 20px);
+    padding-bottom: 28px;
+  }
+
+  .bags-categories-section {
+    padding: 12px 0 18px;
+  }
+
+  .bags-categories-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 10px;
+  }
+
+  .bags-categories-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bags-category-card {
+    flex: 0 0 calc((100% - 20px) / 3.2);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .bags-category-title {
+    font-size: 11px;
+    line-height: 1.25;
+    margin-top: 6px;
+  }
+
+  .bags-banner-section {
+    margin-bottom: 18px;
+  }
+
+  .bags-banner-container {
+    aspect-ratio: 3 / 1;
+    min-height: 104px;
+    border-radius: 8px;
+  }
+
+  .bags-banner-image {
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+  }
+
+  .bags-banner-arrow {
+    width: 22px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.88);
+  }
+}

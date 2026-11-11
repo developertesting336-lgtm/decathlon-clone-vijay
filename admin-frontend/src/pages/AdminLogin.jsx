@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import "../styles/AdminLogin.css";
 
 import sports1 from "../assets/images/login/sports1.png";
@@ -95,7 +96,7 @@ const AdminLogin = () => {
         <div className="login-container">
 
           <div className="admin-logo">
-            <h2>DECATHLON</h2>
+            <DecathlonLogo height={24} />
           </div>
 
           <h1>Hello teammate!</h1>

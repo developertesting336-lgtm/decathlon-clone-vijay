@@ -136,12 +136,12 @@ const OutdoorProducts = () => {
       : [];
 
     if (sizes.length > 0 && !selectedSize) {
-      toast.warning("Please select a size");
+      toast.error("Please select a size");
       return;
     }
 
     if (Number(quantity) < 1) {
-      toast.warning("Quantity must be at least 1");
+      toast.error("Quantity must be at least 1");
       return;
     }
 

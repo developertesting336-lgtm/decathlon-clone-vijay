@@ -184,50 +184,69 @@
   }
 }
 
-/* Tablets (768px - 991px) - Clean 4 Columns x 2 Rows */
-@media (min-width: 768px) and (max-width: 991px) {
+/* Tablets & Mobile (<= 991px) - Smooth Horizontal Slide Track */
+@media (max-width: 991px) {
   .category-showcase {
     padding: 4px 0 6px;
   }
 
   .category-showcase-list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+    padding: 2px 0 6px;
+  }
+
+  .category-showcase-list::-webkit-scrollbar {
+    display: none;
   }
 
   .category-showcase-card {
+    flex: 0 0 130px;
+    width: 130px;
+    aspect-ratio: 1 / 1;
+    scroll-snap-align: start;
     border-radius: 7px;
   }
 }
 
-/* Phablets / Large Phones (576px - 767px) - 4 Columns x 2 Rows */
-@media (min-width: 576px) and (max-width: 767px) {
+/* Phablets / Large Phones (576px - 767px) */
+@media (max-width: 767px) {
   .category-showcase {
     padding: 3px 0 6px;
   }
 
   .category-showcase-list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 8px;
   }
 
   .category-showcase-card {
+    flex: 0 0 116px;
+    width: 116px;
     border-radius: 6px;
   }
 }
 
-/* Mobile Phones (361px - 575px) - 4 Columns x 2 Rows */
+/* Mobile Phones (361px - 575px) */
 @media (max-width: 575px) {
   .category-showcase {
     padding: 2px 0 5px;
   }
 
   .category-showcase-list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
+    gap: 8px;
   }
 
   .category-showcase-card {
+    flex: 0 0 98px;
+    width: 98px;
     border-radius: 6px;
   }
 
@@ -250,11 +269,12 @@
   }
 
   .category-showcase-list {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 5px;
+    gap: 6px;
   }
 
   .category-showcase-card {
+    flex: 0 0 90px;
+    width: 90px;
     border-radius: 5px;
   }
 
@@ -273,10 +293,12 @@
 /* Ultra Small Screens (<= 280px) */
 @media (max-width: 280px) {
   .category-showcase-list {
-    gap: 4px;
+    gap: 5px;
   }
 
   .category-showcase-card {
+    flex: 0 0 78px;
+    width: 78px;
     border-radius: 4px;
   }
 }

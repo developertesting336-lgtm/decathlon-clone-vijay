@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/pageSections/Footer/Footer";
+import "../styles/InfoPage.css";
 
 const INFO_CONTENT = {
   privacy: {
@@ -64,27 +65,27 @@ const InfoPage = ({ type = "privacy" }) => {
   const info = INFO_CONTENT[type] || INFO_CONTENT.privacy;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#f8fafc" }}>
+    <div className="info-page">
       <Navbar />
-      <main style={{ flex: 1, maxWidth: 920, width: "100%", margin: "32px auto", padding: "0 20px" }}>
-        <div style={{ background: "#fff", borderRadius: 12, padding: 32, border: "1px solid #e2e8f0" }}>
-          <h1 style={{ margin: "0 0 8px", color: "#0f172a", fontSize: 28 }}>{info.title}</h1>
-          <p style={{ margin: "0 0 24px", color: "#64748b", fontSize: 15 }}>{info.subtitle}</p>
+      <main className="info-main">
+        <div className="info-card">
+          <h1 className="info-title">{info.title}</h1>
+          <p className="info-subtitle">{info.subtitle}</p>
 
-          <div style={{ display: "grid", gap: 20 }}>
+          <div className="info-sections">
             {info.sections.map((sec) => (
-              <section key={sec.heading}>
-                <h2 style={{ margin: "0 0 6px", fontSize: 18, color: "#0082c3" }}>{sec.heading}</h2>
-                <p style={{ margin: 0, lineHeight: 1.6, color: "#334155", fontSize: 15 }}>{sec.body}</p>
+              <section key={sec.heading} className="info-section">
+                <h2>{sec.heading}</h2>
+                <p>{sec.body}</p>
               </section>
             ))}
           </div>
 
-          <div style={{ marginTop: 28, display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Link to="/" style={{ padding: "10px 18px", background: "#0082c3", color: "#fff", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
+          <div className="info-actions">
+            <Link to="/" className="info-btn-primary">
               Back to Storefront
             </Link>
-            <Link to="/support" style={{ padding: "10px 18px", background: "#f1f5f9", color: "#0f172a", borderRadius: 8, textDecoration: "none", fontWeight: 600 }}>
+            <Link to="/support" className="info-btn-secondary">
               Visit Support Center
             </Link>
           </div>

@@ -7,6 +7,7 @@ import { notifyRestockedSubscribers } from "../services/restockNotificationServi
 
 import { getMultipleImageUrls } from "../utils/uploadToCloudinary.js";
 import { clearCategoriesCache } from "./categoryController.js";
+import { isRequestAdmin } from "../middleware/authMiddleware.js";
 
 /*
 ========================================
@@ -394,7 +395,8 @@ const getProducts = async (req, res) => {
     ACTIVE PRODUCTS
     */
 
-    if (admin !== "true") {
+    const isAdmin = admin === "true" && isRequestAdmin(req);
+    if (!isAdmin) {
       filter.isActive = true;
     }
 

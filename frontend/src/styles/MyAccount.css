@@ -3014,28 +3014,60 @@
   }
 }
 
+.floating-decathlon,
+.floating-close {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
   .orders-header {
     height: 60px;
     padding: 0 12px;
   }
 
+  .orders-main {
+    padding: 12px 0 68px;
+  }
+
   .orders-layout {
-    max-width: calc(100% - 16px);
-    margin-top: 12px;
+    width: calc(100% - 16px);
+    max-width: none;
+    margin-top: 0;
+    gap: 10px;
   }
 
   .sidebar-menu {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 6px;
+    padding: 8px;
+    margin-top: 8px;
+    border-radius: 6px;
+  }
+
+  .sidebar-menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  .sidebar-item {
+    width: auto;
+    flex: 0 0 auto;
+    height: 34px;
+    padding: 0 11px;
+    gap: 7px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 
   .orders-tabs {
     height: auto;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    min-height: auto;
+    flex-wrap: wrap;
     display: flex;
-    padding: 8px 12px;
+    padding: 10px 12px;
     gap: 8px;
   }
 
@@ -3044,31 +3076,65 @@
   }
 
   .order-card {
-    padding: 14px;
+    padding: 0;
   }
 
-  .order-item-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
+  .order-card-header {
+    padding: 12px 14px;
+    gap: 8px;
   }
 
-  .order-item-image {
-    width: 80px;
-    height: 80px;
+  .order-card-body {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .order-card-item {
+    gap: 10px;
+    padding-bottom: 10px;
+  }
+
+  .order-item-img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .order-item-name {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size: 13px;
+  }
+
+  .order-card-footer {
+    padding: 12px 14px;
+    gap: 10px;
   }
 
   .order-actions {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 100%;
     gap: 8px;
   }
 
   .order-actions button,
   .order-actions a {
-    flex: 1 1 calc(50% - 4px);
+    width: 100%;
     text-align: center;
     justify-content: center;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .address-section-card {
+    padding: 14px 12px;
+  }
+
+  .address-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .return-details-card,
@@ -3079,31 +3145,51 @@
 
 @media (max-width: 480px) {
   .orders-layout {
-    max-width: 100%;
-    padding: 0 8px;
+    width: calc(100% - 16px);
+    max-width: none;
+    padding: 0;
   }
 
   .orders-phone-box {
-    font-size: 11px;
+    height: 40px;
+    font-size: 12px;
     padding: 0 12px;
+    border-radius: 6px;
+  }
+
+  .loyalty-box {
+    min-height: auto;
+    margin-top: 8px;
+    padding-bottom: 10px;
+    border-radius: 6px;
   }
 
   .loyalty-heading {
-    padding: 0 14px;
+    height: 42px;
+    padding: 0 12px;
+  }
+
+  .loyalty-heading strong,
+  .loyalty-heading span {
+    font-size: 14px;
   }
 
   .loyalty-box p {
-    margin: 8px 14px;
+    margin: 6px 12px 10px;
     font-size: 12px;
+    line-height: 1.4;
   }
 
   .loyalty-box button {
-    margin: 0 14px 12px;
+    width: calc(100% - 24px);
+    height: 32px;
+    margin: 0 12px;
+    font-size: 11px;
   }
 
-  .order-actions button,
-  .order-actions a {
-    flex: 1 1 100%;
+  .order-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
   }
 
   .order-card-header {
@@ -3212,16 +3298,30 @@
 }
 
 @media (max-width: 600px) {
+  .order-card-help-bar {
+    margin-top: 10px;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
   .order-card-help-actions,
   .modal-order-help-actions {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
   }
 
   .order-help-btn {
     width: 100%;
     justify-content: center;
-    padding: 8px 12px;
+    padding: 7px 6px;
+    font-size: 11px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .order-help-btn.highlight {
+    grid-column: 1 / -1;
   }
 }
 

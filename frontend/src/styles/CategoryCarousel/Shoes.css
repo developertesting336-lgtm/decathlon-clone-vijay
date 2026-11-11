@@ -632,3 +632,111 @@
     flex-basis: 90%;
   }
 }
+
+/* === MOBILE ROW CONSISTENCY OVERRIDES === */
+.shoes-page {
+  overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .shoes-container {
+    width: calc(100% - 20px);
+    padding-bottom: 28px;
+  }
+
+  .shoes-categories-section {
+    padding: 12px 0 18px;
+  }
+
+  .shoes-categories-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 10px;
+  }
+
+  .shoes-categories-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shoes-category-card {
+    flex: 0 0 calc((100% - 20px) / 3.2);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .shoes-category-title {
+    font-size: 11px;
+    line-height: 1.25;
+    margin-top: 6px;
+  }
+
+  .shoes-banner-section {
+    margin-bottom: 18px;
+  }
+
+  .shoes-banner-container {
+    aspect-ratio: 3 / 1;
+    min-height: 104px;
+    border-radius: 8px;
+  }
+
+  .shoes-banner-image {
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+  }
+
+  .shoes-banner-arrow {
+    width: 22px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.88);
+  }
+
+  .shoes-move-section {
+    margin-bottom: 20px;
+  }
+
+  .shoes-move-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .shoes-move-card {
+    flex: 0 0 calc((100% - 10px) / 2.2);
+    border-radius: 10px;
+    scroll-snap-align: start;
+  }
+
+  .shoes-family-section {
+    margin-bottom: 24px;
+  }
+
+  .shoes-family-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+  }
+
+  .shoes-family-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .shoes-family-card {
+    flex: 0 0 calc((100% - 10px) / 2.2);
+    min-width: 0;
+    border-radius: 10px;
+    scroll-snap-align: start;
+  }
+}

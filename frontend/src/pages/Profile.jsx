@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import "../styles/Profile.css";
 
 const getAuthConfig = () => {
@@ -343,10 +344,7 @@ const Profile = () => {
       ================================================== */}
       <header className="profile-header">
         <Link to="/" className="decathlon-logo" style={{ textDecoration: "none" }}>
-          <div className="decathlon-logo-mark">
-            <span></span>
-          </div>
-          <span className="decathlon-logo-text">DECATHLON</span>
+          <DecathlonLogo height={24} />
         </Link>
       </header>
 
@@ -659,10 +657,7 @@ const Profile = () => {
               {/* DIGITAL CARD */}
               <div className="decathlon-digital-card">
                 <div className="digital-card-logo">
-                  <div className="decathlon-logo-mark">
-                    <span></span>
-                  </div>
-                  <span className="decathlon-logo-text">DECATHLON</span>
+                  <DecathlonLogo height={26} />
                 </div>
 
                 <div className="digital-card-barcode-box">

@@ -25,6 +25,7 @@ import {
 import api from "../api/axios";
 import socket from "../socket/socket";
 import "../styles/AdminLayout.css";
+import DecathlonLogo from "./DecathlonLogo";
 import AdminNotificationBell from "./AdminNotificationBell";
 
 const AdminLayout = ({ children }) => {
@@ -153,7 +154,7 @@ const AdminLayout = ({ children }) => {
           {sidebarOpen ? (
             <>
               <div className="sidebar-brand" onClick={() => handleNav("/dashboard")}>
-                <span className="brand-logo">DECATHLON</span>
+                <DecathlonLogo height={18} />
                 <span className="brand-badge">ENTERPRISE</span>
               </div>
               <button
@@ -378,7 +379,7 @@ const AdminLayout = ({ children }) => {
               onClick={() => handleNav("/dashboard")}
               title="Decathlon Admin Dashboard"
             >
-              <span className="brand-logo">DECATHLON</span>
+              <DecathlonLogo height={16} />
               <span className="brand-badge">ADMIN</span>
             </div>
           </div>

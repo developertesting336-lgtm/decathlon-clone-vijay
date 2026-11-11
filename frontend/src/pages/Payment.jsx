@@ -24,6 +24,7 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import toast from "react-hot-toast";
 
 import "../styles/Payment.css";
@@ -60,6 +61,144 @@ const formatPrice = (price) => {
    STRIPE PAYMENT FORM
 ===================================================== */
 
+const PaymentModalShell = ({
+  order,
+  title,
+  processing,
+  errorMessage,
+  submitDisabled,
+  onClose,
+  onSubmit,
+  children,
+}) => (
+  <div className="stripe-modal-overlay">
+    <div className="stripe-payment-modal">
+      <div className="stripe-modal-header">
+        <div>
+          <h2>Complete Payment - {title}</h2>
+          <span>Order #{order._id.slice(-8)}</span>
+        </div>
+
+        <button
+          type="button"
+          className="stripe-close-btn"
+          onClick={onClose}
+          disabled={processing}
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="stripe-modal-body">
+        <div className="stripe-payment-total">
+          <span>Amount to pay</span>
+          <strong>{formatPrice(order.totalAmount)}</strong>
+        </div>
+
+        <form className="stripe-payment-form" onSubmit={onSubmit}>
+          {children}
+
+          {errorMessage && (
+            <div className="stripe-payment-error">{errorMessage}</div>
+          )}
+
+          <button
+            type="submit"
+            className="stripe-submit-btn"
+            disabled={submitDisabled}
+          >
+            {processing
+              ? "PROCESSING PAYMENT..."
+              : `PAY ${formatPrice(order.totalAmount)}`}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+);
+
+const AlternativePaymentModal = ({
+  order,
+  selectedMethod,
+  selectedBank,
+  selectedPayLater,
+  payLaterMobile,
+  onClose,
+  onSuccess,
+}) => {
+  const [processing, setProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const title =
+    selectedMethod === "netbanking"
+      ? `Netbanking (${(selectedBank || "Bank").toUpperCase()})`
+      : `Pay Later (${selectedPayLater.toUpperCase()})`;
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      setProcessing(true);
+      setErrorMessage("");
+
+      const response = await api.put(
+        `/orders/${order._id}/confirm-online`,
+        { paymentMethod: selectedMethod.toUpperCase() },
+        getAuthConfig(),
+      );
+
+      const confirmedOrder = response.data?.order || order;
+      toast.success(`${selectedMethod.toUpperCase()} Payment successful!`);
+      onSuccess(confirmedOrder._id || order._id);
+    } catch (error) {
+      console.error("Alternative Payment Error:", error);
+      const message =
+        error.response?.data?.message || "Payment processing failed";
+      setErrorMessage(message);
+      toast.error(message);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <PaymentModalShell
+      order={order}
+      title={title}
+      processing={processing}
+      errorMessage={errorMessage}
+      submitDisabled={processing}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+    >
+      {selectedMethod === "netbanking" ? (
+        <div className="custom-modal-panel">
+          <div className="modal-method-icon bank-icon">🏦</div>
+          <h4>
+            Paying via {(selectedBank || "Bank").toUpperCase()} Netbanking
+          </h4>
+          <p className="modal-help-text">
+            You are being redirected to your bank's portal. Please do not close
+            or refresh this window.
+          </p>
+        </div>
+      ) : (
+        <div className="custom-modal-panel">
+          <div className="modal-method-icon paylater-icon">💳</div>
+          <h4>Paying via {selectedPayLater.toUpperCase()} Pay Later</h4>
+          {payLaterMobile && (
+            <p className="mobile-display">
+              Mobile: <strong>+91 {payLaterMobile}</strong>
+            </p>
+          )}
+          <p className="modal-help-text">
+            Instant credit limit verified. Click below to complete checkout.
+          </p>
+        </div>
+      )}
+    </PaymentModalShell>
+  );
+};
+
 const StripePaymentForm = ({
   order,
   clientSecret,
@@ -67,9 +206,6 @@ const StripePaymentForm = ({
   selectedUpiApp,
   vpaId,
   upiOption,
-  selectedBank,
-  selectedPayLater,
-  payLaterMobile,
   onClose,
   onSuccess,
 }) => {
@@ -161,7 +297,6 @@ const StripePaymentForm = ({
         setProcessing(false);
       }
     } else if (selectedMethod === "upi") {
-      // REAL STRIPE TEST MODE UPI PAYMENT FLOW
       if (!stripe) {
         toast.error("Stripe is still loading. Please wait.");
         return;
@@ -175,7 +310,7 @@ const StripePaymentForm = ({
       try {
         setProcessing(true);
         setErrorMessage("");
-        setSimulatedStep(1); // 1. Sending Request
+        setSimulatedStep(1);
 
         const customerName =
           `${order.shippingAddress?.firstName || ""} ${order.shippingAddress?.lastName || ""}`.trim() ||
@@ -191,10 +326,8 @@ const StripePaymentForm = ({
         const state = cityStateParts[1]?.trim() || "Karnataka";
         const postalCode = order.shippingAddress?.pincode || "560001";
 
-        // Progress to confirming state
-        setSimulatedStep(2); // 2. Confirming Payment
+        setSimulatedStep(2);
 
-        // Confirm UPI payment using real Stripe test mode flow
         const result = await stripe.confirmPayment({
           clientSecret,
           confirmParams: {
@@ -215,7 +348,6 @@ const StripePaymentForm = ({
           },
         });
 
-        // If Stripe returns an error immediately
         if (result?.error) {
           console.error("Stripe UPI Error:", result.error);
           const message = result.error.message || "UPI payment failed";
@@ -226,9 +358,6 @@ const StripePaymentForm = ({
           return;
         }
 
-        // Stripe will automatically redirect the user to Stripe's hosted UPI instructions
-        // (with test QR code and 'Simulate scan' / test authorization buttons).
-        // If Stripe does not redirect, verify status directly:
         if (result?.paymentIntent?.status === "succeeded") {
           const response = await api.post(
             "/payment/verify-payment",
@@ -256,55 +385,24 @@ const StripePaymentForm = ({
         setProcessing(false);
         setSimulatedStep(1);
       }
-    } else {
-      // NON-STRIPE METHODS (Netbanking, PayLater)
-      try {
-        setProcessing(true);
-        setSimulatedStep(2);
-
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        // Confirm order payment on backend
-        const response = await api.put(
-          `/orders/${order._id}/confirm-online`,
-          { paymentMethod: selectedMethod.toUpperCase() },
-          getAuthConfig(),
-        );
-
-        const confirmedOrder = response.data?.order || order;
-        toast.success(`${selectedMethod.toUpperCase()} Payment successful!`);
-        onSuccess(confirmedOrder._id || order._id);
-      } catch (error) {
-        console.error("Alternative Payment Error:", error);
-        toast.error(error.response?.data?.message || "Payment processing failed");
-      } finally {
-        setProcessing(false);
-      }
     }
   };
 
   const getMethodTitle = () => {
-    switch (selectedMethod) {
-      case "upi": {
-        const appMap = {
-          gpay: "GPAY",
-          phonepe: "PHONEPE",
-          paytm: "PAYTM",
-          bhim: "BHIM",
-        };
-        const appName =
-          upiOption === "apps"
-            ? appMap[selectedUpiApp] || "GPAY"
-            : vpaId || "VPA";
-        return `UPI (${appName})`;
-      }
-      case "netbanking":
-        return `Netbanking (${(selectedBank || "Bank").toUpperCase()})`;
-      case "paylater":
-        return `Pay Later (${selectedPayLater.toUpperCase()})`;
-      default:
-        return "Credit / Debit Card";
+    if (selectedMethod === "upi") {
+      const appMap = {
+        gpay: "GPAY",
+        phonepe: "PHONEPE",
+        paytm: "PAYTM",
+        bhim: "BHIM",
+      };
+      const appName =
+        upiOption === "apps"
+          ? appMap[selectedUpiApp] || "GPAY"
+          : vpaId || "VPA";
+      return `UPI (${appName})`;
     }
+    return "Credit / Debit Card";
   };
 
   const getUpiDisplayName = () => {
@@ -319,122 +417,59 @@ const StripePaymentForm = ({
   };
 
   return (
-    <div className="stripe-modal-overlay">
-      <div className="stripe-payment-modal">
-        <div className="stripe-modal-header">
-          <div>
-            <h2>Complete Payment - {getMethodTitle()}</h2>
-            <span>Order #{order._id.slice(-8)}</span>
+    <PaymentModalShell
+      order={order}
+      title={getMethodTitle()}
+      processing={processing}
+      errorMessage={errorMessage}
+      submitDisabled={
+        selectedMethod === "card"
+          ? !stripe || !elements || !stripeReady || processing
+          : !stripe || processing
+      }
+      onClose={onClose}
+      onSubmit={handleSubmit}
+    >
+      {selectedMethod === "card" ? (
+        <div className="stripe-element-wrapper">
+          {!stripeReady && (
+            <div className="stripe-element-loading">
+              Loading secure payment form...
+            </div>
+          )}
+          <PaymentElement
+            onReady={handleStripeReady}
+            onLoadError={handleStripeLoadError}
+          />
+        </div>
+      ) : (
+        <div className="custom-modal-panel">
+          <div className="modal-method-icon upi-icon">📲</div>
+          <h4>Paying via {getUpiDisplayName()}</h4>
+          {upiOption === "vpa" && (
+            <p className="vpa-display">
+              ID: <strong>{vpaId || "user@upi"}</strong>
+            </p>
+          )}
+
+          <div className="upi-progress-box">
+            <div className={`step-dot ${simulatedStep >= 1 ? "done" : ""}`}>
+              1. Sending Request
+            </div>
+            <div className="step-line" />
+            <div className={`step-dot ${simulatedStep >= 2 ? "done" : ""}`}>
+              2. Confirming Payment
+            </div>
           </div>
 
-          <button
-            type="button"
-            className="stripe-close-btn"
-            onClick={onClose}
-            disabled={processing}
-          >
-            ×
-          </button>
+          <p className="modal-help-text">
+            {processing
+              ? "Connecting to Stripe Test Mode UPI simulator... Please wait."
+              : "Click below to proceed to Stripe Test Mode UPI authorization."}
+          </p>
         </div>
-
-        <div className="stripe-modal-body">
-          <div className="stripe-payment-total">
-            <span>Amount to pay</span>
-            <strong>{formatPrice(order.totalAmount)}</strong>
-          </div>
-
-          <form className="stripe-payment-form" onSubmit={handleSubmit}>
-            {selectedMethod === "card" ? (
-              <div className="stripe-element-wrapper">
-                {!stripeReady && (
-                  <div className="stripe-element-loading">
-                    Loading secure payment form...
-                  </div>
-                )}
-                <PaymentElement
-                  onReady={handleStripeReady}
-                  onLoadError={handleStripeLoadError}
-                />
-              </div>
-            ) : selectedMethod === "upi" ? (
-              <div className="custom-modal-panel">
-                <div className="modal-method-icon upi-icon">📲</div>
-                <h4>Paying via {getUpiDisplayName()}</h4>
-                {upiOption === "vpa" && (
-                  <p className="vpa-display">
-                    ID: <strong>{vpaId || "user@upi"}</strong>
-                  </p>
-                )}
-
-                <div className="upi-progress-box">
-                  <div
-                    className={`step-dot ${simulatedStep >= 1 ? "done" : ""}`}
-                  >
-                    1. Sending Request
-                  </div>
-                  <div className="step-line" />
-                  <div
-                    className={`step-dot ${simulatedStep >= 2 ? "done" : ""}`}
-                  >
-                    2. Confirming Payment
-                  </div>
-                </div>
-
-                <p className="modal-help-text">
-                  {processing
-                    ? "Connecting to Stripe Test Mode UPI simulator... Please wait."
-                    : "Click below to proceed to Stripe Test Mode UPI authorization."}
-                </p>
-              </div>
-            ) : selectedMethod === "netbanking" ? (
-              <div className="custom-modal-panel">
-                <div className="modal-method-icon bank-icon">🏦</div>
-                <h4>
-                  Paying via {(selectedBank || "Bank").toUpperCase()} Netbanking
-                </h4>
-                <p className="modal-help-text">
-                  You are being redirected to your bank's portal. Please do not
-                  close or refresh this window.
-                </p>
-              </div>
-            ) : (
-              <div className="custom-modal-panel">
-                <div className="modal-method-icon paylater-icon">💳</div>
-                <h4>Paying via {selectedPayLater.toUpperCase()} Pay Later</h4>
-                {payLaterMobile && (
-                  <p className="mobile-display">
-                    Mobile: <strong>+91 {payLaterMobile}</strong>
-                  </p>
-                )}
-                <p className="modal-help-text">
-                  Instant credit limit verified. Click below to complete checkout.
-                </p>
-              </div>
-            )}
-
-            {errorMessage && (
-              <div className="stripe-payment-error">{errorMessage}</div>
-            )}
-
-            <button
-              type="submit"
-              className="stripe-submit-btn"
-              disabled={
-                selectedMethod === "card"
-                  ? !stripe || !elements || !stripeReady || processing
-                  : selectedMethod === "upi"
-                    ? !stripe || processing
-                    : processing
-              }
-            >
-              {processing
-                ? "PROCESSING PAYMENT..."
-                : `PAY ${formatPrice(order.totalAmount)}`}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
+      )}
+    </PaymentModalShell>
   );
 };
 /* =====================================================
@@ -473,6 +508,8 @@ const Payment = () => {
   const [clientSecret, setClientSecret] = useState("");
 
   const [showStripe, setShowStripe] = useState(false);
+
+  const [showAltModal, setShowAltModal] = useState(false);
 
   const [rewardEnabled, setRewardEnabled] = useState(false);
 
@@ -647,14 +684,6 @@ const Payment = () => {
       return;
     }
 
-    if (!stripePromise) {
-      toast.error("Stripe is not configured");
-
-      console.error("REACT_APP_STRIPE_PUBLISHABLE_KEY is missing");
-
-      return;
-    }
-
     if (order.paymentStatus === "paid") {
       toast.success("Order is already paid");
 
@@ -663,6 +692,31 @@ const Payment = () => {
 
     if (order.orderStatus === "cancelled") {
       toast.error("This order is cancelled");
+
+      return;
+    }
+
+    if (selectedMethod === "netbanking" || selectedMethod === "paylater") {
+      if (selectedMethod === "netbanking" && !selectedBank) {
+        toast.error("Please select a bank");
+        return;
+      }
+      if (
+        selectedMethod === "paylater" &&
+        payLaterMobile.trim() &&
+        !/^\d{10}$/.test(payLaterMobile.trim())
+      ) {
+        toast.error("Please enter a valid 10-digit mobile number");
+        return;
+      }
+      setShowAltModal(true);
+      return;
+    }
+
+    if (!stripePromise) {
+      toast.error("Stripe is not configured");
+
+      console.error("REACT_APP_STRIPE_PUBLISHABLE_KEY is missing");
 
       return;
     }
@@ -840,9 +894,7 @@ const Payment = () => {
 
         <header className="payment-header">
           <Link to="/" className="payment-logo">
-            <span>D</span>
-
-            <strong>DECATHLON</strong>
+            <DecathlonLogo height={22} />
           </Link>
 
           <div className="secure-payment">
@@ -1368,9 +1420,6 @@ const Payment = () => {
             selectedUpiApp={selectedUpiApp}
             vpaId={vpaId}
             upiOption={upiOption}
-            selectedBank={selectedBank}
-            selectedPayLater={selectedPayLater}
-            payLaterMobile={payLaterMobile}
             onClose={() => {
               setShowStripe(false);
               setClientSecret("");
@@ -1379,6 +1428,20 @@ const Payment = () => {
           />
         </Elements>
       )}
+
+      {showAltModal &&
+        order &&
+        (selectedMethod === "netbanking" || selectedMethod === "paylater") && (
+          <AlternativePaymentModal
+            order={order}
+            selectedMethod={selectedMethod}
+            selectedBank={selectedBank}
+            selectedPayLater={selectedPayLater}
+            payLaterMobile={payLaterMobile}
+            onClose={() => setShowAltModal(false)}
+            onSuccess={handlePaymentSuccess}
+          />
+        )}
     </>
   );
 };

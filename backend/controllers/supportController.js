@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
 import SupportCategory from "../models/SupportCategory.js";
 import SupportFAQ from "../models/SupportFAQ.js";
+import { isRequestAdmin } from "../middleware/authMiddleware.js";
 
 // Escape string for safe RegExp query
 const escapeRegex = (string) => {
@@ -21,18 +21,7 @@ CATEGORY CONTROLLER FUNCTIONS
 export const getCategories = async (req, res) => {
   try {
     const { all } = req.query;
-    let isAdmin = all === "true" || all === "1";
-    if (!isAdmin && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-      try {
-        const token = req.headers.authorization.split(" ")[1];
-        if (process.env.JWT_SECRET) {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET);
-          if (decoded && (decoded.role === "admin" || decoded.isAdmin)) {
-            isAdmin = true;
-          }
-        }
-      } catch (e) {}
-    }
+    const isAdmin = (all === "true" || all === "1") && isRequestAdmin(req);
 
     const filter = isAdmin ? {} : { isActive: true };
     const categories = await SupportCategory.find(filter)
@@ -134,19 +123,8 @@ export const getCategoryById = async (req, res) => {
       });
     }
 
-    // Check if caller is admin
-    let isAdmin = req.query.all === "true";
-    if (!isAdmin && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
-      try {
-        const token = req.headers.authorization.split(" ")[1];
-        if (process.env.JWT_SECRET) {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET);
-          if (decoded && (decoded.role === "admin" || decoded.isAdmin)) {
-            isAdmin = true;
-          }
-        }
-      } catch (e) {}
-    }
+    // Only verified admins can view inactive categories or pass ?all=true
+    const isAdmin = req.query.all === "true" && isRequestAdmin(req);
 
     if (!category.isActive && !isAdmin) {
       return res.status(404).json({
@@ -418,8 +396,11 @@ export const getFaqs = async (req, res) => {
       }
     }
 
-    // Filter by status
-    if (status === "active") {
+    // Only verified admins can inspect inactive FAQs
+    const isAdmin = isRequestAdmin(req);
+    if (!isAdmin) {
+      filter.isActive = true;
+    } else if (status === "active") {
       filter.isActive = true;
     } else if (status === "inactive") {
       filter.isActive = false;
@@ -481,7 +462,7 @@ export const getFaqById = async (req, res) => {
       .populate("category", "name icon isActive")
       .lean();
 
-    if (!faq) {
+    if (!faq || (!faq.isActive && !isRequestAdmin(req))) {
       return res.status(404).json({
         success: false,
         message: "FAQ not found",

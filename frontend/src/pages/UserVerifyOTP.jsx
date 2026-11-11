@@ -8,6 +8,7 @@ import { MdInfoOutline } from "react-icons/md";
 import toast from "react-hot-toast";
 
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import "../styles/UserVerifyOTP.css";
 
 const UserVerifyOTP = () => {
@@ -224,9 +225,7 @@ const UserVerifyOTP = () => {
         </button>
 
         <div className="verify-otp-logo">
-          <span className="verify-otp-logo-mark">D</span>
-
-          <span>DECATHLON</span>
+          <DecathlonLogo height={24} />
         </div>
       </header>
 

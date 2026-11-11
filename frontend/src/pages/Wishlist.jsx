@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import api from "../api/axios";
+import DecathlonLogo from "../components/DecathlonLogo";
 import Navbar from "../components/Navbar";
 import "../styles/Wishlist.css";
 
@@ -329,9 +330,7 @@ const Wishlist = () => {
 
           <div className="footer-bottom-row">
             <div className="footer-logo-row">
-              <span className="footer-logo-text">
-                <span className="logo-symbol">D</span> DECATHLON
-              </span>
+              <DecathlonLogo className="footer-official-logo" color="#FFFFFF" height={20} />
 
               <div className="footer-legal-links">
                 <a href="#terms">Terms and Conditions</a>

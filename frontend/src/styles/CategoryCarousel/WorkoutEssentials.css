@@ -749,3 +749,94 @@
     min-width: 205px;
   }
 }
+
+/* === MOBILE ROW CONSISTENCY OVERRIDES === */
+.workout-essentials-page {
+  overflow-x: hidden;
+}
+
+@media (max-width: 600px) {
+  .workout-essentials-container {
+    padding: 12px 10px 28px;
+  }
+
+  .workout-section {
+    margin-bottom: 20px;
+  }
+
+  .workout-accessories-grid,
+  .workout-apparel-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 10px;
+  }
+
+  .workout-accessories-grid::-webkit-scrollbar,
+  .workout-apparel-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .workout-accessory-card,
+  .workout-apparel-card {
+    flex: 0 0 calc((100% - 20px) / 3.2);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  .workout-accessory-title,
+  .workout-apparel-title {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+
+  .workout-equipments-grid,
+  .workout-essentials-sub-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 8px;
+  }
+
+  .workout-equipments-grid::-webkit-scrollbar,
+  .workout-essentials-sub-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .workout-equipment-card,
+  .workout-essential-card {
+    flex: 0 0 calc((100% - 10px) / 2.2);
+    min-width: 0;
+    aspect-ratio: 1 / 1.05;
+    border-radius: 10px;
+    scroll-snap-align: start;
+  }
+
+  .workout-equipment-title,
+  .workout-essential-title {
+    font-size: 15px;
+  }
+
+  .workout-featured-card {
+    min-height: 150px;
+    aspect-ratio: 2.1 / 1;
+    border-radius: 10px;
+  }
+
+  .workout-featured-title {
+    font-size: 32px;
+  }
+
+  .iconic-product-card {
+    flex: 0 0 calc((100% - 10px) / 2);
+    min-width: calc((100% - 10px) / 2);
+  }
+}

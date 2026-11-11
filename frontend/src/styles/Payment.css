@@ -1767,12 +1767,28 @@
 }
 
 @media (max-width: 480px) {
+  .payment-page {
+    overflow-x: hidden;
+    padding-bottom: 64px;
+  }
+
   .payment-header {
+    height: 50px;
     padding: 0 12px;
+  }
+
+  .payment-logo svg {
+    height: 18px;
+    width: auto;
   }
 
   .secure-payment div {
     display: none;
+  }
+
+  .secure-payment > svg {
+    width: 22px;
+    height: 22px;
   }
 
   .payment-logo span {
@@ -1784,26 +1800,136 @@
   }
 
   .payment-container {
-    max-width: calc(100% - 16px);
+    width: calc(100% - 16px);
+    max-width: none;
+    gap: 12px;
+  }
+
+  .gift-card-section {
+    min-height: auto;
+    padding: 10px;
+  }
+
+  .gift-card-box {
+    width: 100%;
+    min-height: auto;
+    padding: 14px 12px;
+  }
+
+  .gift-card-box h2 {
+    margin-bottom: 6px;
+    font-size: 13.5px;
+  }
+
+  .gift-card-box p {
+    margin-bottom: 12px;
+    font-size: 11.5px;
+  }
+
+  .gift-card-box button {
+    height: 40px;
   }
 
   .payment-method-title {
-    margin: 10px 12px;
+    margin: 10px 10px 8px;
     font-size: 13px;
   }
 
+  .payment-method-sidebar {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .payment-method {
+    min-width: auto;
+    padding: 8px 11px;
+  }
+
+  .payment-method strong {
+    font-size: 11px;
+    margin-bottom: 0;
+  }
+
   .payment-method-content {
-    padding: 18px 12px;
+    padding: 16px 12px;
   }
 
-  .upi-card-options,
-  .upi-apps-row {
-    flex-direction: column;
+  .payment-content-panel h3 {
+    margin-bottom: 8px;
   }
 
-  .bank-selection-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .payment-content-panel p {
+    margin-bottom: 14px;
+    font-size: 11.5px;
+  }
+
+  .upi-options-tabs {
     gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .upi-tab-btn {
+    flex: 1;
+    height: 34px;
+    padding: 0 10px;
+    font-size: 11.5px;
+  }
+
+  .upi-apps-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .upi-app-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .upi-app-logo {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .upi-app-name {
+    font-size: 12.5px;
+  }
+
+  .card-logos-row {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .bank-grid,
+  .bank-selection-grid {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .bank-logo {
+    width: 46px;
+    height: 46px;
+    font-size: 22px;
+  }
+
+  .qr-card,
+  .card-form-box,
+  .method-pay-btn,
+  .paylater-card,
+  .other-bank,
+  .bank-note,
+  .cod-message,
+  .cod-info {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .method-pay-btn,
+  .payment-pay-button {
+    height: 44px;
   }
 }
 

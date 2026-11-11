@@ -167,6 +167,25 @@ const emitBannerUpdate = (type, bannerData = null) => {
 
 /*
 ========================================
+ROOM SCOPING HELPERS (PII PROTECTION)
+========================================
+*/
+const extractUserId = (data) => {
+  if (!data || typeof data !== "object") return null;
+  const raw = data.user?._id || data.user?.id || data.user || data.userId;
+  return raw ? String(raw) : null;
+};
+
+const getScopedRooms = (userId) => {
+  const rooms = ["admin_room"];
+  if (userId) {
+    rooms.push(`user_${String(userId)}`);
+  }
+  return rooms;
+};
+
+/*
+========================================
 SUPPORT TICKET REALTIME EMITTER
 ========================================
 */
@@ -183,12 +202,13 @@ const emitSupportTicketUpdate = (type, data = null) => {
     timestamp: Date.now(),
   };
 
-  io.emit("support_ticket_updated", payload);
+  const rooms = getScopedRooms(extractUserId(data));
+  io.to(rooms).emit("support_ticket_updated", payload);
   if (type) {
-    io.emit(type, payload);
+    io.to(rooms).emit(type, payload);
   }
 
-  console.log(`📡 Support ticket update emitted: ${type}`);
+  console.log(`📡 Support ticket update emitted (${rooms.join(", ")}): ${type}`);
 };
 
 /*
@@ -209,12 +229,13 @@ const emitOrderUpdate = (type, data = null) => {
     timestamp: Date.now(),
   };
 
-  io.emit("order_updated", payload);
+  const rooms = getScopedRooms(extractUserId(data));
+  io.to(rooms).emit("order_updated", payload);
   if (type) {
-    io.emit(type, payload);
+    io.to(rooms).emit(type, payload);
   }
 
-  console.log(`📡 Order update emitted: ${type}`);
+  console.log(`📡 Order update emitted (${rooms.join(", ")}): ${type}`);
 };
 
 /*
@@ -239,9 +260,8 @@ const emitNotificationToAdmins = (notification) => {
     return;
   }
 
-// Single broadcast event to prevent duplicate popup delivery
-  io.emit("admin_notification", notification);
-  console.log(`📡 Notification emitted to admins: ${notification.title}`);
+  io.to("admin_room").emit("admin_notification", notification);
+  console.log(`📡 Notification emitted to admin_room: ${notification.title}`);
 };
 
 /*
@@ -255,14 +275,9 @@ const emitTrackingUpdateToUser = (userId, payload) => {
     return;
   }
 
-  if (userId) {
-    const room = `user_${userId}`;
-    io.to(room).emit("order_tracking_updated", payload);
-  }
-
-  // Also broadcast so any open storefront tabs / admin dashboards receive it
-  io.emit("order_tracking_updated", payload);
-  console.log(`📡 order_tracking_updated emitted for order ${payload.orderId || payload.tracking?.orderId}`);
+  const rooms = getScopedRooms(userId?._id || userId);
+  io.to(rooms).emit("order_tracking_updated", payload);
+  console.log(`📡 order_tracking_updated emitted (${rooms.join(", ")}) for order ${payload.orderId || payload.tracking?.orderId}`);
 };
 
 const emitPaymentStatusToUser = (userId, payload) => {
@@ -271,14 +286,9 @@ const emitPaymentStatusToUser = (userId, payload) => {
     return;
   }
 
-  if (userId) {
-    const room = `user_${userId}`;
-    io.to(room).emit("payment_status_updated", payload);
-  }
-
-  // Also broadcast
-  io.emit("payment_status_updated", payload);
-  console.log(`📡 payment_status_updated emitted for order ${payload.orderId}`);
+  const rooms = getScopedRooms(userId?._id || userId);
+  io.to(rooms).emit("payment_status_updated", payload);
+  console.log(`📡 payment_status_updated emitted (${rooms.join(", ")}) for order ${payload.orderId}`);
 };
 
 export {

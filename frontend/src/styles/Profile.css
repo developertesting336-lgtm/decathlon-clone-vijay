@@ -1804,23 +1804,209 @@ body {
 }
 
 @media (max-width: 480px) {
+  .profile-page {
+    overflow-x: hidden;
+    padding-bottom: 64px;
+  }
+
   .profile-header {
-    padding: 0 16px;
-    height: 60px;
+    padding: 0 12px;
+    height: 52px;
+  }
+
+  .profile-header svg {
+    height: 19px;
+    width: auto;
   }
 
   .decathlon-logo-text {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .profile-user-box {
-    padding: 14px 16px;
+    padding: 12px 14px;
     height: auto;
     min-height: auto;
   }
 
+  .profile-user-box h2 {
+    font-size: 16px;
+    line-height: 20px;
+  }
+
+  .profile-email {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-points {
+    margin-top: 4px;
+  }
+
+  .profile-points strong {
+    font-size: 20px;
+    line-height: 24px;
+  }
+
+  .profile-points span {
+    font-size: 15px;
+  }
+
+  .redeem-btn {
+    height: 30px;
+    margin-top: 6px;
+    padding: 0 14px;
+    font-size: 11.5px;
+  }
+
   .profile-content {
-    padding: 16px 12px;
+    padding: 14px 12px;
+  }
+
+  .profile-top {
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .loyalty-card {
+    min-height: auto;
+    padding: 14px;
+  }
+
+  .loyalty-new {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .loyalty-card h2 {
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .loyalty-card p {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .loyalty-button {
+    height: auto;
+    min-height: 38px;
+    margin-top: 12px;
+    padding: 8px 10px;
+    gap: 6px;
+    font-size: 12.5px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .loyalty-button svg {
+    flex-shrink: 0;
+  }
+
+  .sports-banner {
+    min-height: auto;
+    padding: 16px 14px;
+  }
+
+  .sports-illustration {
+    width: 120px;
+    height: 125px;
+    margin-bottom: 6px;
+  }
+
+  .sports-svg {
+    width: 110px;
+    height: 115px;
+  }
+
+  .sports-content h2 {
+    font-size: 16px;
+    margin-bottom: 6px;
+  }
+
+  .sports-content p {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .synchronize-btn {
+    width: 100%;
+    height: 42px;
+    margin-top: 14px;
+    font-size: 13.5px;
+  }
+
+  .shortcuts-section {
+    margin-top: 18px;
+  }
+
+  .shortcuts-title {
+    font-size: 17px;
+  }
+
+  .shortcut-grid {
+    gap: 12px;
+  }
+
+  .shortcut-card {
+    min-height: auto;
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .shortcut-icon {
+    width: 42px;
+    min-width: 42px;
+    height: 42px;
+  }
+
+  .shortcut-icon svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .shortcut-content {
+    padding-left: 4px;
+  }
+
+  .shortcut-content h3 {
+    font-size: 15px;
+    line-height: 20px;
+    margin-bottom: 4px;
+  }
+
+  .shortcut-content p {
+    font-size: 12.5px;
+    line-height: 17px;
+  }
+
+  .personal-info-title,
+  .communication-prefs-title {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .comm-card,
+  .comm-action-card {
+    padding: 16px 14px;
+  }
+
+  .decathlon-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .digital-card-barcode-box {
+    padding: 14px;
+  }
+
+  .barcode-number {
+    font-size: 14px;
+    letter-spacing: 1.2px;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-footer {
+    padding-top: 24px;
   }
 
   .comm-language-select {

@@ -47,10 +47,12 @@ const SupportTickets = () => {
       try {
         setLoading(true);
         const res = await api.get("/support/tickets");
-        if (isMounted && res.data?.success && Array.isArray(res.data?.tickets)) {
+        if (!isMounted) return;
+        if (res.data?.success && Array.isArray(res.data?.tickets)) {
           setTickets(res.data.tickets);
         }
       } catch (err) {
+        if (!isMounted) return;
         console.error("Error fetching support tickets:", err);
         toast.error("Unable to load your support requests. Please try again.");
       } finally {

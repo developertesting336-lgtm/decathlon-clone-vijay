@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FiArrowLeft, FiMapPin, FiX, FiEdit2, FiCheck } from "react-icons/fi";
 import toast from "react-hot-toast";
 import api from "../api/axios";
+import {
+  applySavedAddressLocation,
+  formatLocationSummary,
+  setStoredDeliveryLocation,
+} from "../utils/deliveryLocation";
 import "../styles/AddressDrawer.css";
 
 const initialForm = {
@@ -239,6 +244,19 @@ const AddressDrawer = ({
               cityState: data.cityState || prev.cityState || "",
             }));
 
+            setStoredDeliveryLocation({
+              ...formatLocationSummary({
+                streetLocality: data.streetLocality,
+                locality: data.streetLocality || data.landmark,
+                city: data.city,
+                state: data.state,
+                cityState: data.cityState,
+                pincode: data.pincode,
+              }),
+              latitude,
+              longitude,
+              source: "gps",
+            });
             setLocationDetected(true);
             toast.success("✓ Location detected");
 
@@ -363,6 +381,9 @@ const AddressDrawer = ({
         setSelectedId(savedAddress._id);
       }
 
+      if (savedAddress) {
+        applySavedAddressLocation(savedAddress);
+      }
       if (onAddressSaved) {
         onAddressSaved(savedAddress);
       }

@@ -630,8 +630,11 @@
 }
 
 .delivery-footer {
-  margin-top: 76px;
-  padding: 35px 0 20px;
+  width: 945px;
+  max-width: calc(100% - 40px);
+  margin: 76px auto 0;
+  padding: 35px 0 32px;
+  border-top: 1px solid #ddd;
   display: grid;
   grid-template-columns: 1fr 1.4fr 1fr;
   align-items: end;
@@ -714,8 +717,16 @@
 }
 
 @media (max-width: 600px) {
+  .delivery-page {
+    overflow-x: hidden;
+  }
+
   .delivery-header {
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    height: 52px;
   }
 
   .delivery-header > div:last-child {
@@ -723,39 +734,243 @@
   }
 
   .delivery-logo {
-    justify-content: flex-end;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .delivery-header,
   .delivery-progress,
+  .delivery-layout,
+  .delivery-footer {
+    width: calc(100% - 24px);
+    max-width: none;
+  }
+
+  .delivery-progress {
+    margin: 0 auto 18px;
+    gap: 5px;
+  }
+
+  .delivery-progress span {
+    height: 5px;
+  }
+
   .delivery-layout {
-    max-width: calc(100% - 24px);
+    gap: 20px;
   }
 
   .delivery-left h1 {
-    font-size: 27px;
+    font-size: 22px;
+    padding-bottom: 10px;
   }
 
   .delivery-address {
+    min-height: auto;
+    padding: 12px 0;
+    align-items: flex-start;
     gap: 12px;
   }
 
+  .delivery-address-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+  }
+
+  .delivery-address-icon svg {
+    font-size: 20px;
+  }
+
+  .delivery-address-title {
+    font-size: 13.5px;
+    margin-bottom: 3px;
+  }
+
+  .delivery-address-info p {
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .delivery-section-title {
+    margin: 18px 0 12px;
+    font-size: 16px;
+  }
+
+  .delivery-option {
+    min-height: auto;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 6px;
+    align-items: flex-start;
+  }
+
+  .delivery-option-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 6px;
+  }
+
+  .delivery-option-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .delivery-option-info strong {
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+
+  .delivery-option-info b {
+    font-size: 12.5px;
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+
+  .delivery-option-info p {
+    font-size: 11.5px;
+    margin-bottom: 5px;
+  }
+
+  .delivery-available,
+  .delivery-unavailable {
+    font-size: 11px;
+  }
+
+  .delivery-available i,
+  .delivery-unavailable i {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+  }
+
+  .delivery-option-check {
+    width: 19px;
+    height: 19px;
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .delivery-order-section {
+    margin-top: 22px;
+  }
+
+  .delivery-order-section > p {
+    margin: 4px 0 14px;
+  }
+
+  .delivery-item-card {
+    padding: 12px;
+  }
+
   .delivery-item-row {
-    grid-template-columns: 60px 1fr;
+    grid-template-columns: 60px minmax(0, 1fr);
+    gap: 10px;
+    min-height: auto;
   }
 
   .delivery-item-image {
-    width: 58px;
-    height: 65px;
+    width: 60px;
+    height: 64px;
   }
 
   .delivery-item-row > strong {
     grid-column: 2;
   }
 
+  .delivery-information-header {
+    height: 46px;
+    padding: 0 14px;
+    font-size: 14.5px;
+  }
+
+  .delivery-information-content {
+    padding: 0 14px 14px;
+  }
+
+  .delivery-info-address {
+    font-size: 13px;
+    gap: 10px;
+  }
+
+  .delivery-contact {
+    font-size: 13px;
+  }
+
+  .delivery-coupon {
+    height: 50px;
+    padding: 0 12px;
+  }
+
+  .delivery-side-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .delivery-side-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .reward-toggle {
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .reward-toggle span {
+    width: 17px;
+    height: 17px;
+  }
+
+  .reward-toggle.active span {
+    transform: translateX(19px);
+  }
+
+  .summary-divider {
+    margin: 14px 0;
+  }
+
+  .summary-saved {
+    margin-top: 16px;
+  }
+
+  .proceed-btn {
+    height: 44px;
+    margin-top: 14px;
+    border-radius: 4px;
+  }
+
+  .delivery-footer {
+    margin-top: 32px;
+    padding: 22px 0 64px;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .delivery-footer-logo {
+    justify-content: center;
+  }
+
   .delivery-footer-links {
     flex-wrap: wrap;
-    gap: 12px;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  .delivery-footer-copy {
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .delivery-back span {
+    display: none;
+  }
+
+  .delivery-logo svg {
+    height: 18px;
+    width: auto;
   }
 }
 

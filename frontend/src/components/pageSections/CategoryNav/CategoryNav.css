@@ -62,14 +62,22 @@
   color: #707070;
 }
 
-.delivery-location a {
+.delivery-location a,
+.delivery-location-btn {
   margin-left: 5px;
   color: #3643BA;
   text-decoration: none;
   font-weight: 600;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
 }
 
-.delivery-location a:hover {
+.delivery-location a:hover,
+.delivery-location-btn:hover {
   text-decoration: underline;
 }
 

@@ -6,6 +6,7 @@ import api, { useWishlist } from "../api/axios";
 import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
 import Footer from "../components/pageSections/Footer/Footer";
+import { openLocationPickerModal, useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/CategoryProducts.css";
 
 const CATEGORY_NAMES = {
@@ -73,6 +74,7 @@ function CategoryProducts() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isWishlisted, handleToggle } = useWishlist();
+  const { location: deliveryLocation, detecting: detectingLocation } = useDeliveryLocation();
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -541,9 +543,17 @@ function CategoryProducts() {
 
       {/* HEADER */}
       <div className="category-header">
-        <div className="delivery-text">
+        <div
+          className="delivery-text"
+          onClick={openLocationPickerModal}
+          style={{ cursor: "pointer" }}
+        >
           Delivery to{" "}
-          <span>Bangalore Central, Bangalore, 560001, Karnataka</span>
+          <span>
+            {detectingLocation
+              ? "Detecting your location..."
+              : deliveryLocation.label}
+          </span>
         </div>
 
         <div className="breadcrumb">

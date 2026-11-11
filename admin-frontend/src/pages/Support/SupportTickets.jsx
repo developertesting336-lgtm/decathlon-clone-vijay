@@ -132,11 +132,11 @@ const SupportTickets = ({ embedded = false }) => {
     };
 
     socket.on("support_ticket_created", handleTicketUpdate);
-    socket.on("support_ticket_update", handleTicketUpdate);
+    socket.on("support_ticket_updated", handleTicketUpdate);
 
     return () => {
       socket.off("support_ticket_created", handleTicketUpdate);
-      socket.off("support_ticket_update", handleTicketUpdate);
+      socket.off("support_ticket_updated", handleTicketUpdate);
     };
   }, [fetchTickets, fetchStats]);
 
