@@ -11,7 +11,7 @@ const CouponBanner = ({ style } = {}) => {
 
   // Return Cloudinary or backend image URL exactly as returned by API
   const getImageUrl = (image) => {
-    if (!image || typeof image !== "string") return "";
+    if (!image || typeof image !== "string") return null;
     const trimmed = image.trim();
 
     // If already absolute URL (Cloudinary, HTTPS, HTTP, protocol-relative), return exactly as-is

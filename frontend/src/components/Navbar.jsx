@@ -11,7 +11,6 @@ import {
   FiAward,
   FiMail,
   FiLogOut,
-  FiMenu,
   FiMonitor,
   FiMessageSquare,
   FiChevronDown,
@@ -89,6 +88,18 @@ const Navbar = () => {
   ];
 
   const searchContainerRef = useRef(null);
+  const accountContainerRef = useRef(null);
+  const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOutside = (e) => {
+      if (accountContainerRef.current && !accountContainerRef.current.contains(e.target)) {
+        setAccountDropdownOpen(false);
+      }
+    };
+    document.addEventListener("pointerdown", handleOutside);
+    return () => document.removeEventListener("pointerdown", handleOutside);
+  }, []);
 
   // PRODUCT MODAL STATES FOR ADD TO CART FROM SEARCH
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -97,10 +108,14 @@ const Navbar = () => {
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
 
-  const isOrdersPage = location.pathname.startsWith("/account");
+  const accountTab = new URLSearchParams(location.search).get("tab");
+  const isOrdersPage =
+    location.pathname.startsWith("/account/orders-returns") ||
+    (location.pathname === "/account" &&
+      (accountTab === "orders" || accountTab === "order-returns" || accountTab === "address"));
 
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
     if (
       typeof image === "string" &&
       (image.startsWith("http://") || image.startsWith("https://"))
@@ -531,18 +546,6 @@ const Navbar = () => {
 
       <header className="navbar-wrapper">
         <div className={`navbar ${isOrdersPage ? "orders-navbar" : ""}`}>
-          {/* ORDERS PAGE LEFT MENU */}
-          {isOrdersPage && (
-            <div className="orders-navbar-menu">
-              <FiMenu />
-              <span>
-                ALL
-                <br />
-                SPORTS
-              </span>
-            </div>
-          )}
-
           {/* LOGO */}
           <Link to="/" className="navbar-logo" aria-label="Decathlon Home">
             <DecathlonLogo className="decathlon-official-logo" height={26} />
@@ -946,17 +949,32 @@ const Navbar = () => {
           {/* RIGHT ACTIONS */}
           <nav className="navbar-actions">
             {/* ACCOUNT */}
-            <div className="navbar-account">
+            <div
+              className={`navbar-account ${accountDropdownOpen ? "account-open" : ""}`}
+              ref={accountContainerRef}
+            >
               <Link
-                to={user ? "/profile" : "/login"}
+                to={user ? "/account" : "/login"}
                 className="navbar-action account-button"
+                onClick={(e) => {
+                  if (
+                    user &&
+                    !window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+                    !accountDropdownOpen
+                  ) {
+                    e.preventDefault();
+                    setAccountDropdownOpen(true);
+                  } else {
+                    setAccountDropdownOpen(false);
+                  }
+                }}
               >
                 <FiUser />
                 <span>{user ? "Account" : "Sign In"}</span>
               </Link>
 
               {user && (
-                <div className="account-dropdown">
+                <div className="account-dropdown" onClick={() => setAccountDropdownOpen(false)}>
                   <Link to="/profile" className="account-dropdown-item">
                     <FiUser />
                     <span>My Profile</span>

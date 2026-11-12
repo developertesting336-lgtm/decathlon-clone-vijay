@@ -504,7 +504,7 @@ const AiChatbot = () => {
     if (!str) return "";
 
     // Split on markdown link [text](url)
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const linkRegex = /(?:\*\*)?\[([^\]]+)\]\(([^)]+)\)(?:\*\*)?/g;
     const parts = [];
     let lastIndex = 0;
     let match;
@@ -774,10 +774,10 @@ const AiChatbot = () => {
                                 <div className="ai-order-card-header">
                                   <div className="ai-order-meta">
                                     <span className="ai-order-id">
-                                      {ord.orderId}
+                                      {ord.orderId || (ord.shortId ? `#${ord.shortId}` : "")}
                                     </span>
                                     <span className="ai-order-date">
-                                      {ord.date}
+                                      {ord.date || ord.orderDate}
                                     </span>
                                   </div>
                                   <span
@@ -854,7 +854,10 @@ const AiChatbot = () => {
                                       className="ai-order-btn-secondary"
                                       onClick={() =>
                                         handleSendMessage(
-                                          `How do I return items in order ${ord.orderId}?`,
+                                          `How do I return items in order ${
+                                            ord.orderId ||
+                                            (ord.shortId ? `#${ord.shortId}` : ord.id || "")
+                                          }?`,
                                         )
                                       }
                                     >

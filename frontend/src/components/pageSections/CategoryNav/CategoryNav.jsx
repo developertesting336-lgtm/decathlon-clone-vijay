@@ -242,28 +242,36 @@ const CategoryNav = ({ section, data }) => {
         setActiveCategory(null);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("pointerdown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("pointerdown", handleClickOutside);
     };
   }, []);
 
-  const handleCategoryHover = (key) => {
-    setActiveCategory(key);
+  const handlePointerEnter = (e, key) => {
+    if (e.pointerType === "mouse") {
+      setActiveCategory(key);
+    }
+  };
+
+  const handlePointerLeave = (e) => {
+    if (e.pointerType === "mouse") {
+      setActiveCategory(null);
+    }
   };
 
   const handleCategoryClick = (key) => {
-    setActiveCategory(activeCategory === key ? null : key);
+    setActiveCategory((prev) => (prev === key ? null : key));
   };
 
   return (
-    <div className="category-nav-wrapper" ref={navRef} onMouseLeave={() => setActiveCategory(null)}>
+    <div className="category-nav-wrapper" ref={navRef} onPointerLeave={handlePointerLeave}>
       <div className="category-nav">
         <div className="category-links">
           <button
             type="button"
             className={`category-tab-btn ${activeCategory === "sports" ? "active" : ""}`}
-            onMouseEnter={() => handleCategoryHover("sports")}
+            onPointerEnter={(e) => handlePointerEnter(e, "sports")}
             onClick={() => handleCategoryClick("sports")}
           >
             All Sports
@@ -271,7 +279,7 @@ const CategoryNav = ({ section, data }) => {
           <button
             type="button"
             className={`category-tab-btn ${activeCategory === "men" ? "active" : ""}`}
-            onMouseEnter={() => handleCategoryHover("men")}
+            onPointerEnter={(e) => handlePointerEnter(e, "men")}
             onClick={() => handleCategoryClick("men")}
           >
             Men
@@ -279,7 +287,7 @@ const CategoryNav = ({ section, data }) => {
           <button
             type="button"
             className={`category-tab-btn ${activeCategory === "women" ? "active" : ""}`}
-            onMouseEnter={() => handleCategoryHover("women")}
+            onPointerEnter={(e) => handlePointerEnter(e, "women")}
             onClick={() => handleCategoryClick("women")}
           >
             Women
@@ -287,7 +295,7 @@ const CategoryNav = ({ section, data }) => {
           <button
             type="button"
             className={`category-tab-btn ${activeCategory === "kids" ? "active" : ""}`}
-            onMouseEnter={() => handleCategoryHover("kids")}
+            onPointerEnter={(e) => handlePointerEnter(e, "kids")}
             onClick={() => handleCategoryClick("kids")}
           >
             Kids
@@ -311,7 +319,17 @@ const CategoryNav = ({ section, data }) => {
       {activeCategory && megaMenuData[activeCategory] && (
         <div className="megamenu-overlay">
           <div className="megamenu-content">
-            <h2 className="megamenu-title">{megaMenuData[activeCategory].title}</h2>
+            <div className="megamenu-header">
+              <h2 className="megamenu-title">{megaMenuData[activeCategory].title}</h2>
+              <button
+                type="button"
+                className="megamenu-close-btn"
+                aria-label="Close menu"
+                onClick={() => setActiveCategory(null)}
+              >
+                ×
+              </button>
+            </div>
             <div className="megamenu-grid">
               {megaMenuData[activeCategory].sections.map((sec, idx) => (
                 <div className="megamenu-section" key={idx}>

@@ -718,7 +718,7 @@
 
 @media (max-width: 600px) {
   .delivery-page {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .delivery-header {

@@ -526,9 +526,10 @@
     min-width: 100%;
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
-    padding: 0;
+    gap: 12px;
+    padding: 0 2px;
   }
 
   .outdoor-products-intro-text {
@@ -538,14 +539,18 @@
 
   .outdoor-products-intro p {
     font-size: 13px;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
   }
 
   .outdoor-products-intro h2 {
-    font-size: 22px;
-    line-height: 1.15;
+    font-size: 20px;
+    line-height: 1.25;
     letter-spacing: -0.3px;
     white-space: normal;
+  }
+
+  .outdoor-products-intro h2 br {
+    display: none;
   }
 
   .outdoor-slider-buttons {
@@ -584,9 +589,14 @@
     font-size: 20px;
   }
 
+  .outdoor-products-slider {
+    gap: 10px;
+    padding: 4px 0 10px;
+  }
+
   .outdoor-product-card {
-    flex: 0 0 calc((100% - 10px) / 1.8);
-    min-width: 150px;
+    flex: 0 0 calc((100% - 10px) / 2);
+    min-width: 0;
   }
 
   .outdoor-price {

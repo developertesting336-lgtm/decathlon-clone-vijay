@@ -1768,7 +1768,7 @@
 
 @media (max-width: 480px) {
   .payment-page {
-    overflow-x: hidden;
+    overflow-x: clip;
     padding-bottom: 64px;
   }
 

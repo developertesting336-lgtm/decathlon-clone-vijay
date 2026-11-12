@@ -142,7 +142,8 @@ function CategoryProducts() {
   };
 
   useEffect(() => {
-    if (category && !location.state?.categoryName) {
+    setFetchedCategoryName("");
+    if (category && /^[0-9a-fA-F]{24}$/.test(category) && !location.state?.categoryName) {
       api
         .get(`/categories/${encodeURIComponent(category)}`)
         .then((res) => {

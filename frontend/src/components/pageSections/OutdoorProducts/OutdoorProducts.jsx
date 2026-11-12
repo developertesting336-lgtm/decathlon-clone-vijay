@@ -22,7 +22,7 @@ const OutdoorProducts = () => {
 
   // IMAGE URL
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
 
     if (
       typeof image === "string" &&
@@ -208,9 +208,9 @@ const OutdoorProducts = () => {
                 <p>Explore best of</p>
 
                 <h2>
-                  Outdoor
+                  Outdoor{" "}
                   <br />
-                  Shoes &
+                  Shoes &amp;{" "}
                   <br />
                   Sneakers.
                 </h2>

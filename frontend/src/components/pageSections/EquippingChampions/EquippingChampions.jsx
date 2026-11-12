@@ -10,7 +10,7 @@ const EquippingChampions = () => {
   const [loading, setLoading] = useState(true);
 
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
 
     if (
       typeof image === "string" &&

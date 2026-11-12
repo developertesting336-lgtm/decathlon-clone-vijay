@@ -92,6 +92,7 @@ const SupportHeader = ({ activeTab = "ecommerce", onTabChange, onOpenDrawer }) =
         className={`support-drawer ${drawerOpen ? "open" : ""}`}
         aria-label="Decathlon Support Menu"
         aria-hidden={!drawerOpen}
+        inert={!drawerOpen}
       >
         <div className="support-drawer-head">
           <h2 className="support-drawer-title">Decathlon Support</h2>

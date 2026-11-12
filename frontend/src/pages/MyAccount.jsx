@@ -18,6 +18,7 @@ import {
   FiRefreshCw,
   FiMessageSquare,
   FiHelpCircle,
+  FiMenu,
 } from "react-icons/fi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -74,7 +75,7 @@ const formatStatus = (status) => {
 };
 
 const getImageUrl = (image) => {
-  if (!image) return "";
+  if (!image) return null;
   if (image.startsWith("http://") || image.startsWith("https://")) {
     return image;
   }
@@ -92,6 +93,7 @@ const MyAccount = () => {
   // Sidebar navigation: 'orders' | 'address'
   const initialNav = searchParams.get("tab") === "address" ? "address" : "orders";
   const [activeNav, setActiveNav] = useState(initialNav);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Orders State
   const [orders, setOrders] = useState([]);
@@ -100,6 +102,11 @@ const MyAccount = () => {
   const [filterPeriod, setFilterPeriod] = useState("all");
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [cancellingId, setCancellingId] = useState("");
+
+  // Cancel Modal State
+  const [cancelModalOrder, setCancelModalOrder] = useState(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelDetails, setCancelDetails] = useState("");
 
   // Return Modal State
   const [returnModalOrder, setReturnModalOrder] = useState(null);
@@ -1041,19 +1048,46 @@ const MyAccount = () => {
     navigate("/");
   };
 
-  const handleCancelOrder = async (orderId) => {
-    if (!window.confirm("Are you sure you want to cancel this order?")) {
+  const handleOpenCancelModal = (order) => {
+    setCancelModalOrder(order);
+    setCancelReason("");
+    setCancelDetails("");
+  };
+
+  const handleCloseCancelModal = () => {
+    if (cancellingId) return;
+    setCancelModalOrder(null);
+    setCancelReason("");
+    setCancelDetails("");
+  };
+
+  const handleSubmitCancelOrder = async (e) => {
+    e.preventDefault();
+    if (!cancelModalOrder) return;
+    if (!cancelReason) {
+      toast.error("Please select a cancellation reason");
+      return;
+    }
+    if (cancelReason === "Other" && !cancelDetails.trim()) {
+      toast.error("Please enter your cancellation reason");
       return;
     }
 
+    const combinedReason = cancelDetails.trim()
+      ? `${cancelReason}: ${cancelDetails.trim()}`
+      : cancelReason;
+
     try {
-      setCancellingId(orderId);
+      setCancellingId(cancelModalOrder._id);
       const response = await api.put(
-        `/orders/${orderId}/cancel`,
-        {},
+        `/orders/${cancelModalOrder._id}/cancel`,
+        { reason: combinedReason },
         getAuthConfig()
       );
       toast.success(response.data?.message || "Order cancelled successfully");
+      setCancelModalOrder(null);
+      setCancelReason("");
+      setCancelDetails("");
       fetchOrders();
     } catch (error) {
       console.error("Cancel Order Error:", error);
@@ -1148,7 +1182,37 @@ const MyAccount = () => {
       <main className="orders-main">
         <div className="orders-layout">
           {/* SIDEBAR */}
-          <aside className="orders-sidebar">
+          {/* MOBILE SIDEBAR TOGGLE BAR */}
+          <div className="mobile-sidebar-bar">
+            <button
+              type="button"
+              className="mobile-sidebar-toggle"
+              onClick={() => setMobileSidebarOpen(true)}
+            >
+              <FiMenu />
+              <span>{activeNav === "address" ? "Address" : "My Orders"}</span>
+            </button>
+          </div>
+
+          {mobileSidebarOpen && (
+            <div
+              className="mobile-sidebar-backdrop"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+          )}
+
+          <aside className={`orders-sidebar ${mobileSidebarOpen ? "mobile-open" : ""}`}>
+            <div className="mobile-sidebar-header">
+              <span>Account Menu</span>
+              <button
+                type="button"
+                className="mobile-sidebar-close"
+                aria-label="Close sidebar"
+                onClick={() => setMobileSidebarOpen(false)}
+              >
+                <FiX />
+              </button>
+            </div>
             <div className="orders-phone-box">
               {user?.mobile ? user.mobile : "+919459940381"}
             </div>
@@ -1177,7 +1241,7 @@ const MyAccount = () => {
               </button>
             </div>
 
-            <div className="sidebar-menu">
+            <div className="sidebar-menu" onClick={() => setMobileSidebarOpen(false)}>
               <div
                 className={`sidebar-item ${activeNav === "orders" ? "active" : ""}`}
                 onClick={() => {
@@ -1431,16 +1495,16 @@ const MyAccount = () => {
                               <>
                                 <span className="status-badge cancelled">Cancelled</span>
                                 {order.paymentStatus?.toLowerCase() === "refunded" ? (
-                                  <span className="payment-badge refunded">REFUNDED</span>
+                                <span className="payment-badge refunded">REFUNDED</span>
                                 ) : order.paymentStatus?.toLowerCase() === "paid" ? (
-                                  <span className="payment-badge paid">
+                                <span className="payment-badge paid">
                                     {order.paymentMethod === "COD" ? "PAID (COD)" : "Paid"}
                                   </span>
-                                ) : (
-                                  <span className="payment-badge pending">
-                                    {order.paymentMethod === "COD" ? "PENDING (COD)" : "Pending"}
+                                ) : order.paymentMethod === "COD" ? (
+                                <span className="payment-badge cancelled">
+                                    NOT CHARGED
                                   </span>
-                                )}
+                                ) : null}
                               </>
                             ) : order.orderStatus?.toLowerCase() === "refunded" ||
                               order.paymentStatus?.toLowerCase() === "refunded" ? (
@@ -1544,7 +1608,7 @@ const MyAccount = () => {
                                 type="button"
                                 className="btn-order-action btn-cancel"
                                 disabled={cancellingId === order._id}
-                                onClick={() => handleCancelOrder(order._id)}
+                                onClick={() => handleOpenCancelModal(order)}
                               >
                                 {cancellingId === order._id
                                   ? "Cancelling..."
@@ -1568,23 +1632,23 @@ const MyAccount = () => {
                                 className={`return-status-tag ${order.returnStatus.toLowerCase()}`}
                               >
                                 {order.returnStatus === "REQUESTED" ? (
-                                  <span>Return Requested</span>
+                                <span>Return Requested</span>
                                 ) : order.returnStatus === "APPROVED" ? (
-                                  <span>Return Approved</span>
+                                <span>Return Approved</span>
                                 ) : order.returnStatus === "PICKUP_SCHEDULED" ? (
-                                  <span>Pickup Scheduled</span>
+                                <span>Pickup Scheduled</span>
                                 ) : order.returnStatus === "PICKED_UP" ? (
-                                  <span>Picked Up</span>
+                                <span>Picked Up</span>
                                 ) : order.returnStatus === "RETURN_RECEIVED" ? (
-                                  <span>Return Received</span>
+                                <span>Return Received</span>
                                 ) : order.returnStatus === "REFUND_PROCESSING" ? (
-                                  <span>Refund Processing</span>
+                                <span>Refund Processing</span>
                                 ) : order.returnStatus === "REFUNDED" ? (
-                                  <span>Refund Completed</span>
+                                <span>Refund Completed</span>
                                 ) : order.returnStatus === "REJECTED" ? (
-                                  <span>Return Rejected</span>
+                                <span>Return Rejected</span>
                                 ) : (
-                                  <span>{order.returnStatus.replace("_", " ")}</span>
+                                <span>{order.returnStatus.replace("_", " ")}</span>
                                 )}
                               </div>
                             ) : null}
@@ -1605,23 +1669,23 @@ const MyAccount = () => {
                                 className={`exchange-status-tag ${order.exchangeStatus.toLowerCase()}`}
                               >
                                 {order.exchangeStatus === "REQUESTED" ? (
-                                  <span>Exchange Requested</span>
+                                <span>Exchange Requested</span>
                                 ) : order.exchangeStatus === "APPROVED" ? (
-                                  <span>Exchange Approved</span>
+                                <span>Exchange Approved</span>
                                 ) : order.exchangeStatus === "PICKUP_SCHEDULED" ? (
-                                  <span>Exchange Pickup</span>
+                                <span>Exchange Pickup</span>
                                 ) : order.exchangeStatus === "PICKED_UP" ? (
-                                  <span>Item Picked Up</span>
+                                <span>Item Picked Up</span>
                                 ) : order.exchangeStatus === "RECEIVED" ? (
-                                  <span>Item Received</span>
+                                <span>Item Received</span>
                                 ) : order.exchangeStatus === "SHIPPED" ? (
-                                  <span>Replacement Shipped</span>
+                                <span>Replacement Shipped</span>
                                 ) : order.exchangeStatus === "DELIVERED" ? (
-                                  <span>Exchange Delivered</span>
+                                <span>Exchange Delivered</span>
                                 ) : order.exchangeStatus === "REJECTED" ? (
-                                  <span>Exchange Rejected</span>
+                                <span>Exchange Rejected</span>
                                 ) : (
-                                  <span>{order.exchangeStatus.replace("_", " ")}</span>
+                                <span>{order.exchangeStatus.replace("_", " ")}</span>
                                 )}
                               </div>
                             ) : null}
@@ -1727,6 +1791,105 @@ const MyAccount = () => {
           <span></span>
         </div>
       </div>
+
+      {/* CANCEL ORDER MODAL */}
+      {cancelModalOrder && (
+        <div
+          className="decathlon-modal-backdrop"
+          onClick={handleCloseCancelModal}
+        >
+          <div
+            className="decathlon-return-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="return-modal-header">
+              <div className="return-modal-title-box">
+                <h3>Cancel Order</h3>
+                <span className="return-modal-subtitle">
+                  Order #{cancelModalOrder._id.slice(-8).toUpperCase()} •{" "}
+                  Placed on {formatDate(cancelModalOrder.createdAt)}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="return-modal-close"
+                onClick={handleCloseCancelModal}
+                disabled={Boolean(cancellingId)}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitCancelOrder} className="return-modal-body">
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Why do you want to cancel this order? *
+                </label>
+                <select
+                  className="return-reason-select"
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  disabled={Boolean(cancellingId)}
+                  required
+                >
+                  <option value="">Select a reason</option>
+                  <option value="Ordered by mistake">Ordered by mistake</option>
+                  <option value="Found a better price elsewhere">
+                    Found a better price elsewhere
+                  </option>
+                  <option value="Delivery taking too long">
+                    Delivery taking too long
+                  </option>
+                  <option value="Need to change size or color">
+                    Need to change size or color
+                  </option>
+                  <option value="Need to change delivery address">
+                    Need to change delivery address
+                  </option>
+                  <option value="Payment or checkout issue">
+                    Payment or checkout issue
+                  </option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="return-form-section">
+                <label className="return-section-label">
+                  Additional Details {cancelReason === "Other" ? "*" : "(Optional)"}
+                </label>
+                <textarea
+                  className="return-details-textarea"
+                  rows="3"
+                  placeholder="Tell us more about why you're cancelling..."
+                  value={cancelDetails}
+                  onChange={(e) => setCancelDetails(e.target.value)}
+                  disabled={Boolean(cancellingId)}
+                  required={cancelReason === "Other"}
+                />
+              </div>
+
+              <div className="return-modal-actions">
+                <button
+                  type="button"
+                  className="btn-return-cancel"
+                  onClick={handleCloseCancelModal}
+                  disabled={Boolean(cancellingId)}
+                >
+                  Keep Order
+                </button>
+                <button
+                  type="submit"
+                  className="btn-return-submit"
+                  style={{ backgroundColor: "#dc2626", borderColor: "#dc2626" }}
+                  disabled={Boolean(cancellingId)}
+                >
+                  {cancellingId ? "Cancelling..." : "Confirm Cancellation"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* RETURN PRODUCT MODAL */}
       {returnModalOrder && (
@@ -2280,16 +2443,16 @@ const MyAccount = () => {
                             <div className="summary-status-badge-row">
                               {isOrderCancelled ? (
                                 <span className="customer-tracking-pill cancelled">
-                                  <span className="cancelled-indicator"></span> ORDER CANCELLED
+                                <span className="cancelled-indicator"></span> ORDER CANCELLED
                                 </span>
                               ) : hasActiveReturn ? (
                                 <span className="customer-tracking-pill return-pill">
-                                  <span className="pulse-indicator orange"></span>
+                                <span className="pulse-indicator orange"></span>
                                   {formatReturnStatusText(retStatus).toUpperCase()}
                                 </span>
                               ) : hasActiveExchange ? (
                                 <span className="customer-tracking-pill exchange-pill">
-                                  <span className="pulse-indicator blue"></span>
+                                <span className="pulse-indicator blue"></span>
                                   {formatExchangeStatusText(exchStatus).toUpperCase()}
                                 </span>
                               ) : (
@@ -2300,7 +2463,7 @@ const MyAccount = () => {
                                     ""
                                   ).toLowerCase()}`}
                                 >
-                                  <span className="pulse-indicator"></span>
+                                <span className="pulse-indicator"></span>
                                   {(
                                     trackingData?.status ||
                                     trackingModalOrder.orderStatus ||
@@ -2315,7 +2478,7 @@ const MyAccount = () => {
                                   if (method === "COD") {
                                     if (payStatus === "refunded" || retStatus === "REFUNDED") {
                                       return (
-                                        <span className="customer-payment-pill refunded">
+                                <span className="customer-payment-pill refunded">
                                           Payment: REFUNDED (COD)
                                         </span>
                                       );
@@ -2326,26 +2489,26 @@ const MyAccount = () => {
                                       retStatus === "PICKED_UP"
                                     ) {
                                       return (
-                                        <span className="customer-payment-pill pending">
+                                <span className="customer-payment-pill pending">
                                           Payment: COD REFUND PENDING
                                         </span>
                                       );
                                     }
                                     return (
-                                      <span className="customer-payment-pill pending">
+                                <span className="customer-payment-pill pending">
                                         Payment: COD REFUND PENDING
                                       </span>
                                     );
                                   } else {
                                     if (payStatus === "refunded" || retStatus === "REFUNDED") {
                                       return (
-                                        <span className="customer-payment-pill refunded">
+                                <span className="customer-payment-pill refunded">
                                           Payment: REFUNDED
                                         </span>
                                       );
                                     }
                                     return (
-                                      <span className="customer-payment-pill pending">
+                                <span className="customer-payment-pill pending">
                                         Payment: REFUND PROCESSING
                                       </span>
                                     );
@@ -2355,7 +2518,7 @@ const MyAccount = () => {
                                 if (hasActiveExchange) {
                                   if (method === "COD") {
                                     return (
-                                      <span
+                                <span
                                         className={`customer-payment-pill ${
                                           payStatus === "paid" ? "paid" : "pending"
                                         }`}
@@ -2365,7 +2528,7 @@ const MyAccount = () => {
                                     );
                                   }
                                   return (
-                                    <span className="customer-payment-pill paid">
+                                <span className="customer-payment-pill paid">
                                       Payment: PAID (Online)
                                     </span>
                                   );
@@ -2374,20 +2537,20 @@ const MyAccount = () => {
                                 if (isOrderCancelled) {
                                   if (payStatus === "refunded") {
                                     return (
-                                      <span className="customer-payment-pill refunded">
+                                <span className="customer-payment-pill refunded">
                                         Payment: REFUNDED
                                       </span>
                                     );
                                   }
                                   if (method === "COD") {
                                     return (
-                                      <span className="customer-payment-pill cancelled">
+                                <span className="customer-payment-pill cancelled">
                                         Payment: NOT CHARGED
                                       </span>
                                     );
                                   }
                                   return (
-                                    <span className="customer-payment-pill pending">
+                                <span className="customer-payment-pill pending">
                                       Payment: REFUND IN PROGRESS
                                     </span>
                                   );
@@ -2395,7 +2558,7 @@ const MyAccount = () => {
 
                                 if (payStatus === "refunded") {
                                   return (
-                                    <span className="customer-payment-pill refunded">
+                                <span className="customer-payment-pill refunded">
                                       Payment: REFUNDED
                                     </span>
                                   );
@@ -2403,33 +2566,33 @@ const MyAccount = () => {
                                 if (method === "COD") {
                                   if (payStatus === "paid") {
                                     return (
-                                      <span className="customer-payment-pill paid">
+                                <span className="customer-payment-pill paid">
                                         Payment: PAID (COD)
                                       </span>
                                     );
                                   }
                                   return (
-                                    <span className="customer-payment-pill pending">
+                                <span className="customer-payment-pill pending">
                                       Payment: PENDING (COD)
                                     </span>
                                   );
                                 }
                                 if (payStatus === "paid") {
                                   return (
-                                    <span className="customer-payment-pill paid">
+                                <span className="customer-payment-pill paid">
                                       Payment: Paid
                                     </span>
                                   );
                                 }
                                 if (payStatus === "failed") {
                                   return (
-                                    <span className="customer-payment-pill failed">
+                                <span className="customer-payment-pill failed">
                                       Payment: Failed
                                     </span>
                                   );
                                 }
                                 return (
-                                  <span className="customer-payment-pill pending">
+                                <span className="customer-payment-pill pending">
                                     Payment: Pending
                                   </span>
                                 );
@@ -2604,8 +2767,8 @@ const MyAccount = () => {
 
                               <div className="step-node-content">
                                 <div className="step-node-header">
-                                  <span className="step-node-label">Order Placed</span>
-                                  <span className="step-node-time">
+                                <span className="step-node-label">Order Placed</span>
+                                <span className="step-node-time">
                                     <FiClock className="step-clock-icon" />{" "}
                                     {formatDateTime(trackingModalOrder.createdAt)}
                                   </span>
@@ -2626,13 +2789,13 @@ const MyAccount = () => {
 
                               <div className="step-node-content">
                                 <div className="step-node-header">
-                                  <span className="step-node-label cancelled-label">
+                                <span className="step-node-label cancelled-label">
                                     Order Cancelled
                                   </span>
                                   {(trackingData?.cancelledAt ||
                                     trackingModalOrder.cancelledAt ||
                                     trackingModalOrder.updatedAt) && (
-                                    <span className="step-node-time cancelled-time">
+                                <span className="step-node-time cancelled-time">
                                       <FiClock className="step-clock-icon" />{" "}
                                       {formatDateTime(
                                         trackingData?.cancelledAt ||
@@ -2693,7 +2856,7 @@ const MyAccount = () => {
                                         {isCompleted ? (
                                           <FiCheck className="node-icon" />
                                         ) : (
-                                          <span className="node-num">{idx + 1}</span>
+                                <span className="node-num">{idx + 1}</span>
                                         )}
                                       </div>
                                       {idx < TRACKING_STEPS.length - 1 && (
@@ -2709,9 +2872,9 @@ const MyAccount = () => {
 
                                     <div className="step-node-content">
                                       <div className="step-node-header">
-                                        <span className="step-node-label">{step.label}</span>
+                                <span className="step-node-label">{step.label}</span>
                                         {stepTime && (
-                                          <span className="step-node-time">
+                                <span className="step-node-time">
                                             <FiClock className="step-clock-icon" />{" "}
                                             {formatDateTime(stepTime)}
                                           </span>
@@ -2814,7 +2977,7 @@ const MyAccount = () => {
                                       {isCompleted ? (
                                         <FiCheck className="node-icon" />
                                       ) : (
-                                        <span className="node-num">{idx + 1}</span>
+                                <span className="node-num">{idx + 1}</span>
                                       )}
                                     </div>
                                     {idx < RETURN_CUSTOMER_STEPS.length - 1 && (
@@ -2828,9 +2991,9 @@ const MyAccount = () => {
 
                                   <div className="step-node-content">
                                     <div className="step-node-header">
-                                      <span className="step-node-label">{step.label}</span>
+                                <span className="step-node-label">{step.label}</span>
                                       {stepTime && (
-                                        <span className="step-node-time">
+                                <span className="step-node-time">
                                           <FiClock className="step-clock-icon" />{" "}
                                           {formatDateTime(stepTime)}
                                         </span>
@@ -2986,7 +3149,7 @@ const MyAccount = () => {
                                       {isCompleted ? (
                                         <FiCheck className="node-icon" />
                                       ) : (
-                                        <span className="node-num">{idx + 1}</span>
+                                <span className="node-num">{idx + 1}</span>
                                       )}
                                     </div>
                                     {idx < EXCHANGE_CUSTOMER_STEPS.length - 1 && (
@@ -3000,9 +3163,9 @@ const MyAccount = () => {
 
                                   <div className="step-node-content">
                                     <div className="step-node-header">
-                                      <span className="step-node-label">{step.label}</span>
+                                <span className="step-node-label">{step.label}</span>
                                       {stepTime && (
-                                        <span className="step-node-time">
+                                <span className="step-node-time">
                                           <FiClock className="step-clock-icon" />{" "}
                                           {formatDateTime(stepTime)}
                                         </span>
@@ -3142,7 +3305,7 @@ const MyAccount = () => {
                                   entry.location.latitude) && (
                                   <div className="history-location-info">
                                     <FiMapPin className="history-map-icon" />
-                                    <span>
+                                <span>
                                       {entry.location.city || "Location"}
                                       {entry.location.latitude &&
                                         ` (${entry.location.latitude.toFixed(

@@ -239,33 +239,33 @@ export const useDeliveryLocation = ({ autoDetect = false } = {}) => {
     if (!autoDetect) return;
     if (process.env.NODE_ENV === "test") return;
 
-    const current = getStoredDeliveryLocation();
-    if (current.source && current.source !== "default") return;
-
-    let alreadyTried = false;
-    try {
-      alreadyTried = sessionStorage.getItem(AUTO_ATTEMPT_KEY) === "1";
-    } catch {
-      alreadyTried = false;
-    }
-    if (alreadyTried) return;
-
-    try {
-      sessionStorage.setItem(AUTO_ATTEMPT_KEY, "1");
-    } catch {
-      // ignore
-    }
-
     let cancelled = false;
 
-    const tryAutoLocation = async () => {
+    const tryAutoLocation = async (forceCheck = false) => {
+      const current = getStoredDeliveryLocation();
+      if (!forceCheck && current.source && current.source !== "default") return;
+
+      let geoAlreadyDenied = false;
+      try {
+        geoAlreadyDenied = sessionStorage.getItem(AUTO_ATTEMPT_KEY) === "denied";
+      } catch {
+        geoAlreadyDenied = false;
+      }
+
       // 1. Try real-time browser geolocation first
-      if (typeof navigator !== "undefined" && navigator.geolocation) {
+      if (!geoAlreadyDenied && typeof navigator !== "undefined" && navigator.geolocation) {
         try {
           if (!cancelled) setDetecting(true);
           await detectRealtimeLocation();
           return;
-        } catch {
+        } catch (err) {
+          if (err?.message?.toLowerCase().includes("denied")) {
+            try {
+              sessionStorage.setItem(AUTO_ATTEMPT_KEY, "denied");
+            } catch {
+              // ignore
+            }
+          }
           // Fall back silently to saved default address if user is logged in
         } finally {
           if (!cancelled) setDetecting(false);
@@ -291,8 +291,18 @@ export const useDeliveryLocation = ({ autoDetect = false } = {}) => {
 
     tryAutoLocation();
 
+    const handleAuthChanged = () => {
+      const current = getStoredDeliveryLocation();
+      if (!current.source || current.source === "default") {
+        tryAutoLocation(true);
+      }
+    };
+
+    window.addEventListener("authChanged", handleAuthChanged);
+
     return () => {
       cancelled = true;
+      window.removeEventListener("authChanged", handleAuthChanged);
     };
   }, [autoDetect]);
 

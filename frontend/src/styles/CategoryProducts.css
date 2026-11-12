@@ -61,7 +61,7 @@
   top: 90px;
   max-height: calc(100vh - 110px);
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: clip;
   padding-right: 14px;
   scrollbar-width: thin;
   scrollbar-color: #304bc7 #f1f3f9;
@@ -395,8 +395,10 @@
   gap: 14px 8px;
 }
 
-.product-card {
+.category-page .product-card {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
   background: #fff;
   display: flex;
   flex-direction: column;
@@ -853,7 +855,7 @@
     flex-direction: column;
     padding: 0;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: clip;
     touch-action: pan-y;
   }
 
@@ -963,8 +965,12 @@
     gap: 10px 8px;
   }
 
-  .product-card {
+  .category-page .product-card {
     min-height: auto;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex: none;
   }
 
   .product-info {
@@ -1011,9 +1017,12 @@
   }
 
   .add-cart-btn {
+    flex: 1;
+    min-width: 0;
     height: 32px;
     padding: 0 8px;
     font-size: 11px;
+    white-space: nowrap;
   }
 }
 
@@ -1056,8 +1065,11 @@
   }
 
   .add-cart-btn {
-    font-size: 10px;
+    flex: 1;
+    min-width: 0;
+    font-size: 10.5px;
     padding: 0 4px;
+    white-space: nowrap;
   }
 
   .wishlist-btn {
@@ -1069,7 +1081,7 @@
 /* Extra Narrow Devices (<= 320px) */
 @media (max-width: 360px) {
   .category-page {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .product-grid {

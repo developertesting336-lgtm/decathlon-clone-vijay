@@ -80,7 +80,7 @@ const Delivery = () => {
   };
 
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
 
     if (image.startsWith("http://") || image.startsWith("https://")) {
       return image;

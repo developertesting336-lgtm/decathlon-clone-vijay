@@ -61,7 +61,7 @@ const ProductSection = ({
   }
 
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
     if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
       return image;
     }

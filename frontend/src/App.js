@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -16,6 +16,7 @@ import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
 import Profile from "./pages/Profile";
 import MyAccount from "./pages/MyAccount";
+import AccountOverview from "./pages/AccountOverview";
 import Wishlist from "./pages/Wishlist";
 import ProductDetail from "./pages/ProductDetail";
 import InfoPage from "./pages/InfoPage";
@@ -36,6 +37,15 @@ import {
 const GOOGLE_CLIENT_ID =
   process.env.REACT_APP_GOOGLE_CLIENT_ID ||
   "902081087966-cvuu00ce433nf87gfrp17f9sbial3nfv.apps.googleusercontent.com";
+
+const AccountRoute = () => {
+  const location = useLocation();
+  const tab = new URLSearchParams(location.search).get("tab");
+  if (tab === "orders" || tab === "order-returns" || tab === "address") {
+    return <MyAccount />;
+  }
+  return <AccountOverview />;
+};
 
 function App() {
   useEffect(() => {
@@ -128,7 +138,7 @@ function App() {
 
             <Route path="/profile" element={<Profile />} />
 
-            <Route path="/account" element={<MyAccount />} />
+            <Route path="/account" element={<AccountRoute />} />
 
             <Route path="/account/orders-returns" element={<MyAccount />} />
 

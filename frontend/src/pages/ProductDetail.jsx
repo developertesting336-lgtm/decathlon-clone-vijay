@@ -16,12 +16,13 @@ import toast from "react-hot-toast";
 import api, { useWishlist } from "../api/axios";
 import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
+import CategoryNav from "../components/pageSections/CategoryNav/CategoryNav";
 import Footer from "../components/pageSections/Footer/Footer";
 import ProductReviews, { StarRating } from "../components/ProductReviews/ProductReviews";
 import SizeGuide from "../components/SizeGuide/SizeGuide";
 import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
 import NotifyMe from "../components/NotifyMe/NotifyMe";
-import { openLocationPickerModal, useDeliveryLocation } from "../utils/deliveryLocation";
+import { useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/ProductDetail.css";
 
 const ProductDetail = () => {
@@ -40,7 +41,7 @@ const ProductDetail = () => {
   const [addingToCart, setAddingToCart] = useState(false);
 
   // Pincode check synced with real-time delivery location
-  const { location: deliveryLocation, detecting: detectingLocation } = useDeliveryLocation();
+  const { location: deliveryLocation } = useDeliveryLocation();
   const [pincode, setPincode] = useState(() => deliveryLocation.pincode || "560001");
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const ProductDetail = () => {
   const formatPrice = (price) => `₹${Number(price || 0).toLocaleString("en-IN")}`;
 
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
     if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
       return image;
     }
@@ -287,32 +288,9 @@ const ProductDetail = () => {
   return (
     <div className="product-detail-page">
       <Navbar />
+      <CategoryNav />
 
       <main className="product-detail-container">
-        {/* =====================================================
-            SUB-NAV BAR (All Sports, Men, Women, Kids + Location)
-        ===================================================== */}
-        <div className="pdp-subnav-bar">
-          <div className="pdp-sports-categories">
-            <Link to="/all-sports">All Sports</Link>
-            <Link to="/category/men">Men</Link>
-            <Link to="/category/women">Women</Link>
-            <Link to="/category/kids">Kids</Link>
-          </div>
-
-          <div
-            className="pdp-location-indicator"
-            onClick={openLocationPickerModal}
-            style={{ cursor: "pointer" }}
-          >
-            Delivery to{" "}
-            <span className="blue-loc">
-              {detectingLocation
-                ? "Detecting your location..."
-                : deliveryLocation.label}
-            </span>
-          </div>
-        </div>
 
         {/* =====================================================
             MAIN 2-COLUMN GRID (MOSAIC LEFT + BUYBOX RIGHT)

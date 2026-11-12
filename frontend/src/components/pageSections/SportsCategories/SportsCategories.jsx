@@ -34,7 +34,7 @@ const SportsCategories = () => {
   }, []);
 
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
 
     if (image.startsWith("http")) {
       return image;

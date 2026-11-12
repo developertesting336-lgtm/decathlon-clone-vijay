@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   FiExternalLink,
   FiPlus,
+  FiMinus,
   FiUser,
   FiLock,
   FiMessageSquare,
@@ -12,11 +13,13 @@ import {
   FiChevronRight,
   FiCheck,
   FiX,
+  FiMenu,
 } from "react-icons/fi";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../api/axios";
 import DecathlonLogo from "../components/DecathlonLogo";
+import ProfileSubSectionView from "../components/profile/ProfileSubSectionView";
 import "../styles/Profile.css";
 
 const getAuthConfig = () => {
@@ -102,10 +105,43 @@ const Profile = () => {
     currentTab === "notification-preferences" ||
     currentTab === "communication-preferences";
 
+  const personalizationTabs = [
+    { key: "favourite-store", label: "Favourite store" },
+    { key: "favourite-sports", label: "Favourite sports" },
+    { key: "connected-apps", label: "Connected apps" },
+    { key: "size-guide", label: "Your size guide" },
+  ];
+
+  const privacyTabs = [
+    { key: "product-recommendations", label: "Product recommendations" },
+    { key: "loyalty-program", label: "Join our loyalty program" },
+    { key: "visited-websites", label: "Visited websites & apps" },
+    { key: "third-party-access", label: "Manage third-party access" },
+    { key: "device-connections", label: "Manage device connections" },
+    { key: "delete-account", label: "Delete my account" },
+  ];
+
+  const isPersonalizationSubTab = personalizationTabs.some((t) => t.key === currentTab);
+  const isPrivacySubTab = privacyTabs.some((t) => t.key === currentTab);
+  const isSubSectionTab = isPersonalizationSubTab || isPrivacySubTab;
+
+  const [personalizationOpen, setPersonalizationOpen] = useState(isPersonalizationSubTab);
+  const [privacyOpen, setPrivacyOpen] = useState(isPrivacySubTab);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileSidebarOpen(false);
+  }, [currentTab]);
+
+  useEffect(() => {
+    if (isPersonalizationSubTab) setPersonalizationOpen(true);
+    if (isPrivacySubTab) setPrivacyOpen(true);
+  }, [isPersonalizationSubTab, isPrivacySubTab]);
+
   const [user, setUser] = useState({
     name: "",
     email: "vk7184192@gmail.com",
-    phone: "09459940381",
+    phone: "",
     dob: "",
     gender: "",
     cardNumber: "2 094724 479967",
@@ -343,6 +379,14 @@ const Profile = () => {
           HEADER
       ================================================== */}
       <header className="profile-header">
+        <button
+          type="button"
+          className="profile-mobile-menu-btn"
+          aria-label="Open menu"
+          onClick={() => setMobileSidebarOpen(true)}
+        >
+          <FiMenu />
+        </button>
         <Link to="/" className="decathlon-logo" style={{ textDecoration: "none" }}>
           <DecathlonLogo height={24} />
         </Link>
@@ -352,10 +396,25 @@ const Profile = () => {
           PAGE LAYOUT
       ================================================== */}
       <div className="profile-layout">
+        {mobileSidebarOpen && (
+          <div
+            className="profile-sidebar-backdrop"
+            onClick={() => setMobileSidebarOpen(false)}
+          />
+        )}
+
         {/* ==================================================
             SIDEBAR
         ================================================== */}
-        <aside className="profile-sidebar">
+        <aside className={`profile-sidebar ${mobileSidebarOpen ? "mobile-open" : ""}`}>
+          <button
+            type="button"
+            className="profile-sidebar-close"
+            aria-label="Close menu"
+            onClick={() => setMobileSidebarOpen(false)}
+          >
+            <FiX />
+          </button>
           {/* USER BOX */}
           <div className="profile-user-box">
             <h2>Welcome</h2>
@@ -427,14 +486,47 @@ const Profile = () => {
               >
                 Notifications preferences
               </div>
-              <div className="menu-link menu-with-icon">
+              <div
+                className={`menu-link menu-with-icon ${personalizationOpen || isPersonalizationSubTab ? "active-menu" : ""}`}
+                onClick={() => setPersonalizationOpen((prev) => !prev)}
+              >
                 <span>Personalization</span>
-                <FiPlus />
+                {personalizationOpen ? <FiMinus /> : <FiPlus />}
               </div>
-              <div className="menu-link menu-with-icon">
+              {personalizationOpen && (
+                <div className="menu-submenu">
+                  {personalizationTabs.map((item) => (
+                    <div
+                      key={item.key}
+                      className={`menu-sublink ${currentTab === item.key ? "active-link" : ""}`}
+                      onClick={() => setSearchParams({ tab: item.key })}
+                    >
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div
+                className={`menu-link menu-with-icon ${privacyOpen || isPrivacySubTab ? "active-menu" : ""}`}
+                onClick={() => setPrivacyOpen((prev) => !prev)}
+              >
                 <span>Privacy and security</span>
-                <FiPlus />
+                {privacyOpen ? <FiMinus /> : <FiPlus />}
               </div>
+              {privacyOpen && (
+                <div className="menu-submenu">
+                  {privacyTabs.map((item) => (
+                    <div
+                      key={item.key}
+                      className={`menu-sublink ${currentTab === item.key ? "active-link" : ""}`}
+                      onClick={() => setSearchParams({ tab: item.key })}
+                    >
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* LOGOUT */}
@@ -461,7 +553,14 @@ const Profile = () => {
             MAIN CONTENT
         ================================================== */}
         <main className="profile-content">
-          {isNotificationPrefs ? (
+          {isSubSectionTab ? (
+            <ProfileSubSectionView
+              activeTab={currentTab}
+              userEmail={user.email}
+              onBack={() => setSearchParams({})}
+              onLogout={handleLogout}
+            />
+          ) : isNotificationPrefs ? (
             /* ==================================================
                COMMUNICATION / NOTIFICATION PREFERENCES VIEW
             ================================================== */
@@ -801,11 +900,13 @@ const Profile = () => {
                   <div className="personal-info-row">
                     <div className="personal-info-left">
                       <span className="personal-info-label">Phone number</span>
-                      <div className="personal-info-value has-value">
-                        <span>{user.phone || "09459940381"}</span>
-                        <span className="verified-badge">
-                          <FiCheck /> Verified
-                        </span>
+                      <div className={`personal-info-value ${user.phone ? "has-value" : ""}`}>
+                        <span>{user.phone || "no information provided"}</span>
+                        {user.phone && (
+                          <span className="verified-badge">
+                            <FiCheck /> Verified
+                          </span>
+                        )}
                       </div>
                     </div>
                     <button

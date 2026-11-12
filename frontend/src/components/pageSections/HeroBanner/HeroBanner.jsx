@@ -27,7 +27,7 @@ const HeroBanner = ({
 
   const resolveImageUrl = useCallback(
     (image) => {
-      if (!image) return "";
+      if (!image) return null;
       if (propGetImageUrl && typeof propGetImageUrl === "function") {
         return propGetImageUrl(image);
       }

@@ -32,7 +32,7 @@ const RelatedProducts = ({ productId, title = "You May Also Like", onProductsLoa
 
   // Image URL helper (reusing Cloudinary and server upload resolution)
   const getImageUrl = (image) => {
-    if (!image) return "";
+    if (!image) return null;
     if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
       return image;
     }
