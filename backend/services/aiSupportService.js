@@ -256,7 +256,13 @@ export async function getUserOrders(userId, options = {}) {
           const matched = userOrders.find((o) =>
             o._id.toString().toLowerCase().endsWith(hexMatch.toLowerCase())
           );
-          if (matched) query._id = matched._id;
+          if (matched) {
+            query._id = matched._id;
+          } else {
+            return { success: true, orders: [] };
+          }
+        } else {
+          return { success: true, orders: [] };
         }
       }
     }

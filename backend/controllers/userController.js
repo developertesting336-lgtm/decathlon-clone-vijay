@@ -1,4 +1,17 @@
 import User from "../models/User.js";
+import Address from "../models/Address.js";
+import Cart from "../models/cart.js";
+import Wishlist from "../models/Wishlist.js";
+import Notification from "../models/Notification.js";
+import AiChatHistory from "../models/AiChatHistory.js";
+import PushSubscription from "../models/PushSubscription.js";
+import StockNotification from "../models/StockNotification.js";
+import Order from "../models/Order.js";
+import Review from "../models/Review.js";
+import SupportTicket from "../models/SupportTicket.js";
+import CouponUsage from "../models/CouponUsage.js";
+import Otp from "../models/Otp.js";
+import { issueOtp, consumeOtp } from "../utils/otpHelper.js";
 
 export const generateCardNumberForUser = (user) => {
   // Derive unique 13-digit Decathlon card number: 2 XXXXXX XXXXXX from user._id
@@ -92,5 +105,97 @@ export const updateUserProfile = async (req, res) => {
   } catch (error) {
     console.error("Update User Profile Error:", error);
     return res.status(500).json({ message: error.message || "Failed to update profile" });
+  }
+};
+
+
+export const sendDeleteAccountOtp = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.email) {
+      return res.status(400).json({
+        message: "No email address is linked to this account. Please add an email in Personal information first.",
+      });
+    }
+
+    const email = user.email.toLowerCase().trim();
+    const result = await issueOtp({
+      type: "email",
+      email,
+      purpose: "Account Deletion",
+    });
+
+    return res.status(200).json({
+      message: result.message || "One-time verification code sent to your email",
+    });
+  } catch (error) {
+    console.error("Send Delete Account OTP Error:", error);
+    return res.status(error.statusCode || 500).json({
+      message: error.message || "Failed to send verification code",
+    });
+  }
+};
+
+export const deleteUserAccount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const otpInput = String(req.body?.otp || req.query?.otp || "").trim();
+    if (!otpInput) {
+      return res.status(400).json({ message: "Please enter the verification code sent to your email" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user.email) {
+      return res.status(400).json({ message: "No email address linked to this account" });
+    }
+
+    const email = user.email.toLowerCase().trim();
+    const verification = await consumeOtp({
+      type: "email",
+      email,
+      otp: otpInput,
+    });
+    if (!verification.ok) {
+      return res.status(verification.status || 400).json({
+        message: verification.message || "Invalid or expired verification code",
+      });
+    }
+
+    const otpFilters = [{ email }];
+    if (user.phone) {
+      otpFilters.push({ phone: user.phone });
+    }
+
+    await Promise.allSettled([
+      Address.deleteMany({ user: userId }),
+      Cart.deleteMany({ user: userId }),
+      Wishlist.deleteMany({ user: userId }),
+      Notification.deleteMany({ user: userId }),
+      AiChatHistory.deleteMany({ user: userId }),
+      PushSubscription.deleteMany({ user: userId }),
+      StockNotification.deleteMany({ user: userId }),
+      Order.deleteMany({ user: userId }),
+      Review.deleteMany({ user: userId }),
+      SupportTicket.deleteMany({ user: userId }),
+      CouponUsage.deleteMany({ userId }),
+      Otp.deleteMany({ $or: otpFilters }),
+    ]);
+
+    await User.findByIdAndDelete(userId);
+
+    return res.status(200).json({
+      message: "Your account has been permanently deleted",
+    });
+  } catch (error) {
+    console.error("Delete User Account Error:", error);
+    return res.status(500).json({
+      message: error.message || "Failed to delete account",
+    });
   }
 };

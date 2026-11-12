@@ -150,22 +150,14 @@ export const handleAIChat = async (req, res) => {
         lowerQuery
       );
 
-    const isOrderQuery =
-      !isHumanSupportQuery &&
-      /\b(order|orders|tracking|track|delivery status|where is my (order|item|package)|when will my order arrive|recent orders)\b/i.test(
-        lowerQuery
-      );
-
     const isReturnQuery =
       !isHumanSupportQuery &&
-      !isOrderQuery &&
       /\b(return|returns|how (can|do) i return|want to return|exchange|replace item|return policy|return a product|can i return)\b/i.test(
         lowerQuery
       );
 
     const isRefundQuery =
       !isHumanSupportQuery &&
-      !isOrderQuery &&
       !isReturnQuery &&
       /\b(refund|refunds|where is my refund|refund status|how long (does )?a? refund take|money back|not received refund)\b/i.test(
         lowerQuery
@@ -173,10 +165,18 @@ export const handleAIChat = async (req, res) => {
 
     const isPaymentQuery =
       !isHumanSupportQuery &&
-      !isOrderQuery &&
-      !isRefundQuery &&
       !isReturnQuery &&
+      !isRefundQuery &&
       /\b(payment|payment failed|money deducted|pay using upi|how can i pay|upi|cod|credit card|card payment|payment issue|payment error)\b/i.test(
+        lowerQuery
+      );
+
+    const isOrderQuery =
+      !isHumanSupportQuery &&
+      !isReturnQuery &&
+      !isRefundQuery &&
+      !isPaymentQuery &&
+      /\b(order|orders|tracking|track|delivery status|where is my (order|item|package)|when will my order arrive|recent orders)\b/i.test(
         lowerQuery
       );
 
@@ -242,20 +242,44 @@ export const handleAIChat = async (req, res) => {
       }
 
       if (userId) {
-        const orderResult = await getUserOrders(userId, { limit: 3 });
+        const rawQuery = effectiveQuery || userQuery || "";
+        const orderIdMatch =
+          rawQuery.match(/#([a-f0-9]{6,24})\b/i) ||
+          rawQuery.match(/\border\s*(?:id|number|#)?\s*[:#-]?\s*([a-f0-9]{6,24})\b/i);
+        const requestedOrderId = orderIdMatch ? orderIdMatch[1] : null;
+
+        const orderResult = await getUserOrders(userId, {
+          limit: 3,
+          orderId: requestedOrderId,
+        });
         if (orderResult.success && orderResult.orders.length > 0) {
           formattedOrders = orderResult.orders;
           const latest = formattedOrders[0];
-          finalReply = `📦 **Found ${formattedOrders.length} recent order${
-            formattedOrders.length > 1 ? "s" : ""
-          } in your account:**\n\n- **Order ID:** \`#${latest.shortId}\`\n- **Status:** **${latest.orderStatus.toUpperCase()}**\n- **Order Date:** ${latest.orderDate}\n- **Estimated Delivery:** **${latest.estDeliveryDate}**\n- **Total:** ₹${latest.totalAmount?.toLocaleString(
+          const statusLower = String(latest.orderStatus || "").toLowerCase();
+          const hideEstDelivery = ["cancelled", "returned", "refunded", "delivered"].includes(
+            statusLower
+          );
+          const headerText = requestedOrderId
+            ? `📦 **Order Details for \`#${latest.shortId}\`:**`
+            : `📦 **Found ${formattedOrders.length} recent order${
+                formattedOrders.length > 1 ? "s" : ""
+              } in your account:**`;
+
+          finalReply = `${headerText}\n\n- **Order ID:** \`#${latest.shortId}\`\n- **Status:** **${latest.orderStatus.toUpperCase()}**\n- **Order Date:** ${latest.orderDate}${
+            hideEstDelivery
+              ? ""
+              : `\n- **Estimated Delivery:** **${latest.estDeliveryDate}**`
+          }\n- **Total:** ₹${latest.totalAmount?.toLocaleString(
             "en-IN"
-          )}\n- **Shipping to:** ${latest.deliveryAddress}\n\nYou can manage all items and live milestones directly in **[Orders & Returns](/account/orders-returns)**.`;
+          )}\n- **Shipping to:** ${latest.deliveryAddress}\n\nYou can manage all items and live milestones directly in [Orders & Returns](/account/orders-returns).`;
 
           if (matchedKnowledge && matchedKnowledge.answer) {
             finalReply += `\n\nℹ️ **Shipment Tracking Guide:**\n${matchedKnowledge.answer}`;
           }
           supportContext = `Customer has active order #${latest.shortId}, status: ${latest.orderStatus}, items: ${latest.itemsCount}, total: ₹${latest.totalAmount}.`;
+        } else if (requestedOrderId) {
+          finalReply = `I couldn't find **Order \`#${requestedOrderId.toUpperCase()}\`** in your Decathlon account. Please double-check the order ID or view all your orders in [Orders & Returns](/account/orders-returns).`;
+          supportContext = `User requested order #${requestedOrderId}, but no matching order was found.`;
         } else {
           finalReply = `I checked your Decathlon account, but found no active orders placed yet. 🏃‍♂️\n\n${
             matchedKnowledge?.answer || "Once you place an order, live shipping status and delivery tracking will update here automatically! Would you like help finding gear?"
@@ -285,7 +309,25 @@ export const handleAIChat = async (req, res) => {
       }
 
       const returnData = await getReturnPolicy();
-      finalReply = `🔄 **${returnData.policyTitle}**\n\n` +
+      let orderReturnPrefix = "";
+      const returnOrderMatch =
+        (effectiveQuery || userQuery || "").match(/#([a-f0-9]{6,24})\b/i) ||
+        (effectiveQuery || userQuery || "").match(
+          /\border\s*(?:id|number|#)?\s*[:#-]?\s*([a-f0-9]{6,24})\b/i
+        );
+      if (userId && returnOrderMatch) {
+        const ordRes = await getUserOrders(userId, {
+          limit: 1,
+          orderId: returnOrderMatch[1],
+        });
+        if (ordRes.success && ordRes.orders.length > 0) {
+          formattedOrders = ordRes.orders;
+          const targetOrd = ordRes.orders[0];
+          orderReturnPrefix = `**Order \`#${targetOrd.shortId}\` (${targetOrd.orderStatus.toUpperCase()}):**\n`;
+        }
+      }
+
+      finalReply = `🔄 **${returnData.policyTitle}**\n\n${orderReturnPrefix}` +
         returnData.highlights.map((h) => `- ${h}`).join("\n") +
         `\n\n**How to Return Online:**\n` +
         returnData.onlineReturnSteps.join("\n") +
