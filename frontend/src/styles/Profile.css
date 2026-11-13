@@ -377,7 +377,7 @@ body {
   min-height: 38px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 8px 12px;
   border-radius: 8px;
   color: #334155;
@@ -388,13 +388,13 @@ body {
   text-decoration: none;
   transition: all 0.15s ease;
   margin-bottom: 2px;
-  gap: 10px;
+  gap: 12px;
 }
 
 .menu-item-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
   flex: 1;
 }
@@ -410,6 +410,7 @@ body {
   font-size: 13px;
   color: #94a3b8;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .menu-item:hover,
@@ -444,6 +445,7 @@ body {
   color: #64748b;
   display: flex;
   align-items: center;
+  margin-left: auto;
 }
 
 .menu-submenu {

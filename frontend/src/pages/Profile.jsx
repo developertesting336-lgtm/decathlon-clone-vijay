@@ -534,43 +534,55 @@ const Profile = () => {
                 className={`menu-link ${isDecathlonCard ? "active-link" : ""}`}
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                <FiCreditCard className="menu-icon" />
-                <span>Loyalty Card</span>
+                <div className="menu-item-left">
+                  <FiCreditCard className="menu-icon" />
+                  <span>Loyalty Card</span>
+                </div>
               </div>
               <div
                 className="menu-link"
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                <FiShoppingBag className="menu-icon" />
-                <span>Rewards Shop</span>
+                <div className="menu-item-left">
+                  <FiShoppingBag className="menu-icon" />
+                  <span>Rewards Shop</span>
+                </div>
               </div>
               <div
                 className="menu-link"
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                <FiAward className="menu-icon" />
-                <span>Unlocked Rewards</span>
+                <div className="menu-item-left">
+                  <FiAward className="menu-icon" />
+                  <span>Unlocked Rewards</span>
+                </div>
               </div>
               <div
                 className="menu-link"
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                <FiTrendingUp className="menu-icon" />
-                <span>Earn More Points</span>
+                <div className="menu-item-left">
+                  <FiTrendingUp className="menu-icon" />
+                  <span>Earn More Points</span>
+                </div>
               </div>
               <div
                 className="menu-link"
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                <FiActivity className="menu-icon" />
-                <span>Sport Sessions</span>
+                <div className="menu-item-left">
+                  <FiActivity className="menu-icon" />
+                  <span>Sport Sessions</span>
+                </div>
               </div>
               <div
                 className="menu-link"
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                <FiClock className="menu-icon" />
-                <span>Points History</span>
+                <div className="menu-item-left">
+                  <FiClock className="menu-icon" />
+                  <span>Points History</span>
+                </div>
               </div>
             </div>
 
@@ -581,22 +593,28 @@ const Profile = () => {
                 className={`menu-link ${!currentTab ? "active-link" : ""}`}
                 onClick={() => setSearchParams({})}
               >
-                <FiUser className="menu-icon" />
-                <span>Profile Overview</span>
+                <div className="menu-item-left">
+                  <FiUser className="menu-icon" />
+                  <span>Profile Overview</span>
+                </div>
               </div>
               <div
                 className={`menu-link ${isPersonalInfo ? "active-link" : ""}`}
                 onClick={() => setSearchParams({ tab: "personal-information" })}
               >
-                <FiUserCheck className="menu-icon" />
-                <span>Personal Information</span>
+                <div className="menu-item-left">
+                  <FiUserCheck className="menu-icon" />
+                  <span>Personal Information</span>
+                </div>
               </div>
               <div
                 className={`menu-link ${isNotificationPrefs ? "active-link" : ""}`}
                 onClick={() => setSearchParams({ tab: "notifications-preferences" })}
               >
-                <FiBell className="menu-icon" />
-                <span>Notification Preferences</span>
+                <div className="menu-item-left">
+                  <FiBell className="menu-icon" />
+                  <span>Notification Preferences</span>
+                </div>
               </div>
 
               {/* Personalization Dropdown */}
