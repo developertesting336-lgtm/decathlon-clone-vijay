@@ -2037,3 +2037,155 @@
   }
 }
 
+
+
+/* =========================================================
+   STATUS PILLS & ORDER LIFECYCLE ACTIONS
+   ========================================================= */
+.orders-status-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+  scrollbar-width: thin;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.status-pill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+.status-pill.active {
+  background: #3643ba;
+  color: #ffffff;
+  border-color: #3643ba;
+  box-shadow: 0 2px 6px rgba(54, 67, 186, 0.25);
+}
+
+.status-pill .pill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.status-pill.active .pill-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.btn-table-action.confirm {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #15803d;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(22, 163, 74, 0.25);
+}
+
+.btn-table-action.confirm:hover {
+  background: #15803d;
+  border-color: #166534;
+  color: #ffffff;
+}
+
+.btn-table-action.cancel-order {
+  background: #ffffff;
+  color: #dc2626;
+  border-color: #fca5a5;
+  font-weight: 600;
+}
+
+.btn-table-action.cancel-order:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+  color: #b91c1c;
+}
+
+.btn-tracking-step.confirm {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #15803d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid #15803d;
+}
+
+.btn-tracking-step.confirm:hover {
+  background: #15803d;
+}
+
+.btn-tracking-step.cancel-order {
+  background: #ffffff;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-tracking-step.cancel-order:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
+.completed-check-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  white-space: nowrap;
+}
+
+.completed-check-badge svg {
+  font-size: 14px;
+  color: #10b981;
+}
+
+.status-badge-inline.cancelled {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  white-space: nowrap;
+}

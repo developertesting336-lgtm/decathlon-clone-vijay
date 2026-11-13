@@ -133,16 +133,9 @@ const Orders = () => {
 
   const sortOrders = useCallback((orderList) => {
     return [...orderList].sort((a, b) => {
-      const aWorking = WORKING_STATUSES.includes(a.orderStatus);
-      const bWorking = WORKING_STATUSES.includes(b.orderStatus);
-
-      if (aWorking && !bWorking) {
-        return -1;
-      }
-      if (!aWorking && bWorking) {
-        return 1;
-      }
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      const dateA = new Date(a.createdAt || 0).getTime();
+      const dateB = new Date(b.createdAt || 0).getTime();
+      return dateB - dateA;
     });
   }, []);
 
@@ -329,6 +322,24 @@ const Orders = () => {
     return orders.filter(
       (o) => o.exchangeStatus && o.exchangeStatus !== "NONE",
     ).length;
+  }, [orders]);
+
+  const statusCounts = useMemo(() => {
+    const counts = {
+      all: orders.length,
+      pending: 0,
+      confirmed: 0,
+      shipped: 0,
+      delivered: 0,
+      cancelled: 0,
+    };
+    orders.forEach((o) => {
+      const s = (o.orderStatus || "").toLowerCase();
+      if (counts[s] !== undefined) {
+        counts[s]++;
+      }
+    });
+    return counts;
   }, [orders]);
 
   const filteredOrders = useMemo(() => {
@@ -582,13 +593,135 @@ const Orders = () => {
   const getOrderTrackingStatus = useCallback((order) => {
     if (!order) return "ORDER_PLACED";
     if (order.orderStatus === "cancelled") return "CANCELLED";
-    if (order.trackingHistory && order.trackingHistory.length > 0) {
-      return order.trackingHistory[order.trackingHistory.length - 1].status;
-    }
     if (order.orderStatus === "delivered") return "DELIVERED";
+    if (order.trackingHistory && order.trackingHistory.length > 0) {
+      const last = order.trackingHistory[order.trackingHistory.length - 1];
+      if (last && last.status) return last.status;
+    }
     if (order.orderStatus === "shipped") return "SHIPPED";
+    if (order.orderStatus === "confirmed") return "CONFIRMED";
     return "ORDER_PLACED";
   }, []);
+
+  const handleConfirmOrder = async (order) => {
+    if (!order) return;
+    try {
+      const locCity =
+        order.shippingAddress?.cityState ||
+        order.currentLocation?.city ||
+        "Central Fulfillment Hub, Bengaluru";
+      const locLat = order.currentLocation?.latitude || 12.9716;
+      const locLng = order.currentLocation?.longitude || 77.5946;
+
+      let response;
+      try {
+        response = await api.put(`/orders/${order._id}/tracking`, {
+          status: "CONFIRMED",
+          description: "Order confirmed by seller",
+          location: {
+            city: locCity,
+            latitude: locLat,
+            longitude: locLng,
+          },
+        });
+      } catch (trackErr) {
+        response = await api.put(`/orders/${order._id}/status`, {
+          status: "confirmed",
+        });
+      }
+
+      const updatedOrder = response.data?.order;
+      const trackingData = response.data?.tracking;
+
+      setOrders((prev) =>
+        sortOrders(
+          prev.map((o) =>
+            o._id === order._id
+              ? {
+                  ...o,
+                  ...(updatedOrder || {}),
+                  orderStatus: "confirmed",
+                  trackingHistory:
+                    trackingData?.trackingHistory ||
+                    updatedOrder?.trackingHistory ||
+                    o.trackingHistory,
+                }
+              : o
+          )
+        )
+      );
+
+      setSelectedOrder((prev) =>
+        prev && prev._id === order._id
+          ? {
+              ...prev,
+              ...(updatedOrder || {}),
+              orderStatus: "confirmed",
+              trackingHistory:
+                trackingData?.trackingHistory ||
+                updatedOrder?.trackingHistory ||
+                prev.trackingHistory,
+            }
+          : prev
+      );
+
+      toast.success("Order confirmed successfully!");
+    } catch (error) {
+      console.error("Confirm Order Error:", error);
+      toast.error(error.response?.data?.message || "Failed to confirm order");
+    }
+  };
+
+  const handleCancelOrder = async (order) => {
+    if (!order) return;
+    const confirmPrompt = window.prompt(
+      `Cancel Order #${order._id.toString().slice(-8).toUpperCase()}?\nEnter reason:`,
+      "Cancelled by store administrator"
+    );
+    if (confirmPrompt === null) return;
+
+    try {
+      const response = await api.put(`/orders/${order._id}/status`, {
+        status: "cancelled",
+        cancellationReason: confirmPrompt || "Cancelled by store administrator",
+      });
+
+      const updatedOrder = response.data?.order;
+
+      setOrders((prev) =>
+        sortOrders(
+          prev.map((o) =>
+            o._id === order._id
+              ? {
+                  ...o,
+                  ...(updatedOrder || {}),
+                  orderStatus: "cancelled",
+                  cancellationReason:
+                    updatedOrder?.cancellationReason || confirmPrompt,
+                }
+              : o
+          )
+        )
+      );
+
+      setSelectedOrder((prev) =>
+        prev && prev._id === order._id
+          ? {
+              ...prev,
+              ...(updatedOrder || {}),
+              orderStatus: "cancelled",
+              cancellationReason:
+                updatedOrder?.cancellationReason || confirmPrompt,
+            }
+          : prev
+      );
+
+      toast.success("Order has been cancelled");
+    } catch (error) {
+      console.error("Cancel Order Error:", error);
+      toast.error(error.response?.data?.message || "Failed to cancel order");
+    }
+  };
 
   const handleMarkAsDelivered = async (order) => {
     if (!order) return;
@@ -1088,15 +1221,35 @@ const Orders = () => {
             </div>
 
             <div className="tracking-control-buttons">
-              {currentTracking === "ORDER_PLACED" && (
-                <button
-                  type="button"
-                  className="btn-tracking-step ship"
-                  onClick={() => handleUpdateTrackingStep(order, "SHIPPED")}
-                >
-                  Mark Shipped
-                </button>
+              {(order.orderStatus === "pending" || currentTracking === "ORDER_PLACED") && (
+                <>
+                  <button
+                    type="button"
+                    className="btn-tracking-step confirm"
+                    onClick={() => handleConfirmOrder(order)}
+                  >
+                    Confirm Order
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-tracking-step cancel-order"
+                    onClick={() => handleCancelOrder(order)}
+                  >
+                    Cancel Order
+                  </button>
+                </>
               )}
+
+              {(order.orderStatus === "confirmed" || currentTracking === "CONFIRMED" || currentTracking === "PACKED") &&
+                order.orderStatus !== "pending" && (
+                  <button
+                    type="button"
+                    className="btn-tracking-step ship"
+                    onClick={() => handleUpdateTrackingStep(order, "SHIPPED")}
+                  >
+                    Mark Shipped
+                  </button>
+                )}
 
               {currentTracking === "SHIPPED" && (
                 <button
@@ -1726,6 +1879,33 @@ const Orders = () => {
           </button>
         </div>
 
+        {/* QUICK STATUS PILLS (FOR ALL ORDERS) */}
+        {activeTab === "all_orders" && (
+          <div className="orders-status-pills">
+            {[
+              { key: "all", label: "All Orders", count: statusCounts.all },
+              { key: "pending", label: "Pending", count: statusCounts.pending },
+              { key: "confirmed", label: "Confirmed", count: statusCounts.confirmed },
+              { key: "shipped", label: "Shipped", count: statusCounts.shipped },
+              { key: "delivered", label: "Delivered", count: statusCounts.delivered },
+              { key: "cancelled", label: "Cancelled", count: statusCounts.cancelled },
+            ].map((pill) => (
+              <button
+                key={pill.key}
+                type="button"
+                className={`status-pill ${statusFilter === pill.key ? "active" : ""}`}
+                onClick={() => {
+                  setStatusFilter(pill.key);
+                  setCurrentPage(1);
+                }}
+              >
+                <span>{pill.label}</span>
+                <span className="pill-badge">{pill.count}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* SINGLE CONSOLIDATED TOOLBAR */}
         <div className="orders-toolbar">
           <div className="orders-search">
@@ -2186,24 +2366,52 @@ const Orders = () => {
                                   </button>
                                 )}
 
-                                {/* Delivery progression — each button disappears after its step is done */}
+                                {/* Delivery progression — each button corresponds to the current stage */}
                                 {!hasActiveReturn(order) &&
                                   !hasActiveExchange(order) &&
                                   order.orderStatus !== "cancelled" &&
                                   order.orderStatus !== "returned" &&
                                   order.orderStatus !== "delivered" && (
                                     <>
-                                      {getOrderTrackingStatus(order) === "ORDER_PLACED" && (
-                                        <button
-                                          type="button"
-                                          className="btn-table-action step ship"
-                                          onClick={() => handleUpdateTrackingStep(order, "SHIPPED")}
-                                          title="Mark order as Shipped"
-                                        >
-                                          Mark Shipped
-                                        </button>
+                                      {/* PENDING: Allow admin to Confirm Order or Cancel */}
+                                      {(order.orderStatus === "pending" ||
+                                        getOrderTrackingStatus(order) === "ORDER_PLACED") && (
+                                        <>
+                                          <button
+                                            type="button"
+                                            className="btn-table-action confirm"
+                                            onClick={() => handleConfirmOrder(order)}
+                                            title="Confirm this order"
+                                          >
+                                            Confirm Order
+                                          </button>
+                                          <button
+                                            type="button"
+                                            className="btn-table-action cancel-order"
+                                            onClick={() => handleCancelOrder(order)}
+                                            title="Cancel this order"
+                                          >
+                                            Cancel
+                                          </button>
+                                        </>
                                       )}
 
+                                      {/* CONFIRMED: Ready to be marked shipped */}
+                                      {(order.orderStatus === "confirmed" ||
+                                        getOrderTrackingStatus(order) === "CONFIRMED" ||
+                                        getOrderTrackingStatus(order) === "PACKED") &&
+                                        order.orderStatus !== "pending" && (
+                                          <button
+                                            type="button"
+                                            className="btn-table-action step ship"
+                                            onClick={() => handleUpdateTrackingStep(order, "SHIPPED")}
+                                            title="Mark order as Shipped"
+                                          >
+                                            Mark Shipped
+                                          </button>
+                                        )}
+
+                                      {/* SHIPPED: Ready for hub / transit */}
                                       {getOrderTrackingStatus(order) === "SHIPPED" && (
                                         <button
                                           type="button"
@@ -2215,6 +2423,7 @@ const Orders = () => {
                                         </button>
                                       )}
 
+                                      {/* REACHED_HUB: Ready for out for delivery */}
                                       {getOrderTrackingStatus(order) === "REACHED_HUB" && (
                                         <button
                                           type="button"
@@ -2226,6 +2435,7 @@ const Orders = () => {
                                         </button>
                                       )}
 
+                                      {/* OUT_FOR_DELIVERY: Ready for delivery */}
                                       {getOrderTrackingStatus(order) === "OUT_FOR_DELIVERY" && (
                                         <button
                                           type="button"
@@ -2239,21 +2449,36 @@ const Orders = () => {
                                     </>
                                   )}
 
-                                {/* COD payment — disappears once paid */}
-                                {order.paymentMethod === "COD" &&
-                                  !hasActiveReturn(order) &&
+                                {/* DELIVERED ORDERS: COD payment or Completed checkmark */}
+                                {!hasActiveReturn(order) &&
                                   !hasActiveExchange(order) &&
-                                  (order.paymentStatus || "").toLowerCase() === "pending" &&
-                                  order.orderStatus !== "cancelled" && (
-                                    <button
-                                      type="button"
-                                      className="btn-table-action cod-pay"
-                                      onClick={() => handleMarkCodPaymentReceived(order)}
-                                      title="Mark COD Payment Received"
-                                    >
-                                      Mark COD Received
-                                    </button>
+                                  (order.orderStatus === "delivered" ||
+                                    getOrderTrackingStatus(order) === "DELIVERED") && (
+                                    <>
+                                      {order.paymentMethod === "COD" &&
+                                      (order.paymentStatus || "").toLowerCase() === "pending" ? (
+                                        <button
+                                          type="button"
+                                          className="btn-table-action cod-pay"
+                                          onClick={() => handleMarkCodPaymentReceived(order)}
+                                          title="Mark COD Payment Received"
+                                        >
+                                          Mark COD Received
+                                        </button>
+                                      ) : (
+                                        <span className="completed-check-badge" title="Order fulfilled and paid">
+                                          <MdCheckCircle /> Completed
+                                        </span>
+                                      )}
+                                    </>
                                   )}
+
+                                {/* CANCELLED BADGE */}
+                                {order.orderStatus === "cancelled" && (
+                                  <span className="status-badge-inline cancelled">
+                                    Cancelled
+                                  </span>
+                                )}
 
                                 {/* View details — always visible */}
                                 <button
