@@ -27,8 +27,6 @@ import "../styles/Orders.css";
 
 const ORDERS_PER_PAGE = 20;
 
-const WORKING_STATUSES = ["pending", "confirmed", "processing", "shipped"];
-
 const STATUS_OPTIONS = [
   "pending",
   "confirmed",
