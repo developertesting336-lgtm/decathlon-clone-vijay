@@ -18,6 +18,7 @@ import DecathlonLogo from "../components/DecathlonLogo";
 import CartSizeModal from "../components/CartSizeModal";
 import AddressDrawer from "../components/AddressDrawer";
 import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import "../styles/Cart.css";
 
 const getProduct = (item) => item?.product || {};
@@ -453,7 +454,7 @@ const Cart = () => {
   if (loading) {
     return (
       <main className="cart-page">
-        <div className="cart-loading">Loading cart...</div>
+        <LoadingSpinner message="Loading your cart..." minHeight="60vh" size="large" />
       </main>
     );
   }

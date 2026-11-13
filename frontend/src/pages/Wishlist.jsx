@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import api from "../api/axios";
 import DecathlonLogo from "../components/DecathlonLogo";
 import Navbar from "../components/Navbar";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import "../styles/Wishlist.css";
 
 const getAuthConfig = () => {
@@ -133,7 +134,7 @@ const Wishlist = () => {
           </div>
 
           {loading ? (
-            <div className="wishlist-loading-spinner">Loading wishlist...</div>
+            <LoadingSpinner message="Loading your wishlist..." minHeight="40vh" size="large" />
           ) : wishlistItems.length > 0 ? (
             <div className="wishlist-grid">
               {wishlistItems.map((product) => {

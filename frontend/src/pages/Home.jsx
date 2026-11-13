@@ -16,6 +16,7 @@ import OutdoorProducts from "../components/pageSections/OutdoorProducts/OutdoorP
 import EquippingChampions from "../components/pageSections/EquippingChampions/EquippingChampions";
 
 import Footer from "../components/pageSections/Footer/Footer";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import api from "../api/axios";
 
 import "../styles/Home.css";
@@ -68,33 +69,7 @@ const Home = () => {
       <CategoryNav />
 
       {loading ? (
-        <div className="home-container">
-          <div
-            className="home-skeleton-wrapper"
-            aria-busy="true"
-            aria-label="Loading homepage content"
-          >
-            <div className="home-loading-header">
-              <div className="home-loading-spinner" />
-              <span className="home-loading-text">Loading Decathlon...</span>
-            </div>
-            <div className="home-skeleton-banner home-skeleton-coupon"></div>
-            <div className="home-skeleton-row">
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="home-skeleton-card"></div>
-              ))}
-            </div>
-            <div className="home-skeleton-banner home-skeleton-hero"></div>
-            <div className="home-skeleton-products-wrapper">
-              <div className="home-skeleton-title"></div>
-              <div className="home-skeleton-products-row">
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="home-skeleton-product-card"></div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <LoadingSpinner message="Loading Decathlon..." minHeight="65vh" size="large" />
       ) : null}
 
       <div

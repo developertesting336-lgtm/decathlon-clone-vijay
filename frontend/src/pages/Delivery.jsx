@@ -16,6 +16,7 @@ import api from "../api/axios";
 import DecathlonLogo from "../components/DecathlonLogo";
 import AddressDrawer from "../components/AddressDrawer";
 import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import "../styles/Delivery.css";
 
 const getProduct = (item) => item?.product || {};
@@ -254,7 +255,11 @@ const Delivery = () => {
   };
 
   if (loading) {
-    return <div className="delivery-loading">Loading...</div>;
+    return (
+      <main className="delivery-page">
+        <LoadingSpinner message="Loading delivery options..." minHeight="60vh" size="large" />
+      </main>
+    );
   }
 
   return (

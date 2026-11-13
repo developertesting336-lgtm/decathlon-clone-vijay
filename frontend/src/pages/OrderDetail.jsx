@@ -19,6 +19,7 @@ import { FaStar, FaRegStar } from "react-icons/fa";
 import toast from "react-hot-toast";
 import api, { isTokenExpired } from "../api/axios";
 import socket from "../socket/socket";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import "../styles/OrderDetail.css";
 
 const getAuthConfig = () => {
@@ -328,10 +329,7 @@ const OrderDetail = () => {
     return (
       <div className="order-detail-page">
         <div className="order-detail-container">
-          <div className="order-detail-loading-box">
-            <div className="order-detail-spinner" />
-            <p>Loading order details...</p>
-          </div>
+          <LoadingSpinner message="Loading order details..." minHeight="50vh" size="large" />
         </div>
       </div>
     );

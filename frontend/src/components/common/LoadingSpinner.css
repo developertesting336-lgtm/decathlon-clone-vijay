@@ -1,0 +1,72 @@
+.decathlon-loading-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  animation: decathlonFadeIn 0.25s ease-in-out;
+}
+
+.decathlon-loading-container.full-page {
+  min-height: 80vh;
+}
+
+.decathlon-spinner-ring {
+  border-radius: 50%;
+  border-style: solid;
+  border-color: #e2e8f0;
+  border-top-color: #0082c3;
+  animation: decathlonSpin 0.75s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+  flex-shrink: 0;
+}
+
+.decathlon-spinner-ring.small {
+  width: 24px;
+  height: 24px;
+  border-width: 2.5px;
+}
+
+.decathlon-spinner-ring.medium {
+  width: 38px;
+  height: 38px;
+  border-width: 3.5px;
+}
+
+.decathlon-spinner-ring.large {
+  width: 52px;
+  height: 52px;
+  border-width: 4.5px;
+}
+
+.decathlon-loading-text {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0082c3;
+  letter-spacing: 0.3px;
+  font-family: inherit;
+  text-align: center;
+}
+
+@keyframes decathlonSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes decathlonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

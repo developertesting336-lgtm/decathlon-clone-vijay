@@ -25,6 +25,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 import api from "../api/axios";
 import DecathlonLogo from "../components/DecathlonLogo";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import toast from "react-hot-toast";
 
 import "../styles/Payment.css";
@@ -1144,7 +1145,16 @@ const Payment = () => {
   ===================================================== */
 
   if (loading) {
-    return <div className="payment-loading">Loading...</div>;
+    return (
+      <div className="payment-page">
+        <header className="payment-top-header">
+          <div className="header-content-inner">
+            <DecathlonLogo />
+          </div>
+        </header>
+        <LoadingSpinner message="Loading payment details..." minHeight="60vh" size="large" />
+      </div>
+    );
   }
 
   if (!order) {

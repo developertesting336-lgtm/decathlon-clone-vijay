@@ -18,6 +18,7 @@ import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
 import CategoryNav from "../components/pageSections/CategoryNav/CategoryNav";
 import Footer from "../components/pageSections/Footer/Footer";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import ProductReviews, { StarRating } from "../components/ProductReviews/ProductReviews";
 import SizeGuide from "../components/SizeGuide/SizeGuide";
 import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
@@ -254,10 +255,9 @@ const ProductDetail = () => {
     return (
       <div className="product-detail-page">
         <Navbar />
+        <CategoryNav />
         <div className="product-detail-container">
-          <div style={{ minHeight: "450px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", color: "#666" }}>
-            Loading product details...
-          </div>
+          <LoadingSpinner message="Loading product details..." minHeight="55vh" size="large" />
         </div>
         <Footer />
       </div>
