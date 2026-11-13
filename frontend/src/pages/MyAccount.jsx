@@ -6,7 +6,6 @@ import {
   FiMapPin,
   FiPower,
   FiCreditCard,
-  FiTarget,
   FiSliders,
   FiTruck,
   FiCheckCircle,
@@ -19,6 +18,7 @@ import {
   FiMessageSquare,
   FiHelpCircle,
   FiMenu,
+  FiAward,
 } from "react-icons/fi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -27,6 +27,7 @@ import api from "../api/axios";
 import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
 import AddressDrawer from "../components/AddressDrawer";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import "../styles/MyAccount.css";
 
 const getAuthConfig = () => {
@@ -84,6 +85,15 @@ const getImageUrl = (image) => {
   if (image.startsWith("/uploads/")) return `${backendUrl}${image}`;
   if (image.startsWith("uploads/")) return `${backendUrl}/${image}`;
   return `${backendUrl}${image.startsWith("/") ? "" : "/"}${image}`;
+};
+
+const formatCardNumber = (num) => {
+  if (!num) return "2 094724 479967";
+  const clean = num.toString().replace(/\s+/g, "");
+  if (clean.length === 13) {
+    return `${clean[0]} ${clean.slice(1, 7)} ${clean.slice(7)}`;
+  }
+  return clean.replace(/(\d{4})/g, "$1 ").trim();
 };
 
 const MyAccount = () => {
@@ -1247,86 +1257,145 @@ const MyAccount = () => {
                 <FiX />
               </button>
             </div>
-            <div className="orders-phone-box">
-              {user?.mobile ? user.mobile : "+919459940381"}
-            </div>
+            <div className="orders-sidebar-card">
+              {/* User Hero Banner */}
+              <div className="orders-loyalty-banner">
+                <div className="orders-user-profile-row">
+                  <div className="orders-avatar-circle">
+                    {(user?.name || user?.email || user?.mobile || "D").charAt(0).toUpperCase()}
+                  </div>
+                  <div className="orders-user-meta">
+                    <span className="orders-welcome-tag">Decathlon Member</span>
+                    <h3 className="orders-user-name" title={user?.name || user?.email || user?.mobile || ""}>
+                      {user?.name || user?.email?.split("@")[0] || user?.mobile || "Sportsperson"}
+                    </h3>
+                    <p className="orders-user-identifier" title={user?.email || user?.mobile || ""}>
+                      {user?.email || user?.mobile || "+919459940381"}
+                    </p>
+                  </div>
+                </div>
 
-            <div className="loyalty-box">
-              <div className="loyalty-heading">
-                <strong>Loyalty Points</strong>
-                <span>
-                  0 pts
-                  <FiChevronRight />
+                {/* Points Pill */}
+                <div
+                  className="orders-points-pill"
+                  onClick={() => navigate("/profile?tab=decathlon-card")}
+                  title="View Decathlon Club Rewards"
+                >
+                  <div className="orders-points-left">
+                    <FiAward className="orders-points-icon" />
+                    <div>
+                      <span className="orders-points-label">Loyalty Points</span>
+                      <strong className="orders-points-value">{user?.points || 0} Pts</strong>
+                    </div>
+                  </div>
+                  <span className="orders-points-btn">Redeem</span>
+                </div>
+
+                <div className="orders-loyalty-progress-mini">
+                  <div
+                    className="orders-loyalty-progress-bar"
+                    style={{ width: `${Math.min(100, Math.max(12, ((user?.points || 0) / 200) * 100))}%` }}
+                  />
+                </div>
+                <span className="orders-loyalty-note">
+                  Earn {Math.max(0, 200 - (user?.points || 0))} more pts to unlock ₹100 voucher
                 </span>
               </div>
 
-              <div className="loyalty-divider"></div>
+              {/* Navigation Menu */}
+              <div className="orders-sidebar-nav" onClick={() => setMobileSidebarOpen(false)}>
+                <button
+                  type="button"
+                  className={`orders-nav-item ${activeNav === "orders" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveNav("orders");
+                    setSearchParams({ tab: "orders" });
+                  }}
+                >
+                  <div className="orders-nav-icon-box box-indigo">
+                    <FiBox />
+                  </div>
+                  <span>My Orders</span>
+                  <FiChevronRight className="orders-nav-chevron" />
+                </button>
 
-              <p>
-                Start shopping today to earn &amp; redeem points for direct
-                savings on purchases!
-              </p>
+                <button
+                  type="button"
+                  className="orders-nav-item"
+                  onClick={() => navigate("/profile")}
+                >
+                  <div className="orders-nav-icon-box box-blue">
+                    <FiUser />
+                  </div>
+                  <span>My Profile</span>
+                  <FiChevronRight className="orders-nav-chevron" />
+                </button>
 
-              <button
-                type="button"
-                onClick={() => toast("Loyalty program coming soon")}
-              >
-                LEARN MORE
-              </button>
-            </div>
+                <button
+                  type="button"
+                  className="orders-nav-item"
+                  onClick={() => toast("Wallet features coming soon", { icon: "💳" })}
+                >
+                  <div className="orders-nav-icon-box box-cyan">
+                    <FiCreditCard />
+                  </div>
+                  <span>Wallet</span>
+                  <strong className="orders-nav-val">₹0</strong>
+                </button>
 
-            <div className="sidebar-menu" onClick={() => setMobileSidebarOpen(false)}>
-              <div
-                className={`sidebar-item ${activeNav === "orders" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveNav("orders");
-                  setSearchParams({ tab: "orders" });
-                }}
-              >
-                <FiBox />
-                <span>My Orders</span>
-              </div>
+                <button
+                  type="button"
+                  className="orders-nav-item"
+                  onClick={() => navigate("/profile?tab=decathlon-card")}
+                >
+                  <div className="orders-nav-icon-box box-amber">
+                    <FiAward />
+                  </div>
+                  <span>Sporty Rewards</span>
+                  <strong className="orders-nav-val">{user?.points || 0} pts</strong>
+                </button>
 
-              <div
-                className="sidebar-item"
-                onClick={() => navigate("/profile")}
-              >
-                <FiUser />
-                <span>My Profile</span>
-              </div>
+                <button
+                  type="button"
+                  className={`orders-nav-item ${activeNav === "address" ? "active" : ""}`}
+                  onClick={() => {
+                    setActiveNav("address");
+                    setSearchParams({ tab: "address" });
+                  }}
+                >
+                  <div className="orders-nav-icon-box box-emerald">
+                    <FiMapPin />
+                  </div>
+                  <span>Addresses</span>
+                  <FiChevronRight className="orders-nav-chevron" />
+                </button>
 
-              <div
-                className="sidebar-item"
-                onClick={() => toast("Wallet features coming soon")}
-              >
-                <FiCreditCard />
-                <span>Wallet</span>
-                <strong>₹ 0</strong>
-              </div>
+                <div className="orders-nav-divider" />
 
-              <div
-                className="sidebar-item"
-                onClick={() => toast("Rewards coming soon")}
-              >
-                <FiTarget />
-                <span>Sporty Rewards</span>
-                <strong>₹ 0</strong>
-              </div>
+                <div
+                  className="orders-member-card-pill"
+                  onClick={() => navigate("/profile?tab=decathlon-card")}
+                  title="View Decathlon Membership Card"
+                >
+                  <FiCreditCard className="orders-member-card-icon" />
+                  <div className="orders-member-card-text">
+                    <span className="orders-member-card-label">Member Card</span>
+                    <strong className="orders-member-card-digits">
+                      {formatCardNumber(user?.cardNumber)}
+                    </strong>
+                  </div>
+                </div>
 
-              <div
-                className={`sidebar-item ${activeNav === "address" ? "active" : ""}`}
-                onClick={() => {
-                  setActiveNav("address");
-                  setSearchParams({ tab: "address" });
-                }}
-              >
-                <FiMapPin />
-                <span>Address</span>
-              </div>
-
-              <div className="sidebar-item" onClick={handleLogout}>
-                <FiPower />
-                <span>Logout</span>
+                <button
+                  type="button"
+                  className="orders-nav-item orders-nav-logout"
+                  onClick={handleLogout}
+                >
+                  <div className="orders-nav-icon-box box-red">
+                    <FiPower />
+                  </div>
+                  <span>Log out</span>
+                </button>
               </div>
             </div>
           </aside>
@@ -1506,9 +1575,7 @@ const MyAccount = () => {
                 </div>
 
                 {loadingOrders ? (
-                  <div className="orders-loading-spinner">
-                    Loading your orders...
-                  </div>
+                  <LoadingSpinner message="Loading your orders..." minHeight="300px" size="medium" />
                 ) : filteredOrders.length > 0 ? (
                   <div className="orders-list">
                     {filteredOrders.map((order) => (
@@ -1767,54 +1834,19 @@ const MyAccount = () => {
                               className="order-help-btn"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleOpenTrackingModal(order);
+                                handleOpenPaymentIssueModal(order);
                               }}
-                              title="Track delivery milestones"
-                            >
-                              <FiTruck /> Track Order
-                            </button>
-                            <button
-                              type="button"
-                              className="order-help-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (isOrderReturnEligible(order)) {
-                                  handleOpenReturnModal(order);
-                                } else {
-                                  toast(getOrderReturnIneligibleReason(order), { icon: "ℹ️" });
-                                }
-                              }}
-                              title="Initiate return"
-                            >
-                              <FiRotateCcw /> Return Order
-                            </button>
-                            <button
-                              type="button"
-                              className="order-help-btn"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (isOrderExchangeEligible(order)) {
-                                  handleOpenExchangeModal(order);
-                                } else {
-                                  toast(getOrderExchangeIneligibleReason(order), { icon: "ℹ️" });
-                                }
-                              }}
-                              title="Request size exchange"
-                            >
-                              <FiRefreshCw /> Exchange Product
-                            </button>
-                            <button
-                              type="button"
-                              className="order-help-btn"
-                              onClick={() => handleOpenPaymentIssueModal(order)}
                               title="Report payment or refund issue"
                             >
-                              <FiCreditCard /> Payment Issue
+                              <FiCreditCard /> Payment &amp; Refund Issue
                             </button>
                             <button
                               type="button"
                               className="order-help-btn highlight"
-                              onClick={() => handleOpenLiveChatForOrder(order)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenLiveChatForOrder(order);
+                              }}
                               title="Chat live with Decathlon support"
                             >
                               <FiMessageSquare /> Contact Support
