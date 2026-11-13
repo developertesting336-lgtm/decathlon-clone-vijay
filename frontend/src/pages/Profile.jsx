@@ -14,6 +14,23 @@ import {
   FiCheck,
   FiX,
   FiMenu,
+  FiPackage,
+  FiGift,
+  FiAward,
+  FiShoppingBag,
+  FiTrendingUp,
+  FiClock,
+  FiUserCheck,
+  FiBell,
+  FiSliders,
+  FiShield,
+  FiLogOut,
+  FiCreditCard,
+  FiZap,
+  FiCalendar,
+  FiPhone,
+  FiMail,
+  FiEdit2,
 } from "react-icons/fi";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -379,17 +396,55 @@ const Profile = () => {
           HEADER
       ================================================== */}
       <header className="profile-header">
-        <button
-          type="button"
-          className="profile-mobile-menu-btn"
-          aria-label="Open menu"
-          onClick={() => setMobileSidebarOpen(true)}
-        >
-          <FiMenu />
-        </button>
-        <Link to="/" className="decathlon-logo" style={{ textDecoration: "none" }}>
-          <DecathlonLogo height={24} />
-        </Link>
+        <div className="profile-header-left">
+          <button
+            type="button"
+            className="profile-mobile-menu-btn"
+            aria-label="Open menu"
+            onClick={() => setMobileSidebarOpen(true)}
+          >
+            <FiMenu />
+          </button>
+          <Link to="/" className="decathlon-logo" style={{ textDecoration: "none" }} title="Decathlon Store Home">
+            <DecathlonLogo height={24} />
+          </Link>
+          <span className="profile-header-divider" />
+          <span className="profile-header-portal-tag">My Account</span>
+        </div>
+
+        <div className="profile-header-right">
+          <Link to="/" className="profile-header-action" title="Continue Shopping">
+            <FiShoppingBag className="header-action-icon" />
+            <span className="header-action-text">Continue Shopping</span>
+          </Link>
+
+          <Link
+            to="/account/orders-returns?tab=order-returns"
+            className="profile-header-action"
+            title="Track Orders & Returns"
+          >
+            <FiPackage className="header-action-icon" />
+            <span className="header-action-text">My Orders</span>
+          </Link>
+
+          <Link to="/cart" className="profile-header-action header-cart-pill" title="View Cart">
+            <FiShoppingBag className="header-action-icon" />
+            <span className="header-action-text">Cart</span>
+          </Link>
+
+          <div
+            className="profile-header-user-pill"
+            onClick={() => setSearchParams({ tab: "personal-information" })}
+            title="Manage Personal Information"
+          >
+            <div className="header-avatar-circle">
+              <FiUser />
+            </div>
+            <span className="header-user-display">
+              {user.name ? user.name.split(" ")[0] : (user.email ? user.email.split("@")[0] : "Member")}
+            </span>
+          </div>
+        </div>
       </header>
 
       {/* ==================================================
@@ -417,81 +472,145 @@ const Profile = () => {
           </button>
           {/* USER BOX */}
           <div className="profile-user-box">
-            <h2>Welcome</h2>
-            <p className="profile-email">{user.email || "vk7184192@gmail.com"}</p>
-            <div className="profile-points">
-              <strong>0</strong>
-              <span>point</span>
+            <div className="profile-user-top">
+              <div className="profile-user-avatar">
+                <FiUser />
+              </div>
+              <div className="profile-user-details">
+                <span className="profile-user-greeting">Welcome</span>
+                <p className="profile-email" title={user.email || ""}>
+                  {user.email || "user@example.com"}
+                </p>
+              </div>
             </div>
-            <button type="button" className="redeem-btn">
-              Redeem points
-            </button>
+
+            <div className="profile-points-pill">
+              <div className="profile-points-info">
+                <FiAward className="profile-points-icon" />
+                <span className="profile-points-value">{user.points || 0}</span>
+                <span className="profile-points-label">Points</span>
+              </div>
+              <button
+                type="button"
+                className="redeem-btn"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+              >
+                Redeem
+              </button>
+            </div>
           </div>
 
           {/* SIDEBAR MENU */}
           <div className="profile-menu">
             {/* PURCHASES */}
             <div className="menu-section">
-              <h3>Purchases</h3>
+              <div className="menu-section-header">Purchases</div>
               <Link
                 to="/account/orders-returns?tab=order-returns"
                 className="menu-item menu-link-external"
               >
-                <span>Track your orders &amp; returns</span>
-                <FiExternalLink />
+                <div className="menu-item-left">
+                  <FiPackage className="menu-icon" />
+                  <span>Orders &amp; Returns</span>
+                </div>
+                <FiExternalLink className="menu-external-icon" />
               </Link>
-              <div className="menu-item">
-                <span>Gift cards</span>
-                <FiExternalLink />
+              <div
+                className="menu-item"
+                onClick={() => toast("Gift cards coming soon!", { icon: "🎁" })}
+              >
+                <div className="menu-item-left">
+                  <FiGift className="menu-icon" />
+                  <span>Gift Cards</span>
+                </div>
+                <FiExternalLink className="menu-external-icon" />
               </div>
             </div>
 
             {/* LOYALTY */}
             <div className="menu-section">
-              <h3>Loyalty</h3>
+              <div className="menu-section-header">Loyalty &amp; Club</div>
               <div
                 className={`menu-link ${isDecathlonCard ? "active-link" : ""}`}
-                style={{ cursor: "pointer" }}
                 onClick={() => setSearchParams({ tab: "decathlon-card" })}
               >
-                Loyalty card
+                <FiCreditCard className="menu-icon" />
+                <span>Loyalty Card</span>
               </div>
-              <div className="menu-link">Rewards shop</div>
-              <div className="menu-link">Unlocked rewards</div>
-              <div className="menu-link">Earn more points</div>
-              <div className="menu-link">Sport sessions</div>
-              <div className="menu-link">My points history</div>
+              <div
+                className="menu-link"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+              >
+                <FiShoppingBag className="menu-icon" />
+                <span>Rewards Shop</span>
+              </div>
+              <div
+                className="menu-link"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+              >
+                <FiAward className="menu-icon" />
+                <span>Unlocked Rewards</span>
+              </div>
+              <div
+                className="menu-link"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+              >
+                <FiTrendingUp className="menu-icon" />
+                <span>Earn More Points</span>
+              </div>
+              <div
+                className="menu-link"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+              >
+                <FiActivity className="menu-icon" />
+                <span>Sport Sessions</span>
+              </div>
+              <div
+                className="menu-link"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+              >
+                <FiClock className="menu-icon" />
+                <span>Points History</span>
+              </div>
             </div>
 
-            {/* PROFILE */}
+            {/* PROFILE & SETTINGS */}
             <div className="menu-section profile-menu-section">
-              <h3
-                className="active-menu"
-                style={{ cursor: "pointer" }}
+              <div className="menu-section-header">Account Settings</div>
+              <div
+                className={`menu-link ${!currentTab ? "active-link" : ""}`}
                 onClick={() => setSearchParams({})}
               >
-                Profile
-              </h3>
+                <FiUser className="menu-icon" />
+                <span>Profile Overview</span>
+              </div>
               <div
                 className={`menu-link ${isPersonalInfo ? "active-link" : ""}`}
-                style={{ cursor: "pointer" }}
                 onClick={() => setSearchParams({ tab: "personal-information" })}
               >
-                Personal information
+                <FiUserCheck className="menu-icon" />
+                <span>Personal Information</span>
               </div>
               <div
                 className={`menu-link ${isNotificationPrefs ? "active-link" : ""}`}
-                style={{ cursor: "pointer" }}
                 onClick={() => setSearchParams({ tab: "notifications-preferences" })}
               >
-                Notifications preferences
+                <FiBell className="menu-icon" />
+                <span>Notification Preferences</span>
               </div>
+
+              {/* Personalization Dropdown */}
               <div
                 className={`menu-link menu-with-icon ${personalizationOpen || isPersonalizationSubTab ? "active-menu" : ""}`}
                 onClick={() => setPersonalizationOpen((prev) => !prev)}
               >
-                <span>Personalization</span>
-                {personalizationOpen ? <FiMinus /> : <FiPlus />}
+                <div className="menu-item-left">
+                  <FiSliders className="menu-icon" />
+                  <span>Personalization</span>
+                </div>
+                <span className="submenu-caret">
+                  {personalizationOpen ? <FiMinus /> : <FiPlus />}
+                </span>
               </div>
               {personalizationOpen && (
                 <div className="menu-submenu">
@@ -507,12 +626,18 @@ const Profile = () => {
                 </div>
               )}
 
+              {/* Privacy and security Dropdown */}
               <div
                 className={`menu-link menu-with-icon ${privacyOpen || isPrivacySubTab ? "active-menu" : ""}`}
                 onClick={() => setPrivacyOpen((prev) => !prev)}
               >
-                <span>Privacy and security</span>
-                {privacyOpen ? <FiMinus /> : <FiPlus />}
+                <div className="menu-item-left">
+                  <FiShield className="menu-icon" />
+                  <span>Privacy &amp; Security</span>
+                </div>
+                <span className="submenu-caret">
+                  {privacyOpen ? <FiMinus /> : <FiPlus />}
+                </span>
               </div>
               {privacyOpen && (
                 <div className="menu-submenu">
@@ -529,22 +654,30 @@ const Profile = () => {
               )}
             </div>
 
-            {/* LOGOUT */}
-            <div
-              className="logout"
-              style={{ cursor: "pointer" }}
-              onClick={handleLogout}
-            >
-              Logout
-            </div>
+            {/* CARD NUMBER & LOGOUT FOOTER */}
+            <div className="profile-sidebar-footer">
+              <div
+                className="card-number-badge"
+                onClick={() => setSearchParams({ tab: "decathlon-card" })}
+                title="View Decathlon Membership Card"
+              >
+                <FiCreditCard className="footer-card-icon" />
+                <div>
+                  <span className="card-number-label">Member Card</span>
+                  <strong className="card-number-val">
+                    {user.cardNumber?.replace(/\s+/g, "") || "2094724479967"}
+                  </strong>
+                </div>
+              </div>
 
-            {/* CARD NUMBER */}
-            <div
-              className="card-number"
-              style={{ cursor: "pointer" }}
-              onClick={() => setSearchParams({ tab: "decathlon-card" })}
-            >
-              Card number: {user.cardNumber?.replace(/\s+/g, "") || "2094724479967"}
+              <button
+                type="button"
+                className="profile-logout-btn"
+                onClick={handleLogout}
+              >
+                <FiLogOut className="logout-icon" />
+                <span>Log out</span>
+              </button>
             </div>
           </div>
         </aside>
@@ -812,153 +945,255 @@ const Profile = () => {
             </div>
           ) : isPersonalInfo ? (
             /* ==================================================
-               PERSONAL INFORMATION VIEW (MATCHING DECATHLON OFFICIAL)
+               PERSONAL INFORMATION VIEW (MODERN DECATHLON ATHLETE IDENTITY)
             ================================================== */
             <div className="personal-info-container">
-              {/* BACK TO PROFILE BREADCRUMB */}
-              <button
-                type="button"
-                className="back-to-profile-btn"
-                onClick={() => setSearchParams({})}
-              >
-                <FiChevronLeft /> Profile information
-              </button>
+              {/* BACK NAVIGATION */}
+              <div className="pi-top-nav">
+                <button
+                  type="button"
+                  className="pi-back-btn"
+                  onClick={() => setSearchParams({})}
+                >
+                  <FiChevronLeft />
+                  <span>Profile Overview</span>
+                </button>
+                <div className="pi-breadcrumb-trail">
+                  <span>Account</span> / <span>Settings</span> / <span className="active">Personal Information</span>
+                </div>
+              </div>
 
-              <h1 className="personal-info-title">Personal information</h1>
+              {/* HERO PROFILE CARD */}
+              <div className="pi-hero-card">
+                <div className="pi-hero-avatar-wrap">
+                  <div className="pi-hero-avatar">
+                    {user.name ? user.name.charAt(0).toUpperCase() : <FiUser />}
+                  </div>
+                  <span className="pi-hero-verified-badge" title="Verified Member">
+                    <FiCheck />
+                  </span>
+                </div>
 
-              {/* MY IDENTITY SECTION */}
-              <div className="personal-info-section">
-                <h2 className="personal-info-section-title">My identity</h2>
+                <div className="pi-hero-details">
+                  <div className="pi-hero-name-row">
+                    <h1 className="pi-hero-name">{user.name || "Decathlon Athlete"}</h1>
+                    <span className="pi-status-chip">
+                      <span className="pi-status-dot" /> Active Member
+                    </span>
+                  </div>
+                  <p className="pi-hero-subtitle">
+                    Manage your personal athlete profile, verified contact details, and digital sports pass.
+                  </p>
+                  <div className="pi-hero-meta">
+                    <span className="pi-meta-item">
+                      <FiMail /> {user.email || "No email linked"}
+                    </span>
+                    {user.phone && (
+                      <span className="pi-meta-item">
+                        <FiPhone /> {user.phone}
+                      </span>
+                    )}
+                    <span className="pi-meta-item pi-meta-card">
+                      <FiCreditCard /> Card: {formatCardNumber(user.cardNumber)}
+                    </span>
+                  </div>
+                </div>
+              </div>
 
-                <div className="personal-info-card">
+              {/* IDENTITY & CONTACT CARD */}
+              <div className="pi-card">
+                <div className="pi-card-header">
+                  <div>
+                    <h2 className="pi-card-title">Identity & Contact Details</h2>
+                    <p className="pi-card-subtitle">
+                      Your personal details are securely stored and used for in-store checkout and online deliveries.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pi-fields-list">
                   {/* FIRST NAME AND LAST NAME */}
-                  <div className="personal-info-row">
-                    <div className="personal-info-left">
-                      <span className="personal-info-label">
-                        First Name and Last Name
-                      </span>
-                      <span
-                        className={`personal-info-value ${
-                          user.name ? "has-value" : ""
-                        }`}
-                      >
-                        {user.name || "no information provided"}
-                      </span>
+                  <div className="pi-field-row">
+                    <div className="pi-field-icon-wrap box-blue">
+                      <FiUser />
+                    </div>
+                    <div className="pi-field-content">
+                      <span className="pi-field-label">Full Name</span>
+                      <div className="pi-field-val-wrap">
+                        <span className={`pi-field-value ${user.name ? "has-val" : "is-empty"}`}>
+                          {user.name || "No name provided"}
+                        </span>
+                      </div>
                     </div>
                     <button
                       type="button"
-                      className="btn-edit-field"
+                      className="pi-btn-edit"
                       onClick={() => openEditModal("name")}
                     >
-                      Edit
+                      <FiEdit2 />
+                      <span>Edit</span>
                     </button>
                   </div>
 
                   {/* DATE OF BIRTH */}
-                  <div className="personal-info-row">
-                    <div className="personal-info-left">
-                      <span className="personal-info-label">Date of Birth</span>
-                      <span
-                        className={`personal-info-value ${
-                          user.dob ? "has-value" : ""
-                        }`}
-                      >
-                        {user.dob || "no information provided"}
-                      </span>
+                  <div className="pi-field-row">
+                    <div className="pi-field-icon-wrap box-purple">
+                      <FiCalendar />
                     </div>
-                    <button
-                      type="button"
-                      className="btn-edit-field"
-                      onClick={() => openEditModal("dob")}
-                    >
-                      Edit
-                    </button>
-                  </div>
-
-                  {/* GENDER */}
-                  <div className="personal-info-row">
-                    <div className="personal-info-left">
-                      <span className="personal-info-label">Gender</span>
-                      <span
-                        className={`personal-info-value ${
-                          user.gender ? "has-value" : ""
-                        }`}
-                      >
-                        {user.gender || "no information provided"}
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      className="btn-edit-field"
-                      onClick={() => openEditModal("gender")}
-                    >
-                      Edit
-                    </button>
-                  </div>
-
-                  {/* PHONE NUMBER */}
-                  <div className="personal-info-row">
-                    <div className="personal-info-left">
-                      <span className="personal-info-label">Phone number</span>
-                      <div className={`personal-info-value ${user.phone ? "has-value" : ""}`}>
-                        <span>{user.phone || "no information provided"}</span>
-                        {user.phone && (
-                          <span className="verified-badge">
-                            <FiCheck /> Verified
+                    <div className="pi-field-content">
+                      <span className="pi-field-label">Date of Birth</span>
+                      <div className="pi-field-val-wrap">
+                        <span className={`pi-field-value ${user.dob ? "has-val" : "is-empty"}`}>
+                          {user.dob || "No date of birth provided"}
+                        </span>
+                        {!user.dob && (
+                          <span className="pi-hint-chip">
+                            <FiAward /> Add for birthday perks
                           </span>
                         )}
                       </div>
                     </div>
                     <button
                       type="button"
-                      className="btn-edit-field"
+                      className="pi-btn-edit"
+                      onClick={() => openEditModal("dob")}
+                    >
+                      <FiEdit2 />
+                      <span>Edit</span>
+                    </button>
+                  </div>
+
+                  {/* GENDER */}
+                  <div className="pi-field-row">
+                    <div className="pi-field-icon-wrap box-emerald">
+                      <FiUserCheck />
+                    </div>
+                    <div className="pi-field-content">
+                      <span className="pi-field-label">Gender</span>
+                      <div className="pi-field-val-wrap">
+                        <span className={`pi-field-value ${user.gender ? "has-val" : "is-empty"}`}>
+                          {user.gender || "No information provided"}
+                        </span>
+                        {user.gender && (
+                          <span className="pi-badge pi-badge-muted">
+                            {user.gender}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="pi-btn-edit"
+                      onClick={() => openEditModal("gender")}
+                    >
+                      <FiEdit2 />
+                      <span>Edit</span>
+                    </button>
+                  </div>
+
+                  {/* PHONE NUMBER */}
+                  <div className="pi-field-row">
+                    <div className="pi-field-icon-wrap box-amber">
+                      <FiPhone />
+                    </div>
+                    <div className="pi-field-content">
+                      <span className="pi-field-label">Phone Number</span>
+                      <div className="pi-field-val-wrap">
+                        <span className={`pi-field-value ${user.phone ? "has-val" : "is-empty"}`}>
+                          {user.phone || "No phone number linked"}
+                        </span>
+                        {user.phone ? (
+                          <span className="pi-badge pi-badge-verified">
+                            <FiCheck /> Verified
+                          </span>
+                        ) : (
+                          <span className="pi-hint-chip">Required for SMS order updates</span>
+                        )}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="pi-btn-edit"
                       onClick={() => openEditModal("phone")}
                     >
-                      Edit
+                      <FiEdit2 />
+                      <span>Edit</span>
                     </button>
                   </div>
 
                   {/* EMAIL ADDRESS */}
-                  <div className="personal-info-row">
-                    <div className="personal-info-left">
-                      <span className="personal-info-label">Email address</span>
-                      <span className="personal-info-value has-value">
-                        {user.email || "vk7184192@gmail.com"}
-                      </span>
+                  <div className="pi-field-row">
+                    <div className="pi-field-icon-wrap box-sky">
+                      <FiMail />
+                    </div>
+                    <div className="pi-field-content">
+                      <span className="pi-field-label">Email Address</span>
+                      <div className="pi-field-val-wrap">
+                        <span className="pi-field-value has-val">
+                          {user.email || "developer@decathlon.com"}
+                        </span>
+                        <span className="pi-badge pi-badge-primary">
+                          Primary Account
+                        </span>
+                      </div>
                     </div>
                     <button
                       type="button"
-                      className="btn-edit-field"
+                      className="pi-btn-edit"
                       onClick={() => openEditModal("email")}
                     >
-                      Edit
+                      <FiEdit2 />
+                      <span>Edit</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* MY DECATHLON CARD SECTION */}
-              <div className="decathlon-card-section">
-                <h2 className="personal-info-section-title">My Decathlon card</h2>
-                <p className="decathlon-card-desc">
-                  Your card number is an information specific to your account.
-                  It can be used to authenticate in store and used in your
-                  communications with the customer service.
-                </p>
+              {/* MY DECATHLON DIGITAL CARD SECTION */}
+              <div className="pi-card-section">
+                <div className="pi-section-head">
+                  <h2 className="pi-card-title">My Decathlon Digital Card</h2>
+                  <p className="pi-card-subtitle">
+                    Your digital membership card is linked to all your in-store and online purchases, warranty guarantees, and loyalty points.
+                  </p>
+                </div>
 
                 <div
-                  className="decathlon-card-box"
-                  style={{ cursor: "pointer" }}
+                  className="pi-digital-card"
                   onClick={() => setSearchParams({ tab: "decathlon-card" })}
+                  title="Click to view full Decathlon card and barcode"
                 >
-                  <div className="decathlon-card-info">
-                    <span className="decathlon-card-label">Card number</span>
-                    <span className="decathlon-card-digits">
+                  <div className="pi-dc-glow" />
+                  <div className="pi-dc-top">
+                    <div className="pi-dc-brand">
+                      <span className="pi-dc-logo">DECATHLON</span>
+                      <span className="pi-dc-pass-tag">SPORT PASS</span>
+                    </div>
+                    <div className="pi-dc-chip">
+                      <FiCreditCard />
+                    </div>
+                  </div>
+
+                  <div className="pi-dc-middle">
+                    <span className="pi-dc-num-label">MEMBERSHIP NUMBER</span>
+                    <span className="pi-dc-number">
                       {formatCardNumber(user.cardNumber)}
                     </span>
                   </div>
-                  <div className="decathlon-card-arrow">
-                    <FiChevronRight />
+
+                  <div className="pi-dc-bottom">
+                    <div className="pi-dc-holder">
+                      <span className="pi-dc-holder-label">CARDHOLDER</span>
+                      <span className="pi-dc-holder-name">
+                        {user.name ? user.name.toUpperCase() : "DECATHLON ATHLETE"}
+                      </span>
+                    </div>
+                    <div className="pi-dc-action">
+                      <span>View Card & Barcode</span>
+                      <div className="pi-dc-arrow">
+                        <FiChevronRight />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -970,70 +1205,188 @@ const Profile = () => {
             <>
               {/* TOP SECTION */}
               <section className="profile-top">
-                <div className="welcome-area">
-                  <div className="welcome-icon">
-                    <FiUser />
+                {/* Modern Welcome Hero Card */}
+                <div className="welcome-card-modern">
+                  <div className="welcome-card-header">
+                    <div className="welcome-avatar-wrap">
+                      <div className="welcome-avatar-circle">
+                        <FiUser />
+                      </div>
+                      <span className="welcome-status-dot" title="Active Account" />
+                    </div>
+                    <div className="welcome-heading">
+                      <div className="welcome-greeting-row">
+                        <span className="welcome-badge">Decathlon Member</span>
+                        {user.isPhoneVerified && (
+                          <span className="welcome-verified-chip">
+                            <FiCheck className="chip-icon" /> Verified
+                          </span>
+                        )}
+                      </div>
+                      <h1 className="welcome-title">
+                        Welcome, {user.name ? user.name.split(" ")[0] : (user.email ? user.email.split("@")[0] : "Athlete")}!
+                      </h1>
+                      <p className="welcome-subtitle">
+                        Manage your profile, sports activities, membership rewards, and orders all in one place.
+                      </p>
+                    </div>
                   </div>
-                  <div className="welcome-text">
-                    <h1>Welcome</h1>
-                    <p>
-                      Manage all your data in one place to fully enjoy all
-                      Decathlon services
-                    </p>
+
+                  <div className="welcome-quick-stats">
+                    <div
+                      className="welcome-stat-item"
+                      onClick={() => setSearchParams({ tab: "decathlon-card" })}
+                    >
+                      <div className="stat-icon-wrap stat-pts">
+                        <FiAward />
+                      </div>
+                      <div className="stat-meta">
+                        <span className="stat-label">Loyalty Points</span>
+                        <span className="stat-val">{user.points || 0} pts</span>
+                      </div>
+                    </div>
+
+                    <div
+                      className="welcome-stat-item"
+                      onClick={() => navigate("/account/orders-returns?tab=order-returns")}
+                    >
+                      <div className="stat-icon-wrap stat-orders">
+                        <FiPackage />
+                      </div>
+                      <div className="stat-meta">
+                        <span className="stat-label">Orders &amp; Returns</span>
+                        <span className="stat-val">Track Orders</span>
+                      </div>
+                    </div>
+
+                    <div
+                      className="welcome-stat-item"
+                      onClick={() => setSearchParams({ tab: "personal-information" })}
+                    >
+                      <div className="stat-icon-wrap stat-profile">
+                        <FiEdit3 />
+                      </div>
+                      <div className="stat-meta">
+                        <span className="stat-label">Profile Settings</span>
+                        <span className="stat-val">Edit Details</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="loyalty-card">
-                  <div className="loyalty-new">New</div>
-                  <h2>Loyalty program</h2>
-                  <p>
-                    Earn enough points and enjoy discounts on your next
-                    purchases!
+                {/* Modern Loyalty Program Card */}
+                <div className="loyalty-card-modern">
+                  <div className="loyalty-badge-row">
+                    <span className="loyalty-pill-new">CLUB REWARDS</span>
+                    <span className="loyalty-tier-badge">Active Member</span>
+                  </div>
+                  <h2 className="loyalty-modern-title">Loyalty Program</h2>
+                  <p className="loyalty-modern-desc">
+                    Earn 1 point for every ₹100 spent and convert points into instant purchase vouchers!
                   </p>
-                  <button type="button" className="loyalty-button">
-                    <span>Manage my loyalty program</span>
+
+                  <div className="loyalty-progress-container">
+                    <div className="loyalty-progress-meta">
+                      <span className="progress-label">Current Progress</span>
+                      <span className="progress-value">
+                        <strong>{user.points || 0}</strong> / 200 pts
+                      </span>
+                    </div>
+                    <div className="loyalty-progress-track">
+                      <div
+                        className="loyalty-progress-bar"
+                        style={{
+                          width: `${Math.min(
+                            100,
+                            Math.max(12, ((user.points || 0) / 200) * 100)
+                          )}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="progress-note">
+                      Earn {Math.max(0, 200 - (user.points || 0))} more pts to unlock ₹100 discount voucher
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="loyalty-action-btn"
+                    onClick={() => setSearchParams({ tab: "decathlon-card" })}
+                  >
+                    <span>Manage Loyalty Program</span>
                     <FiExternalLink />
                   </button>
                 </div>
               </section>
 
               {/* SPORTS BANNER */}
-              <section className="sports-banner">
-                <div className="sports-illustration">
-                  <img
-                    src="https://contents.mediadecathlon.com/s1212514/k$1defdc1cd8f187e0e3f69e07e288b033/step-1.svg"
-                    alt="Synchronize sports activities"
-                    className="sports-svg"
-                  />
+              <section className="sports-banner-modern">
+                <div className="sports-banner-left">
+                  <div className="sports-phone-mockup">
+                    <img
+                      src="https://contents.mediadecathlon.com/s1212514/k$1defdc1cd8f187e0e3f69e07e288b033/step-1.svg"
+                      alt="Synchronize sports activities"
+                      className="sports-mockup-svg"
+                    />
+                  </div>
                 </div>
-                <div className="sports-content">
-                  <h2>
-                    Synchronize all your favorite sports trackers and
-                    activities!
+
+                <div className="sports-banner-right">
+                  <div className="sports-banner-tag">
+                    <FiActivity className="tag-icon" />
+                    <span>FITNESS &amp; ACTIVITY SYNC</span>
+                  </div>
+                  <h2 className="sports-banner-title">
+                    Synchronize all your favorite sports trackers and activities!
                   </h2>
-                  <p>
-                    If you use several sports trackers to register your
-                    activities, this new feature is for you! Activate the
-                    synchronization and gather all your activities in one place.
+                  <p className="sports-banner-desc">
+                    If you use several sports trackers to register your activities, this new feature is for you! Gather all your workout stats in one place and earn Decathlon points with every sweat session.
                   </p>
-                  <button type="button" className="synchronize-btn">
-                    Synchronize
+
+                  <div className="sports-apps-row">
+                    <span className="sports-app-pill app-strava">Strava</span>
+                    <span className="sports-app-pill app-garmin">Garmin</span>
+                    <span className="sports-app-pill app-apple">Apple Health</span>
+                    <span className="sports-app-pill app-polar">Polar</span>
+                    <span className="sports-app-pill app-coros">Coros</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="sports-sync-btn-modern"
+                    onClick={() => setSearchParams({ tab: "connected-apps" })}
+                  >
+                    <FiZap className="btn-icon" />
+                    <span>Synchronize Trackers</span>
                   </button>
                 </div>
               </section>
 
               {/* SHORTCUTS */}
-              <section className="shortcuts-section">
-                <h2 className="shortcuts-title">Your shortcuts</h2>
+              <section className="shortcuts-section-modern">
+                <div className="shortcuts-header-row">
+                  <div>
+                    <h2 className="shortcuts-title-modern">Your Shortcuts</h2>
+                    <p className="shortcuts-subtitle-modern">
+                      Quick access to manage your account security, personal profile and preferences
+                    </p>
+                  </div>
+                </div>
 
-                <div className="shortcut-grid">
-                  <ShortcutCard
-                    icon={<FiLock />}
-                    title="Change my password"
-                    description="A strong password will increase the security of your account"
-                  />
+                <div className="shortcut-grid-modern">
+                  <div
+                    className="shortcut-card-item"
+                    onClick={() => toast("Password reset option is in Privacy & Security", { icon: "🔒" })}
+                  >
+                    <ShortcutCard
+                      icon={<FiLock />}
+                      title="Change my password"
+                      description="A strong password increases the security of your account"
+                    />
+                  </div>
 
                   <div
+                    className="shortcut-card-item"
                     style={{ cursor: "pointer" }}
                     onClick={() =>
                       setSearchParams({ tab: "notifications-preferences" })
@@ -1042,12 +1395,13 @@ const Profile = () => {
                     <ShortcutCard
                       icon={<FiMessageSquare />}
                       title="Communication preferences"
-                      description="Choose your communication preferences, and the way you want to be contacted."
+                      description="Choose your communication channels, newsletters and updates"
                     />
                   </div>
 
                   {/* EDIT MY PERSONAL PROFILE SHORTCUT */}
                   <div
+                    className="shortcut-card-item"
                     style={{ cursor: "pointer" }}
                     onClick={() =>
                       setSearchParams({ tab: "personal-information" })
@@ -1056,22 +1410,34 @@ const Profile = () => {
                     <ShortcutCard
                       icon={<FiEdit3 />}
                       title="Edit my personal profile"
-                      description="To keep it updated!"
+                      description="Keep your contact info, addresses and details up to date"
                     />
                   </div>
 
-                  <ShortcutCard
-                    icon={<FiActivity />}
-                    title="Manage my favorite sports"
-                    description="Tell us more about your sports profile"
-                  />
+                  <div
+                    className="shortcut-card-item"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setSearchParams({ tab: "favourite-sports" })}
+                  >
+                    <ShortcutCard
+                      icon={<FiActivity />}
+                      title="Manage my favorite sports"
+                      description="Tell us more about your sporting preferences and skill levels"
+                    />
+                  </div>
 
-                  <ShortcutCard
-                    icon={<FiBarChart2 />}
-                    title="Sync all my sports activities"
-                    description="To gather all your registered sport activities"
-                    full
-                  />
+                  <div
+                    className="shortcut-card-item shortcut-card-full-item"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setSearchParams({ tab: "connected-apps" })}
+                  >
+                    <ShortcutCard
+                      icon={<FiBarChart2 />}
+                      title="Sync all my sports activities"
+                      description="Connect your trackers to gather all registered sport activities and achievements"
+                      full
+                    />
+                  </div>
                 </div>
               </section>
 
@@ -1265,13 +1631,16 @@ const Profile = () => {
 
 const ShortcutCard = ({ icon, title, description, full = false }) => {
   return (
-    <div className={`shortcut-card ${full ? "shortcut-card-full" : ""}`}>
-      <div className="shortcut-icon">{icon}</div>
+    <div className={`shortcut-card-modern ${full ? "shortcut-card-modern-full" : ""}`}>
+      <div className="shortcut-icon-circle">{icon}</div>
 
-      <div className="shortcut-content">
-        <h3>{title}</h3>
+      <div className="shortcut-meta">
+        <h3 className="shortcut-name">{title}</h3>
+        <p className="shortcut-desc">{description}</p>
+      </div>
 
-        <p>{description}</p>
+      <div className="shortcut-arrow-circle">
+        <FiChevronRight />
       </div>
     </div>
   );
