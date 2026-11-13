@@ -76,7 +76,7 @@ const PaymentModalShell = ({
       <div className="stripe-modal-header">
         <div>
           <h2>Complete Payment - {title}</h2>
-          <span>Order #{order._id.slice(-8)}</span>
+          <span>{order?._id ? `Order #${order._id.slice(-8)}` : "Decathlon Checkout"}</span>
         </div>
 
         <button
@@ -140,15 +140,44 @@ const AlternativePaymentModal = ({
       setProcessing(true);
       setErrorMessage("");
 
-      const response = await api.put(
-        `/orders/${order._id}/confirm-online`,
-        { paymentMethod: selectedMethod.toUpperCase() },
-        getAuthConfig(),
-      );
+      if (order?._id) {
+        const response = await api.put(
+          `/orders/${order._id}/confirm-online`,
+          { paymentMethod: selectedMethod.toUpperCase() },
+          getAuthConfig(),
+        );
 
-      const confirmedOrder = response.data?.order || order;
-      toast.success(`${selectedMethod.toUpperCase()} Payment successful!`);
-      onSuccess(confirmedOrder._id || order._id);
+        const confirmedOrder = response.data?.order || order;
+        toast.success(`${selectedMethod.toUpperCase()} Payment successful!`);
+        onSuccess(confirmedOrder._id || order._id);
+      } else {
+        const checkoutData = JSON.parse(
+          sessionStorage.getItem("checkout_data") || "{}"
+        );
+        const response = await api.post(
+          "/orders",
+          {
+            addressId: checkoutData.addressId,
+            deliveryOption: checkoutData.deliveryOption || "standard",
+            couponCode: checkoutData.couponCode || "",
+            paymentMethod: selectedMethod.toUpperCase(),
+            paymentStatus: "paid",
+          },
+          getAuthConfig(),
+        );
+
+        const createdOrder = response.data?.order;
+        if (createdOrder?._id) {
+          sessionStorage.removeItem("checkout_data");
+          sessionStorage.removeItem("applied_coupon");
+          window.dispatchEvent(new Event("cartUpdated"));
+
+          toast.success("Payment successful! Order created.");
+          onSuccess(createdOrder._id);
+        } else {
+          toast.error("Failed to create order after payment");
+        }
+      }
     } catch (error) {
       console.error("Alternative Payment Error:", error);
       const message =
@@ -252,7 +281,9 @@ const StripePaymentForm = ({
         const result = await stripe.confirmPayment({
           elements,
           confirmParams: {
-            return_url: `${window.location.origin}/payment/${order._id}`,
+            return_url: order?._id
+              ? `${window.location.origin}/payment/${order._id}`
+              : `${window.location.origin}/payment`,
           },
           redirect: "if_required",
         });
@@ -271,22 +302,53 @@ const StripePaymentForm = ({
           return;
         }
 
-        const response = await api.post(
-          "/payment/verify-payment",
-          {
-            paymentIntentId: paymentIntent.id,
-            orderId: order._id,
-          },
-          getAuthConfig(),
-        );
+        if (order?._id) {
+          const response = await api.post(
+            "/payment/verify-payment",
+            {
+              paymentIntentId: paymentIntent.id,
+              orderId: order._id,
+            },
+            getAuthConfig(),
+          );
 
-        if (response.data?.paymentStatus === "paid") {
-          toast.success("Payment successful");
-          onSuccess(response.data?.order?._id || order._id);
-          return;
+          if (response.data?.paymentStatus === "paid") {
+            toast.success("Payment successful");
+            onSuccess(response.data?.order?._id || order._id);
+            return;
+          }
+
+          toast.error(response.data?.message || "Payment verification failed");
+        } else {
+          const checkoutData = JSON.parse(
+            sessionStorage.getItem("checkout_data") || "{}"
+          );
+          const orderRes = await api.post(
+            "/orders",
+            {
+              addressId: checkoutData.addressId,
+              deliveryOption: checkoutData.deliveryOption || "standard",
+              couponCode: checkoutData.couponCode || "",
+              paymentMethod: "CARD",
+              paymentStatus: "paid",
+              stripePaymentIntentId: paymentIntent.id,
+            },
+            getAuthConfig(),
+          );
+
+          const createdOrder = orderRes.data?.order;
+          if (createdOrder?._id) {
+            sessionStorage.removeItem("checkout_data");
+            localStorage.removeItem("pending_checkout_data");
+            sessionStorage.removeItem("applied_coupon");
+            window.dispatchEvent(new Event("cartUpdated"));
+
+            toast.success("Payment successful! Order created.");
+            onSuccess(createdOrder._id);
+            return;
+          }
+          toast.error("Failed to create order after payment");
         }
-
-        toast.error(response.data?.message || "Payment verification failed");
       } catch (error) {
         console.error("Stripe Payment Exception:", error);
         const message =
@@ -331,7 +393,9 @@ const StripePaymentForm = ({
         const result = await stripe.confirmPayment({
           clientSecret,
           confirmParams: {
-            return_url: `${window.location.origin}/payment/${order._id}`,
+            return_url: order?._id
+              ? `${window.location.origin}/payment/${order._id}`
+              : `${window.location.origin}/payment`,
             payment_method_data: {
               type: "upi",
               billing_details: {
@@ -359,19 +423,49 @@ const StripePaymentForm = ({
         }
 
         if (result?.paymentIntent?.status === "succeeded") {
-          const response = await api.post(
-            "/payment/verify-payment",
-            {
-              paymentIntentId: result.paymentIntent.id,
-              orderId: order._id,
-            },
-            getAuthConfig(),
-          );
+          if (order?._id) {
+            const response = await api.post(
+              "/payment/verify-payment",
+              {
+                paymentIntentId: result.paymentIntent.id,
+                orderId: order._id,
+              },
+              getAuthConfig(),
+            );
 
-          if (response.data?.paymentStatus === "paid") {
-            toast.success("UPI payment successful!");
-            onSuccess(response.data?.order?._id || order._id);
-            return;
+            if (response.data?.paymentStatus === "paid") {
+              toast.success("UPI payment successful!");
+              onSuccess(response.data?.order?._id || order._id);
+              return;
+            }
+          } else {
+            const checkoutData = JSON.parse(
+              sessionStorage.getItem("checkout_data") || "{}"
+            );
+            const orderRes = await api.post(
+              "/orders",
+              {
+                addressId: checkoutData.addressId,
+                deliveryOption: checkoutData.deliveryOption || "standard",
+                couponCode: checkoutData.couponCode || "",
+                paymentMethod: "UPI",
+                paymentStatus: "paid",
+                stripePaymentIntentId: result.paymentIntent.id,
+              },
+              getAuthConfig(),
+            );
+
+            const createdOrder = orderRes.data?.order;
+            if (createdOrder?._id) {
+              sessionStorage.removeItem("checkout_data");
+              localStorage.removeItem("pending_checkout_data");
+              sessionStorage.removeItem("applied_coupon");
+              window.dispatchEvent(new Event("cartUpdated"));
+
+              toast.success("UPI payment successful! Order created.");
+              onSuccess(createdOrder._id);
+              return;
+            }
           }
         }
       } catch (error) {
@@ -479,7 +573,11 @@ const StripePaymentForm = ({
 const Payment = () => {
   const navigate = useNavigate();
 
-  const { orderId } = useParams();
+  const { orderId: rawOrderId } = useParams();
+  const orderId =
+    rawOrderId && rawOrderId !== "null" && rawOrderId !== "undefined"
+      ? rawOrderId
+      : null;
 
   const [searchParams] = useSearchParams();
 
@@ -518,47 +616,117 @@ const Payment = () => {
   const hasVerifiedRedirectRef = useRef(false);
 
   /* =====================================================
-     FETCH ORDER
+     FETCH ORDER OR LOAD CHECKOUT SESSION
   ===================================================== */
 
   const fetchOrder = useCallback(async () => {
-    if (!orderId) {
-      toast.error("Order ID is missing");
-
-      navigate("/cart");
-
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login first", { id: "login-required" });
+      navigate("/login");
       return;
     }
 
     try {
       setLoading(true);
 
-      const response = await api.get(`/orders/${orderId}`, getAuthConfig());
-
-      const orderData = response.data?.order;
-
-      if (!orderData) {
-        toast.error("Order not found");
-
-        navigate("/cart");
-
+      if (orderId) {
+        const response = await api.get(`/orders/${orderId}`, getAuthConfig());
+        const orderData = response.data?.order;
+        if (!orderData) {
+          toast.error("Order not found");
+          navigate("/cart");
+          return;
+        }
+        setOrder(orderData);
         return;
       }
 
-      setOrder(orderData);
+      // Direct checkout mode (order created only upon payment/COD selection)
+      const rawCheckout = sessionStorage.getItem("checkout_data");
+      const checkoutData = rawCheckout ? JSON.parse(rawCheckout) : null;
+
+      const cartRes = await api.get("/cart", getAuthConfig());
+      const items = cartRes.data?.cart?.items || [];
+
+      if (!items.length) {
+        toast.error("Your cart is empty");
+        navigate("/cart");
+        return;
+      }
+
+      let address = checkoutData?.selectedAddress;
+      if (!address && checkoutData?.addressId) {
+        try {
+          const addrRes = await api.get("/addresses", getAuthConfig());
+          const addresses = addrRes.data?.addresses || [];
+          address =
+            addresses.find((a) => a._id === checkoutData.addressId) ||
+            addresses[0];
+        } catch {
+          address = null;
+        }
+      }
+
+      if (!address) {
+        toast.error("Please select a delivery address");
+        navigate("/checkout/cart/delivery");
+        return;
+      }
+
+      let subtotal = 0;
+      const orderItems = items.map((item) => {
+        const prod = item.product || {};
+        const price = Number(prod.discountPrice || prod.price || 0);
+        subtotal += price * (item.quantity || 1);
+        return {
+          product: prod._id,
+          name: prod.name || "",
+          image: prod.images?.[0] || "",
+          price,
+          quantity: item.quantity || 1,
+          size: item.size || "",
+          color: item.color || "",
+        };
+      });
+
+      const deliveryOption = checkoutData?.deliveryOption || "standard";
+      const deliveryCharge =
+        deliveryOption === "standard" ? (subtotal >= 999 ? 0 : 49) : 0;
+
+      let couponDiscount = 0;
+      const coupon = checkoutData?.appliedCoupon;
+      if (coupon) {
+        couponDiscount = Number(coupon.discountAmount || 0);
+      }
+
+      const totalAmount = Math.max(0, subtotal - couponDiscount + deliveryCharge);
+
+      setOrder({
+        _id: null,
+        user: null,
+        orderItems,
+        shippingAddress: address,
+        subtotal,
+        discount: 0,
+        couponDiscount,
+        couponCode: checkoutData?.couponCode || "",
+        deliveryCharge,
+        totalAmount,
+        paymentStatus: "pending",
+        orderStatus: "pending",
+        deliveryOption,
+      });
     } catch (error) {
       console.error("Fetch Order Error:", error);
 
       if (error.response?.status === 401) {
-        toast.error("Please login first");
-
+        toast.error("Please login first", { id: "login-required" });
         navigate("/login");
-
         return;
       }
 
       toast.error(error.response?.data?.message || "Failed to load order");
-
       navigate("/cart");
     } finally {
       setLoading(false);
@@ -581,7 +749,7 @@ const Payment = () => {
     const paymentIntentId = searchParams.get("payment_intent");
     const redirectStatus = searchParams.get("redirect_status");
 
-    if (!paymentIntentClientSecret || !paymentIntentId || !orderId) {
+    if (!paymentIntentClientSecret || !paymentIntentId) {
       return;
     }
 
@@ -617,7 +785,7 @@ const Payment = () => {
 
       if (!paymentIntent) {
         toast.error("Payment details not found");
-        navigate(`/payment/${orderId}`, { replace: true });
+        navigate(orderId ? `/payment/${orderId}` : "/payment", { replace: true });
         return;
       }
 
@@ -628,32 +796,97 @@ const Payment = () => {
         redirectStatus === "failed"
       ) {
         toast.error("Payment was declined or cancelled. You can try again.");
-        navigate(`/payment/${orderId}`, { replace: true });
+        navigate(orderId ? `/payment/${orderId}` : "/payment", { replace: true });
         return;
       }
 
-      const response = await api.post(
-        "/payment/verify-payment",
-        {
-          paymentIntentId: paymentIntent.id,
+      if (paymentIntent.status === "succeeded") {
+        if (orderId) {
+          const response = await api.post(
+            "/payment/verify-payment",
+            {
+              paymentIntentId: paymentIntent.id,
+              orderId,
+            },
+            getAuthConfig(),
+          );
 
-          orderId,
-        },
-        getAuthConfig(),
-      );
+          if (response.data?.paymentStatus === "paid") {
+            toast.success("Payment verified successfully!", {
+              id: "payment-verified-success",
+            });
+            navigate(`/order-success/${orderId}`, {
+              replace: true,
+            });
+            return;
+          } else {
+            toast.error(
+              response.data?.message || `Payment status: ${paymentIntent.status}`,
+            );
+            navigate(`/payment/${orderId}`, { replace: true });
+            return;
+          }
+        } else {
+          // Direct checkout mode: Order is created after online payment succeeds
+          const rawCheckout =
+            sessionStorage.getItem("checkout_data") ||
+            localStorage.getItem("pending_checkout_data");
+          const checkoutData = rawCheckout ? JSON.parse(rawCheckout) : {};
 
-      if (response.data?.paymentStatus === "paid") {
-        toast.success("Payment verified successfully!", {
-          id: "payment-verified-success",
-        });
-        navigate(`/order-success/${orderId}`, {
-          replace: true,
-        });
-      } else {
-        toast.error(
-          response.data?.message || `Payment status: ${paymentIntent.status}`,
-        );
-        navigate(`/payment/${orderId}`, { replace: true });
+          let addressId = checkoutData.addressId;
+          if (!addressId) {
+            try {
+              const addrRes = await api.get("/addresses", getAuthConfig());
+              const addresses = addrRes.data?.addresses || [];
+              const def = addresses.find((a) => a.isDefault) || addresses[0];
+              addressId = def?._id;
+            } catch (err) {
+              console.error("Address fallback error:", err);
+            }
+          }
+
+          if (!addressId) {
+            toast.error("Delivery address missing. Please return to checkout.");
+            navigate("/checkout/cart/delivery", { replace: true });
+            return;
+          }
+
+          const orderRes = await api.post(
+            "/orders",
+            {
+              addressId,
+              deliveryOption: checkoutData.deliveryOption || "standard",
+              couponCode: checkoutData.couponCode || "",
+              paymentMethod:
+                paymentIntent.payment_method_types?.[0] === "upi"
+                  ? "UPI"
+                  : checkoutData.paymentMethod || "UPI",
+              paymentStatus: "paid",
+              stripePaymentIntentId: paymentIntent.id,
+            },
+            getAuthConfig(),
+          );
+
+          const createdOrder = orderRes.data?.order;
+          if (createdOrder?._id) {
+            sessionStorage.removeItem("checkout_data");
+            localStorage.removeItem("pending_checkout_data");
+            sessionStorage.removeItem("applied_coupon");
+            window.dispatchEvent(new Event("cartUpdated"));
+
+            toast.success("Payment verified! Order placed successfully.", {
+              id: "payment-verified-success",
+            });
+            navigate(`/order-success/${createdOrder._id}`, { replace: true });
+            return;
+          }
+
+          toast.error(
+            orderRes.data?.message || "Failed to create order after payment",
+          );
+          navigate("/payment", { replace: true });
+          return;
+        }
       }
     } catch (error) {
       console.error("Redirect Verification Error:", error);
@@ -663,7 +896,7 @@ const Payment = () => {
           error.message ||
           "Payment verification failed",
       );
-      navigate(`/payment/${orderId}`, { replace: true });
+      navigate(orderId ? `/payment/${orderId}` : "/payment", { replace: true });
     } finally {
       setLoading(false);
     }
@@ -678,21 +911,18 @@ const Payment = () => {
   ===================================================== */
 
   const startOnlinePayment = async () => {
-    if (!order?._id) {
+    if (orderId && !order?._id) {
       toast.error("Order not found");
-
       return;
     }
 
-    if (order.paymentStatus === "paid") {
+    if (order?.paymentStatus === "paid") {
       toast.success("Order is already paid");
-
       return;
     }
 
-    if (order.orderStatus === "cancelled") {
+    if (order?.orderStatus === "cancelled") {
       toast.error("This order is cancelled");
-
       return;
     }
 
@@ -715,9 +945,7 @@ const Payment = () => {
 
     if (!stripePromise) {
       toast.error("Stripe is not configured");
-
       console.error("REACT_APP_STRIPE_PUBLISHABLE_KEY is missing");
-
       return;
     }
 
@@ -732,14 +960,25 @@ const Payment = () => {
       setClientSecret("");
 
       const paymentMethod = selectedMethod === "upi" ? "UPI" : "CARD";
+      const checkoutData = JSON.parse(
+        sessionStorage.getItem("checkout_data") || "{}"
+      );
+
+      const payload = orderId
+        ? {
+            orderId: order._id,
+            paymentMethod,
+          }
+        : {
+            paymentMethod,
+            addressId: checkoutData.addressId,
+            deliveryOption: checkoutData.deliveryOption || order?.deliveryOption || "standard",
+            couponCode: checkoutData.couponCode || order?.couponCode || "",
+          };
 
       const response = await api.post(
         "/payment/create-payment-intent",
-        {
-          orderId: order._id,
-
-          paymentMethod,
-        },
+        payload,
         getAuthConfig(),
       );
 
@@ -749,9 +988,7 @@ const Payment = () => {
 
       if (!secret || typeof secret !== "string") {
         toast.error("Client secret was not received");
-
         console.error("Invalid clientSecret:", response.data);
-
         return;
       }
 
@@ -769,9 +1006,7 @@ const Payment = () => {
 
       if (error.response?.status === 401) {
         toast.error("Please login first");
-
         navigate("/login");
-
         return;
       }
 
@@ -786,52 +1021,81 @@ const Payment = () => {
   ===================================================== */
 
   const handleCOD = async () => {
-    if (!order?._id) {
+    if (orderId && !order?._id) {
       toast.error("Order not found");
-
       return;
     }
 
-    if (order.paymentStatus === "paid") {
+    if (order?.paymentStatus === "paid") {
       toast.error("Order is already paid");
-
       return;
     }
 
-    if (order.orderStatus === "cancelled") {
+    if (order?.orderStatus === "cancelled") {
       toast.error("This order is cancelled");
-
       return;
     }
 
     try {
       setPaymentLoading(true);
 
-      const response = await api.put(
-        `/orders/${order._id}/cod`,
-        {},
-        getAuthConfig(),
-      );
+      if (orderId) {
+        const response = await api.put(
+          `/orders/${order._id}/cod`,
+          {},
+          getAuthConfig(),
+        );
 
-      const confirmedOrder = response.data?.order;
+        const confirmedOrder = response.data?.order;
+        if (!confirmedOrder?._id) {
+          toast.error("Failed to confirm order");
+          return;
+        }
 
-      if (!confirmedOrder?._id) {
-        toast.error("Failed to confirm order");
-
+        toast.success("Order placed successfully");
+        navigate(`/order-success/${confirmedOrder._id}`);
         return;
       }
 
-      toast.success("COD order placed successfully");
+      // Create COD order only when COD is selected and submitted!
+      const checkoutData = JSON.parse(
+        sessionStorage.getItem("checkout_data") || "{}"
+      );
+      if (!checkoutData.addressId && !order?.shippingAddress?._id) {
+        toast.error("Delivery address missing. Please return to checkout.");
+        navigate("/checkout/cart/delivery");
+        return;
+      }
 
-      navigate(`/order-success/${confirmedOrder._id}`);
+      const response = await api.post(
+        "/orders",
+        {
+          addressId: checkoutData.addressId || order?.shippingAddress?._id,
+          deliveryOption: checkoutData.deliveryOption || order?.deliveryOption || "standard",
+          couponCode: checkoutData.couponCode || order?.couponCode || "",
+          paymentMethod: "COD",
+        },
+        getAuthConfig(),
+      );
+
+      const createdOrder = response.data?.order;
+      if (!createdOrder?._id) {
+        toast.error("Failed to place order");
+        return;
+      }
+
+      sessionStorage.removeItem("checkout_data");
+      sessionStorage.removeItem("applied_coupon");
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      toast.success("Order placed successfully");
+      navigate(`/order-success/${createdOrder._id}`);
     } catch (error) {
       console.error("COD Error:", error);
 
       if (error.response?.status === 401) {
         toast.error("Please login first");
-
         navigate("/login");
-
         return;
       }
 

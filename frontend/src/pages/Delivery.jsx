@@ -40,7 +40,6 @@ const Delivery = () => {
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
   const [billingSame, setBillingSame] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [creatingOrder, setCreatingOrder] = useState(false);
   const [deliveryInfoOpen, setDeliveryInfoOpen] = useState(true);
   const [addressDrawerOpen, setAddressDrawerOpen] = useState(false);
   const [couponModalOpen, setCouponModalOpen] = useState(false);
@@ -222,9 +221,7 @@ const Delivery = () => {
     setAddressDrawerOpen(false);
   };
 
-  const handleProceed = async () => {
-    if (creatingOrder) return;
-
+  const handleProceed = () => {
     if (!selectedAddress?._id) {
       toast.error("Please select a delivery address");
       setAddressDrawerOpen(true);
@@ -242,53 +239,18 @@ const Delivery = () => {
       return;
     }
 
-    try {
-      setCreatingOrder(true);
+    // Save checkout details for payment page - order will be created upon payment/COD selection
+    const checkoutPayload = JSON.stringify({
+      addressId: selectedAddress._id,
+      selectedAddress,
+      deliveryOption: deliveryMethod,
+      couponCode: appliedCoupon?.couponCode || "",
+      appliedCoupon,
+    });
+    sessionStorage.setItem("checkout_data", checkoutPayload);
+    localStorage.setItem("pending_checkout_data", checkoutPayload);
 
-      const response = await api.post(
-        "/orders",
-        {
-          addressId: selectedAddress._id,
-          paymentMethod: "UPI",
-          deliveryOption: deliveryMethod,
-          couponCode: appliedCoupon?.couponCode || "",
-        },
-        getAuthConfig(),
-      );
-
-      const order = response.data?.order;
-
-      if (!order?._id) {
-        toast.error("Order ID not received");
-        return;
-      }
-
-      sessionStorage.removeItem("applied_coupon");
-
-      toast.success("Order created successfully");
-      navigate(`/payment/${order._id}`);
-    } catch (error) {
-      console.error("Create Order Error:", error);
-
-      if (error.response?.status === 401) {
-        toast.error("Please login first");
-        navigate("/login");
-        return;
-      }
-
-      const errorMsg =
-        error.response?.data?.message || "Failed to create order";
-      toast.error(errorMsg);
-
-      if (
-        errorMsg.toLowerCase().includes("coupon") ||
-        errorMsg.toLowerCase().includes("minimum order")
-      ) {
-        toast.error("Please remove or reapply a valid coupon.");
-      }
-    } finally {
-      setCreatingOrder(false);
-    }
+    navigate("/payment");
   };
 
   if (loading) {
@@ -362,6 +324,8 @@ const Delivery = () => {
                   : "delivery-option"
               }
               onClick={() => setDeliveryMethod("standard")}
+              role="radio"
+              aria-checked={deliveryMethod === "standard"}
             >
               <div className="delivery-option-icon">
                 <FiTruck />
@@ -380,7 +344,9 @@ const Delivery = () => {
                 </span>
               </div>
 
-              <span className="delivery-option-check">✓</span>
+              <span className="delivery-option-check">
+                {deliveryMethod === "standard" ? "✓" : ""}
+              </span>
             </button>
 
             <button
@@ -388,6 +354,8 @@ const Delivery = () => {
               className={deliveryMethod === "pickup" ? "delivery-option selected" : "delivery-option"}
               onClick={() => setDeliveryMethod("pickup")}
               aria-label="Pickup from Store"
+              role="radio"
+              aria-checked={deliveryMethod === "pickup"}
             >
               <div className="delivery-option-icon">
                 <FiHome />
@@ -407,7 +375,9 @@ const Delivery = () => {
                 </span>
               </div>
 
-              <span className="delivery-option-check">✓</span>
+              <span className="delivery-option-check">
+                {deliveryMethod === "pickup" ? "✓" : ""}
+              </span>
             </button>
 
             <div className="delivery-order-section">
@@ -646,10 +616,9 @@ const Delivery = () => {
                 <button
                   type="button"
                   className="proceed-btn"
-                  disabled={creatingOrder}
                   onClick={handleProceed}
                 >
-                  {creatingOrder ? "Creating Order..." : "Proceed to pay"}
+                  Proceed to pay
                 </button>
               </div>
             </div>

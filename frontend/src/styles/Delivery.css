@@ -267,13 +267,21 @@
   width: 21px;
   height: 21px;
   border-radius: 50%;
-  background: #3544c4;
-  color: #fff;
+  border: 1.5px solid #c4cdd5;
+  background: #ffffff;
+  color: transparent;
   font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.delivery-option.selected .delivery-option-check {
+  background: #3544c4;
+  border-color: #3544c4;
+  color: #ffffff;
 }
 
 .delivery-option-check.disabled {

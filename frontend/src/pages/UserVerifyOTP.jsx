@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { IoHomeOutline } from "react-icons/io5";
 import { MdInfoOutline } from "react-icons/md";
@@ -216,17 +216,18 @@ const UserVerifyOTP = () => {
         <button
           type="button"
           className="verify-otp-back"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           disabled={loading}
+          aria-label="Back to home"
         >
           <IoHomeOutline />
 
           <span>Back</span>
         </button>
 
-        <div className="verify-otp-logo">
+        <Link to="/" className="verify-otp-logo" aria-label="Decathlon Home">
           <DecathlonLogo height={24} />
-        </div>
+        </Link>
       </header>
 
       <section className="verify-otp-container">

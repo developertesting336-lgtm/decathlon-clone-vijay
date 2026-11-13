@@ -102,8 +102,9 @@ const UserLogin = () => {
         <button
           type="button"
           className="user-login-back"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           disabled={loading}
+          aria-label="Back to home"
         >
           <IoHomeOutline />
 
@@ -112,9 +113,9 @@ const UserLogin = () => {
           </span>
         </button>
 
-        <div className="user-login-logo">
+        <Link to="/" className="user-login-logo" aria-label="Decathlon Home">
           <DecathlonLogo height={24} />
-        </div>
+        </Link>
 
       </header>
 

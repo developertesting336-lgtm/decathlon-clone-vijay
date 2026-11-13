@@ -16,6 +16,7 @@ import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
 import Profile from "./pages/Profile";
 import MyAccount from "./pages/MyAccount";
+import OrderDetail from "./pages/OrderDetail";
 import AccountOverview from "./pages/AccountOverview";
 import Wishlist from "./pages/Wishlist";
 import ProductDetail from "./pages/ProductDetail";
@@ -132,6 +133,7 @@ function App() {
 
             <Route path="/checkout/cart/delivery" element={<Delivery />} />
 
+            <Route path="/payment" element={<Payment />} />
             <Route path="/payment/:orderId" element={<Payment />} />
 
             <Route path="/order-success/:orderId" element={<OrderSuccess />} />
@@ -141,6 +143,8 @@ function App() {
             <Route path="/account" element={<AccountRoute />} />
 
             <Route path="/account/orders-returns" element={<MyAccount />} />
+            <Route path="/account/orders/:orderId" element={<OrderDetail />} />
+            <Route path="/account/orders-returns/:orderId" element={<OrderDetail />} />
 
             <Route path="/support" element={<Support />} />
             <Route path="/support/tickets" element={<SupportTickets />} />

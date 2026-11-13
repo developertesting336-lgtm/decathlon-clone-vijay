@@ -1147,7 +1147,18 @@ const Navbar = () => {
             </Link>
 
             {/* CART */}
-            <Link to="/cart" className="navbar-action">
+            <Link
+              to="/cart"
+              className="navbar-action"
+              onClick={(e) => {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                  e.preventDefault();
+                  toast.error("Please login first", { id: "login-required" });
+                  navigate("/login");
+                }
+              }}
+            >
               <div className="cart-icon-wrapper">
                 {isOrdersPage ? <FiShoppingCart /> : <FiShoppingBag />}
                 {cartCount > 0 && (

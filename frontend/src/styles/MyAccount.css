@@ -766,6 +766,18 @@
   color: #fff;
 }
 
+.btn-order-action.btn-view-details {
+  border-color: #0288d1;
+  color: #0288d1;
+  background: #f0f9ff;
+  font-weight: 700;
+}
+
+.btn-order-action.btn-view-details:hover {
+  background: #0288d1;
+  color: #fff;
+}
+
 .btn-order-action.btn-pay {
   border-color: #3945bd;
   background: #3945bd;

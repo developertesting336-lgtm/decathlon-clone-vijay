@@ -80,16 +80,17 @@ const UserRegister = () => {
         <button
           type="button"
           className="user-register-back"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
           disabled={loading}
+          aria-label="Back to home"
         >
           <IoHomeOutline />
           <span>Back</span>
         </button>
 
-        <div className="user-register-logo">
+        <Link to="/" className="user-register-logo" aria-label="Decathlon Home">
           <DecathlonLogo height={24} />
-        </div>
+        </Link>
       </header>
 
       <section className="user-register-container">

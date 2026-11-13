@@ -91,8 +91,8 @@ const Cart = () => {
       console.error("Fetch Cart Error:", error);
       setCartItems([]);
       if (error.response?.status === 401) {
-        toast.error("Please login first");
-        navigate("/login");
+        toast.error("Please login first", { id: "login-required" });
+        navigate("/login", { replace: true });
         return;
       }
       toast.error(error.response?.data?.message || "Failed to load cart");
@@ -126,13 +126,20 @@ const Cart = () => {
     } catch (error) {
       console.error("Fetch Address Error:", error);
       if (error.response?.status === 401) {
-        toast.error("Please login first");
-        navigate("/login");
+        toast.error("Please login first", { id: "login-required" });
+        navigate("/login", { replace: true });
       }
     }
   }, [navigate]);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login first", { id: "login-required" });
+      navigate("/login", { replace: true });
+      return;
+    }
+
     const loadData = async () => {
       try {
         setLoading(true);
@@ -147,6 +154,7 @@ const Cart = () => {
     };
     loadData();
   }, [
+    navigate,
     fetchCart,
     fetchCouponBanner,
     fetchAddresses,

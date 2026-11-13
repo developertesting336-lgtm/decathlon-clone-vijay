@@ -933,6 +933,26 @@ const MyAccount = () => {
         const response = await api.get("/orders/my-orders", getAuthConfig());
         const fetchedOrders = response.data?.orders || [];
         setOrders(Array.isArray(fetchedOrders) ? fetchedOrders : []);
+
+        // Automatically close cancel modal if the cancelled/updated order is currently open
+        setCancelModalOrder((currentModal) => {
+          if (!currentModal) return null;
+          const targetId = event?._id || event?.orderId;
+          if (targetId && targetId === currentModal._id) {
+            setCancellingId("");
+            setCancelReason("");
+            setCancelDetails("");
+            return null;
+          }
+          const found = fetchedOrders.find((o) => o._id === currentModal._id);
+          if (found && (found.orderStatus === "cancelled" || found.status === "cancelled")) {
+            setCancellingId("");
+            setCancelReason("");
+            setCancelDetails("");
+            return null;
+          }
+          return currentModal;
+        });
       } catch (err) {
         console.error("Real-time my-orders refresh error:", err);
       }
@@ -1030,11 +1050,13 @@ const MyAccount = () => {
     };
 
     socket.on("order_updated", handleOrderUpdate);
+    socket.on("order_cancelled", handleOrderUpdate);
     socket.on("order_tracking_updated", handleTrackingUpdate);
     socket.on("payment_status_updated", handlePaymentUpdate);
 
     return () => {
       socket.off("order_updated", handleOrderUpdate);
+      socket.off("order_cancelled", handleOrderUpdate);
       socket.off("order_tracking_updated", handleTrackingUpdate);
       socket.off("payment_status_updated", handlePaymentUpdate);
     };
@@ -1055,10 +1077,10 @@ const MyAccount = () => {
   };
 
   const handleCloseCancelModal = () => {
-    if (cancellingId) return;
     setCancelModalOrder(null);
     setCancelReason("");
     setCancelDetails("");
+    setCancellingId("");
   };
 
   const handleSubmitCancelOrder = async (e) => {
@@ -1091,7 +1113,19 @@ const MyAccount = () => {
       fetchOrders();
     } catch (error) {
       console.error("Cancel Order Error:", error);
-      toast.error(error.response?.data?.message || "Failed to cancel order");
+      const errMsg = error.response?.data?.message || "Failed to cancel order";
+      toast.error(errMsg);
+      if (
+        errMsg.toLowerCase().includes("cancelled") ||
+        errMsg.toLowerCase().includes("cannot be cancelled") ||
+        error.response?.status === 400 ||
+        error.response?.status === 404
+      ) {
+        setCancelModalOrder(null);
+        setCancelReason("");
+        setCancelDetails("");
+        fetchOrders();
+      }
     } finally {
       setCancellingId("");
     }
@@ -1478,7 +1512,12 @@ const MyAccount = () => {
                 ) : filteredOrders.length > 0 ? (
                   <div className="orders-list">
                     {filteredOrders.map((order) => (
-                      <div key={order._id} className="order-card">
+                      <div
+                        key={order._id}
+                        className="order-card"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => navigate(`/account/orders/${order._id}`)}
+                      >
                         <div className="order-card-header">
                           <div className="order-card-info">
                             <span className="order-card-id">
@@ -1580,8 +1619,22 @@ const MyAccount = () => {
                           <div className="order-actions">
                             <button
                               type="button"
+                              className="btn-order-action btn-view-details"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/account/orders/${order._id}`);
+                              }}
+                            >
+                              View Details
+                            </button>
+
+                            <button
+                              type="button"
                               className="btn-order-action btn-track"
-                              onClick={() => handleOpenTrackingModal(order)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenTrackingModal(order);
+                              }}
                               title="Track Delivery Status"
                             >
                               <FiTruck /> Track Order
@@ -1594,9 +1647,10 @@ const MyAccount = () => {
                                 <button
                                   type="button"
                                   className="btn-order-action btn-pay"
-                                  onClick={() =>
-                                    navigate(`/payment/${order._id}`)
-                                  }
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/payment/${order._id}`);
+                                  }}
                                 >
                                   Pay Now
                                 </button>
@@ -1608,7 +1662,10 @@ const MyAccount = () => {
                                 type="button"
                                 className="btn-order-action btn-cancel"
                                 disabled={cancellingId === order._id}
-                                onClick={() => handleOpenCancelModal(order)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenCancelModal(order);
+                                }}
                               >
                                 {cancellingId === order._id
                                   ? "Cancelling..."
@@ -1621,7 +1678,10 @@ const MyAccount = () => {
                               <button
                                 type="button"
                                 className="btn-order-action btn-return"
-                                onClick={() => handleOpenReturnModal(order)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenReturnModal(order);
+                                }}
                               >
                                 Return
                               </button>
@@ -1658,7 +1718,10 @@ const MyAccount = () => {
                               <button
                                 type="button"
                                 className="btn-order-action btn-exchange"
-                                onClick={() => handleOpenExchangeModal(order)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenExchangeModal(order);
+                                }}
                               >
                                 Exchange
                               </button>
@@ -1702,7 +1765,10 @@ const MyAccount = () => {
                             <button
                               type="button"
                               className="order-help-btn"
-                              onClick={() => handleOpenTrackingModal(order)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenTrackingModal(order);
+                              }}
                               title="Track delivery milestones"
                             >
                               <FiTruck /> Track Order
@@ -1710,7 +1776,8 @@ const MyAccount = () => {
                             <button
                               type="button"
                               className="order-help-btn"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 if (isOrderReturnEligible(order)) {
                                   handleOpenReturnModal(order);
                                 } else {
@@ -1724,7 +1791,8 @@ const MyAccount = () => {
                             <button
                               type="button"
                               className="order-help-btn"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 if (isOrderExchangeEligible(order)) {
                                   handleOpenExchangeModal(order);
                                 } else {
@@ -1814,7 +1882,6 @@ const MyAccount = () => {
                 type="button"
                 className="return-modal-close"
                 onClick={handleCloseCancelModal}
-                disabled={Boolean(cancellingId)}
               >
                 ×
               </button>
@@ -1873,7 +1940,6 @@ const MyAccount = () => {
                   type="button"
                   className="btn-return-cancel"
                   onClick={handleCloseCancelModal}
-                  disabled={Boolean(cancellingId)}
                 >
                   Keep Order
                 </button>
