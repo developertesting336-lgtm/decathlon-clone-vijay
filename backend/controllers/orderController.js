@@ -337,6 +337,9 @@ const createOrder = async (req, res) => {
       },
     ];
 
+    const isPaid = req.body.paymentStatus === "paid";
+    const isCOD = paymentMethod === "COD";
+
     const order = await Order.create({
       user: req.user.id,
       orderItems,
@@ -357,9 +360,11 @@ const createOrder = async (req, res) => {
       deliveryCharge,
       totalAmount,
       paymentMethod,
-      paymentStatus: "pending",
-      orderStatus: "pending",
-      stripePaymentIntentId: "",
+      paymentStatus: isPaid ? "paid" : "pending",
+      orderStatus: isPaid || isCOD ? "confirmed" : "pending",
+      stripePaymentIntentId: req.body.stripePaymentIntentId || "",
+      paidAt: isPaid ? new Date() : undefined,
+      paymentReceivedAt: isPaid ? new Date() : undefined,
       couponCode: normalizedCouponCode,
       deliveryOption,
       trackingNumber,
@@ -579,11 +584,23 @@ const getMyOrders = async (req, res) => {
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
+    if (
+      !id ||
+      id === "null" ||
+      id === "undefined" ||
+      !mongoose.Types.ObjectId.isValid(id)
+    ) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
+    }
+
+    const userId = req.user?.id || req.user?._id;
 
     const order = await Order.findOne({
       _id: id,
-      user: req.user.id,
-    }).populate("orderItems.product", "name images brand");
+      user: userId,
+    }).populate("orderItems.product", "name images brand category price description");
 
     if (!order) {
       return res.status(404).json({
@@ -768,24 +785,22 @@ const cancelOrder = async (req, res) => {
 
     // Send email notification (non-blocking)
     if (order.user?.email) {
-      try {
-        await sendEmail({
-          to: order.user.email,
-          subject: `Your Decathlon Order #${order._id
-            .toString()
-            .slice(-8)
-            .toUpperCase()} has been cancelled`,
-          text: `Hello ${
-            order.user.name || "Customer"
-          },\n\nYour order #${order._id} has been cancelled successfully.\n${
-            order.paymentStatus === "refunded"
-              ? `A full refund of ₹${order.totalAmount} has been initiated to your original payment method (Refund ID: ${order.stripeRefundId}).`
-              : "For Cash on Delivery orders, no payment was charged."
-          }\n\nThank you,\nDecathlon Team`,
-        });
-      } catch (mailErr) {
+      sendEmail({
+        to: order.user.email,
+        subject: `Your Decathlon Order #${order._id
+          .toString()
+          .slice(-8)
+          .toUpperCase()} has been cancelled`,
+        text: `Hello ${
+          order.user.name || "Customer"
+        },\n\nYour order #${order._id} has been cancelled successfully.\n${
+          order.paymentStatus === "refunded"
+            ? `A full refund of ₹${order.totalAmount} has been initiated to your original payment method (Refund ID: ${order.stripeRefundId}).`
+            : "For Cash on Delivery orders, no payment was charged."
+        }\n\nThank you,\nDecathlon Team`,
+      }).catch((mailErr) => {
         console.error("Cancellation email error:", mailErr.message);
-      }
+      });
     }
 
     return res.status(200).json({

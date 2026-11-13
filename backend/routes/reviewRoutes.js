@@ -3,6 +3,7 @@ import {
   createReview,
   getReviewsByProduct,
   getReviewById,
+  getMyReviews,
   updateReview,
   deleteReview,
   getAllReviews,
@@ -14,6 +15,9 @@ const router = express.Router();
 
 // Admin: view all reviews
 router.get("/", authMiddleware, adminMiddleware, getAllReviews);
+
+// Logged in user: get all my reviews
+router.get("/my-reviews", authMiddleware, getMyReviews);
 
 // Create review (requires logged in user)
 router.post("/", authMiddleware, createReview);

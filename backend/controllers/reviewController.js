@@ -384,6 +384,39 @@ export const deleteReview = async (req, res) => {
 };
 
 /**
+ * GET LOGGED IN USER REVIEWS
+ * GET /reviews/my-reviews or /api/reviews/my-reviews
+ * Requires: Logged in user
+ */
+export const getMyReviews = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const reviews = await Review.find({ user: userId })
+      .populate("product", "name images price")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return res.status(200).json({
+      success: true,
+      reviews,
+    });
+  } catch (error) {
+    console.error("Get My Reviews Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch user reviews",
+    });
+  }
+};
+
+/**
  * ADMIN: GET ALL REVIEWS
  * GET /reviews or /api/reviews
  * Requires: Admin

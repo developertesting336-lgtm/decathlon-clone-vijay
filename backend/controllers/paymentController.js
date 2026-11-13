@@ -1,6 +1,9 @@
 import Stripe from "stripe";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Order from "../models/Order.js";
+import Cart from "../models/cart.js";
+import Coupon from "../models/Coupon.js";
 import { emitOrderUpdate } from "../socket/socketManager.js";
 
 dotenv.config();
@@ -12,38 +15,92 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 */
 const createPaymentIntent = async (req, res) => {
   try {
-    const { orderId, paymentMethod = "CARD" } = req.body;
+    const {
+      orderId,
+      paymentMethod = "CARD",
+      deliveryOption = "standard",
+      couponCode,
+    } = req.body;
 
-    if (!orderId) {
-      return res.status(400).json({
-        message: "Order ID is required",
+    let totalAmount = 0;
+    let order = null;
+
+    if (orderId) {
+      order = await Order.findOne({
+        _id: orderId,
+        user: req.user.id,
       });
+
+      if (!order) {
+        return res.status(404).json({
+          message: "Order not found",
+        });
+      }
+
+      if (order.paymentStatus === "paid") {
+        return res.status(400).json({
+          message: "Order is already paid",
+        });
+      }
+
+      if (order.orderStatus === "cancelled") {
+        return res.status(400).json({
+          message: "Cancelled order cannot be paid",
+        });
+      }
+
+      totalAmount = Number(order.totalAmount);
+    } else {
+      const cart = await Cart.findOne({
+        user: req.user.id,
+      }).populate("items.product");
+
+      if (!cart || cart.items.length === 0) {
+        return res.status(400).json({
+          message: "Cart is empty",
+        });
+      }
+
+      let subtotal = 0;
+      for (const item of cart.items) {
+        const product = item.product;
+        if (product && product.isActive) {
+          const finalPrice =
+            product.discountPrice > 0 ? product.discountPrice : product.price;
+          subtotal += finalPrice * item.quantity;
+        }
+      }
+
+      let deliveryCharge = 0;
+      if (deliveryOption === "standard") {
+        deliveryCharge = subtotal >= 999 ? 0 : 49;
+      }
+
+      let couponDiscount = 0;
+      if (couponCode) {
+        const coupon = await Coupon.findOne({
+          code: String(couponCode).trim().toUpperCase(),
+          isActive: true,
+        });
+        if (coupon && subtotal >= (coupon.minOrderAmount || 0)) {
+          if (coupon.discountType === "percentage") {
+            couponDiscount = Math.round(
+              (subtotal * coupon.discountValue) / 100,
+            );
+            if (coupon.maxDiscountAmount > 0) {
+              couponDiscount = Math.min(
+                couponDiscount,
+                coupon.maxDiscountAmount,
+              );
+            }
+          } else {
+            couponDiscount = Math.min(coupon.discountValue, subtotal);
+          }
+        }
+      }
+
+      totalAmount = Math.max(0, subtotal - couponDiscount + deliveryCharge);
     }
-
-    const order = await Order.findOne({
-      _id: orderId,
-      user: req.user.id,
-    });
-
-    if (!order) {
-      return res.status(404).json({
-        message: "Order not found",
-      });
-    }
-
-    if (order.paymentStatus === "paid") {
-      return res.status(400).json({
-        message: "Order is already paid",
-      });
-    }
-
-    if (order.orderStatus === "cancelled") {
-      return res.status(400).json({
-        message: "Cancelled order cannot be paid",
-      });
-    }
-
-    const totalAmount = Number(order.totalAmount);
 
     if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
       return res.status(400).json({
@@ -54,9 +111,9 @@ const createPaymentIntent = async (req, res) => {
     const amount = Math.round(totalAmount * 100);
 
     /*
-      Reuse existing PaymentIntent if valid and open
+      Reuse existing PaymentIntent if valid and open on existing order
     */
-    if (order.stripePaymentIntentId) {
+    if (order && order.stripePaymentIntentId) {
       try {
         const existingIntent = await stripe.paymentIntents.retrieve(
           order.stripePaymentIntentId,
@@ -84,44 +141,30 @@ const createPaymentIntent = async (req, res) => {
       }
     }
 
-    const paymentIntent = await stripe.paymentIntents.create(
-      {
-        amount,
-        currency: "inr",
-
-        automatic_payment_methods: {
-          enabled: true,
-        },
-
-        metadata: {
-          orderId: order._id.toString(),
-
-          userId: req.user.id.toString(),
-
-          paymentMethod: paymentMethod === "UPI" ? "UPI" : "CARD",
-        },
+    const paymentIntentParams = {
+      amount,
+      currency: "inr",
+      automatic_payment_methods: {
+        enabled: true,
       },
-      {
-        idempotencyKey: `order_${order._id.toString()}`,
+      metadata: {
+        orderId: order ? order._id.toString() : "",
+        userId: req.user.id.toString(),
+        paymentMethod: paymentMethod === "UPI" ? "UPI" : "CARD",
       },
-    );
+    };
 
-    order.stripePaymentIntentId = paymentIntent.id;
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
 
-    /*
-      Store informational payment method.
-      Stripe PaymentElement still decides
-      the actual available method.
-    */
-    order.paymentMethod = paymentMethod === "UPI" ? "UPI" : "CARD";
-
-    await order.save();
+    if (order) {
+      order.stripePaymentIntentId = paymentIntent.id;
+      order.paymentMethod = paymentMethod === "UPI" ? "UPI" : "CARD";
+      await order.save();
+    }
 
     return res.status(200).json({
       message: "Payment intent created",
-
       clientSecret: paymentIntent.client_secret,
-
       paymentIntentId: paymentIntent.id,
     });
   } catch (error) {
@@ -140,9 +183,31 @@ const verifyPayment = async (req, res) => {
   try {
     const { paymentIntentId, orderId } = req.body;
 
-    if (!paymentIntentId || !orderId) {
+    if (!paymentIntentId) {
       return res.status(400).json({
-        message: "Payment Intent ID and Order ID are required",
+        message: "Payment Intent ID is required",
+      });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (paymentIntent.status !== "succeeded") {
+      return res.status(400).json({
+        message: "Payment has not succeeded",
+        paymentStatus: "failed",
+      });
+    }
+
+    if (
+      !orderId ||
+      orderId === "null" ||
+      orderId === "undefined" ||
+      !mongoose.Types.ObjectId.isValid(orderId)
+    ) {
+      return res.status(200).json({
+        message: "Payment verified successfully",
+        paymentStatus: "paid",
+        paymentIntentId: paymentIntent.id,
       });
     }
 
@@ -156,8 +221,6 @@ const verifyPayment = async (req, res) => {
         message: "Order not found",
       });
     }
-
-    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
     /*
       Check PaymentIntent belongs
