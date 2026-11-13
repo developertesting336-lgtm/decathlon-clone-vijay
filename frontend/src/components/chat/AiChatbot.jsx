@@ -631,11 +631,11 @@ const AiChatbot = () => {
               <div className="ai-header-text">
                 <div className="ai-header-title">
                   <span>Decathlon AI</span>
-                  <span className="ai-badge-pill">Help & Support</span>
+                  <span className="ai-badge-pill">Assistant</span>
                 </div>
                 <div className="ai-header-status">
                   <span className="ai-status-dot"></span>
-                  <span>Online • Live Database Grounded</span>
+                  <span>Online • Instant Sports & Order Help</span>
                 </div>
                 {currentUser && (
                   <div
@@ -645,9 +645,8 @@ const AiChatbot = () => {
                     <IoPersonCircleOutline className="ai-user-icon" />
                     <span>
                       {currentUser.name
-                        ? currentUser.name.split(" ")[0]
-                        : "Account"}{" "}
-                      • History & Orders Synced
+                        ? `Hi, ${currentUser.name.split(" ")[0]}`
+                        : "Member"}
                     </span>
                   </div>
                 )}
@@ -1139,7 +1138,7 @@ const AiChatbot = () => {
               </button>
             </div>
             <div className="ai-footer-note">
-              <span>Powered by Decathlon AI • Gemini 1.5 Flash Grounded</span>
+              <span>Powered by Decathlon AI • Smart Sports Assistant</span>
             </div>
           </div>
         </div>
