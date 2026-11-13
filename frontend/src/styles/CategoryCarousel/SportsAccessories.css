@@ -405,7 +405,7 @@
 
 /* === MOBILE ROW CONSISTENCY OVERRIDES === */
 .sports-accessories-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @media (max-width: 768px) {

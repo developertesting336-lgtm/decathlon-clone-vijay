@@ -813,7 +813,7 @@
 
 /* === MOBILE ROW CONSISTENCY OVERRIDES === */
 .cycling-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @media (max-width: 768px) {

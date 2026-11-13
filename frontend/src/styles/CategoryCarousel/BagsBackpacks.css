@@ -406,7 +406,7 @@
 
 /* === MOBILE ROW CONSISTENCY OVERRIDES === */
 .bags-backpacks-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @media (max-width: 768px) {

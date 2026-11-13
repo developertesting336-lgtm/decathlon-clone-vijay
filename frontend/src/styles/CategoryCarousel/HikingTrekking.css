@@ -623,7 +623,7 @@
 
 /* === MOBILE ROW CONSISTENCY OVERRIDES === */
 .hiking-trekking-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 @media (max-width: 768px) {

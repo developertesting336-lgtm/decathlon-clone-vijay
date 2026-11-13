@@ -6,6 +6,7 @@ import api, { useWishlist } from "../api/axios";
 import socket from "../socket/socket";
 import Navbar from "../components/Navbar";
 import Footer from "../components/pageSections/Footer/Footer";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 import { openLocationPickerModal, useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/CategoryProducts.css";
 
@@ -1055,7 +1056,7 @@ function CategoryProducts() {
           </div>
 
           {/* LOADING */}
-          {loading && <div className="loading">Loading products...</div>}
+          {loading && <LoadingSpinner message="Loading products..." minHeight="45vh" size="large" />}
 
           {/* ERROR */}
           {!loading && error && <div className="error">{error}</div>}
