@@ -39,7 +39,6 @@ const Delivery = () => {
 
   const [cartItems, setCartItems] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const rewardEnabled = false;
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
   const [billingSame, setBillingSame] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -66,8 +65,6 @@ const Delivery = () => {
       sessionStorage.removeItem("applied_coupon");
     }
   }, [appliedCoupon]);
-
-  const rewardBalance = 0;
 
   const getAuthConfig = () => {
     const token = localStorage.getItem("token");

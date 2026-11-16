@@ -315,6 +315,7 @@ const Offers = () => {
         <div className="header-titles">
           <h1>
             <MdLocalOffer /> Offers & Promotions Engine
+            {totalOffers > 0 && <span className="offers-count-badge">({totalOffers})</span>}
           </h1>
           <p>
             Manage product offers, category deals, scheduling, and automatic priority conflict resolution.

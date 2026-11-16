@@ -35,6 +35,16 @@
   color: #3643ba;
 }
 
+.offers-count-badge {
+  font-size: 14px;
+  font-weight: 700;
+  background: #e0e7ff;
+  color: #3643ba;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  vertical-align: middle;
+}
+
 .header-titles p {
   font-size: 13.5px;
   color: #64748b;
