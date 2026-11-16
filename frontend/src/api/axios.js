@@ -1,3 +1,4 @@
+import { toggleGuestWishlist, getGuestWishlistIds } from "../utils/guestWishlist";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -150,11 +151,12 @@ api.interceptors.response.use(
   }
 );
 
-export const toggleWishlist = async (productId) => {
+export const toggleWishlist = async (productId, product = null) => {
   const token = localStorage.getItem("token");
   if (!token) {
-    toast.error("Please login to add items to wishlist");
-    return false;
+    const res = toggleGuestWishlist(product || productId);
+    toast.success(res.message);
+    return res.added;
   }
 
   try {
@@ -195,7 +197,7 @@ export const useWishlist = () => {
   const fetchWishlist = useCallback(async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setWishlistIds([]);
+      setWishlistIds(getGuestWishlistIds());
       return;
     }
     try {
@@ -226,8 +228,8 @@ export const useWishlist = () => {
     };
   }, [fetchWishlist]);
 
-  const handleToggle = async (productId) => {
-    await toggleWishlist(productId);
+  const handleToggle = async (productId, product = null) => {
+    await toggleWishlist(productId, product);
     window.dispatchEvent(new Event("wishlistUpdated"));
     fetchWishlist();
   };

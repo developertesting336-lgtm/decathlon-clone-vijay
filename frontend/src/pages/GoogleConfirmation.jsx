@@ -1,3 +1,4 @@
+import { syncGuestCartAndWishlist } from "../utils/syncGuestData";
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
@@ -71,6 +72,13 @@ const GoogleConfirmation = () => {
       // Persist authenticated session
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+
+      // Synchronize any guest cart & wishlist with the newly authenticated account
+      try {
+        await syncGuestCartAndWishlist(token);
+      } catch (syncErr) {
+        console.error("Guest data sync error:", syncErr);
+      }
 
       // Clean up temporary confirmation session
       try {

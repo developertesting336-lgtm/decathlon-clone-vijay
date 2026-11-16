@@ -1,3 +1,4 @@
+import { addToGuestCart } from "../../../utils/guestCart";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -293,13 +294,6 @@ const ProductSection = ({
 
   const handleAddToCart = async () => {
     if (!selectedProduct) return;
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      toast.error("Please login first");
-      return;
-    }
-
     const sizes = Array.isArray(selectedProduct.size) ? selectedProduct.size : [];
     if (sizes.length > 0 && !selectedSize) {
       toast.error("Please select a size");
@@ -308,6 +302,21 @@ const ProductSection = ({
 
     if (!quantity || Number(quantity) < 1) {
       toast.error("Quantity must be at least 1");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const res = addToGuestCart(selectedProduct, selectedSize || "", selectedColor || "", Number(quantity) || 1);
+      if (res.success) {
+        toast.success(res.message);
+        setSelectedProduct(null);
+        setSelectedSize("");
+        setSelectedColor("");
+        setQuantity(1);
+      } else {
+        toast.error(res.message);
+      }
       return;
     }
 
@@ -500,7 +509,7 @@ const ProductSection = ({
                             isWishlisted(product._id) ? "active" : ""
                           }`}
                           aria-label="Add to wishlist"
-                          onClick={() => handleToggle(product._id)}
+                          onClick={() => handleToggle(product._id, product)}
                         >
                           {isWishlisted(product._id) ? (
                             <MdFavorite size={16} />

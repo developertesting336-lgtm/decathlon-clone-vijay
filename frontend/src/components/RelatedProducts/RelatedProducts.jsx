@@ -1,3 +1,4 @@
+import { addToGuestCart } from "../../utils/guestCart";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -103,13 +104,6 @@ const RelatedProducts = ({ productId, title = "You May Also Like", onProductsLoa
   // Add to cart submission
   const handleAddToCart = async () => {
     if (!selectedProduct) return;
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      toast.error("Please login first");
-      return;
-    }
-
     const sizes = Array.isArray(selectedProduct.size)
       ? selectedProduct.size
       : selectedProduct.size
@@ -122,6 +116,21 @@ const RelatedProducts = ({ productId, title = "You May Also Like", onProductsLoa
 
     if (!quantity || Number(quantity) < 1) {
       toast.error("Quantity must be at least 1");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const res = addToGuestCart(selectedProduct, selectedSize || "", selectedColor || "", Number(quantity) || 1);
+      if (res.success) {
+        toast.success(res.message);
+        setSelectedProduct(null);
+        setSelectedSize("");
+        setSelectedColor("");
+        setQuantity(1);
+      } else {
+        toast.error(res.message);
+      }
       return;
     }
 
@@ -422,7 +431,7 @@ const RelatedProducts = ({ productId, title = "You May Also Like", onProductsLoa
                         isWishlisted(prod._id) ? "active" : ""
                       }`}
                       aria-label="Add to wishlist"
-                      onClick={() => handleToggle(prod._id)}
+                      onClick={() => handleToggle(prod._id, prod)}
                     >
                       {isWishlisted(prod._id) ? (
                         <MdFavorite size={16} />

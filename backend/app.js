@@ -32,6 +32,8 @@ import stockNotificationRoutes from "./routes/stockNotificationRoutes.js";
 import couponRoutes from "./routes/couponRoutes.js";
 import supportRoutes from "./routes/supportRoutes.js";
 import supportTicketRoutes from "./routes/supportTicketRoutes.js";
+import offerRoutes from "./routes/offerRoutes.js";
+import priceAlertRoutes from "./routes/priceAlertRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 import { seedSupportData } from "./seedSupportData.js";
 
@@ -217,6 +219,12 @@ app.use("/support", supportRoutes);
 
 app.use("/api/support/tickets", supportTicketRoutes);
 app.use("/support/tickets", supportTicketRoutes);
+
+app.use("/api/offers", offerRoutes);
+app.use("/offers", offerRoutes);
+
+app.use("/api/price-alerts", priceAlertRoutes);
+app.use("/price-alerts", priceAlertRoutes);
 
 app.use("/products", productRoutes);
 

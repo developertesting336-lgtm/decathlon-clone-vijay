@@ -1,3 +1,4 @@
+import { addToGuestCart } from "../../../utils/guestCart";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./OutdoorProducts.css";
@@ -124,13 +125,6 @@ const OutdoorProducts = () => {
   const handleAddToCart = async () => {
     if (!selectedProduct) return;
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      toast.error("Please login first");
-      return;
-    }
-
     const sizes = Array.isArray(selectedProduct.size)
       ? selectedProduct.size
       : [];
@@ -142,6 +136,18 @@ const OutdoorProducts = () => {
 
     if (Number(quantity) < 1) {
       toast.error("Quantity must be at least 1");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const res = addToGuestCart(selectedProduct, selectedSize || "", selectedColor || "", Number(quantity) || 1);
+      if (res.success) {
+        toast.success(res.message);
+        handleCloseModal();
+      } else {
+        toast.error(res.message);
+      }
       return;
     }
 
@@ -342,7 +348,7 @@ const OutdoorProducts = () => {
                           : ""
                       }`}
                       onClick={() =>
-                        handleToggle(product._id)
+                        handleToggle(product._id, product)
                       }
                       aria-label="Wishlist"
                     >

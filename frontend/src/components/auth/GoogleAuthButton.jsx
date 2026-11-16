@@ -5,6 +5,7 @@ import { useGoogleLogin, GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 
 import api from "../../api/axios";
+import { syncGuestCartAndWishlist } from "../../utils/syncGuestData";
 import "./GoogleAuthButton.css";
 
 const GoogleAuthButton = ({
@@ -69,6 +70,13 @@ const GoogleAuthButton = ({
       // Store auth session
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
+
+      // Synchronize any guest cart & wishlist with the authenticated account
+      try {
+        await syncGuestCartAndWishlist(token);
+      } catch (syncErr) {
+        console.error("Guest data sync error:", syncErr);
+      }
 
       // Notify Navbar, Cart, and other active listeners
       window.dispatchEvent(new Event("authChanged"));

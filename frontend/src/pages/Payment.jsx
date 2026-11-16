@@ -1,10 +1,14 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 
 import {
-  FiCheckCircle,
   FiTruck,
   FiAward,
   FiHome,
+  FiArrowLeft,
+  FiShield,
+  FiGift,
+  FiMapPin,
+  FiCheck,
 } from "react-icons/fi";
 
 import {
@@ -676,15 +680,19 @@ const Payment = () => {
       }
 
       let subtotal = 0;
+      let totalMRP = 0;
       const orderItems = items.map((item) => {
         const prod = item.product || {};
         const price = Number(prod.discountPrice || prod.price || 0);
+        const mrp = Number(prod.price || price || 0);
         subtotal += price * (item.quantity || 1);
+        totalMRP += mrp * (item.quantity || 1);
         return {
           product: prod._id,
           name: prod.name || "",
           image: prod.images?.[0] || "",
           price,
+          mrp,
           quantity: item.quantity || 1,
           size: item.size || "",
           color: item.color || "",
@@ -701,6 +709,7 @@ const Payment = () => {
         couponDiscount = Number(coupon.discountAmount || 0);
       }
 
+      const discount = Math.max(0, totalMRP - subtotal);
       const totalAmount = Math.max(0, subtotal - couponDiscount + deliveryCharge);
 
       setOrder({
@@ -709,7 +718,8 @@ const Payment = () => {
         orderItems,
         shippingAddress: address,
         subtotal,
-        discount: 0,
+        totalMRP: totalMRP > 0 ? totalMRP : subtotal,
+        discount,
         couponDiscount,
         couponCode: checkoutData?.couponCode || "",
         deliveryCharge,
@@ -1135,10 +1145,28 @@ const Payment = () => {
 
   const totalAmount = Number(order?.totalAmount || 0);
 
-  const totalMRP =
-    subtotal + (discount > couponDiscount ? discount - couponDiscount : 0);
+  const totalMRP = Number(
+    order?.totalMRP ||
+      (subtotal + (discount > couponDiscount ? discount - couponDiscount : discount))
+  );
 
-  const pincode = order?.shippingAddress?.pincode || "";
+  const address = order?.shippingAddress;
+  const addressType = address?.addressType || "Home";
+  const recipientName = address?.name || address?.fullName || "";
+  const recipientPhone = address?.phone || address?.mobileNumber || "";
+  const formattedAddressText = address
+    ? [
+        address.houseBuilding,
+        address.streetLocality,
+        address.landmark,
+        address.cityState,
+        address.pincode ? `${address.pincode}` : "",
+      ]
+        .filter(Boolean)
+        .join(", ")
+    : "No delivery address specified";
+
+  const totalSavings = discount + couponDiscount;
 
   /* =====================================================
      LOADING
@@ -1165,24 +1193,45 @@ const Payment = () => {
     <>
       <main className="payment-page">
         {/* HEADER */}
+        <header className="payment-top-navbar">
+          <div className="payment-navbar-inner">
+            <button
+              type="button"
+              className="payment-nav-back-btn"
+              onClick={() => navigate("/checkout/cart/delivery")}
+            >
+              <FiArrowLeft />
+              <span>Back to Delivery</span>
+            </button>
 
-        <header className="payment-header">
-          <Link to="/" className="payment-logo">
-            <DecathlonLogo height={22} />
-          </Link>
+            <Link to="/" className="payment-navbar-logo" title="Decathlon">
+              <DecathlonLogo height={24} />
+            </Link>
 
-          <div className="secure-payment">
-            <FiCheckCircle />
-
-            <div>
-              <strong>100%</strong>
-
-              <span>Secure</span>
-
-              <span>Payment</span>
+            <div className="payment-secure-badge">
+              <FiShield />
+              <span>100% SECURE CHECKOUT</span>
             </div>
           </div>
         </header>
+
+        {/* 3-STEP PROGRESS INDICATOR */}
+        <div className="payment-steps-container">
+          <div className="payment-step completed">
+            <span className="step-num">✓</span>
+            <span className="step-label">Cart</span>
+          </div>
+          <div className="payment-step-line active" />
+          <div className="payment-step completed">
+            <span className="step-num">✓</span>
+            <span className="step-label">Delivery</span>
+          </div>
+          <div className="payment-step-line active" />
+          <div className="payment-step active">
+            <span className="step-num">3</span>
+            <span className="step-label">Payment</span>
+          </div>
+        </div>
 
         {/* MAIN */}
 
@@ -1191,23 +1240,28 @@ const Payment = () => {
 
           <section className="payment-left">
             <div className="gift-card-section">
-              <div className="gift-card-box">
-                <h2>Have a Gift Card?</h2>
-
-                <p>Have a Gift Card? Add to this transaction</p>
-
-                <button
-                  type="button"
-                  onClick={() => toast("Gift card coming soon")}
-                >
-                  <span>＋</span>
-                  ADD A GIFT CARD
-                </button>
-
+              <div className="gift-card-card">
+                <div className="gift-card-header">
+                  <div className="gift-card-title-group">
+                    <div className="gift-icon-box">
+                      <FiGift className="gift-icon" />
+                    </div>
+                    <div>
+                      <h3>Have a Gift Card or Voucher?</h3>
+                      <p>Redeem your gift card balance or promo voucher code</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="gift-card-btn"
+                    onClick={() => toast("Gift card redeem feature coming soon")}
+                  >
+                    <span>+</span> ADD GIFT CARD
+                  </button>
+                </div>
                 <div className="gift-links">
-                  <span>Wallet & Gift card</span>
-
-                  <a href="#terms">Terms & Conditions</a>
+                  <span>Wallet &amp; Gift card</span>
+                  <a href="#terms">Terms &amp; Conditions</a>
                 </div>
               </div>
             </div>
@@ -1549,107 +1603,128 @@ const Payment = () => {
 
           <aside className="payment-right">
             <div className="payment-summary-sticky">
+              {/* Delivery Details Card */}
               <div className="payment-delivery-card">
-                <h2>Order Summary</h2>
+                <div className="payment-card-header-row">
+                  <div className="payment-card-title-group">
+                    <FiMapPin className="payment-card-icon" />
+                    <h2>Delivery Details</h2>
+                  </div>
+                  <button
+                    type="button"
+                    className="payment-change-link"
+                    onClick={() => navigate("/checkout/cart/delivery")}
+                  >
+                    Change
+                  </button>
+                </div>
 
                 <div className="payment-delivery-divider" />
 
-                <div className="payment-delivery-info">
-                  <div className="payment-truck-icon">
-                    <FiTruck />
+                <div className="payment-address-details">
+                  <div className="payment-address-badge-row">
+                    <span className="payment-address-type-badge">{addressType}</span>
+                    {recipientName && <strong>{recipientName}</strong>}
+                    {recipientPhone && <span className="payment-address-phone">• {recipientPhone}</span>}
                   </div>
-
-                  <div>
-                    <strong>Home Delivery to {pincode}</strong>
-
+                  <p className="payment-address-text">{formattedAddressText}</p>
+                  <div className="payment-delivery-eta">
+                    <FiTruck className="eta-truck-icon" />
                     <span>
-                      {orderItems.length} item
-                      {orderItems.length !== 1 ? "s" : ""} will be delivered
-                      soon
+                      Standard Delivery ({orderItems.length} {orderItems.length === 1 ? "item" : "items"})
                     </span>
                   </div>
                 </div>
               </div>
 
+              {/* Order Summary Card */}
               <div className="payment-order-card">
-                <h2>Order Summary</h2>
+                <div className="payment-card-header-row">
+                  <h2>Order Summary</h2>
+                  <span className="payment-item-count-badge">
+                    {orderItems.length} {orderItems.length === 1 ? "Item" : "Items"}
+                  </span>
+                </div>
 
                 <div className="payment-order-divider" />
 
                 <div className="payment-summary-row">
-                  <span>Total price (Inc GST)</span>
-
+                  <span>Total MRP</span>
                   <strong>{formatPrice(totalMRP)}</strong>
                 </div>
 
-                {discount > couponDiscount && (
-                  <div className="payment-summary-row">
+                {discount > 0 && (
+                  <div className="payment-summary-row discount-row">
                     <span>Discount on MRP</span>
-
-                    <strong>-{formatPrice(discount - couponDiscount)}</strong>
+                    <strong className="payment-discount-val">-{formatPrice(discount)}</strong>
                   </div>
                 )}
 
-                {couponCode && (couponDiscount > 0 || discount > 0) && (
-                  <div
-                    className="payment-summary-row"
-                    style={{ color: "#008c3a" }}
-                  >
-                    <span>Coupon Discount ({couponCode})</span>
-
-                    <strong style={{ color: "#008c3a" }}>
-                      -{formatPrice(couponDiscount || discount)}
-                    </strong>
+                {couponCode && couponDiscount > 0 && (
+                  <div className="payment-summary-row coupon-row">
+                    <span>Coupon ({couponCode})</span>
+                    <strong className="payment-discount-val">-{formatPrice(couponDiscount)}</strong>
                   </div>
                 )}
 
                 <div className="payment-summary-row">
                   <span>Convenience fee</span>
-
                   <strong>
-                    {deliveryCharge > 0
-                      ? formatPrice(deliveryCharge)
-                      : "FREE"}
+                    {deliveryCharge > 0 ? (
+                      formatPrice(deliveryCharge)
+                    ) : (
+                      <span className="free-tag">FREE</span>
+                    )}
                   </strong>
                 </div>
 
                 <div className="payment-order-divider" />
 
                 <div className="payment-total-row">
-                  <span>TOTAL</span>
-
-                  <strong>{formatPrice(totalAmount)}</strong>
+                  <span>Total Payable</span>
+                  <strong className="payment-total-amount">{formatPrice(totalAmount)}</strong>
                 </div>
 
-                {(discount > 0 || couponDiscount > 0) && (
-                  <div className="payment-save-box">
-                    You save{" "}
-                    <strong>
-                      {formatPrice(Math.max(discount, couponDiscount))}
-                    </strong>{" "}
-                    in this order
+                {totalSavings > 0 && (
+                  <div className="payment-save-pill">
+                    <FiCheck className="save-check-icon" />
+                    <span>You saved {formatPrice(totalSavings)} on this order!</span>
                   </div>
                 )}
+
+                <button
+                  type="button"
+                  className="payment-sidebar-pay-btn"
+                  onClick={selectedMethod === "cod" ? handleCOD : startOnlinePayment}
+                  disabled={creatingIntent || paymentLoading}
+                >
+                  {creatingIntent || paymentLoading ? (
+                    "Processing..."
+                  ) : selectedMethod === "cod" ? (
+                    `Confirm & Place Order ${formatPrice(totalAmount)}`
+                  ) : (
+                    `Proceed to Pay ${formatPrice(totalAmount)}`
+                  )}
+                </button>
               </div>
 
+              {/* Sporty Rewards */}
               <div className="payment-reward-box">
                 <div className="payment-reward-icon">
                   <FiAward />
                 </div>
 
-                <div>
-                  <strong>Sporty Rewards: ₹{rewardBalance}</strong>
-
-                  <span>Available Balance: ₹{rewardBalance}</span>
+                <div className="payment-reward-text">
+                  <strong>Sporty Rewards: ₹${rewardBalance}</strong>
+                  <span>Available Balance: ₹${rewardBalance}</span>
                 </div>
 
                 <button
                   type="button"
-                  className={
-                    rewardEnabled ? "payment-toggle active" : "payment-toggle"
-                  }
+                  className={rewardEnabled ? "payment-toggle active" : "payment-toggle"}
                   disabled={rewardBalance <= 0}
                   onClick={() => setRewardEnabled((prev) => !prev)}
+                  aria-label="Toggle Sporty Rewards"
                 >
                   <span />
                 </button>

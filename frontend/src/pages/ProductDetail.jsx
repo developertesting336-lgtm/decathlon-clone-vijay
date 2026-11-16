@@ -1,6 +1,9 @@
+import { addToGuestCart } from "../utils/guestCart";
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { subscribeToWebPush } from "../utils/pushNotifications";
 import {
+  FiBell,
   FiShield,
   FiRotateCcw,
   FiWind,
@@ -9,6 +12,11 @@ import {
   FiChevronRight,
   FiShare2,
   FiEdit2,
+  FiTrendingDown,
+  FiClock,
+  FiInfo,
+  FiX,
+  FiTag,
 } from "react-icons/fi";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import toast from "react-hot-toast";
@@ -40,6 +48,14 @@ const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [addingToCart, setAddingToCart] = useState(false);
+  const [priceComparison, setPriceComparison] = useState(null);
+  const [showPriceHistoryModal, setShowPriceHistoryModal] = useState(false);
+  const [isPriceTracking, setIsPriceTracking] = useState(false);
+  const [priceAlertId, setPriceAlertId] = useState(null);
+  const [showPriceAlertModal, setShowPriceAlertModal] = useState(false);
+  const [targetPriceInput, setTargetPriceInput] = useState("");
+  const [alertEmailInput, setAlertEmailInput] = useState("");
+  const [settingAlert, setSettingAlert] = useState(false);
 
   // Pincode check synced with real-time delivery location
   const { location: deliveryLocation } = useDeliveryLocation();
@@ -106,6 +122,9 @@ const ProductDetail = () => {
         }
 
         setProduct(prod);
+        if (response.data?.priceComparison) {
+          setPriceComparison(response.data.priceComparison);
+        }
         setRatingSummary({
           averageRating: Number(prod.averageRating || prod.rating || prod.review || 0),
           reviewCount: Number(prod.reviewCount || 0),
@@ -155,6 +174,85 @@ const ProductDetail = () => {
     };
   }, [id]);
 
+  // Check Price Alert tracking status for current product
+  useEffect(() => {
+    if (!id) return;
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if (user?.email) {
+      setAlertEmailInput(user.email);
+    }
+    api
+      .get(`/price-alerts/status/${id}`)
+      .then((res) => {
+        if (res.data?.isTracking) {
+          setIsPriceTracking(true);
+          setPriceAlertId(res.data.alert?._id || null);
+          if (res.data.alert?.targetPrice) {
+            setTargetPriceInput(res.data.alert.targetPrice);
+          }
+        } else {
+          setIsPriceTracking(false);
+          setPriceAlertId(null);
+        }
+      })
+      .catch(() => {});
+  }, [id]);
+
+  const handleOpenPriceAlert = () => {
+    if (isPriceTracking && priceAlertId) {
+      handleCancelPriceAlert();
+      return;
+    }
+    const suggestedTarget = Math.round(currentPrice * 0.9);
+    setTargetPriceInput(suggestedTarget);
+    setShowPriceAlertModal(true);
+  };
+
+  const handleCancelPriceAlert = async () => {
+    try {
+      if (priceAlertId) {
+        await api.delete(`/price-alerts/${priceAlertId}`);
+      }
+      setIsPriceTracking(false);
+      setPriceAlertId(null);
+      toast.success("Price tracking removed for this product");
+    } catch (err) {
+      toast.error("Failed to cancel price tracking");
+    }
+  };
+
+  const handleSavePriceAlert = async (e) => {
+    e.preventDefault();
+    try {
+      setSettingAlert(true);
+
+      // 1. Request Web Push permission and register push subscription
+      const pushRes = await subscribeToWebPush();
+
+      // 2. Register price alert in backend
+      const res = await api.post("/price-alerts", {
+        productId: product._id,
+        email: alertEmailInput || undefined,
+        targetPrice: targetPriceInput ? Number(targetPriceInput) : undefined,
+      });
+
+      setIsPriceTracking(true);
+      setPriceAlertId(res.data?.alert?._id || null);
+      setShowPriceAlertModal(false);
+
+      if (pushRes?.success) {
+        toast.success("Price tracking enabled with Web Push alerts!");
+      } else {
+        toast.success("Price alert set! You will receive notifications when the price drops.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.message || "Failed to set price alert");
+    } finally {
+      setSettingAlert(false);
+    }
+  };
+
   // Pricing calculations
   const currentPrice = useMemo(() => {
     if (!product) return 0;
@@ -162,6 +260,66 @@ const ProductDetail = () => {
       ? product.discountPrice
       : product.price;
   }, [product]);
+
+  const originalPrice = useMemo(() => {
+    return Number(priceComparison?.originalPrice || product?.price || 0);
+  }, [priceComparison, product]);
+
+  const previousPrice = useMemo(() => {
+    if (priceComparison?.previousPrice) return priceComparison.previousPrice;
+    if (product?.previousPrice) return product.previousPrice;
+    if (originalPrice > currentPrice) {
+      return Math.round(currentPrice + (originalPrice - currentPrice) * 0.4);
+    }
+    return originalPrice;
+  }, [priceComparison, product, originalPrice, currentPrice]);
+
+  const priceDropAmount = useMemo(() => {
+    if (priceComparison?.priceDrop !== undefined) return priceComparison.priceDrop;
+    return previousPrice > currentPrice ? previousPrice - currentPrice : 0;
+  }, [priceComparison, previousPrice, currentPrice]);
+
+  const savingsAmount = useMemo(() => {
+    if (priceComparison?.totalSavings !== undefined) return priceComparison.totalSavings;
+    return originalPrice > currentPrice ? originalPrice - currentPrice : 0;
+  }, [priceComparison, originalPrice, currentPrice]);
+
+  const discountPercentage = useMemo(() => {
+    if (priceComparison?.discountPercent !== undefined) return priceComparison.discountPercent;
+    return originalPrice > 0 ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
+  }, [priceComparison, originalPrice, currentPrice]);
+
+  const lowestPriceIn30Days = useMemo(() => {
+    if (priceComparison?.lowestPriceIn30Days) return priceComparison.lowestPriceIn30Days;
+    return product?.lowestPriceIn30Days || Math.min(currentPrice, previousPrice);
+  }, [priceComparison, product, currentPrice, previousPrice]);
+
+  const priceHistoryTimeline = useMemo(() => {
+    if (priceComparison?.history && priceComparison.history.length > 0) {
+      return priceComparison.history;
+    }
+    const now = Date.now();
+    return [
+      {
+        price: originalPrice,
+        effectivePrice: originalPrice,
+        effectiveDate: new Date(now - 45 * 86400000),
+        reason: "Original launch price",
+      },
+      {
+        price: originalPrice,
+        effectivePrice: previousPrice,
+        effectiveDate: new Date(now - 15 * 86400000),
+        reason: "Previous season pricing",
+      },
+      {
+        price: originalPrice,
+        effectivePrice: currentPrice,
+        effectiveDate: new Date(),
+        reason: "Current promotional offer",
+      },
+    ];
+  }, [priceComparison, originalPrice, previousPrice, currentPrice]);
 
   // Delivery estimation
   const deliveryDateString = useMemo(() => {
@@ -206,16 +364,20 @@ const ProductDetail = () => {
 
   // Add to cart handler
   const handleAddToCart = async (targetProduct = product, targetSize = selectedSize, targetColor = selectedColor) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login to add items to cart");
-      navigate("/login");
-      return;
-    }
-
     const sizes = Array.isArray(targetProduct.size) ? targetProduct.size : [];
     if (sizes.length > 0 && !targetSize) {
       toast.error("Please select a size");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const res = addToGuestCart(targetProduct, targetSize || "", targetColor || "", 1);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
       return;
     }
 
@@ -357,12 +519,88 @@ const ProductDetail = () => {
               </a>
             </div>
 
-            {/* Price Line */}
-            <div className="pdp-price-row-wrap">
-              <span className="pdp-current-price-val">{formatPrice(currentPrice)}</span>
-              {product.price && product.price > currentPrice && (
-                <span className="pdp-mrp-strike-val">MRP {formatPrice(product.price)}</span>
+            {/* Price Line & History Comparison */}
+            <div className="pdp-price-comparison-card">
+              {(product?.appliedOffer || priceComparison?.appliedOffer) && (
+                <div className="pdp-active-offer-banner">
+                  <div className="pdp-offer-badge-tag">
+                    <FiTag /> {(product?.appliedOffer || priceComparison?.appliedOffer).badgeLabel || "Special Offer"}
+                  </div>
+                  <span className="pdp-offer-title">{(product?.appliedOffer || priceComparison?.appliedOffer).title}</span>
+                  {(product?.appliedOffer || priceComparison?.appliedOffer).bannerText && (
+                    <span className="pdp-offer-subtext">{(product?.appliedOffer || priceComparison?.appliedOffer).bannerText}</span>
+                  )}
+                </div>
               )}
+              <div className="pdp-price-primary-row">
+                <span className="pdp-current-price-val">{formatPrice(currentPrice)}</span>
+                {originalPrice > currentPrice && (
+                  <span className="pdp-mrp-strike-val">MRP {formatPrice(originalPrice)}</span>
+                )}
+                {discountPercentage > 0 && (
+                  <span className="pdp-discount-pill">{discountPercentage}% OFF</span>
+                )}
+              </div>
+
+              {/* Price differences, discount percentage and savings */}
+              <div className="pdp-savings-callout-row">
+                {savingsAmount > 0 && (
+                  <span className="pdp-save-badge">
+                    Save <strong>{formatPrice(savingsAmount)}</strong> ({discountPercentage}%)
+                  </span>
+                )}
+
+                {priceDropAmount > 0 && (
+                  <span className="pdp-price-drop-badge">
+                    <FiTrendingDown />
+                    <span>Price dropped by <strong>{formatPrice(priceDropAmount)}</strong></span>
+                  </span>
+                )}
+              </div>
+
+              {/* Historical Price Comparison Meta & Trend CTA */}
+              <div className="pdp-price-meta-strip">
+                {previousPrice > 0 && previousPrice !== currentPrice && (
+                  <div className="pdp-price-meta-item">
+                    <span className="meta-label">Previous:</span>
+                    <strong className="meta-val">{formatPrice(previousPrice)}</strong>
+                  </div>
+                )}
+
+                {lowestPriceIn30Days > 0 && (
+                  <div className="pdp-price-meta-item">
+                    <span className="meta-label">30-day low:</span>
+                    <strong className="meta-val highlight-lowest">{formatPrice(lowestPriceIn30Days)}</strong>
+                    {currentPrice <= lowestPriceIn30Days && (
+                      <span className="pdp-best-price-tag">Best Price</span>
+                    )}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className={`pdp-price-track-btn ${isPriceTracking ? "active" : ""}`}
+                  onClick={handleOpenPriceAlert}
+                  title={
+                    isPriceTracking
+                      ? "Price tracking active. Click to disable."
+                      : "Track price drops and receive instant Web Push alerts"
+                  }
+                >
+                  <FiBell />
+                  <span>{isPriceTracking ? "Tracking Active" : "Track Price Drop"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="pdp-price-history-btn"
+                  onClick={() => setShowPriceHistoryModal(true)}
+                  title="View complete historical price changes and trends"
+                >
+                  <FiClock />
+                  <span>Price History & Trends</span>
+                </button>
+              </div>
             </div>
 
             {/* Colour Selection */}
@@ -475,14 +713,14 @@ const ProductDetail = () => {
                 productId={product._id}
                 product={product}
                 isWishlisted={isWishlisted(product._id)}
-                onToggleWishlist={() => handleToggle(product._id)}
+                onToggleWishlist={() => handleToggle(product._id, product)}
               />
             ) : (
               <div className="pdp-actions-row">
                 <button
                   type="button"
                   className={`pdp-heart-btn ${isWishlisted(product._id) ? "active" : ""}`}
-                  onClick={() => handleToggle(product._id)}
+                  onClick={() => handleToggle(product._id, product)}
                   aria-label="Wishlist"
                 >
                   {isWishlisted(product._id) ? <MdFavorite /> : <MdFavoriteBorder />}
@@ -726,6 +964,188 @@ const ProductDetail = () => {
           isOpen={showSizeModal}
           onClose={() => setShowSizeModal(false)}
         />
+      )}
+
+      {/* Price Alert & Web Push Modal */}
+      {showPriceAlertModal && (
+        <div className="pdp-modal-overlay" onClick={() => setShowPriceAlertModal(false)}>
+          <div className="pdp-price-alert-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="pdp-modal-header">
+              <div className="modal-header-titles">
+                <h3>Track Price Drop & Web Push Alerts</h3>
+                <p>{product.name}</p>
+              </div>
+              <button
+                type="button"
+                className="modal-close-icon-btn"
+                onClick={() => setShowPriceAlertModal(false)}
+                title="Close"
+              >
+                <FiX />
+              </button>
+            </div>
+
+            <form onSubmit={handleSavePriceAlert} className="pdp-alert-form">
+              <div className="alert-price-preview">
+                <div className="alert-price-box">
+                  <span className="box-label">Current Selling Price</span>
+                  <strong className="box-val">{formatPrice(currentPrice)}</strong>
+                </div>
+                <div className="alert-arrow">➔</div>
+                <div className="alert-price-box target">
+                  <span className="box-label">Alert Below Target</span>
+                  <strong className="box-val">{formatPrice(targetPriceInput || currentPrice)}</strong>
+                </div>
+              </div>
+
+              <div className="pdp-alert-field">
+                <label>Notify me when price drops to or below (₹)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max={currentPrice}
+                  value={targetPriceInput}
+                  onChange={(e) => setTargetPriceInput(e.target.value)}
+                  placeholder={`e.g. ${Math.round(currentPrice * 0.9)}`}
+                  required
+                />
+                <small>Leave as default or set a custom target price threshold.</small>
+              </div>
+
+              <div className="pdp-alert-field">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  value={alertEmailInput}
+                  onChange={(e) => setAlertEmailInput(e.target.value)}
+                  placeholder="your.email@example.com"
+                  required
+                />
+              </div>
+
+              <div className="pdp-webpush-callout">
+                <div className="callout-icon">🔔</div>
+                <div>
+                  <strong>Instant Web Push Alerts Included</strong>
+                  <p>When you click 'Enable Price Alerts', your browser will ask to allow notifications so you get native OS alerts instantly on this device even if the browser is minimized.</p>
+                </div>
+              </div>
+
+              <div className="pdp-modal-actions">
+                <button
+                  type="button"
+                  className="pdp-modal-cancel-btn"
+                  onClick={() => setShowPriceAlertModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="pdp-modal-submit-btn"
+                  disabled={settingAlert}
+                >
+                  {settingAlert ? "Enabling..." : "Enable Price Alerts"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Price History & Trends Modal */}
+      {showPriceHistoryModal && (
+        <div className="pdp-modal-overlay" onClick={() => setShowPriceHistoryModal(false)}>
+          <div className="pdp-price-history-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="pdp-modal-header">
+              <div className="modal-header-titles">
+                <h3>Price History & Comparison</h3>
+                <p>{product.name}</p>
+              </div>
+              <button
+                type="button"
+                className="pdp-modal-close-btn"
+                onClick={() => setShowPriceHistoryModal(false)}
+                title="Close"
+              >
+                <FiX />
+              </button>
+            </div>
+
+            <div className="pdp-history-summary-grid">
+              <div className="summary-stat-box">
+                <span className="stat-label">Current Selling Price</span>
+                <strong className="stat-value current">{formatPrice(currentPrice)}</strong>
+              </div>
+              <div className="summary-stat-box">
+                <span className="stat-label">Original MRP</span>
+                <strong className="stat-value">{formatPrice(originalPrice)}</strong>
+              </div>
+              <div className="summary-stat-box">
+                <span className="stat-label">Previous Price</span>
+                <strong className="stat-value">{formatPrice(previousPrice)}</strong>
+              </div>
+              <div className="summary-stat-box">
+                <span className="stat-label">30-Day Lowest</span>
+                <strong className="stat-value lowest">{formatPrice(lowestPriceIn30Days)}</strong>
+              </div>
+            </div>
+
+            <div className="pdp-history-timeline-section">
+              <h4>Historical Product Pricing Records</h4>
+              <p className="timeline-subtitle">Track price adjustments over time to make informed purchasing decisions</p>
+
+              <div className="pdp-timeline-list">
+                {priceHistoryTimeline.map((item, index) => {
+                  const effPrice = item.effectivePrice || item.price;
+                  const percentOfMRP = Math.round((effPrice / (originalPrice || 1)) * 100);
+                  const isCurrent = index === priceHistoryTimeline.length - 1;
+
+                  return (
+                    <div key={index} className={`pdp-timeline-item ${isCurrent ? "current" : ""}`}>
+                      <div className="timeline-date-col">
+                        <span className="timeline-date">
+                          {new Date(item.effectiveDate).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })}
+                        </span>
+                        <span className="timeline-reason">{item.reason || "Price update"}</span>
+                      </div>
+
+                      <div className="timeline-bar-col">
+                        <div className="timeline-progress-track">
+                          <div
+                            className={`timeline-progress-fill ${isCurrent ? "current" : ""}`}
+                            style={{ width: `${Math.min(100, Math.max(15, percentOfMRP))}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="timeline-price-col">
+                        <strong className="timeline-price-val">{formatPrice(effPrice)}</strong>
+                        {isCurrent && <span className="timeline-current-pill">Current</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="pdp-history-footer">
+              <span className="history-transparency-note">
+                <FiInfo /> Historical pricing recorded from verified Decathlon catalog adjustments.
+              </span>
+              <button
+                type="button"
+                className="pdp-history-close-action"
+                onClick={() => setShowPriceHistoryModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <Footer />

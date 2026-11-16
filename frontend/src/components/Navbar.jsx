@@ -1,3 +1,4 @@
+import { getGuestCartCount, addToGuestCart } from "../utils/guestCart";
 import React, { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import {
   FiSearch,
@@ -21,6 +22,7 @@ import {
   FiEdit2,
   FiBell,
   FiPackage,
+  FiTrendingDown,
 } from "react-icons/fi";
 import socket from "../socket/socket";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -157,7 +159,7 @@ const Navbar = () => {
   const fetchCartCount = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setCartCount(0);
+      setCartCount(getGuestCartCount());
       return;
     }
     try {
@@ -253,6 +255,8 @@ const Navbar = () => {
       case "ORDER_PLACED":
       case "ORDER_DELIVERED":
         return <FiPackage style={{ color: "#16a34a" }} />;
+      case "PRICE_DROP":
+        return <FiTrendingDown style={{ color: "#dc2626" }} />;
       case "OFFER":
         return <FiAward style={{ color: "#ea580c" }} />;
       default:
@@ -448,7 +452,16 @@ const Navbar = () => {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      toast.error("Please login first");
+      const res = addToGuestCart(selectedProduct, selectedSize || "", selectedColor || "", Number(quantity) || 1);
+      if (res.success) {
+        toast.success(res.message);
+        setSelectedProduct(null);
+        setSelectedSize("");
+        setSelectedColor("");
+        setQuantity(1);
+      } else {
+        toast.error(res.message);
+      }
       return;
     }
 
@@ -719,7 +732,7 @@ const Navbar = () => {
                                       }`}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        toggleWishlistIcon(prod._id);
+                                        toggleWishlistIcon(prod._id, prod);
                                       }}
                                     >
                                       {isWishlisted(prod._id) ? "♥" : "♡"}
@@ -901,7 +914,7 @@ const Navbar = () => {
                                       }`}
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        toggleWishlistIcon(prod._id);
+                                        toggleWishlistIcon(prod._id, prod);
                                       }}
                                     >
                                       {isWishlisted(prod._id) ? "♥" : "♡"}
@@ -1147,18 +1160,7 @@ const Navbar = () => {
             </Link>
 
             {/* CART */}
-            <Link
-              to="/cart"
-              className="navbar-action"
-              onClick={(e) => {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                  e.preventDefault();
-                  toast.error("Please login first", { id: "login-required" });
-                  navigate("/login");
-                }
-              }}
-            >
+            <Link to="/cart" className="navbar-action">
               <div className="cart-icon-wrapper">
                 {isOrdersPage ? <FiShoppingCart /> : <FiShoppingBag />}
                 {cartCount > 0 && (

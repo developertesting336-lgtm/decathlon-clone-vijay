@@ -1,3 +1,4 @@
+import { addToGuestCart } from "../utils/guestCart";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { FiHeart, FiPlus, FiMinus, FiFilter, FiX } from "react-icons/fi";
@@ -346,23 +347,28 @@ function CategoryProducts() {
 
   const handleAddToCart = async (e, product) => {
     e.stopPropagation();
+    const productId = product._id || product.id;
+    const defaultSize =
+      Array.isArray(product.size) && product.size.length > 0
+        ? product.size[0]
+        : "";
+    const defaultColor =
+      Array.isArray(product.color) && product.color.length > 0
+        ? product.color[0]
+        : "";
+
     const token = localStorage.getItem("token");
     if (!token) {
-      toast.error("Please login first");
-      navigate("/login");
+      const res = addToGuestCart(product, defaultSize, defaultColor, 1);
+      if (res.success) {
+        toast.success(res.message);
+      } else {
+        toast.error(res.message);
+      }
       return;
     }
 
     try {
-      const productId = product._id || product.id;
-      const defaultSize =
-        Array.isArray(product.size) && product.size.length > 0
-          ? product.size[0]
-          : undefined;
-      const defaultColor =
-        Array.isArray(product.color) && product.color.length > 0
-          ? product.color[0]
-          : undefined;
 
       await api.post("/cart", {
         productId,
@@ -545,38 +551,45 @@ function CategoryProducts() {
 
       {/* HEADER */}
       <div className="category-header">
-        <div
-          className="delivery-text"
-          onClick={openLocationPickerModal}
-          style={{ cursor: "pointer" }}
-        >
-          Delivery to{" "}
-          <span>
-            {detectingLocation
-              ? "Detecting your location..."
-              : deliveryLocation.label}
+        <div className="category-header-inner">
+          <div className="breadcrumb">
+            <span onClick={() => navigate("/")}>Home</span>
+            <b>›</b>
+            {searchQuery ? (
+              <>
+                <span>Search</span>
+                <b>›</b>
+                <span>"{searchQuery}"</span>
+              </>
+            ) : (
+              <>
+                <span>Sports</span>
+                <b>›</b>
+                <span>{categoryName}</span>
+              </>
+            )}
+          </div>
+
+          <div
+            className="delivery-text"
+            onClick={openLocationPickerModal}
+            style={{ cursor: "pointer" }}
+          >
+            Delivery to{" "}
+            <span>
+              {detectingLocation
+                ? "Detecting your location..."
+                : deliveryLocation.label}
+            </span>
+          </div>
+        </div>
+
+        <div className="category-title-row">
+          <h1>{pageHeading}</h1>
+          <span className="category-product-count-pill">
+            {filteredProducts.length} {filteredProducts.length === 1 ? "Product" : "Products"}
           </span>
         </div>
-
-        <div className="breadcrumb">
-          <span onClick={() => navigate("/")}>Home</span>
-          <b>›</b>
-          {searchQuery ? (
-            <>
-              <span>Search</span>
-              <b>›</b>
-              <span>"{searchQuery}"</span>
-            </>
-          ) : (
-            <>
-              <span>Sports</span>
-              <b>›</b>
-              <span>{categoryName}</span>
-            </>
-          )}
-        </div>
-
-        <h1>{pageHeading}</h1>
       </div>
 
       {/* MOBILE BACKDROP OVERLAY */}
@@ -1097,6 +1110,12 @@ function CategoryProducts() {
                   const productId = product._id || product.id;
                   const wishlisted = isWishlisted(productId);
 
+                  const brand = (product.brand || "DECATHLON").trim();
+                  let displayName = (product.name || "Product").trim();
+                  if (brand && displayName.toLowerCase().startsWith(brand.toLowerCase())) {
+                    displayName = displayName.substring(brand.length).trim().replace(/^[-:\s]+/, "");
+                  }
+
                   return (
                     <div className="product-card" key={productId}>
                       <div
@@ -1107,62 +1126,73 @@ function CategoryProducts() {
                           <span className="new-badge">New arrival</span>
                         )}
 
-                        {discount > 0 && (
+                        {product.appliedOffer ? (
+                          <span className="offer-pill-badge">{product.appliedOffer.badgeLabel || "Offer"}</span>
+                        ) : discount > 0 ? (
                           <span className="sale-badge">Sale</span>
-                        )}
+                        ) : null}
+
+                        <button
+                          type="button"
+                          className={`product-card-wishlist-btn ${wishlisted ? "active" : ""}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleToggle(productId, product);
+                          }}
+                          aria-label="Wishlist"
+                        >
+                          <FiHeart
+                            fill={wishlisted ? "#e90036" : "none"}
+                            color={wishlisted ? "#e90036" : "#64748b"}
+                          />
+                        </button>
 
                         <img
                           src={getImage(product)}
                           alt={product.name || "Product"}
+                          loading="lazy"
                         />
                       </div>
 
                       <div className="product-info">
-                        <h3 onClick={() => navigate(`/product/${productId}`)}>
-                          {product.name}
+                        <div className="product-brand">{brand.toUpperCase()}</div>
+
+                        <h3
+                          onClick={() => navigate(`/product/${productId}`)}
+                          title={product.name}
+                        >
+                          {displayName || product.name}
                         </h3>
 
                         <div className="rating">
-                          <span>★★★★★</span>
-
-                          <small>{product.rating || 4.5}</small>
-
-                          <small>
-                            {product.reviews
-                              ? `${
-                                  product.reviews / 1000 >= 1
-                                    ? (product.reviews / 1000).toFixed(1) + "k"
-                                    : product.reviews
-                                }`
-                              : "5.0k"}
-                          </small>
+                          <span className="stars">★</span>
+                          <span className="rating-score">{product.rating || 4.5}</span>
+                          <span className="rating-count">
+                            ({product.reviews
+                              ? product.reviews / 1000 >= 1
+                                ? `${(product.reviews / 1000).toFixed(1)}k`
+                                : product.reviews
+                              : "5.0k"})
+                          </span>
                         </div>
 
-                        <div className="price">₹{price.toLocaleString()}</div>
-
-                        {mrp > price && (
-                          <div className="mrp">MRP ₹{mrp.toLocaleString()}</div>
-                        )}
-
-                        <div className="product-actions">
-                          <button
-                            className={`wishlist-btn ${wishlisted ? "active" : ""}`}
-                            onClick={() => handleToggle(productId)}
-                            aria-label="Wishlist"
-                          >
-                            <FiHeart
-                              fill={wishlisted ? "#e90036" : "none"}
-                              color={wishlisted ? "#e90036" : "currentColor"}
-                            />
-                          </button>
-
-                          <button
-                            className="add-cart-btn"
-                            onClick={(e) => handleAddToCart(e, product)}
-                          >
-                            Add to cart
-                          </button>
+                        <div className="product-price-row">
+                          <span className="current-price">₹{price.toLocaleString("en-IN")}</span>
+                          {mrp > price && (
+                            <>
+                              <span className="mrp-price">₹{mrp.toLocaleString("en-IN")}</span>
+                              <span className="discount-pill">{discount}% OFF</span>
+                            </>
+                          )}
                         </div>
+
+                        <button
+                          type="button"
+                          className="product-card-cart-btn"
+                          onClick={(e) => handleAddToCart(e, product)}
+                        >
+                          ADD TO CART
+                        </button>
                       </div>
                     </div>
                   );

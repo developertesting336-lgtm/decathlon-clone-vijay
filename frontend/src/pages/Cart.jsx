@@ -1,3 +1,12 @@
+import {
+  getGuestCart,
+  updateGuestCartQuantity,
+  updateGuestCartSize,
+  removeFromGuestCart,
+  clearGuestCart as clearStorageGuestCart,
+} from "../utils/guestCart";
+import { toggleGuestWishlist } from "../utils/guestWishlist";
+import { syncGuestCartAndWishlist } from "../utils/syncGuestData";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FiArrowLeft,
@@ -7,9 +16,12 @@ import {
   FiTag,
   FiAward,
   FiChevronRight,
+  FiChevronDown,
   FiPlus,
   FiMinus,
   FiCheck,
+  FiTruck,
+  FiShield,
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -37,7 +49,7 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [updatingProduct, setUpdatingProduct] = useState("");
   const [removingProduct, setRemovingProduct] = useState("");
-  const [rewardEnabled, setRewardEnabled] = useState(false);
+  const rewardEnabled = false;
   const [selectedCartItem, setSelectedCartItem] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [updatingSize, setUpdatingSize] = useState(false);
@@ -84,6 +96,11 @@ const Cart = () => {
   };
 
   const fetchCart = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setCartItems(getGuestCart());
+      return;
+    }
     try {
       const response = await api.get("/cart", getAuthConfig());
       const items = response.data.cart?.items || [];
@@ -92,13 +109,12 @@ const Cart = () => {
       console.error("Fetch Cart Error:", error);
       setCartItems([]);
       if (error.response?.status === 401) {
-        toast.error("Please login first", { id: "login-required" });
-        navigate("/login", { replace: true });
+        setCartItems(getGuestCart());
         return;
       }
       toast.error(error.response?.data?.message || "Failed to load cart");
     }
-  }, [navigate]);
+  }, []);
 
 
 
@@ -134,42 +150,59 @@ const Cart = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Please login first", { id: "login-required" });
-      navigate("/login", { replace: true });
-      return;
-    }
-
     const loadData = async () => {
       try {
         setLoading(true);
-        await Promise.all([
-          fetchCart(),
-          fetchCouponBanner(),
-          fetchAddresses(),
-        ]);
+        const token = localStorage.getItem("token");
+        if (token) {
+          const guestItems = getGuestCart();
+          if (Array.isArray(guestItems) && guestItems.length > 0) {
+            try {
+              await syncGuestCartAndWishlist(token);
+            } catch (syncErr) {
+              console.error("Cart sync error:", syncErr);
+            }
+          }
+          await Promise.all([
+            fetchCart(),
+            fetchCouponBanner(),
+            fetchAddresses(),
+          ]);
+        } else {
+          setCartItems(getGuestCart());
+          await fetchCouponBanner();
+        }
       } finally {
         setLoading(false);
       }
     };
     loadData();
-  }, [
-    navigate,
-    fetchCart,
-    fetchCouponBanner,
-    fetchAddresses,
-  ]);
 
-  useEffect(() => {
-    const handleCartUpdated = () => {
-      fetchCart();
+    const handleCartUpdated = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setCartItems(getGuestCart());
+      } else {
+        const guestItems = getGuestCart();
+        if (Array.isArray(guestItems) && guestItems.length > 0) {
+          try {
+            await syncGuestCartAndWishlist(token);
+          } catch (syncErr) {
+            console.error("Cart sync error:", syncErr);
+          }
+        }
+        fetchCart();
+      }
     };
     window.addEventListener("cartUpdated", handleCartUpdated);
     return () => {
       window.removeEventListener("cartUpdated", handleCartUpdated);
     };
-  }, [fetchCart]);
+  }, [
+    fetchCart,
+    fetchCouponBanner,
+    fetchAddresses,
+  ]);
 
   const totalMRP = useMemo(() => {
     return cartItems.reduce(
@@ -259,6 +292,12 @@ const Cart = () => {
       toast.error("Product not found");
       return;
     }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      updateGuestCartQuantity(productId, item?.size || "", getQuantity(item) + 1);
+      setCartItems(getGuestCart());
+      return;
+    }
     try {
       setUpdatingProduct(productId);
       await api.put(
@@ -288,6 +327,12 @@ const Cart = () => {
       toast.error("Quantity cannot be less than 1");
       return;
     }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      updateGuestCartQuantity(productId, item?.size || "", quantity - 1);
+      setCartItems(getGuestCart());
+      return;
+    }
     try {
       setUpdatingProduct(productId);
       await api.put(
@@ -309,6 +354,12 @@ const Cart = () => {
   const saveToWishlist = async (item) => {
     const productId = getProductId(item);
     if (!productId) return;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toggleGuestWishlist(item.product || { _id: productId });
+      toast.success("Saved to wishlist ❤️");
+      return;
+    }
     try {
       await api.post("/wishlist", { productId }, getAuthConfig());
       toast.success("Saved to wishlist");
@@ -323,9 +374,16 @@ const Cart = () => {
       toast.error("Product not found");
       return;
     }
+    const size = item?.size || "";
+    const token = localStorage.getItem("token");
+    if (!token) {
+      removeFromGuestCart(productId, size);
+      setCartItems(getGuestCart());
+      toast.success("Product removed from cart");
+      return;
+    }
     try {
       setRemovingProduct(productId);
-      const size = item?.size || "";
       await api.delete(
         `/cart/${productId}?size=${encodeURIComponent(size)}`,
         getAuthConfig(),
@@ -350,6 +408,13 @@ const Cart = () => {
   const clearCart = async () => {
     if (!cartItems.length) {
       toast("Cart is already empty");
+      return;
+    }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      clearStorageGuestCart();
+      setCartItems([]);
+      toast.success("Cart cleared successfully");
       return;
     }
     try {
@@ -404,6 +469,14 @@ const Cart = () => {
       toast.error("Product not found");
       return;
     }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      updateGuestCartSize(productId, selectedCartItem?.size || "", selectedSize);
+      setCartItems(getGuestCart());
+      toast.success("Size updated successfully");
+      closeSizeModal();
+      return;
+    }
     try {
       setUpdatingSize(true);
       await api.put(
@@ -436,6 +509,12 @@ const Cart = () => {
   };
 
   const handleDeliveryOption = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast("Please login or register to complete your order", { icon: "🔒" });
+      navigate("/login", { state: { from: "/cart" } });
+      return;
+    }
     if (!selectedAddress) {
       setAddressDrawerOpen(true);
       return;
@@ -463,37 +542,60 @@ const Cart = () => {
     <>
       <main className="cart-page">
         <header className="cart-header">
-          <button
-            type="button"
-            className="cart-back"
-            onClick={() => navigate("/")}
-          >
-            <FiArrowLeft />
-            <span>Back to Shop</span>
-          </button>
-          <Link to="/" className="cart-logo">
-            <DecathlonLogo height={22} />
-          </Link>
+          <div className="cart-header-inner">
+            <button
+              type="button"
+              className="cart-back"
+              onClick={() => navigate("/")}
+            >
+              <FiArrowLeft />
+              <span>Continue Shopping</span>
+            </button>
+            <Link to="/" className="cart-logo" title="Decathlon">
+              <DecathlonLogo height={24} />
+            </Link>
+            <div className="cart-header-secure">
+              <FiShield />
+              <span>100% SECURE CHECKOUT</span>
+            </div>
+          </div>
         </header>
 
-        <div className="cart-progress">
-          <span className="cart-progress-active"></span>
-          <span></span>
-          <span></span>
+        <div className="cart-steps-container">
+          <div className="cart-step active">
+            <span className="step-num">1</span>
+            <span className="step-label">Cart</span>
+          </div>
+          <div className="step-line active"></div>
+          <div className="cart-step">
+            <span className="step-num">2</span>
+            <span className="step-label">Delivery</span>
+          </div>
+          <div className="step-line"></div>
+          <div className="cart-step">
+            <span className="step-num">3</span>
+            <span className="step-label">Payment</span>
+          </div>
         </div>
 
         <div className="cart-main">
           <section className="cart-left">
             <div className="cart-title-row">
-              <h1>Cart Items</h1>
+              <div className="cart-title-left">
+                <h1>Cart Items</h1>
+                <span className="cart-item-count-badge">
+                  {cartItems.length} {cartItems.length === 1 ? "Item" : "Items"}
+                </span>
+              </div>
               {cartItems.length > 0 && (
                 <button
                   type="button"
                   className="cart-clear-btn"
                   onClick={clearCart}
-                  title="Clear cart"
+                  title="Clear all items"
                 >
                   <FiTrash2 />
+                  <span>Clear Cart</span>
                 </button>
               )}
             </div>
@@ -517,13 +619,16 @@ const Cart = () => {
                       `, ${selectedAddress.landmark}`}
                     {selectedAddress.cityState &&
                       `, ${selectedAddress.cityState}`}
-                    {selectedAddress.pincode && `, ${selectedAddress.pincode}`}
+                    {selectedAddress.pincode && ` - ${selectedAddress.pincode}`}
                   </div>
                 </div>
               ) : (
                 <div className="cart-address-text">
                   <span>Delivery to </span>
                   <strong>Add delivery address</strong>
+                  <div className="cart-address-details">
+                    Select an address to see accurate delivery speed & charges
+                  </div>
                 </div>
               )}
 
@@ -554,6 +659,12 @@ const Cart = () => {
                   const sellingPrice = getSellingPrice(item);
                   const mrp = getMRP(item);
 
+                  const brand = (product?.brand || "DECATHLON").trim();
+                  let displayName = (product?.name || "Decathlon Product").trim();
+                  if (displayName.toLowerCase().startsWith(brand.toLowerCase())) {
+                    displayName = displayName.substring(brand.length).trim().replace(/^[-:\s]+/, "");
+                  }
+
                   return (
                     <article
                       className="cart-item"
@@ -572,70 +683,95 @@ const Cart = () => {
 
                       <div className="cart-item-details">
                         <div className="cart-item-heading">
-                          <strong>{product?.brand || "DECATHLON"}</strong>
-                          <p>{product?.name}</p>
+                          <span className="cart-item-brand">{brand}</span>
+                          <h3 className="cart-item-name">{displayName || product?.name}</h3>
                         </div>
 
-                        {item?.size && (
-                          <button
-                            type="button"
-                            className="cart-selected-size"
-                            onClick={() => openSizeModal(item)}
-                          >
-                            <span>Size</span>
-                            <strong>{item.size}</strong>
-                          </button>
-                        )}
+                        <div className="cart-item-controls-row">
+                          {item?.size && (
+                            <button
+                              type="button"
+                              className="cart-selected-size"
+                              onClick={() => openSizeModal(item)}
+                              title="Change Size"
+                            >
+                              <span className="size-label">Size</span>
+                              <strong className="size-val">{item.size}</strong>
+                              <FiChevronDown className="size-arrow" />
+                            </button>
+                          )}
 
-                        <div className="cart-options">
-                          <span>Qty</span>
-                          <div className="quantity-box">
-                            <button
-                              type="button"
-                              onClick={() => decreaseQuantity(item)}
-                              disabled={updatingProduct === productId}
-                            >
-                              <FiMinus />
-                            </button>
-                            <span>{quantity}</span>
-                            <button
-                              type="button"
-                              onClick={() => increaseQuantity(item)}
-                              disabled={updatingProduct === productId}
-                            >
-                              <FiPlus />
-                            </button>
+                          <div className="cart-options">
+                            <span className="qty-label">Qty</span>
+                            <div className="quantity-box">
+                              <button
+                                type="button"
+                                onClick={() => decreaseQuantity(item)}
+                                disabled={updatingProduct === productId}
+                                title="Decrease quantity"
+                              >
+                                <FiMinus />
+                              </button>
+                              <span>{quantity}</span>
+                              <button
+                                type="button"
+                                onClick={() => increaseQuantity(item)}
+                                disabled={updatingProduct === productId}
+                                title="Increase quantity"
+                              >
+                                <FiPlus />
+                              </button>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="cart-item-price">
-                          <strong>{formatPrice(sellingPrice)}</strong>
-                          {mrp > sellingPrice && (
-                            <span className="cart-item-old-price">
-                              MRP {formatPrice(mrp)}
-                            </span>
-                          )}
+                        <div className="cart-item-price-row">
+                          <div className="cart-item-price">
+                            <strong className="selling-price">{formatPrice(sellingPrice)}</strong>
+                            {mrp > sellingPrice && (
+                              <>
+                                <span className="cart-item-old-price">
+                                  MRP {formatPrice(mrp)}
+                                </span>
+                                <span className="cart-item-discount-tag">
+                                  {Math.round(((mrp - sellingPrice) / mrp) * 100)}% OFF
+                                </span>
+                              </>
+                            )}
+                            {product?.appliedOffer && (
+                              <span className="cart-item-offer-pill">
+                                {product.appliedOffer.badgeLabel || "Deal"}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        <div className="cart-item-actions">
+                        <div className="cart-item-actions-row">
                           <button
                             type="button"
+                            className="cart-action-link"
                             onClick={() => saveToWishlist(item)}
+                            title="Save to Wishlist"
                           >
                             <FiHeart />
+                            <span>Save for later</span>
                           </button>
+                          <span className="action-sep">•</span>
                           <button
                             type="button"
+                            className="cart-action-link delete"
                             onClick={() => removeItem(item)}
                             disabled={removingProduct === productId}
+                            title="Remove from Cart"
                           >
                             <FiTrash2 />
+                            <span>Remove</span>
                           </button>
                         </div>
 
                         <div className="cart-delivery">
-                          <span></span>
-                          Delivery by <strong>{new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</strong>
+                          <FiTruck className="delivery-truck-icon" />
+                          <span>Delivery by <strong>{new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</strong></span>
                         </div>
                       </div>
                     </article>
@@ -687,8 +823,11 @@ const Cart = () => {
                   <div className="cart-side-icon">
                     <FiTag />
                   </div>
-                  <span>Apply Coupon</span>
-                  <FiChevronRight />
+                  <div className="cart-side-card-content">
+                    <span className="side-card-title">Apply Coupon</span>
+                    <span className="side-card-sub">Save more with discount codes</span>
+                  </div>
+                  <FiChevronRight className="side-card-chevron" />
                 </button>
               )}
 
@@ -697,25 +836,34 @@ const Cart = () => {
                   <div className="cart-side-icon">
                     <FiAward />
                   </div>
-                  <div>
-                    <strong>Sporty Rewards:</strong>
-                    <b>₹0</b>
+                  <div className="cart-rewards-info">
+                    <div className="rewards-title-row">
+                      <strong>Sporty Rewards</strong>
+                      <span className="rewards-pts-badge">0 pts</span>
+                    </div>
+                    <span className="rewards-bal">Available Balance: ₹0</span>
                   </div>
                   <button
                     type="button"
-                    className={
-                      rewardEnabled ? "reward-toggle active" : "reward-toggle"
-                    }
-                    onClick={() => setRewardEnabled((prev) => !prev)}
+                    className={`reward-toggle ${rewardEnabled ? "active" : ""}`}
+                    disabled={true}
+                    onClick={() => {
+                      toast("You currently have 0 Sporty Reward points", { icon: "ℹ️" });
+                    }}
+                    title="Sporty Rewards (0 available)"
                   >
-                    <span></span>
+                    <span className="reward-toggle-thumb"></span>
                   </button>
                 </div>
-                <p>Available Balance: ₹0</p>
               </div>
 
               <div className="cart-summary">
-                <h2>Order Summary</h2>
+                <div className="cart-summary-header">
+                  <h2>Order Summary</h2>
+                  <span className="summary-item-badge">
+                    {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
+                  </span>
+                </div>
 
                 <div className="summary-row">
                   <span>Total MRP</span>
@@ -736,18 +884,21 @@ const Cart = () => {
                   </div>
                 )}
 
-                <small>Convenience fee will be calculated on next step</small>
+                <div className="summary-row summary-shipping">
+                  <span>Convenience Fee</span>
+                  <strong className="free-shipping">FREE</strong>
+                </div>
+
                 <div className="summary-divider"></div>
 
                 <div className="summary-total">
-                  <span>Total</span>
+                  <span>Total Payable</span>
                   <strong>{formatPrice(finalPayable)}</strong>
                 </div>
 
                 {totalSavedOverall > 0 && (
                   <div className="summary-saved">
-                    You saved <strong>{formatPrice(totalSavedOverall)}</strong> on
-                    this order
+                    🎉 You saved <strong>{formatPrice(totalSavedOverall)}</strong> on this order!
                   </div>
                 )}
 
@@ -758,9 +909,14 @@ const Cart = () => {
                   onClick={handleDeliveryOption}
                 >
                   {selectedAddress
-                    ? "Select delivery Option"
-                    : "Add or choose address"}
+                    ? "SELECT DELIVERY OPTION"
+                    : "ADD OR CHOOSE ADDRESS"}
                 </button>
+
+                <div className="cart-secure-notice">
+                  <FiShield />
+                  <span>Safe and Secure Payments • Easy Returns</span>
+                </div>
               </div>
             </div>
           </aside>
@@ -776,19 +932,18 @@ const Cart = () => {
           </section>
         )}
 
-
         <footer className="cart-footer">
-          <Link to="/" className="cart-footer-logo">
-            <DecathlonLogo height={18} />
+          <Link to="/" className="cart-footer-logo" title="Decathlon">
+            <DecathlonLogo height={20} />
           </Link>
 
           <div className="cart-footer-links">
-            <a href="#terms">Terms of use</a>
-            <a href="#supply">Terms of supply</a>
-            <a href="#privacy">Privacy policy</a>
+            <a href="#terms">Terms of Use</a>
+            <a href="#supply">Terms of Supply</a>
+            <a href="#privacy">Privacy Policy</a>
           </div>
 
-          <span className="cart-footer-copy">Â©2026 Decathlon</span>
+          <span className="cart-footer-copy">© 2026 Decathlon. All rights reserved.</span>
         </footer>
       </main>
 

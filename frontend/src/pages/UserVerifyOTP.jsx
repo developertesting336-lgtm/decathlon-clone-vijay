@@ -1,3 +1,4 @@
+import { syncGuestCartAndWishlist } from "../utils/syncGuestData";
 import React, { useEffect, useRef, useState } from "react";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -150,6 +151,13 @@ const UserVerifyOTP = () => {
       localStorage.setItem("user", JSON.stringify(user));
 
       window.dispatchEvent(new Event("authChanged"));
+
+      // Synchronize any guest cart & wishlist with the newly authenticated account
+      try {
+        await syncGuestCartAndWishlist(token);
+      } catch (syncErr) {
+        console.error("Guest data sync error:", syncErr);
+      }
 
       toast.success(
         mode === "register"

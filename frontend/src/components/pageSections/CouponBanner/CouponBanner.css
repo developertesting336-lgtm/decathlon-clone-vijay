@@ -1,8 +1,17 @@
 .coupon-banner {
   width: 100%;
-  margin: 20px 0;
+  margin: 0;
   overflow: hidden;
   line-height: 0;
+  border-radius: 12px;
+  border: 1px solid #eef2f6;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coupon-banner:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .coupon-banner-image {
@@ -49,10 +58,6 @@
 ================================= */
 
 @media (min-width: 1200px) {
-  .coupon-banner {
-    margin: 20px 0;
-  }
-
   .coupon-banner-image {
     width: 100%;
     height: auto;
@@ -64,10 +69,6 @@
 ================================= */
 
 @media (min-width: 993px) and (max-width: 1199px) {
-  .coupon-banner {
-    margin: 18px 0;
-  }
-
   .coupon-banner-image {
     width: 100%;
     height: auto;
@@ -79,10 +80,6 @@
 ================================= */
 
 @media (min-width: 769px) and (max-width: 992px) {
-  .coupon-banner {
-    margin: 16px 0;
-  }
-
   .coupon-banner-image {
     width: 100%;
     height: auto;
@@ -96,7 +93,7 @@
 @media (max-width: 768px) {
   .coupon-banner {
     width: 100%;
-    margin: 14px 0;
+    border-radius: 8px;
   }
 
   .coupon-banner-clickable.has-multiple {
@@ -117,7 +114,7 @@
 @media (max-width: 480px) {
   .coupon-banner {
     width: 100%;
-    margin: 12px 0;
+    border-radius: 6px;
   }
 
   .coupon-banner-image {
@@ -132,10 +129,6 @@
 ================================= */
 
 @media (max-width: 360px) {
-  .coupon-banner {
-    margin: 10px 0;
-  }
-
   .coupon-banner-image {
     width: 100%;
     height: auto;

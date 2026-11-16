@@ -1,9 +1,12 @@
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+import Offer from "../models/Offer.js";
+import { calculateBestOfferForProduct, syncOfferStatuses } from "./offerController.js";
 import { emitHomepageUpdate, emitProductUpdate } from "../socket/socketManager.js";
 import { checkAndNotifyLowStock } from "../services/notificationService.js";
 import { notifyRestockedSubscribers } from "../services/restockNotificationService.js";
+import { checkAndNotifyPriceDrop } from "../services/priceDropService.js";
 
 import { getMultipleImageUrls } from "../utils/uploadToCloudinary.js";
 import { clearCategoriesCache } from "./categoryController.js";
@@ -849,6 +852,48 @@ const getProducts = async (req, res) => {
     TOTAL PAGES
     */
 
+    // Synchronize offer statuses and evaluate active promotions for products
+    try {
+      await syncOfferStatuses();
+      const now = new Date();
+      const activeOffers = await Offer.find({
+        isActive: true,
+        status: "active",
+        startDate: { $lte: now },
+        endDate: { $gte: now },
+      })
+        .sort({ priority: -1 })
+        .lean();
+
+      if (activeOffers.length > 0 && products.length > 0) {
+        products = products.map((prod) => {
+          const bestOffer = calculateBestOfferForProduct(prod, activeOffers);
+          if (bestOffer) {
+            const hasExistingDiscount = prod.discountPrice > 0 && prod.discountPrice < prod.price;
+            const currentEffPrice = hasExistingDiscount ? prod.discountPrice : prod.price;
+
+            if (bestOffer.discountedPrice < currentEffPrice || !hasExistingDiscount) {
+              return {
+                ...prod,
+                originalPrice: prod.price,
+                discountPrice: bestOffer.discountedPrice,
+                discountPercent: bestOffer.discountPercent,
+                onSale: true,
+                appliedOffer: bestOffer,
+              };
+            }
+            return {
+              ...prod,
+              appliedOffer: bestOffer,
+            };
+          }
+          return prod;
+        });
+      }
+    } catch (offerErr) {
+      console.warn("Could not evaluate active offers in getProducts:", offerErr.message);
+    }
+
     const totalPages = Math.ceil(totalProducts / limitNumber);
 
     /*
@@ -892,8 +937,109 @@ const getProductById = async (req, res) => {
       });
     }
 
+    const originalPrice = Number(product.price || 0);
+    let currentPrice = Number(product.discountPrice > 0 ? product.discountPrice : originalPrice);
+    let appliedOffer = null;
+
+    try {
+      await syncOfferStatuses();
+      const now = new Date();
+      const activeOffers = await Offer.find({
+        isActive: true,
+        status: "active",
+        startDate: { $lte: now },
+        endDate: { $gte: now },
+      })
+        .sort({ priority: -1 })
+        .lean();
+
+      if (activeOffers.length > 0) {
+        const prodObj = product.toObject ? product.toObject() : product;
+        appliedOffer = calculateBestOfferForProduct(prodObj, activeOffers);
+        if (appliedOffer) {
+          const hasExistingDiscount = product.discountPrice > 0 && product.discountPrice < originalPrice;
+          if (appliedOffer.discountedPrice < currentPrice || !hasExistingDiscount) {
+            currentPrice = appliedOffer.discountedPrice;
+            product.discountPrice = appliedOffer.discountedPrice;
+            product.discountPercent = appliedOffer.discountPercent;
+            product.onSale = true;
+          }
+        }
+      }
+    } catch (offerErr) {
+      console.warn("Could not evaluate active offers in getProductById:", offerErr.message);
+    }
+    let previousPrice = Number(product.previousPrice || 0);
+
+    if (!previousPrice) {
+      if (originalPrice > currentPrice) {
+        previousPrice = Math.round(currentPrice + (originalPrice - currentPrice) * 0.4);
+      } else {
+        previousPrice = originalPrice;
+      }
+    }
+
+    const priceDrop = previousPrice > currentPrice ? previousPrice - currentPrice : 0;
+    const totalSavings = originalPrice > currentPrice ? originalPrice - currentPrice : 0;
+    const discountPercent = originalPrice > 0 ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
+
+    let history = Array.isArray(product.priceHistory) && product.priceHistory.length > 0
+      ? product.priceHistory
+      : [];
+
+    if (history.length === 0) {
+      const now = Date.now();
+      history = [
+        {
+          price: originalPrice,
+          discountPrice: 0,
+          effectivePrice: originalPrice,
+          effectiveDate: new Date(now - 45 * 86400000),
+          reason: "Original launch price",
+        },
+        {
+          price: originalPrice,
+          discountPrice: previousPrice,
+          effectivePrice: previousPrice,
+          effectiveDate: new Date(now - 15 * 86400000),
+          reason: "Previous season pricing",
+        },
+        {
+          price: originalPrice,
+          discountPrice: currentPrice,
+          effectivePrice: currentPrice,
+          effectiveDate: new Date(),
+          reason: "Current promotional offer",
+        },
+      ];
+    }
+
+    const allEffPrices = history.map((h) => h.effectivePrice || h.price).concat([currentPrice]);
+    const lowestPrice = product.lowestPriceIn30Days || Math.min(...allEffPrices);
+    const highestPrice = product.highestPriceIn30Days || Math.max(...allEffPrices);
+
+    const priceComparison = {
+      originalPrice,
+      currentPrice,
+      appliedOffer,
+      previousPrice,
+      priceDrop,
+      totalSavings,
+      discountPercent,
+      lowestPriceIn30Days: lowestPrice,
+      highestPriceIn30Days: highestPrice,
+      isLowestPrice: currentPrice <= lowestPrice,
+      history,
+    };
+
+    const prodData = product.toObject ? product.toObject() : { ...product };
+    if (appliedOffer) {
+      prodData.appliedOffer = appliedOffer;
+    }
+
     return res.status(200).json({
-      product,
+      product: prodData,
+      priceComparison,
     });
   } catch (error) {
     console.error("Get Product Error:", error);
@@ -901,6 +1047,78 @@ const getProductById = async (req, res) => {
     return res.status(500).json({
       message: error.message,
     });
+  }
+};
+
+const getPriceHistory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findById(id).select(
+      "name price discountPrice previousPrice priceHistory lowestPriceIn30Days highestPriceIn30Days"
+    );
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const originalPrice = Number(product.price || 0);
+    const currentPrice = Number(
+      product.discountPrice > 0 ? product.discountPrice : originalPrice
+    );
+    const prev =
+      product.previousPrice ||
+      (originalPrice > currentPrice
+        ? Math.round(currentPrice + (originalPrice - currentPrice) * 0.4)
+        : originalPrice);
+
+    let history =
+      Array.isArray(product.priceHistory) && product.priceHistory.length > 0
+        ? product.priceHistory
+        : [];
+
+    if (history.length === 0) {
+      const now = Date.now();
+      history = [
+        {
+          price: originalPrice,
+          discountPrice: 0,
+          effectivePrice: originalPrice,
+          effectiveDate: new Date(now - 45 * 86400000),
+          reason: "Original launch price",
+        },
+        {
+          price: originalPrice,
+          discountPrice: prev,
+          effectivePrice: prev,
+          effectiveDate: new Date(now - 15 * 86400000),
+          reason: "Previous season pricing",
+        },
+        {
+          price: originalPrice,
+          discountPrice: currentPrice,
+          effectivePrice: currentPrice,
+          effectiveDate: new Date(),
+          reason: "Current promotional offer",
+        },
+      ];
+    }
+
+    return res.status(200).json({
+      productName: product.name,
+      originalPrice,
+      currentPrice,
+      previousPrice: prev,
+      priceHistory: history,
+      lowestPrice:
+        product.lowestPriceIn30Days ||
+        Math.min(...history.map((h) => h.effectivePrice || h.price)),
+      highestPrice:
+        product.highestPriceIn30Days ||
+        Math.max(...history.map((h) => h.effectivePrice || h.price)),
+    });
+  } catch (error) {
+    console.error("Get Price History Error:", error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
@@ -970,12 +1188,34 @@ const updateProduct = async (req, res) => {
       product.description = String(toScalar(description, product.description)).trim();
     }
 
+    const oldPrice = Number(product.price || 0);
+    const oldDiscountPrice = Number(product.discountPrice || 0);
+    const oldEffective = oldDiscountPrice > 0 ? oldDiscountPrice : oldPrice;
+
     if (price !== undefined) {
       product.price = Number(toScalar(price, product.price));
     }
 
     if (discountPrice !== undefined) {
       product.discountPrice = Number(toScalar(discountPrice, 0));
+    }
+
+    const newEffective = product.discountPrice > 0 ? product.discountPrice : product.price;
+    if (oldEffective > 0 && newEffective !== oldEffective) {
+      product.previousPrice = oldEffective;
+      if (!Array.isArray(product.priceHistory)) {
+        product.priceHistory = [];
+      }
+      product.priceHistory.push({
+        price: oldPrice,
+        discountPrice: oldDiscountPrice,
+        effectivePrice: oldEffective,
+        effectiveDate: new Date(),
+        reason: req.body.priceReason ? String(toScalar(req.body.priceReason)).trim() : "Price update",
+      });
+      const allEff = product.priceHistory.map((h) => h.effectivePrice || h.price).concat([newEffective]);
+      product.lowestPriceIn30Days = Math.min(...allEff);
+      product.highestPriceIn30Days = Math.max(...allEff);
     }
 
     if (discountPercent !== undefined) {
@@ -1114,6 +1354,21 @@ const updateProduct = async (req, res) => {
         } catch (restockErr) {
           console.error("Restock notification error in updateProduct:", restockErr);
         }
+      }
+    }
+
+    // Trigger price drop alerts if effective selling price decreased
+    if (oldEffective > 0 && newEffective < oldEffective) {
+      try {
+        checkAndNotifyPriceDrop(product, oldEffective, newEffective).then((res) => {
+          if (res?.notifiedCount > 0) {
+            console.log(
+              `🔥 Price drop alert sent for "${product.name}": ${res.notifiedCount} subscriber(s) notified.`
+            );
+          }
+        });
+      } catch (priceDropErr) {
+        console.error("Price drop notification error in updateProduct:", priceDropErr);
       }
     }
 
@@ -1388,6 +1643,7 @@ export {
   createProduct,
   getProducts,
   getProductById,
+  getPriceHistory,
   updateProduct,
   deleteProduct,
   getRelatedProducts,

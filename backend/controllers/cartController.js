@@ -1,5 +1,7 @@
 import Cart from "../models/cart.js";
 import Product from "../models/Product.js";
+import Offer from "../models/Offer.js";
+import { calculateBestOfferForProduct, syncOfferStatuses } from "./offerController.js";
 
 /*
 ========================================
@@ -651,4 +653,81 @@ const clearCart = async (req, res) => {
   }
 };
 
-export { addToCart, getCart, updateCartQuantity, removeFromCart, clearCart };
+
+/*
+========================================
+SYNC / MERGE GUEST CART
+========================================
+*/
+const syncCart = async (req, res) => {
+  try {
+    const { items = [] } = req.body;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      const cart = await Cart.findOne({ user: req.user.id }).populate({
+        path: 'items.product',
+        select: 'name description price discountPrice images brand stock size color',
+      });
+      return res.status(200).json({
+        message: 'No guest items to sync',
+        cart: cart || { items: [] },
+      });
+    }
+
+    let cart = await Cart.findOne({ user: req.user.id });
+    if (!cart) {
+      cart = await Cart.create({
+        user: req.user.id,
+        items: [],
+      });
+    }
+
+    for (const item of items) {
+      const pId = item.productId || item.product?._id || item.product;
+      if (!pId) continue;
+
+      const product = await Product.findById(pId);
+      if (!product || Number(product.stock || 0) <= 0) continue;
+
+      const itemSize = item.size || '';
+      const addQty = Math.max(1, Number(item.quantity || 1));
+
+      const existingItemIndex = cart.items.findIndex(
+        (ci) => ci.product.toString() === pId.toString() && (ci.size || '') === itemSize
+      );
+
+      if (existingItemIndex > -1) {
+        const currentQty = Number(cart.items[existingItemIndex].quantity || 1);
+        const newQty = Math.min(product.stock, currentQty + addQty);
+        cart.items[existingItemIndex].quantity = newQty;
+      } else {
+        const finalQty = Math.min(product.stock, addQty);
+        cart.items.push({
+          product: pId,
+          quantity: finalQty,
+          size: itemSize,
+        });
+      }
+    }
+
+    await cart.save();
+
+    const populatedCart = await Cart.findById(cart._id).populate({
+      path: 'items.product',
+      select: 'name description price discountPrice images brand stock size color',
+    });
+
+    return res.status(200).json({
+      message: 'Cart synced successfully',
+      cart: populatedCart,
+    });
+  } catch (error) {
+    console.error('Sync Cart Error:', error);
+    return res.status(500).json({
+      message: error.message || 'Failed to sync cart',
+    });
+  }
+};
+
+
+export { addToCart, getCart, updateCartQuantity, removeFromCart, clearCart, syncCart };

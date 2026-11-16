@@ -9,6 +9,7 @@ import {
   FiHome,
   FiChevronUp,
   FiCheck,
+  FiShield,
 } from "react-icons/fi";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -17,6 +18,7 @@ import DecathlonLogo from "../components/DecathlonLogo";
 import AddressDrawer from "../components/AddressDrawer";
 import ApplyCoupon from "../components/ApplyCoupon/ApplyCoupon";
 import LoadingSpinner from "../components/common/LoadingSpinner";
+import { getGuestCart } from "../utils/guestCart";
 import "../styles/Delivery.css";
 
 const getProduct = (item) => item?.product || {};
@@ -37,7 +39,7 @@ const Delivery = () => {
 
   const [cartItems, setCartItems] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [rewardEnabled, setRewardEnabled] = useState(false);
+  const rewardEnabled = false;
   const [deliveryMethod, setDeliveryMethod] = useState("standard");
   const [billingSame, setBillingSame] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -97,6 +99,22 @@ const Delivery = () => {
     `₹${Number(price || 0).toLocaleString("en-IN")}`;
 
   const fetchData = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      const guestItems = getGuestCart();
+      setCartItems(Array.isArray(guestItems) ? guestItems : []);
+      try {
+        const savedGuestAddress = JSON.parse(
+          localStorage.getItem("guest_address") || "null"
+        );
+        setSelectedAddress(savedGuestAddress);
+      } catch {
+        setSelectedAddress(null);
+      }
+      setLoading(false);
+      return;
+    }
+
     try {
       const [cartResponse, addressResponse] = await Promise.all([
         api.get("/cart", getAuthConfig()),
@@ -104,7 +122,6 @@ const Delivery = () => {
       ]);
 
       const items = cartResponse.data.cart?.items || [];
-
       const addresses = addressResponse.data.addresses || [];
 
       setCartItems(Array.isArray(items) ? items : []);
@@ -113,7 +130,6 @@ const Delivery = () => {
         const defaultAddress = addresses.find(
           (address) => address.isDefault === true,
         );
-
         setSelectedAddress(defaultAddress || addresses[0]);
       } else {
         setSelectedAddress(null);
@@ -122,8 +138,12 @@ const Delivery = () => {
       console.error("Delivery Data Error:", error);
 
       if (error.response?.status === 401) {
+        const guestItems = getGuestCart();
+        if (guestItems.length > 0) {
+          setCartItems(guestItems);
+          return;
+        }
         toast.error("Please login first");
-
         navigate("/login");
         return;
       }
@@ -223,6 +243,13 @@ const Delivery = () => {
   };
 
   const handleProceed = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast("Please login or register to complete your order", { icon: "🔒" });
+      navigate("/login", { state: { from: "/checkout/cart/delivery" } });
+      return;
+    }
+
     if (!selectedAddress?._id) {
       toast.error("Please select a delivery address");
       setAddressDrawerOpen(true);
@@ -266,31 +293,50 @@ const Delivery = () => {
     <>
       <main className="delivery-page">
         <header className="delivery-header">
-          <button
-            type="button"
-            className="delivery-back"
-            onClick={() => navigate("/cart")}
-          >
-            <FiArrowLeft />
-            <span>Back to Cart</span>
-          </button>
+          <div className="delivery-header-inner">
+            <button
+              type="button"
+              className="delivery-back"
+              onClick={() => navigate("/cart")}
+            >
+              <FiArrowLeft />
+              <span>Back to Cart</span>
+            </button>
 
-          <Link to="/" className="delivery-logo">
-            <DecathlonLogo height={22} />
-          </Link>
+            <Link to="/" className="delivery-logo" title="Decathlon">
+              <DecathlonLogo height={24} />
+            </Link>
 
-          <div />
+            <div className="delivery-header-secure">
+              <FiShield />
+              <span>100% SECURE CHECKOUT</span>
+            </div>
+          </div>
         </header>
 
-        <div className="delivery-progress">
-          <span className="active" />
-          <span className="active" />
-          <span />
+        <div className="delivery-steps-container">
+          <div className="delivery-step completed">
+            <span className="step-num">✓</span>
+            <span className="step-label">Cart</span>
+          </div>
+          <div className="step-line active"></div>
+          <div className="delivery-step active">
+            <span className="step-num">2</span>
+            <span className="step-label">Delivery</span>
+          </div>
+          <div className="step-line"></div>
+          <div className="delivery-step">
+            <span className="step-num">3</span>
+            <span className="step-label">Payment</span>
+          </div>
         </div>
 
         <div className="delivery-layout">
           <section className="delivery-left">
-            <h1>Address/Delivery</h1>
+            <div className="delivery-title-row">
+              <h1>Address & Delivery</h1>
+              <span className="delivery-badge-sub">Step 2 of 3</span>
+            </div>
 
             <div className="delivery-address">
               <div className="delivery-address-icon">
@@ -299,109 +345,126 @@ const Delivery = () => {
 
               <div className="delivery-address-info">
                 <div className="delivery-address-title">
-                  Delivery to{" "}
+                  <span>Deliver to: </span>
                   <strong>{selectedAddress?.addressType || "Home"}</strong>
                 </div>
 
                 <p>
                   {selectedAddress
-                    ? `${selectedAddress.houseBuilding}, ${selectedAddress.streetLocality}, ${
+                    ? `${selectedAddress.houseBuilding || ""}${selectedAddress.streetLocality ? `, ${selectedAddress.streetLocality}` : ""}${
                         selectedAddress.landmark
-                          ? `${selectedAddress.landmark}, `
+                          ? `, ${selectedAddress.landmark}`
                           : ""
-                      }${selectedAddress.cityState}, ${selectedAddress.pincode}`
+                      }${selectedAddress.cityState ? `, ${selectedAddress.cityState}` : ""}${selectedAddress.pincode ? ` - ${selectedAddress.pincode}` : ""}`
                     : "No address selected"}
                 </p>
               </div>
 
-              <button type="button" onClick={handleAddressChange}>
+              <button type="button" className="delivery-change-btn" onClick={handleAddressChange}>
                 Change
               </button>
             </div>
 
             <h2 className="delivery-section-title">Select Delivery Option</h2>
 
-            <button
-              type="button"
-              className={
-                deliveryMethod === "standard"
-                  ? "delivery-option selected"
-                  : "delivery-option"
-              }
-              onClick={() => setDeliveryMethod("standard")}
-              role="radio"
-              aria-checked={deliveryMethod === "standard"}
-            >
-              <div className="delivery-option-icon">
-                <FiTruck />
-              </div>
+            <div className="delivery-options-group">
+              <button
+                type="button"
+                className={
+                  deliveryMethod === "standard"
+                    ? "delivery-option selected"
+                    : "delivery-option"
+                }
+                onClick={() => setDeliveryMethod("standard")}
+                role="radio"
+                aria-checked={deliveryMethod === "standard"}
+              >
+                <div className="delivery-option-icon">
+                  <FiTruck />
+                </div>
 
-              <div className="delivery-option-info">
-                <strong>Standard Delivery</strong>
+                <div className="delivery-option-info">
+                  <div className="option-headline">
+                    <strong>Standard Delivery</strong>
+                    <span className="option-delivery-date">
+                      Delivery by {new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                    </span>
+                  </div>
 
-                <b>Delivery by {new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</b>
+                  <p>Get your order delivered directly at your doorstep.</p>
 
-                <p>Get your order delivered at your door step.</p>
+                  <span className="delivery-available">
+                    <span className="avail-dot" />
+                    All items available
+                  </span>
+                </div>
 
-                <span className="delivery-available">
-                  <i />
-                  All item available
-                </span>
-              </div>
+                <div className="delivery-option-radio">
+                  <span className="radio-circle">
+                    {deliveryMethod === "standard" && <span className="radio-inner" />}
+                  </span>
+                </div>
+              </button>
 
-              <span className="delivery-option-check">
-                {deliveryMethod === "standard" ? "✓" : ""}
-              </span>
-            </button>
+              <button
+                type="button"
+                className={deliveryMethod === "pickup" ? "delivery-option selected" : "delivery-option"}
+                onClick={() => setDeliveryMethod("pickup")}
+                aria-label="Pickup from Store"
+                role="radio"
+                aria-checked={deliveryMethod === "pickup"}
+              >
+                <div className="delivery-option-icon">
+                  <FiHome />
+                </div>
 
-            <button
-              type="button"
-              className={deliveryMethod === "pickup" ? "delivery-option selected" : "delivery-option"}
-              onClick={() => setDeliveryMethod("pickup")}
-              aria-label="Pickup from Store"
-              role="radio"
-              aria-checked={deliveryMethod === "pickup"}
-            >
-              <div className="delivery-option-icon">
-                <FiHome />
-              </div>
+                <div className="delivery-option-info">
+                  <div className="option-headline">
+                    <strong>Pickup from Store</strong>
+                    <span className="option-free-badge">FREE</span>
+                  </div>
 
-              <div className="delivery-option-info">
-                <strong>Pickup from Store</strong>
+                  <p>
+                    Collect your order from your favourite Decathlon store near you.
+                  </p>
 
-                <p>
-                  Collect your order from your favourite Decathlon store near
-                  you.
-                </p>
+                  <span className="delivery-available">
+                    <span className="avail-dot" />
+                    Ready in 2 hours
+                  </span>
+                </div>
 
-                <span className="delivery-available">
-                  <i />
-                  Ready in 2 hours (Free)
-                </span>
-              </div>
-
-              <span className="delivery-option-check">
-                {deliveryMethod === "pickup" ? "✓" : ""}
-              </span>
-            </button>
+                <div className="delivery-option-radio">
+                  <span className="radio-circle">
+                    {deliveryMethod === "pickup" && <span className="radio-inner" />}
+                  </span>
+                </div>
+              </button>
+            </div>
 
             <div className="delivery-order-section">
-              <h2>Order Summary</h2>
-
-              <p>Delivery at your door step</p>
+              <div className="delivery-order-header">
+                <h2>Items in this Order</h2>
+                <span className="order-items-count">
+                  {cartItems.length} {cartItems.length === 1 ? "Item" : "Items"}
+                </span>
+              </div>
 
               <div className="delivery-item-card">
                 <div className="delivery-item-title">
-                  {cartItems.length} Item
-                  {cartItems.length !== 1 ? "s" : ""} - Delivery by{" "}
+                  <span>Estimated Arrival: </span>
                   <strong>{new Date(Date.now() + 3 * 86400000).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</strong>
                 </div>
 
                 <div className="delivery-items-list">
                   {cartItems.map((item, index) => {
                     const product = getProduct(item);
-
                     const image = product?.images?.[0] || "";
+                    const brand = (product?.brand || "DECATHLON").trim();
+                    let displayName = (product?.name || "Product").trim();
+                    if (displayName.toLowerCase().startsWith(brand.toLowerCase())) {
+                      displayName = displayName.substring(brand.length).trim().replace(/^[-:\s]+/, "");
+                    }
 
                     return (
                       <div
@@ -409,28 +472,31 @@ const Delivery = () => {
                         key={product?._id || index}
                       >
                         <div className="delivery-item-image">
-                          {image && (
+                          {image ? (
                             <img
                               src={getImageUrl(image)}
                               alt={product?.name || "Product"}
                             />
+                          ) : (
+                            <div>No Image</div>
                           )}
                         </div>
 
                         <div className="delivery-item-details">
-                          <strong>{product?.brand || "DECATHLON"}</strong>
+                          <span className="delivery-item-brand">{brand}</span>
+                          <span className="delivery-item-name">{displayName || product?.name}</span>
 
-                          <span>{product?.name}</span>
-
-                          <small>
-                            Qty: {getQuantity(item)}
-                            {item?.size ? ` • Size: ${item.size}` : ""}
-                          </small>
+                          <div className="delivery-item-meta">
+                            <span>Qty: {getQuantity(item)}</span>
+                            {item?.size && <span>• Size: {item.size}</span>}
+                          </div>
                         </div>
 
-                        <strong>
-                          {formatPrice(getPrice(item) * getQuantity(item))}
-                        </strong>
+                        <div className="delivery-item-price">
+                          <strong>
+                            {formatPrice(getPrice(item) * getQuantity(item))}
+                          </strong>
+                        </div>
                       </div>
                     );
                   })}
@@ -443,38 +509,40 @@ const Delivery = () => {
                   className="delivery-information-header"
                   onClick={() => setDeliveryInfoOpen((prev) => !prev)}
                 >
-                  <span>Delivery Information</span>
-
+                  <span>Delivery & Contact Details</span>
                   <FiChevronUp className={deliveryInfoOpen ? "open" : ""} />
                 </button>
 
                 {deliveryInfoOpen && (
                   <div className="delivery-information-content">
                     <div className="delivery-info-address">
-                      <div>
+                      <div className="delivery-info-text">
                         <strong>
                           {selectedAddress?.addressType || "Home"}
-                        </strong>{" "}
-                        -{" "}
-                        {selectedAddress
-                          ? `${selectedAddress.houseBuilding}, ${selectedAddress.streetLocality}, ${selectedAddress.cityState}, ${selectedAddress.pincode}`
-                          : "No address selected"}
+                        </strong>
+                        <p>
+                          {selectedAddress
+                            ? `${selectedAddress.houseBuilding || ""}${selectedAddress.streetLocality ? `, ${selectedAddress.streetLocality}` : ""}${selectedAddress.cityState ? `, ${selectedAddress.cityState}` : ""}${selectedAddress.pincode ? ` - ${selectedAddress.pincode}` : ""}`
+                            : "No address selected"}
+                        </p>
                       </div>
 
-                      <button type="button" onClick={handleAddressChange}>
+                      <button type="button" className="info-change-btn" onClick={handleAddressChange}>
                         Change
                       </button>
                     </div>
 
-                    <div className="delivery-contact">
-                      <strong>
-                        {selectedAddress?.firstName} {selectedAddress?.lastName}
-                      </strong>
-
-                      {selectedAddress?.mobile && (
-                        <span>, {selectedAddress.mobile}</span>
-                      )}
-                    </div>
+                    {selectedAddress && (
+                      <div className="delivery-contact">
+                        <strong>Recipient: </strong>
+                        <span>
+                          {selectedAddress.firstName} {selectedAddress.lastName}
+                        </span>
+                        {selectedAddress.mobile && (
+                          <span> • Tel: {selectedAddress.mobile}</span>
+                        )}
+                      </div>
+                    )}
 
                     <div className="billing-address">
                       <label>
@@ -483,15 +551,13 @@ const Delivery = () => {
                           checked={billingSame}
                           onChange={(e) => setBillingSame(e.target.checked)}
                         />
-
-                        <span>Billing address same as delivery</span>
+                        <span>Billing address is same as delivery address</span>
                       </label>
                     </div>
                   </div>
                 )}
               </div>
             </div>
-
           </section>
 
           <aside className="delivery-right">
@@ -534,8 +600,11 @@ const Delivery = () => {
                   <div className="delivery-side-icon">
                     <FiTag />
                   </div>
-                  <span>Apply Coupon</span>
-                  <FiChevronRight />
+                  <div className="delivery-coupon-content">
+                    <span className="coupon-main-title">Apply Coupon</span>
+                    <span className="coupon-sub-title">Save more with discount codes</span>
+                  </div>
+                  <FiChevronRight className="coupon-arrow" />
                 </button>
               )}
 
@@ -545,28 +614,36 @@ const Delivery = () => {
                     <FiAward />
                   </div>
 
-                  <div>
-                    <strong>Sporty Rewards: ₹{rewardBalance}</strong>
-
-                    <small>Available Balance: ₹{rewardBalance}</small>
+                  <div className="rewards-info-col">
+                    <div className="rewards-heading-row">
+                      <strong>Sporty Rewards</strong>
+                      <span className="rewards-pts-badge">0 pts</span>
+                    </div>
+                    <small>Available Balance: ₹0</small>
                   </div>
 
                   <button
                     type="button"
-                    disabled={rewardBalance <= 0}
-                    className={
-                      rewardEnabled && rewardBalance > 0
-                        ? "reward-toggle active"
-                        : "reward-toggle"
-                    }
-                    onClick={() => setRewardEnabled((prev) => !prev)}
+                    disabled={true}
+                    className="reward-toggle"
+                    onClick={() => {
+                      toast("You currently have 0 Sporty Reward points", { icon: "ℹ️" });
+                    }}
+                    title="Sporty Rewards (0 available)"
                   >
-                    <span />
+                    <span className="reward-toggle-thumb" />
                   </button>
                 </div>
               </div>
 
               <div className="delivery-summary">
+                <div className="summary-card-header">
+                  <h2>Price Summary</h2>
+                  <span className="summary-items-count">
+                    {cartItems.length} {cartItems.length === 1 ? "item" : "items"}
+                  </span>
+                </div>
+
                 <div className="summary-row">
                   <span>Total MRP</span>
                   <strong>{formatPrice(totalMRP)}</strong>
@@ -591,11 +668,8 @@ const Delivery = () => {
                 )}
 
                 <div className="summary-row">
-                  <span>
-                    Convenience fee
-                    <span className="summary-arrow">⌄</span>
-                  </span>
-                  <strong>
+                  <span>Convenience Fee</span>
+                  <strong className={deliveryFee <= 0 ? "free-convenience" : ""}>
                     {deliveryFee > 0 ? (
                       formatPrice(deliveryFee)
                     ) : (
@@ -607,14 +681,13 @@ const Delivery = () => {
                 <div className="summary-divider" />
 
                 <div className="summary-total">
-                  <span>Total</span>
+                  <span>Total Payable</span>
                   <strong>{formatPrice(payableTotal)}</strong>
                 </div>
 
                 {totalSaved > 0 && (
                   <div className="summary-saved">
-                    You saved <strong>{formatPrice(totalSaved)}</strong> on this
-                    order
+                    🎉 You saved <strong>{formatPrice(totalSaved)}</strong> on this order!
                   </div>
                 )}
 
@@ -623,37 +696,31 @@ const Delivery = () => {
                   className="proceed-btn"
                   onClick={handleProceed}
                 >
-                  Proceed to pay
+                  PROCEED TO PAY
                 </button>
+
+                <div className="delivery-secure-notice">
+                  <FiShield />
+                  <span>Safe and Secure Payments • Easy Returns</span>
+                </div>
               </div>
             </div>
           </aside>
         </div>
 
-          <footer className="delivery-footer">
-            <Link to="/" className="delivery-footer-logo">
-              <DecathlonLogo height={18} />
-            </Link>
+        <footer className="delivery-footer">
+          <Link to="/" className="delivery-footer-logo" title="Decathlon">
+            <DecathlonLogo height={20} />
+          </Link>
 
-            <div className="delivery-footer-links">
-              <a href="#terms">
-                Terms of use
-                <FiChevronRight />
-              </a>
+          <div className="delivery-footer-links">
+            <a href="#terms">Terms of Use</a>
+            <a href="#supply">Terms of Supply</a>
+            <a href="#privacy">Privacy Policy</a>
+          </div>
 
-              <a href="#supply">
-                Terms of supply
-                <FiChevronRight />
-              </a>
-
-              <a href="#privacy">
-                Privacy policy
-                <FiChevronRight />
-              </a>
-            </div>
-
-            <span className="delivery-footer-copy">©2026 Decathlon</span>
-          </footer>
+          <span className="delivery-footer-copy">© 2026 Decathlon. All rights reserved.</span>
+        </footer>
       </main>
 
       <AddressDrawer

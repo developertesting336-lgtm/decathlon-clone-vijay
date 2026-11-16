@@ -4,6 +4,7 @@ import {
   createProduct,
   getProducts,
   getProductById,
+  getPriceHistory,
   updateProduct,
   deleteProduct,
   getRelatedProducts,
@@ -16,6 +17,7 @@ import upload from "../middleware/uploadMiddleware.js";
 const router = express.Router();
 
 router.get("/:productId/related", getRelatedProducts);
+router.get("/:id/price-history", getPriceHistory);
 
 router.post(
   "/",

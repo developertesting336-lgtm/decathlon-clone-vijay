@@ -26,6 +26,34 @@ const productSchema = new mongoose.Schema(
       min: 0,
     },
 
+    previousPrice: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    lowestPriceIn30Days: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    highestPriceIn30Days: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    priceHistory: [
+      {
+        price: { type: Number, required: true },
+        discountPrice: { type: Number, default: 0 },
+        effectivePrice: { type: Number, required: true },
+        effectiveDate: { type: Date, default: Date.now },
+        reason: { type: String, default: "Price update", trim: true },
+      },
+    ],
+
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",

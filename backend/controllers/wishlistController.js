@@ -135,4 +135,54 @@ const removeFromWishlist = async (req, res) => {
   }
 };
 
-export { addToWishlist, getWishlist, removeFromWishlist};
+
+/*
+========================================
+SYNC / MERGE GUEST WISHLIST
+========================================
+*/
+const syncWishlist = async (req, res) => {
+  try {
+    const { productIds = [] } = req.body;
+
+    let wishlist = await Wishlist.findOne({ user: req.user.id });
+    if (!wishlist) {
+      wishlist = await Wishlist.create({
+        user: req.user.id,
+        products: [],
+      });
+    }
+
+    if (Array.isArray(productIds) && productIds.length > 0) {
+      for (const pId of productIds) {
+        if (!pId) continue;
+        const exists = wishlist.products.some((id) => id.toString() === pId.toString());
+        if (!exists) {
+          const product = await Product.findById(pId);
+          if (product) {
+            wishlist.products.push(pId);
+          }
+        }
+      }
+      await wishlist.save();
+    }
+
+    const updatedWishlist = await Wishlist.findById(wishlist._id).populate({
+      path: "products",
+      select: "name price discountPrice images brand stock size color category",
+    });
+
+    return res.status(200).json({
+      message: "Wishlist synced successfully",
+      wishlist: updatedWishlist,
+    });
+  } catch (error) {
+    console.error("Sync Wishlist Error:", error);
+    return res.status(500).json({
+      message: error.message || "Failed to sync wishlist",
+    });
+  }
+};
+
+
+export { addToWishlist, getWishlist, removeFromWishlist, syncWishlist };

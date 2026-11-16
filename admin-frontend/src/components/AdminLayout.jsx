@@ -16,6 +16,7 @@ import {
   MdStorefront,
   MdNotifications,
   MdLocalOffer,
+  MdFlashOn,
   MdHelpCenter,
   MdRateReview,
   MdStraighten,
@@ -127,6 +128,7 @@ const AdminLayout = ({ children }) => {
   const isStockAlertsActive = location.pathname.startsWith("/stock-alerts");
   const isOrdersActive = location.pathname.startsWith("/orders");
   const isCouponsActive = location.pathname.startsWith("/coupons");
+  const isOffersActive = location.pathname.startsWith("/offers");
   const isUsersActive = location.pathname.startsWith("/users");
   const isBannersActive = location.pathname.startsWith("/banners");
   const isAiActive = location.pathname.startsWith("/ai-knowledge");
@@ -296,6 +298,16 @@ const AdminLayout = ({ children }) => {
           >
             <MdLocalOffer />
             {sidebarOpen && <span>Coupons</span>}
+          </button>
+
+          <button
+            type="button"
+            className={isOffersActive ? "active" : ""}
+            onClick={() => handleNav("/offers")}
+            title="Promotional Offers & Deals"
+          >
+            <MdFlashOn />
+            {sidebarOpen && <span>Offers</span>}
           </button>
 
           <button
