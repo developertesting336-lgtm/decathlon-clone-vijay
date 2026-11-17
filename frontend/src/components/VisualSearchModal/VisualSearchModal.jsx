@@ -6,6 +6,7 @@ import {
   FiRefreshCw,
   FiShoppingCart,
   FiCheckCircle,
+  FiInfo,
 } from "react-icons/fi";
 import { MdAutoAwesome, MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import api, { useWishlist } from "../../api/axios";
@@ -281,9 +282,15 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
                   )}
                   <div className="summary-info">
                     <div className="summary-headline">
-                      <FiCheckCircle className="check-icon" />
+                      {results.visualAnalysis?.isProduct === false ? (
+                        <FiInfo className="check-icon" style={{ color: "#d97706" }} />
+                      ) : (
+                        <FiCheckCircle className="check-icon" />
+                      )}
                       <span>
-                        Found {results.products?.length || 0} visually similar products
+                        {results.visualAnalysis?.isProduct === false
+                          ? `Identified: ${results.visualAnalysis.productType}`
+                          : `Found ${results.products?.length || 0} visually similar products`}
                       </span>
                     </div>
                     {results.visualAnalysis && (
@@ -293,7 +300,7 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
                             {results.visualAnalysis.productType}
                           </span>
                         )}
-                        {results.visualAnalysis.sport && (
+                        {results.visualAnalysis.sport && results.visualAnalysis.sport !== "None" && (
                           <span className="tag-pill sport">
                             {results.visualAnalysis.sport}
                           </span>
@@ -318,6 +325,14 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
                 </button>
               </div>
 
+              {/* Informational Guidance Notice if photo is not a sports product */}
+              {results.visualAnalysis?.userNotice && (
+                <div className="visual-notice-banner">
+                  <FiInfo size={16} className="notice-icon" />
+                  <span>{results.visualAnalysis.userNotice}</span>
+                </div>
+              )}
+
               {/* Products Grid */}
               <div className="visual-search-grid">
                 {results.products?.map((prod) => {
@@ -335,14 +350,19 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
                       : 0;
 
                   const wishlisted = isWishlisted(prod._id);
+                  const isReal = results.visualAnalysis?.isProduct !== false;
 
                   return (
                     <div key={prod._id} className="visual-product-card">
                       {/* Match Badge */}
                       {prod.visualMatchPercentage && (
-                        <div className="visual-match-pill">
+                        <div className={`visual-match-pill ${isReal ? "" : "color-match-pill"}`}>
                           <MdAutoAwesome size={11} />
-                          <span>{prod.visualMatchPercentage}% Match</span>
+                          <span>
+                            {isReal
+                              ? `${prod.visualMatchPercentage}% Match`
+                              : `${prod.visualMatchPercentage}% Color Match`}
+                          </span>
                         </div>
                       )}
 

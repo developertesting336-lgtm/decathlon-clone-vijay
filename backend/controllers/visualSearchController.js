@@ -1,7 +1,15 @@
 import Product from "../models/Product.js";
 
+// List of models in preference order (handles temporary high-demand spikes smoothly)
+const VISION_MODELS = [
+  "gemini-3.1-flash-lite",
+  "gemini-flash-lite-latest",
+  "gemini-3.8-flash",
+  "gemini-3.7-flash",
+];
+
 /**
- * Call Google Gemini 1.5 Flash Vision API to analyze product image characteristics
+ * Call Google Gemini Vision API to accurately analyze product image characteristics
  */
 async function analyzeImageWithGemini(base64Data, mimeType = "image/jpeg") {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -9,19 +17,22 @@ async function analyzeImageWithGemini(base64Data, mimeType = "image/jpeg") {
     throw new Error("GEMINI_API_KEY is not configured");
   }
 
-  const prompt = `You are an AI visual search engine for Decathlon Sports Store.
-Analyze this product image carefully. Identify what sports, fitness, or outdoor item is shown.
-Respond strictly in JSON format with NO markdown code fences, NO formatting, ONLY valid JSON matching this schema:
+  const prompt = `You are an expert AI visual search engine for Decathlon Sports Store.
+Analyze this image carefully and return strictly valid JSON (NO markdown fences, NO extra words):
 {
-  "productType": "e.g. Running Shoes / Road Bicycle / Gym Shorts / Camping Tent / Football / Backpack / Yoga Mat",
-  "sport": "e.g. Running / Cycling / Fitness / Camping / Hiking / Football / Tennis",
+  "isProduct": true,
+  "productType": "Specific product type, e.g. Running Shoes / Road Bicycle / Backpack / Gym Shorts / Camping Tent / T-Shirt / Logo or Graphic / None",
+  "sport": "Associated sport, e.g. Running / Cycling / Camping / Fitness / Hiking / Football / Tennis / None",
   "colors": ["Primary Color", "Secondary Color"],
-  "keyAttributes": ["e.g. lace-up", "mesh", "waterproof", "single-speed"],
-  "searchQuery": "concise 2-4 word search phrase, e.g. red running shoes",
-  "description": "Short 1-sentence visual summary of the item"
-}`;
+  "keyAttributes": ["e.g. lightweight", "waterproof", "cushioned", "lace-up", "single-speed"],
+  "searchQuery": "2-4 word search phrase for finding this item, e.g. red running shoes",
+  "description": "1 clear sentence visually describing the image contents"
+}
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+CRITICAL RULES:
+1. If the image is a graphic logo, avatar, abstract symbol, text icon, meme, document, or human face without distinct sports gear, set "isProduct": false and "sport": "None".
+2. If it is an actual sports product (shoe, bike, ball, gym apparel, tent, backpack, racket, etc.), set "isProduct": true and identify the exact sport and product type.
+3. Accurately identify the true primary colors.`;
 
   const payload = {
     contents: [
@@ -40,33 +51,46 @@ Respond strictly in JSON format with NO markdown code fences, NO formatting, ONL
       },
     ],
     generationConfig: {
-      temperature: 0.2,
-      maxOutputTokens: 500,
+      temperature: 0.1,
+      maxOutputTokens: 600,
     },
   };
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+  let lastError = null;
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Gemini Vision API error (${response.status}): ${errorText}`);
+  for (const model of VISION_MODELS) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+
+        // Clean markdown backticks if present
+        const cleanedText = rawText
+          .replace(/^```json\s*/i, "")
+          .replace(/^```\s*/i, "")
+          .replace(/```\s*$/i, "")
+          .trim();
+
+        const parsed = JSON.parse(cleanedText);
+        return parsed;
+      }
+
+      // If model returned 404/503, try next candidate model
+      const errText = await response.text();
+      lastError = new Error(`${model} failed (${response.status}): ${errText}`);
+    } catch (err) {
+      lastError = err;
+    }
   }
 
-  const data = await response.json();
-  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-
-  // Clean markdown backticks if present
-  const cleanedText = rawText
-    .replace(/^```json\s*/i, "")
-    .replace(/^```\s*/i, "")
-    .replace(/```\s*$/i, "")
-    .trim();
-
-  return JSON.parse(cleanedText);
+  throw lastError || new Error("All Gemini Vision models failed");
 }
 
 /**
@@ -76,6 +100,7 @@ function fallbackVisualAnalysis(filename = "") {
   const lower = (filename || "").toLowerCase();
   if (lower.includes("shoe") || lower.includes("run") || lower.includes("footwear")) {
     return {
+      isProduct: true,
       productType: "Running Shoes",
       sport: "Running",
       colors: ["Red", "Black"],
@@ -86,6 +111,7 @@ function fallbackVisualAnalysis(filename = "") {
   }
   if (lower.includes("cycle") || lower.includes("bike")) {
     return {
+      isProduct: true,
       productType: "Bicycle",
       sport: "Cycling",
       colors: ["Blue", "Black"],
@@ -96,6 +122,7 @@ function fallbackVisualAnalysis(filename = "") {
   }
   if (lower.includes("tent") || lower.includes("camp") || lower.includes("hike")) {
     return {
+      isProduct: true,
       productType: "Camping Tent",
       sport: "Camping",
       colors: ["Green", "Grey"],
@@ -106,12 +133,13 @@ function fallbackVisualAnalysis(filename = "") {
   }
 
   return {
-    productType: "Sports Gear",
-    sport: "All Sports",
+    isProduct: false,
+    productType: "Non-Product Image",
+    sport: "None",
     colors: ["Multi"],
-    keyAttributes: ["sports", "athletic"],
+    keyAttributes: ["graphic", "photo"],
     searchQuery: "sports equipment",
-    description: "Athletic equipment detected",
+    description: "Image uploaded does not appear to be a distinct sports product",
   };
 }
 
@@ -160,6 +188,7 @@ export const visualProductSearch = async (req, res) => {
     }
 
     const {
+      isProduct = true,
       productType = "Sports Gear",
       sport = "All Sports",
       colors = [],
@@ -169,13 +198,15 @@ export const visualProductSearch = async (req, res) => {
     } = visualAnalysis || {};
 
     // 3. Search and Match Products in Catalog
+    const isRealProduct = isProduct !== false && sport !== "None" && !productType.toLowerCase().includes("logo") && !productType.toLowerCase().includes("icon");
+
     const terms = [
       ...productType.toLowerCase().split(/\s+/),
       ...sport.toLowerCase().split(/\s+/),
       ...colors.map((c) => c.toLowerCase()),
       ...keyAttributes.map((a) => a.toLowerCase()),
       ...searchQuery.toLowerCase().split(/\s+/),
-    ].filter((w) => w && w.length > 2);
+    ].filter((w) => w && w.length > 2 && w !== "none" && w !== "logo" && w !== "icon");
 
     const uniqueTerms = [...new Set(terms)];
 
@@ -206,31 +237,33 @@ export const visualProductSearch = async (req, res) => {
         ? prod.color.map((c) => String(c).toLowerCase())
         : [String(prod.color || "").toLowerCase()];
 
-      // Direct Category / Subcategory Match (+45 pts)
-      const targetType = productType.toLowerCase();
-      const targetSport = sport.toLowerCase();
-      if (
-        pCat.includes(targetSport) ||
-        pCat.includes(targetType) ||
-        pSub.includes(targetSport) ||
-        pSub.includes(targetType)
-      ) {
-        score += 45;
+      if (isRealProduct) {
+        // Direct Category / Subcategory Match (+60 pts)
+        const targetType = productType.toLowerCase();
+        const targetSport = sport.toLowerCase();
+        if (
+          pCat.includes(targetSport) ||
+          pCat.includes(targetType) ||
+          pSub.includes(targetSport) ||
+          pSub.includes(targetType)
+        ) {
+          score += 60;
+        }
+
+        // Name Term Matches (+15 pts per term)
+        uniqueTerms.forEach((term) => {
+          if (pName.includes(term)) score += 15;
+          if (pCat.includes(term)) score += 10;
+          if (pSub.includes(term)) score += 10;
+          if (pBrand.includes(term)) score += 5;
+        });
       }
 
-      // Name Term Matches (+15 pts per term)
-      uniqueTerms.forEach((term) => {
-        if (pName.includes(term)) score += 15;
-        if (pCat.includes(term)) score += 10;
-        if (pSub.includes(term)) score += 10;
-        if (pBrand.includes(term)) score += 5;
-      });
-
-      // Color Affinity (+20 pts)
+      // Color Affinity (+25 pts)
       colors.forEach((col) => {
         const cLower = col.toLowerCase();
         if (pColors.some((pc) => pc.includes(cLower)) || pName.includes(cLower)) {
-          score += 20;
+          score += 25;
         }
       });
 
@@ -247,16 +280,19 @@ export const visualProductSearch = async (req, res) => {
     // Sort by highest similarity
     scoredProducts.sort((a, b) => b.rawScore - a.rawScore);
 
-    // Pick top matching products (at least 6-12 items)
-    const topScored = scoredProducts.slice(0, 16);
+    // Pick top matching products (up to 12 items)
+    const topScored = scoredProducts.slice(0, 12);
     const maxScore = topScored[0]?.rawScore || 1;
 
-    // Convert rawScore into clean visual similarity percentage (e.g. 78% - 98%)
+    // Convert rawScore into realistic match percentage
     const results = topScored.map((item, index) => {
       let matchPercent = 95 - index * 2;
-      if (maxScore > 0 && item.rawScore > 0) {
+      if (isRealProduct && maxScore > 0 && item.rawScore > 0) {
         const ratio = Math.min(1, item.rawScore / maxScore);
-        matchPercent = Math.max(70, Math.min(98, Math.round(75 + ratio * 23)));
+        matchPercent = Math.max(75, Math.min(98, Math.round(75 + ratio * 23)));
+      } else if (!isRealProduct) {
+        // For non-product images, color matches have modest similarity (e.g. 50-68%)
+        matchPercent = Math.max(45, Math.min(68, 55 - index * 2));
       }
       return {
         ...item.product,
@@ -264,15 +300,23 @@ export const visualProductSearch = async (req, res) => {
       };
     });
 
+    // Human-readable notice if image is not a product
+    let userNotice = "";
+    if (!isRealProduct) {
+      userNotice = `No sports equipment or apparel was detected in this photo (Identified: "${productType}"). Showing sports items in a similar color palette (${colors.join(", ")}).`;
+    }
+
     return res.status(200).json({
       success: true,
       visualAnalysis: {
+        isProduct: isRealProduct,
         productType,
         sport,
         colors,
         keyAttributes,
         searchQuery,
         description,
+        userNotice,
       },
       products: results,
     });
