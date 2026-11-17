@@ -260,8 +260,10 @@ const Users = () => {
                               {user.name?.charAt(0)?.toUpperCase() || "U"}
                             </div>
                             <div className="user-name-cell">
-                              <strong>{user.name || "Customer"}</strong>
-                              <span className="user-badge">Customer</span>
+                              <strong>{user.name || (user.role === "admin" ? "Admin" : "Customer")}</strong>
+                              <span className={`user-badge ${user.role === "admin" ? "badge-admin" : "badge-customer"}`}>
+                                {user.role === "admin" ? "Admin" : "Customer"}
+                              </span>
                             </div>
                           </div>
                         </td>

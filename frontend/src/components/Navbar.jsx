@@ -23,6 +23,8 @@ import {
   FiBell,
   FiPackage,
   FiTrendingDown,
+  FiTrash2,
+  FiCamera,
 } from "react-icons/fi";
 import socket from "../socket/socket";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -35,6 +37,7 @@ import api, {
 import DecathlonLogo from "./DecathlonLogo";
 import ProductSizeModal from "./ProductSizeModal";
 import LocationPickerModal from "./LocationPickerModal";
+import VisualSearchModal from "./VisualSearchModal/VisualSearchModal";
 import { useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/Navbar.css";
 import "../styles/ProductSizeModal.css";
@@ -47,6 +50,7 @@ const Navbar = () => {
     autoDetect: true,
   });
   const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [isVisualSearchOpen, setIsVisualSearchOpen] = useState(false);
 
   const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
@@ -216,6 +220,29 @@ const Navbar = () => {
     }
   };
 
+  const handleClearReadNotifications = async () => {
+    try {
+      await api.delete("/notifications/clear-read");
+      setNotifications((prev) => prev.filter((n) => !n.read));
+      toast.success("Read notifications deleted");
+    } catch (err) {
+      console.error("Clear read notifications error:", err);
+      toast.error("Failed to delete read notifications");
+    }
+  };
+
+  const handleDeleteNotification = async (id, e) => {
+    if (e) e.stopPropagation();
+    try {
+      await api.delete(`/notifications/${id}`);
+      setNotifications((prev) => prev.filter((n) => n._id !== id));
+      toast.success("Notification deleted");
+    } catch (err) {
+      console.error("Delete notification error:", err);
+      toast.error("Failed to delete notification");
+    }
+  };
+
   const handleNotificationItemClick = async (notif) => {
     if (!notif.read && notif._id) {
       try {
@@ -258,6 +285,7 @@ const Navbar = () => {
       case "PRICE_DROP":
         return <FiTrendingDown style={{ color: "#dc2626" }} />;
       case "OFFER":
+      case "SALE":
         return <FiAward style={{ color: "#ea580c" }} />;
       default:
         return <FiBell style={{ color: "#3643ba" }} />;
@@ -334,12 +362,36 @@ const Navbar = () => {
       fetchNotifications();
     };
 
+    const handleOfferAlert = (offerData) => {
+      fetchNotifications();
+      if (offerData?.title) {
+        toast(
+          (t) => (
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                toast.dismiss(t.id);
+                if (offerData.url) navigate(offerData.url);
+              }}
+            >
+              <div style={{ fontWeight: 700, fontSize: "13px" }}>{offerData.title}</div>
+              <div style={{ fontSize: "12px", color: "#555" }}>
+                {offerData.message || offerData.bannerText || "Check out new sports deals!"}
+              </div>
+            </div>
+          ),
+          { icon: "🏷️", duration: 6000 }
+        );
+      }
+    };
+
     window.addEventListener("authChanged", handleAuthChange);
     window.addEventListener("cartUpdated", handleCartChange);
     window.addEventListener("notificationsUpdated", fetchNotifications);
 
     socket.on("notification", handleNewNotification);
     socket.on("product_restocked", handleRestock);
+    socket.on("offer_alert", handleOfferAlert);
 
     const handleOpenLocationModal = () => setLocationModalOpen(true);
     window.addEventListener("openLocationModal", handleOpenLocationModal);
@@ -351,6 +403,7 @@ const Navbar = () => {
       window.removeEventListener("notificationsUpdated", fetchNotifications);
       socket.off("notification", handleNewNotification);
       socket.off("product_restocked", handleRestock);
+      socket.off("offer_alert", handleOfferAlert);
     };
   }, [fetchNotifications, navigate]);
 
@@ -591,6 +644,22 @@ const Navbar = () => {
             ) : (
               <span className="search-cursor"></span>
             )}
+
+            {/* AI VISUAL SEARCH CAMERA BUTTON */}
+            <button
+              type="button"
+              className="navbar-visual-search-btn"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsSearchFocused(false);
+                setIsVisualSearchOpen(true);
+              }}
+              title="Search by image or photo"
+              aria-label="Search by image"
+            >
+              <FiCamera className="visual-search-cam-icon" />
+            </button>
 
             {/* DECATHLON SEARCH MODAL POPOVER */}
             {isSearchFocused && (
@@ -1071,15 +1140,27 @@ const Navbar = () => {
                         </span>
                       )}
                     </div>
-                    {unreadNotificationsCount > 0 && (
-                      <button
-                        type="button"
-                        className="notification-mark-all"
-                        onClick={handleMarkAllRead}
-                      >
-                        Mark all as read
-                      </button>
-                    )}
+                    <div className="notification-header-actions">
+                      {unreadNotificationsCount > 0 && (
+                        <button
+                          type="button"
+                          className="notification-mark-all"
+                          onClick={handleMarkAllRead}
+                        >
+                          Mark all as read
+                        </button>
+                      )}
+                      {notifications.some((n) => n.read) && (
+                        <button
+                          type="button"
+                          className="notification-clear-read"
+                          onClick={handleClearReadNotifications}
+                          title="Delete all read notifications"
+                        >
+                          Delete read
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="notification-dropdown-body">
@@ -1131,7 +1212,17 @@ const Navbar = () => {
                               </div>
                               <p className="notif-item-message">{item.message}</p>
                             </div>
-                            {!item.read && <span className="notif-unread-dot" />}
+                            <div className="notification-item-actions">
+                              {!item.read && <span className="notif-unread-dot" />}
+                              <button
+                                type="button"
+                                className="notif-delete-btn"
+                                onClick={(e) => handleDeleteNotification(item._id, e)}
+                                title="Delete notification"
+                              >
+                                <FiTrash2 />
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1217,6 +1308,11 @@ const Navbar = () => {
           formatPrice={formatPrice}
         />
       )}
+      {/* AI VISUAL PRODUCT SEARCH MODAL */}
+      <VisualSearchModal
+        isOpen={isVisualSearchOpen}
+        onClose={() => setIsVisualSearchOpen(false)}
+      />
     </>
   );
 };

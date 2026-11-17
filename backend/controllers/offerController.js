@@ -1,6 +1,11 @@
 import Offer from "../models/Offer.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+import {
+  notifyUsersOfOffer,
+  notifyOfferScheduled,
+  notifyOfferStarted,
+} from "../services/offerNotificationService.js";
 
 /**
  * Synchronize offer statuses based on current date/time
@@ -8,16 +13,31 @@ import Category from "../models/Category.js";
 export const syncOfferStatuses = async () => {
   const now = new Date();
 
-  // 1. Move scheduled -> active when start date has arrived
-  await Offer.updateMany(
-    {
-      isActive: true,
-      status: "scheduled",
-      startDate: { $lte: now },
-      endDate: { $gt: now },
-    },
-    { $set: { status: "active" } }
-  );
+  // 1. Find scheduled offers that have now arrived at their start date
+  const newlyActiveOffers = await Offer.find({
+    isActive: true,
+    status: "scheduled",
+    startDate: { $lte: now },
+    endDate: { $gt: now },
+  })
+    .populate("applicableProducts", "name price discountPrice images category")
+    .populate("applicableCategories", "name image");
+
+  if (newlyActiveOffers.length > 0) {
+    const ids = newlyActiveOffers.map((o) => o._id);
+    await Offer.updateMany(
+      { _id: { $in: ids } },
+      { $set: { status: "active" } }
+    );
+
+    // Dispatch automatic alert notifications for newly live offers
+    for (const off of newlyActiveOffers) {
+      off.status = "active";
+      notifyOfferStarted(off, true).catch((err) =>
+        console.error(`Sync Offer Notification Error for "${off.title}":`, err.message)
+      );
+    }
+  }
 
   // 2. Move active/scheduled -> expired when end date has passed
   await Offer.updateMany(
@@ -289,8 +309,15 @@ export const createOffer = async (req, res) => {
     await offer.save();
 
     const populatedOffer = await Offer.findById(offer._id)
-      .populate("applicableProducts", "name price images")
+      .populate("applicableProducts", "name price images discountPrice category")
       .populate("applicableCategories", "name image");
+
+    // Automatically dispatch offer & price drop notification alerts if offer is active or scheduled
+    if (populatedOffer.isActive && populatedOffer.status !== "disabled" && populatedOffer.status !== "expired") {
+      notifyUsersOfOffer(populatedOffer, true).catch((notifErr) =>
+        console.error("Offer Creation Notification Alert Error:", notifErr.message)
+      );
+    }
 
     res.status(201).json({
       success: true,
@@ -388,8 +415,15 @@ export const updateOffer = async (req, res) => {
     await offer.save();
 
     const updatedOffer = await Offer.findById(offer._id)
-      .populate("applicableProducts", "name price images")
+      .populate("applicableProducts", "name price images discountPrice category")
       .populate("applicableCategories", "name image");
+
+    // Automatically dispatch offer & price drop notification alerts if offer is active or scheduled
+    if (updatedOffer.isActive && updatedOffer.status !== "disabled" && updatedOffer.status !== "expired") {
+      notifyUsersOfOffer(updatedOffer, true).catch((notifErr) =>
+        console.error("Offer Update Notification Alert Error:", notifErr.message)
+      );
+    }
 
     res.status(200).json({
       success: true,
@@ -450,6 +484,13 @@ export const toggleOfferStatus = async (req, res) => {
     offer.isActive = !offer.isActive;
     offer.status = offer.getCalculatedStatus();
     await offer.save();
+
+    // If offer was activated or scheduled, trigger notification alerts
+    if (offer.isActive && offer.status !== "disabled" && offer.status !== "expired") {
+      notifyUsersOfOffer(offer._id, true).catch((notifErr) =>
+        console.error("Offer Toggle Notification Alert Error:", notifErr.message)
+      );
+    }
 
     res.status(200).json({
       success: true,

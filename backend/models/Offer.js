@@ -113,6 +113,18 @@ const offerSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    lastNotifiedAt: {
+      type: Date,
+      default: null,
+    },
+    scheduledNotifiedAt: {
+      type: Date,
+      default: null,
+    },
+    startedNotifiedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -122,7 +134,8 @@ const offerSchema = new mongoose.Schema(
 // Virtual to dynamically derive status according to current clock
 offerSchema.methods.getCalculatedStatus = function (now = new Date()) {
   if (!this.isActive) return "disabled";
-  if (now < new Date(this.startDate)) return "scheduled";
+  // If start date is in the future by more than 2 minutes, mark as scheduled; otherwise mark as active
+  if (now.getTime() < new Date(this.startDate).getTime() - 2 * 60 * 1000) return "scheduled";
   if (now > new Date(this.endDate)) return "expired";
   return "active";
 };

@@ -83,6 +83,30 @@ export const sendPushToUser = async (userId, payload) => {
 };
 
 /**
+ * Send web push notification to ALL registered devices (customers & admins).
+ */
+export const sendPushToAllSubscribers = async (payload) => {
+  try {
+    const subscriptions = await PushSubscription.find();
+    if (!subscriptions || subscriptions.length === 0) {
+      console.log("No push subscriptions found in database.");
+      return 0;
+    }
+
+    const results = await Promise.allSettled(
+      subscriptions.map((sub) => sendPushToSubscription(sub, payload))
+    );
+
+    const successCount = results.filter((r) => r.status === "fulfilled" && r.value === true).length;
+    console.log(`📡 Broadcast Web Push sent to ${successCount}/${subscriptions.length} devices.`);
+    return successCount;
+  } catch (error) {
+    console.error("Send Push To All Subscribers Error:", error.message);
+    return 0;
+  }
+};
+
+/**
  * Send web push notification to all admin users' subscriptions.
  */
 export const sendPushToAdmins = async (payload) => {

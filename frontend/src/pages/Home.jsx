@@ -5,7 +5,9 @@ import CategoryNav from "../components/pageSections/CategoryNav/CategoryNav";
 
 import CouponBanner from "../components/pageSections/CouponBanner/CouponBanner";
 import CategoryCarousel from "../components/pageSections/CategoryCarousel/CategoryCarousel";
+import RecentlyViewedSection from "../components/pageSections/RecentlyViewed/RecentlyViewedSection";
 import CategoryShowcase from "../components/pageSections/CategoryShowcase/CategoryShowcase";
+import PersonalizedRecommendations from "../components/pageSections/PersonalizedRecommendations/PersonalizedRecommendations";
 import ProductSection from "../components/pageSections/ProductSection/ProductSection";
 import PromoBanner from "../components/pageSections/PromoBanner/PromoBanner";
 import PromoBanner2 from "../components/pageSections/PromoBanner2/PromoBanner2";
@@ -48,6 +50,9 @@ const Home = () => {
             if (isMounted) {
               setLoading(false);
               setTimeout(() => {
+                window.scrollTo(0, 0);
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
                 window.dispatchEvent(new Event("resize"));
               }, 50);
             }
@@ -78,8 +83,10 @@ const Home = () => {
       >
         <CouponBanner />
         <CategoryCarousel />
+        <RecentlyViewedSection />
         <PromoBanner />
         <CategoryShowcase />
+        <PersonalizedRecommendations />
         <ProductSection />
         <SportsCategories />
         <PromoBanner2 />

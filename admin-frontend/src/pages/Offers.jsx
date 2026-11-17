@@ -284,20 +284,74 @@ const Offers = () => {
     }
   };
 
+  const formatScheduleDate = (dateStr) => {
+    if (!dateStr) return "-";
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch {
+      return new Date(dateStr).toLocaleDateString();
+    }
+  };
+
   const getScopeBadge = (offer) => {
     if (offer.targetType === "product") {
-      const count = offer.applicableProducts?.length || 0;
+      const prods = offer.applicableProducts || [];
+      const count = prods.length;
+      if (count === 0) {
+        return (
+          <span className="offer-scope-pill product">
+            <MdInventory2 /> No Products
+          </span>
+        );
+      }
+      const fullList = prods.map((p) => p.name || "Product").join(", ");
+      if (count <= 2) {
+        return (
+          <span className="offer-scope-pill product" title={fullList}>
+            <MdInventory2 /> <span className="scope-text">{fullList}</span>
+          </span>
+        );
+      }
+      const leadingNames = prods.slice(0, 2).map((p) => p.name || "Product").join(", ");
       return (
-        <span className="offer-scope-pill product">
-          <MdInventory2 /> {count} {count === 1 ? "Product" : "Products"}
+        <span className="offer-scope-pill product" title={fullList}>
+          <MdInventory2 />
+          <span className="scope-text">{leadingNames}</span>
+          <span className="scope-more-count">+{count - 2} more</span>
         </span>
       );
     }
     if (offer.targetType === "category") {
-      const catNames = (offer.applicableCategories || []).map((c) => c.name || "Category").join(", ");
+      const cats = offer.applicableCategories || [];
+      const count = cats.length;
+      if (count === 0) {
+        return (
+          <span className="offer-scope-pill category">
+            <MdCategory /> No Categories
+          </span>
+        );
+      }
+      const fullList = cats.map((c) => c.name || "Category").join(", ");
+      if (count <= 2) {
+        return (
+          <span className="offer-scope-pill category" title={fullList}>
+            <MdCategory /> <span className="scope-text">{fullList}</span>
+          </span>
+        );
+      }
+      const leadingNames = cats.slice(0, 2).map((c) => c.name || "Category").join(", ");
       return (
-        <span className="offer-scope-pill category" title={catNames}>
-          <MdCategory /> {catNames || "Category"}
+        <span className="offer-scope-pill category" title={fullList}>
+          <MdCategory />
+          <span className="scope-text">{leadingNames}</span>
+          <span className="scope-more-count">+{count - 2} more</span>
         </span>
       );
     }
@@ -461,12 +515,14 @@ const Offers = () => {
                     </td>
                     <td>
                       <div className="schedule-col">
-                        <span className="date-row">
-                          <strong>Start:</strong> {new Date(offer.startDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
-                        </span>
-                        <span className="date-row">
-                          <strong>End:</strong> {new Date(offer.endDate).toLocaleDateString("en-IN", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}
-                        </span>
+                        <div className="date-row">
+                          <span className="date-label">Start:</span>
+                          <span className="date-val">{formatScheduleDate(offer.startDate)}</span>
+                        </div>
+                        <div className="date-row">
+                          <span className="date-label">End:</span>
+                          <span className="date-val">{formatScheduleDate(offer.endDate)}</span>
+                        </div>
                       </div>
                     </td>
                     <td>{getStatusBadge(offer.status, offer.isActive)}</td>

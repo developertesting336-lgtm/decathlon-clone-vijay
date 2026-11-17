@@ -31,6 +31,7 @@ import ProductReviews, { StarRating } from "../components/ProductReviews/Product
 import SizeGuide from "../components/SizeGuide/SizeGuide";
 import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
 import NotifyMe from "../components/NotifyMe/NotifyMe";
+import PriceHistoryChart from "../components/PriceHistoryChart/PriceHistoryChart";
 import { useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/ProductDetail.css";
 
@@ -124,6 +125,34 @@ const ProductDetail = () => {
         setProduct(prod);
         if (response.data?.priceComparison) {
           setPriceComparison(response.data.priceComparison);
+        }
+
+        // Record recently viewed (local + authenticated API)
+        try {
+          const currentPrice =
+            prod.discountPrice && Number(prod.discountPrice) > 0
+              ? Number(prod.discountPrice)
+              : Number(prod.price) || 0;
+
+          const existingGuestStr = localStorage.getItem("recently_viewed_guest");
+          let guestList = existingGuestStr ? JSON.parse(existingGuestStr) : [];
+          if (!Array.isArray(guestList)) guestList = [];
+          guestList = guestList.filter((g) => (g.productId || g._id) !== prod._id);
+          guestList.unshift({
+            _id: prod._id,
+            productId: prod._id,
+            product: prod,
+            viewedPrice: currentPrice,
+            lastViewedAt: new Date().toISOString(),
+          });
+          localStorage.setItem("recently_viewed_guest", JSON.stringify(guestList.slice(0, 20)));
+
+          const token = localStorage.getItem("token") || localStorage.getItem("userToken");
+          if (token) {
+            api.post("/recently-viewed", { productId: prod._id }).catch(() => {});
+          }
+        } catch (viewErr) {
+          console.warn("Could not record recently viewed:", viewErr);
         }
         setRatingSummary({
           averageRating: Number(prod.averageRating || prod.rating || prod.review || 0),
@@ -295,30 +324,41 @@ const ProductDetail = () => {
   }, [priceComparison, product, currentPrice, previousPrice]);
 
   const priceHistoryTimeline = useMemo(() => {
+    let list = [];
     if (priceComparison?.history && priceComparison.history.length > 0) {
-      return priceComparison.history;
+      list = [...priceComparison.history];
+    } else {
+      const now = Date.now();
+      list = [
+        {
+          price: originalPrice,
+          effectivePrice: originalPrice,
+          effectiveDate: new Date(now - 45 * 86400000),
+          reason: "Original launch price",
+        },
+        {
+          price: originalPrice,
+          effectivePrice: previousPrice,
+          effectiveDate: new Date(now - 15 * 86400000),
+          reason: "Previous season pricing",
+        },
+      ];
     }
-    const now = Date.now();
-    return [
-      {
+
+    // Ensure the active current price is always the final 'Current' point
+    const lastItem = list[list.length - 1];
+    const lastEffPrice = Number(lastItem?.effectivePrice || lastItem?.discountPrice || lastItem?.price || 0);
+    if (lastEffPrice !== currentPrice && currentPrice > 0) {
+      list.push({
         price: originalPrice,
-        effectivePrice: originalPrice,
-        effectiveDate: new Date(now - 45 * 86400000),
-        reason: "Original launch price",
-      },
-      {
-        price: originalPrice,
-        effectivePrice: previousPrice,
-        effectiveDate: new Date(now - 15 * 86400000),
-        reason: "Previous season pricing",
-      },
-      {
-        price: originalPrice,
+        discountPrice: currentPrice,
         effectivePrice: currentPrice,
         effectiveDate: new Date(),
-        reason: "Current promotional offer",
-      },
-    ];
+        reason: "Current selling price",
+      });
+    }
+
+    return list;
   }, [priceComparison, originalPrice, previousPrice, currentPrice]);
 
   // Delivery estimation
@@ -1091,6 +1131,13 @@ const ProductDetail = () => {
             </div>
 
             <div className="pdp-history-timeline-section">
+              {/* Visual Interactive Price Trend Graph */}
+              <PriceHistoryChart
+                history={priceHistoryTimeline}
+                originalPrice={originalPrice}
+                currentPrice={currentPrice}
+              />
+
               <h4>Historical Product Pricing Records</h4>
               <p className="timeline-subtitle">Track price adjustments over time to make informed purchasing decisions</p>
 

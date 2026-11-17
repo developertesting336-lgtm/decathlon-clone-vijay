@@ -105,6 +105,8 @@ export const getMyNotifications = async (req, res) => {
     if (type && type !== "ALL") {
       if (type === "RETURN_EXCHANGE") {
         andConditions.push({ type: { $in: ["RETURN", "EXCHANGE"] } });
+      } else if (type === "OFFER" || type === "SALE") {
+        andConditions.push({ type: { $in: ["OFFER", "SALE"] } });
       } else {
         andConditions.push({ type });
       }
@@ -287,6 +289,8 @@ export const testAdminNotification = async (req, res) => {
       EXCHANGE: "New Exchange Request",
       LOW_STOCK: "Low Stock Alert",
       REFUND: "Refund Completed",
+      OFFER: "Flash Sale Alert: Weekend Sports Fest",
+      SALE: "Mega Clearance Sale: Up to 50% OFF",
     };
 
     const testBodies = {
@@ -295,6 +299,8 @@ export const testAdminNotification = async (req, res) => {
       EXCHANGE: `Exchange request received for Order #DEC${Math.floor(1000 + Math.random() * 9000)}.`,
       LOW_STOCK: "Quechua Mountain Hiking Shoes has only 2 items left.",
       REFUND: `Refund completed for Order #DEC${Math.floor(1000 + Math.random() * 9000)}.`,
+      OFFER: "Get up to 40% OFF on all hiking and running gear this weekend only!",
+      SALE: "Flash sale is now live! Over 200 products discounted across top categories.",
     };
 
     const urlMap = {
@@ -303,6 +309,8 @@ export const testAdminNotification = async (req, res) => {
       EXCHANGE: "/orders?tab=exchanges",
       LOW_STOCK: "/products",
       REFUND: "/orders?tab=returns",
+      OFFER: "/offers",
+      SALE: "/offers",
     };
 
     const testNotif = {

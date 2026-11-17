@@ -8,7 +8,7 @@ import { emitOrderUpdate } from "../socket/socketManager.js";
 
 dotenv.config();
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "dummy_stripe_key");
 
 /*
   CREATE PAYMENT INTENT

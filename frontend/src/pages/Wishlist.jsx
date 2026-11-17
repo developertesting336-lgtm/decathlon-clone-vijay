@@ -164,17 +164,13 @@ const Wishlist = () => {
       return;
     }
     try {
-      await Promise.all(
-        wishlistItems.map((item) =>
-          api.delete(`/wishlist/${item._id || item.id}`, getAuthConfig())
-        )
-      );
+      await api.delete("/wishlist", getAuthConfig());
       setWishlistItems([]);
       toast.success("Wishlist cleared");
       window.dispatchEvent(new Event("wishlistUpdated"));
     } catch (err) {
       console.error("Clear wishlist error:", err);
-      toast.error("Failed to clear wishlist");
+      toast.error(err.response?.data?.message || "Failed to clear wishlist");
     }
   };
 

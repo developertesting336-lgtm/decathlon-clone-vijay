@@ -133,6 +133,13 @@ const AdminNotificationBell = () => {
         case "REFUND":
           navigate("/orders?tab=returns");
           break;
+        case "OFFER":
+        case "SALE":
+          navigate("/offers");
+          break;
+        case "PRICE_DROP":
+          navigate("/products");
+          break;
         default:
           if (notif.url) {
             navigate(notif.url);
@@ -157,6 +164,11 @@ const AdminNotificationBell = () => {
         return <MdInventory className="notif-type-icon low-stock" />;
       case "REFUND":
         return <MdAssignmentReturn className="notif-type-icon refund" />;
+      case "OFFER":
+      case "SALE":
+        return <MdFlashOn className="notif-type-icon offer" style={{ color: "#ea580c" }} />;
+      case "PRICE_DROP":
+        return <MdFlashOn className="notif-type-icon price-drop" style={{ color: "#dc2626" }} />;
       default:
         return <MdNotifications className="notif-type-icon default" />;
     }
@@ -516,6 +528,16 @@ const AdminNotificationBell = () => {
               title="Test Low Stock Popup"
             >
               Low Stock
+            </button>
+            <button
+              type="button"
+              className="test-btn"
+              style={{ color: "#ea580c" }}
+              disabled={sendingTest}
+              onClick={() => handleSendTestNotification("OFFER")}
+              title="Test Offer / Sale Popup"
+            >
+              Offer / Sale
             </button>
           </div>
 

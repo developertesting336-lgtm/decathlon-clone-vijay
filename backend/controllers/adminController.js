@@ -39,8 +39,9 @@ const registerUser = async (req, res) => {
       phone: normalizedPhone || undefined,
 
       password: hashedPassword,
-
       role: "user",
+
+
     });
 
     res.status(201).json({
@@ -148,7 +149,7 @@ const loginUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find({
-      role: "user",
+
     })
       .select("-password")
       .sort({

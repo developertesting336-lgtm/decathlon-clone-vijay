@@ -133,6 +133,33 @@
   color: #111;
 }
 
+/* NAVBAR VISUAL SEARCH BUTTON */
+.navbar-visual-search-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  margin-left: 8px;
+  border-radius: 50%;
+  color: #0082c3;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.navbar-visual-search-btn:hover {
+  background: #e0f2fe;
+  color: #026ca3;
+  transform: scale(1.1);
+}
+
+.visual-search-cam-icon {
+  width: 19px;
+  height: 19px;
+}
+
 .search-cursor {
   width: 1px;
   height: 19px;
@@ -988,6 +1015,12 @@
   border-radius: 9999px;
 }
 
+.notification-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .notification-mark-all {
   background: none;
   border: none;
@@ -1001,6 +1034,22 @@
 
 .notification-mark-all:hover {
   text-decoration: underline;
+}
+
+.notification-clear-read {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.notification-clear-read:hover {
+  text-decoration: underline;
+  color: #b91c1c;
 }
 
 .notification-dropdown-body {
@@ -1087,6 +1136,38 @@
   margin: 0;
   line-height: 1.35;
   word-break: break-word;
+}
+
+.notification-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.notif-delete-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 13px;
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.notification-item:hover .notif-delete-btn {
+  opacity: 1;
+}
+
+.notif-delete-btn:hover {
+  color: #dc2626;
+  background: #fee2e2;
 }
 
 .notif-unread-dot {

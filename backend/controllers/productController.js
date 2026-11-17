@@ -984,10 +984,22 @@ const getProductById = async (req, res) => {
     const discountPercent = originalPrice > 0 ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
 
     let history = Array.isArray(product.priceHistory) && product.priceHistory.length > 0
-      ? product.priceHistory
+      ? product.priceHistory.map((h) => (h.toObject ? h.toObject() : { ...h }))
       : [];
 
-    if (history.length === 0) {
+    if (history.length > 0) {
+      const last = history[history.length - 1];
+      const lastEff = Number(last.effectivePrice || last.discountPrice || last.price || 0);
+      if (lastEff !== currentPrice && currentPrice > 0) {
+        history.push({
+          price: originalPrice,
+          discountPrice: currentPrice,
+          effectivePrice: currentPrice,
+          effectiveDate: new Date(),
+          reason: "Current selling price",
+        });
+      }
+    } else {
       const now = Date.now();
       history = [
         {
@@ -1073,10 +1085,22 @@ const getPriceHistory = async (req, res) => {
 
     let history =
       Array.isArray(product.priceHistory) && product.priceHistory.length > 0
-        ? product.priceHistory
+        ? product.priceHistory.map((h) => (h.toObject ? h.toObject() : { ...h }))
         : [];
 
-    if (history.length === 0) {
+    if (history.length > 0) {
+      const last = history[history.length - 1];
+      const lastEff = Number(last.effectivePrice || last.discountPrice || last.price || 0);
+      if (lastEff !== currentPrice && currentPrice > 0) {
+        history.push({
+          price: originalPrice,
+          discountPrice: currentPrice,
+          effectivePrice: currentPrice,
+          effectiveDate: new Date(),
+          reason: "Current selling price",
+        });
+      }
+    } else {
       const now = Date.now();
       history = [
         {

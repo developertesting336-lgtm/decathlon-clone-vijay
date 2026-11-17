@@ -185,4 +185,29 @@ const syncWishlist = async (req, res) => {
 };
 
 
-export { addToWishlist, getWishlist, removeFromWishlist, syncWishlist };
+/*
+========================================
+CLEAR ENTIRE WISHLIST
+========================================
+*/
+const clearWishlist = async (req, res) => {
+  try {
+    const updatedWishlist = await Wishlist.findOneAndUpdate(
+      { user: req.user.id },
+      { $set: { products: [] } },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "Wishlist cleared successfully",
+      wishlist: updatedWishlist || { products: [] },
+    });
+  } catch (error) {
+    console.error("Clear Wishlist Error:", error);
+    return res.status(500).json({
+      message: error.message || "Failed to clear wishlist",
+    });
+  }
+};
+
+export { addToWishlist, getWishlist, removeFromWishlist, syncWishlist, clearWishlist };

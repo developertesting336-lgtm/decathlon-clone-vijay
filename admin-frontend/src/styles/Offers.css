@@ -194,15 +194,18 @@
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
 }
 
 .table-responsive {
   overflow-x: auto;
   width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .offers-table {
   width: 100%;
+  min-width: 960px;
   border-collapse: collapse;
   text-align: left;
 }
@@ -210,16 +213,25 @@
 .offers-table th {
   background: #f8fafc;
   color: #475569;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding: 12px 18px;
+  padding: 12px 14px;
   border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 
+.offers-table th:nth-child(1) { width: 23%; }
+.offers-table th:nth-child(2) { width: 24%; }
+.offers-table th:nth-child(3) { width: 13%; }
+.offers-table th:nth-child(4) { width: 9%; }
+.offers-table th:nth-child(5) { width: 16%; }
+.offers-table th:nth-child(6) { width: 9%; }
+.offers-table th:nth-child(7) { width: 6%; }
+
 .offers-table td {
-  padding: 14px 18px;
+  padding: 14px 14px;
   border-bottom: 1px solid #f1f5f9;
   font-size: 13px;
   vertical-align: middle;
@@ -239,7 +251,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-width: 280px;
+  max-width: 240px;
 }
 
 .offer-name {
@@ -251,6 +263,10 @@
 .offer-banner-preview {
   font-size: 12px;
   color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
 }
 
 .offer-badge-tag {
@@ -269,12 +285,34 @@
 .offer-scope-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 12px;
   font-weight: 600;
   padding: 4px 9px;
   border-radius: 6px;
+  max-width: 230px;
   white-space: nowrap;
+}
+
+.offer-scope-pill svg {
+  flex-shrink: 0;
+  font-size: 14px;
+}
+
+.offer-scope-pill .scope-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.offer-scope-pill .scope-more-count {
+  font-size: 10.5px;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .offer-scope-pill.product {
@@ -336,14 +374,26 @@
   flex-direction: column;
   gap: 3px;
   font-size: 12px;
+  white-space: nowrap;
 }
 
 .schedule-col .date-row {
-  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.schedule-col .date-row strong {
+.schedule-col .date-label {
+  font-weight: 700;
+  color: #64748b;
+  font-size: 11px;
+  width: 34px;
+}
+
+.schedule-col .date-val {
+  font-weight: 600;
   color: #1e293b;
+  font-size: 12px;
 }
 
 /* Status Badges */

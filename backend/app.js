@@ -1,9 +1,14 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
 import dns from "dns";
-import path from "path";
 import http from "http";
 import { Server } from "socket.io";
 import { initSocket } from "./socket/socketManager.js";
@@ -34,6 +39,9 @@ import supportRoutes from "./routes/supportRoutes.js";
 import supportTicketRoutes from "./routes/supportTicketRoutes.js";
 import offerRoutes from "./routes/offerRoutes.js";
 import priceAlertRoutes from "./routes/priceAlertRoutes.js";
+import recentlyViewedRoutes from "./routes/recentlyViewedRoutes.js";
+import recommendationRoutes from "./routes/recommendationRoutes.js";
+import visualSearchRoutes from "./routes/visualSearchRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 import { seedSupportData } from "./seedSupportData.js";
 
@@ -183,6 +191,9 @@ app.use("/auth", adminRoutes);
 
 app.use("/api/categories", categoryRoutes);
 
+app.use("/api/products/visual-search", visualSearchRoutes);
+app.use("/products/visual-search", visualSearchRoutes);
+
 app.use("/api/products", productRoutes);
 
 app.use("/api/cart", cartRoutes);
@@ -225,6 +236,12 @@ app.use("/offers", offerRoutes);
 
 app.use("/api/price-alerts", priceAlertRoutes);
 app.use("/price-alerts", priceAlertRoutes);
+
+app.use("/api/recently-viewed", recentlyViewedRoutes);
+app.use("/recently-viewed", recentlyViewedRoutes);
+
+app.use("/api/recommendations", recommendationRoutes);
+app.use("/recommendations", recommendationRoutes);
 
 app.use("/products", productRoutes);
 
@@ -331,5 +348,5 @@ EXPORT APP & SERVER
 ========================================
 */
 
-export { server, io, isAllowedOrigin };
+export { server, io, isAllowedOrigin, connectDB };
 export default app;

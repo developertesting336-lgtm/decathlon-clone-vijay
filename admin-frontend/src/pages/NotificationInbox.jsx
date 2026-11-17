@@ -403,6 +403,19 @@ const NotificationInbox = () => {
             <MdAssignmentReturn />
           </div>
         );
+      case "OFFER":
+      case "SALE":
+        return (
+          <div className="inbox-type-icon offer" style={{ backgroundColor: "#ffedd5", color: "#ea580c" }}>
+            <MdFlashOn />
+          </div>
+        );
+      case "PRICE_DROP":
+        return (
+          <div className="inbox-type-icon price-drop" style={{ backgroundColor: "#fee2e2", color: "#dc2626" }}>
+            <MdFlashOn />
+          </div>
+        );
       default:
         return (
           <div className="inbox-type-icon default">
@@ -425,6 +438,11 @@ const NotificationInbox = () => {
         return "Manage Stock";
       case "REFUND":
         return "Inspect Refund";
+      case "OFFER":
+      case "SALE":
+        return "View Offers";
+      case "PRICE_DROP":
+        return "View Product";
       default:
         return "Open Details";
     }
@@ -614,6 +632,15 @@ const NotificationInbox = () => {
             onClick={() => handleSendTestNotification("REFUND")}
           >
             + Test Refund
+          </button>
+          <button
+            type="button"
+            className="quick-test-btn offer"
+            style={{ backgroundColor: "#ea580c", color: "#fff", borderColor: "#ea580c" }}
+            disabled={sendingTest}
+            onClick={() => handleSendTestNotification("OFFER")}
+          >
+            + Test Offer / Sale
           </button>
         </div>
       </div>
