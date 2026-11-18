@@ -1,11 +1,13 @@
 import Product from "../models/Product.js";
 
-// List of models in preference order (handles temporary high-demand spikes smoothly)
+// List of models in preference order (gemini-3.5-flash-lite is active and high-speed)
 const VISION_MODELS = [
-  "gemini-3.1-flash-lite",
+  "gemini-3.5-flash-lite",
   "gemini-flash-lite-latest",
   "gemini-3.8-flash",
   "gemini-3.7-flash",
+  "gemini-3.5-flash",
+  "gemini-flash-latest",
 ];
 
 /**
@@ -153,7 +155,7 @@ export const visualProductSearch = async (req, res) => {
     let mimeType = "image/jpeg";
     let filename = "";
 
-    // 1. Extract image buffer from multipart upload
+    // 1. Extract image buffer from multipart upload, base64 payload, or remote imageUrl
     if (req.file && req.file.buffer) {
       base64Data = req.file.buffer.toString("base64");
       mimeType = req.file.mimetype || "image/jpeg";
@@ -169,6 +171,18 @@ export const visualProductSearch = async (req, res) => {
         base64Data = rawBase64;
       }
       filename = "snapshot.jpg";
+    } else if (req.body?.imageUrl) {
+      try {
+        const fetchRes = await fetch(req.body.imageUrl);
+        if (fetchRes.ok) {
+          const arrBuf = await fetchRes.arrayBuffer();
+          base64Data = Buffer.from(arrBuf).toString("base64");
+          mimeType = fetchRes.headers.get("content-type") || "image/jpeg";
+          filename = req.body.imageUrl.split("/").pop() || "sample.jpg";
+        }
+      } catch (e) {
+        console.warn("Failed to fetch imageUrl:", e.message);
+      }
     }
 
     if (!base64Data) {

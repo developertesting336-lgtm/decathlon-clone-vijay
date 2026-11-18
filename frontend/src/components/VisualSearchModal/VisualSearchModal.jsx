@@ -118,26 +118,39 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
       setError(null);
       setPreviewUrl(sample.url);
 
-      // Fetch sample image and convert to File
-      const res = await fetch(sample.url);
-      const blob = await res.blob();
-      const file = new File([blob], `${sample.label.toLowerCase().replace(/\s+/g, "_")}.jpg`, {
-        type: "image/jpeg",
-      });
-      runVisualSearch(file);
+      let file = null;
+      try {
+        const res = await fetch(sample.url);
+        if (res.ok) {
+          const blob = await res.blob();
+          file = new File(
+            [blob],
+            `${sample.label.toLowerCase().replace(/\s+/g, "_")}.jpg`,
+            { type: "image/jpeg" }
+          );
+        }
+      } catch (e) {
+        console.warn("Direct sample fetch error:", e.message);
+      }
+
+      runVisualSearch(file, sample.url);
     } catch {
       setError("Failed to load sample image. Please try uploading your own photo.");
       setIsAnalyzing(false);
     }
   };
 
-  const runVisualSearch = async (file) => {
+  const runVisualSearch = async (file, imageUrl = null) => {
     try {
       setIsAnalyzing(true);
       setError(null);
 
       const formData = new FormData();
-      formData.append("image", file);
+      if (file) {
+        formData.append("image", file);
+      } else if (imageUrl) {
+        formData.append("imageUrl", imageUrl);
+      }
 
       const res = await api.post("/products/visual-search", formData, {
         headers: { "Content-Type": "multipart/form-data" },
