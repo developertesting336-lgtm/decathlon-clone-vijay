@@ -27,7 +27,9 @@ import Navbar from "../components/Navbar";
 import CategoryNav from "../components/pageSections/CategoryNav/CategoryNav";
 import Footer from "../components/pageSections/Footer/Footer";
 import LoadingSpinner from "../components/common/LoadingSpinner";
-import ProductReviews, { StarRating } from "../components/ProductReviews/ProductReviews";
+import ProductReviews, {
+  StarRating,
+} from "../components/ProductReviews/ProductReviews";
 import SizeGuide from "../components/SizeGuide/SizeGuide";
 import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
 import NotifyMe from "../components/NotifyMe/NotifyMe";
@@ -45,32 +47,94 @@ const ProductDetail = () => {
   // (Excludes non-clothing: cycles, dumbbells, shoes, tents, bottles, backpacks, etc.)
   const isClothingProduct = useCallback((item) => {
     if (!item) return false;
-    const text = `${item.name || ""} ${typeof item.category === "string" ? item.category : item.category?.name || ""}`.toLowerCase();
+    const text =
+      `${item.name || ""} ${item.subcategory || ""} ${typeof item.category === "string" ? item.category : item.category?.name || ""}`.toLowerCase();
 
     // Hardware, gear, shoes, bags & accessories (NOT clothing)
     const nonClothing = [
-      /\bcycles?\b/i, /\bbikes?\b/i, /\bbicycles?\b/i, /\bframe\b/i,
-      /\bdumbbells?\b/i, /\bkettlebells?\b/i, /\bweights?\b/i, /\bbench\b/i,
-      /\btents?\b/i, /\bsleeping bag\b/i, /\bmats?\b/i, /\byoga mat\b/i, /\btowels?\b/i,
-      /\bbottles?\b/i, /\bsippers?\b/i, /\bflasks?\b/i,
-      /\bbackpacks?\b/i, /\brucksacks?\b/i, /\bbags?\b/i, /\bpouches?\b/i,
-      /\bshoes?\b/i, /\bboots?\b/i, /\btrainers?\b/i, /\bsneakers?\b/i, /\bsandals?\b/i, /\bflipflops?\b/i,
-      /\bsunglasses\b/i, /\bgoggles\b/i, /\bwatches?\b/i,
-      /\bropes?\b/i, /\bhelmets?\b/i, /\bpumps?\b/i, /\brackets?\b/i, /\bballs?\b/i,
-      /\bskates?\b/i, /\bskateboards?\b/i, /\brollers?\b/i
+      /\bcycles?\b/i,
+      /\bbikes?\b/i,
+      /\bbicycles?\b/i,
+      /\bframe\b/i,
+      /\bdumbbells?\b/i,
+      /\bkettlebells?\b/i,
+      /\bweights?\b/i,
+      /\bbench\b/i,
+      /\btents?\b/i,
+      /\bsleeping bag\b/i,
+      /\bmats?\b/i,
+      /\byoga mat\b/i,
+      /\btowels?\b/i,
+      /\bbottles?\b/i,
+      /\bsippers?\b/i,
+      /\bflasks?\b/i,
+      /\bbackpacks?\b/i,
+      /\brucksacks?\b/i,
+      /\bbags?\b/i,
+      /\bpouches?\b/i,
+      /\bshoes?\b/i,
+      /\bboots?\b/i,
+      /\btrainers?\b/i,
+      /\bsneakers?\b/i,
+      /\bsandals?\b/i,
+      /\bflipflops?\b/i,
+      /\bsunglasses\b/i,
+      /\bgoggles\b/i,
+      /\bwatches?\b/i,
+      /\bropes?\b/i,
+      /\bhelmets?\b/i,
+      /\bpumps?\b/i,
+      /\brackets?\b/i,
+      /\bballs?\b/i,
+      /\bskates?\b/i,
+      /\bskateboards?\b/i,
+      /\brollers?\b/i,
     ];
     if (nonClothing.some((r) => r.test(text))) return false;
 
+    // Has apparel sizes (S, M, L, XL, etc.)
+    const hasApparelSizes =
+      Array.isArray(item.size) &&
+      item.size.some((s) =>
+        /^(xs|s|m|l|xl|xxl|2xl|3xl|\d{2,3})$/i.test(String(s).trim())
+      );
+    if (hasApparelSizes) return true;
+
     // Wearable apparel
     const clothing = [
-      /\bshirts?\b/i, /\bt-?shirts?\b/i, /\btees?\b/i, /\bpolos?\b/i,
-      /\bjackets?\b/i, /\bcoats?\b/i, /\braincoats?\b/i, /\bwindproof\b/i,
-      /\bfleece\b/i, /\bvests?\b/i, /\bhoodies?\b/i, /\bsweatshirts?\b/i,
-      /\bsweaters?\b/i, /\bjerseys?\b/i, /\btops?\b/i, /\btanks?\b/i,
-      /\btrackpants?\b/i, /\bpants?\b/i, /\btrousers?\b/i, /\bshorts?\b/i,
-      /\bjoggers?\b/i, /\bleggings?\b/i, /\btights?\b/i, /\bbottoms?\b/i,
-      /\bjeans?\b/i, /\bskirts?\b/i, /\bactivewear\b/i, /\bsportswear\b/i,
-      /\bgym\b/i, /\bfitness\b/i
+      /\bshirts?\b/i,
+      /\bt-?shirts?\b/i,
+      /\btees?\b/i,
+      /\bpolos?\b/i,
+      /\bjackets?\b/i,
+      /\bcoats?\b/i,
+      /\braincoats?\b/i,
+      /\bwindproof\b/i,
+      /\bfleece\b/i,
+      /\bvests?\b/i,
+      /\bhoodies?\b/i,
+      /\bsweatshirts?\b/i,
+      /\bsweaters?\b/i,
+      /\bjerseys?\b/i,
+      /\btops?\b/i,
+      /\btanks?\b/i,
+      /\btrackpants?\b/i,
+      /\bpants?\b/i,
+      /\btrousers?\b/i,
+      /\bshorts?\b/i,
+      /\bjoggers?\b/i,
+      /\bleggings?\b/i,
+      /\btights?\b/i,
+      /\bbottoms?\b/i,
+      /\bjeans?\b/i,
+      /\bskirts?\b/i,
+      /\bactivewear\b/i,
+      /\bsportswear\b/i,
+      /\bapparel\b/i,
+      /\bclothing\b/i,
+      /\bgym\b/i,
+      /\bfitness\b/i,
+      /\bhiking\b/i,
     ];
     return clothing.some((r) => r.test(text));
   }, []);
@@ -95,7 +159,9 @@ const ProductDetail = () => {
 
   // Pincode check synced with real-time delivery location
   const { location: deliveryLocation } = useDeliveryLocation();
-  const [pincode, setPincode] = useState(() => deliveryLocation.pincode || "560001");
+  const [pincode, setPincode] = useState(
+    () => deliveryLocation.pincode || "560001",
+  );
 
   useEffect(() => {
     if (deliveryLocation?.pincode) {
@@ -121,16 +187,20 @@ const ProductDetail = () => {
   const handleRatingUpdate = useCallback(({ averageRating, reviewCount }) => {
     setRatingSummary({ averageRating, reviewCount });
     setProduct((prev) =>
-      prev ? { ...prev, averageRating, reviewCount } : prev
+      prev ? { ...prev, averageRating, reviewCount } : prev,
     );
   }, []);
 
   // Price formatter
-  const formatPrice = (price) => `₹${Number(price || 0).toLocaleString("en-IN")}`;
+  const formatPrice = (price) =>
+    `₹${Number(price || 0).toLocaleString("en-IN")}`;
 
   const getImageUrl = (image) => {
     if (!image) return null;
-    if (typeof image === "string" && (image.startsWith("http://") || image.startsWith("https://"))) {
+    if (
+      typeof image === "string" &&
+      (image.startsWith("http://") || image.startsWith("https://"))
+    ) {
       return image;
     }
     const apiBaseUrl = api.defaults.baseURL || "";
@@ -172,10 +242,14 @@ const ProductDetail = () => {
               ? Number(prod.discountPrice)
               : Number(prod.price) || 0;
 
-          const existingGuestStr = localStorage.getItem("recently_viewed_guest");
+          const existingGuestStr = localStorage.getItem(
+            "recently_viewed_guest",
+          );
           let guestList = existingGuestStr ? JSON.parse(existingGuestStr) : [];
           if (!Array.isArray(guestList)) guestList = [];
-          guestList = guestList.filter((g) => (g.productId || g._id) !== prod._id);
+          guestList = guestList.filter(
+            (g) => (g.productId || g._id) !== prod._id,
+          );
           guestList.unshift({
             _id: prod._id,
             productId: prod._id,
@@ -183,17 +257,25 @@ const ProductDetail = () => {
             viewedPrice: currentPrice,
             lastViewedAt: new Date().toISOString(),
           });
-          localStorage.setItem("recently_viewed_guest", JSON.stringify(guestList.slice(0, 20)));
+          localStorage.setItem(
+            "recently_viewed_guest",
+            JSON.stringify(guestList.slice(0, 20)),
+          );
 
-          const token = localStorage.getItem("token") || localStorage.getItem("userToken");
+          const token =
+            localStorage.getItem("token") || localStorage.getItem("userToken");
           if (token) {
-            api.post("/recently-viewed", { productId: prod._id }).catch(() => {});
+            api
+              .post("/recently-viewed", { productId: prod._id })
+              .catch(() => {});
           }
         } catch (viewErr) {
           console.warn("Could not record recently viewed:", viewErr);
         }
         setRatingSummary({
-          averageRating: Number(prod.averageRating || prod.rating || prod.review || 0),
+          averageRating: Number(
+            prod.averageRating || prod.rating || prod.review || 0,
+          ),
           reviewCount: Number(prod.reviewCount || 0),
         });
         document.title = `${prod.name || "Product"} | Decathlon`;
@@ -222,7 +304,8 @@ const ProductDetail = () => {
     }
 
     const handleProductRealtime = (payload) => {
-      const updatedId = payload?.productId || payload?.product?._id || payload?._id;
+      const updatedId =
+        payload?.productId || payload?.product?._id || payload?._id;
       if (updatedId === id) {
         if (payload?.type === "product_deleted") {
           setError("This product has been removed");
@@ -310,7 +393,9 @@ const ProductDetail = () => {
       if (pushRes?.success) {
         toast.success("Price tracking enabled with Web Push alerts!");
       } else {
-        toast.success("Price alert set! You will receive notifications when the price drops.");
+        toast.success(
+          "Price alert set! You will receive notifications when the price drops.",
+        );
       }
     } catch (err) {
       console.error(err);
@@ -342,23 +427,31 @@ const ProductDetail = () => {
   }, [priceComparison, product, originalPrice, currentPrice]);
 
   const priceDropAmount = useMemo(() => {
-    if (priceComparison?.priceDrop !== undefined) return priceComparison.priceDrop;
+    if (priceComparison?.priceDrop !== undefined)
+      return priceComparison.priceDrop;
     return previousPrice > currentPrice ? previousPrice - currentPrice : 0;
   }, [priceComparison, previousPrice, currentPrice]);
 
   const savingsAmount = useMemo(() => {
-    if (priceComparison?.totalSavings !== undefined) return priceComparison.totalSavings;
+    if (priceComparison?.totalSavings !== undefined)
+      return priceComparison.totalSavings;
     return originalPrice > currentPrice ? originalPrice - currentPrice : 0;
   }, [priceComparison, originalPrice, currentPrice]);
 
   const discountPercentage = useMemo(() => {
-    if (priceComparison?.discountPercent !== undefined) return priceComparison.discountPercent;
-    return originalPrice > 0 ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
+    if (priceComparison?.discountPercent !== undefined)
+      return priceComparison.discountPercent;
+    return originalPrice > 0
+      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+      : 0;
   }, [priceComparison, originalPrice, currentPrice]);
 
   const lowestPriceIn30Days = useMemo(() => {
-    if (priceComparison?.lowestPriceIn30Days) return priceComparison.lowestPriceIn30Days;
-    return product?.lowestPriceIn30Days || Math.min(currentPrice, previousPrice);
+    if (priceComparison?.lowestPriceIn30Days)
+      return priceComparison.lowestPriceIn30Days;
+    return (
+      product?.lowestPriceIn30Days || Math.min(currentPrice, previousPrice)
+    );
   }, [priceComparison, product, currentPrice, previousPrice]);
 
   const priceHistoryTimeline = useMemo(() => {
@@ -385,7 +478,12 @@ const ProductDetail = () => {
 
     // Ensure the active current price is always the final 'Current' point
     const lastItem = list[list.length - 1];
-    const lastEffPrice = Number(lastItem?.effectivePrice || lastItem?.discountPrice || lastItem?.price || 0);
+    const lastEffPrice = Number(
+      lastItem?.effectivePrice ||
+        lastItem?.discountPrice ||
+        lastItem?.price ||
+        0,
+    );
     if (lastEffPrice !== currentPrice && currentPrice > 0) {
       list.push({
         price: originalPrice,
@@ -424,7 +522,7 @@ const ProductDetail = () => {
       toast.success(
         locLabel
           ? `Delivery available to ${locLabel} (${cleanPin})`
-          : `Delivery is available for pincode ${cleanPin}`
+          : `Delivery is available for pincode ${cleanPin}`,
       );
     } catch {
       toast.success(`Delivery is available for pincode ${cleanPin}`);
@@ -436,12 +534,18 @@ const ProductDetail = () => {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Product link copied to clipboard!");
     } else {
-      toast.success("Share product ID: " + (product?._id?.slice(-7) || "8404222"));
+      toast.success(
+        "Share product ID: " + (product?._id?.slice(-7) || "8404222"),
+      );
     }
   };
 
   // Add to cart handler
-  const handleAddToCart = async (targetProduct = product, targetSize = selectedSize, targetColor = selectedColor) => {
+  const handleAddToCart = async (
+    targetProduct = product,
+    targetSize = selectedSize,
+    targetColor = selectedColor,
+  ) => {
     const sizes = Array.isArray(targetProduct.size) ? targetProduct.size : [];
     if (sizes.length > 0 && !targetSize) {
       toast.error("Please select a size");
@@ -450,7 +554,12 @@ const ProductDetail = () => {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      const res = addToGuestCart(targetProduct, targetSize || "", targetColor || "", 1);
+      const res = addToGuestCart(
+        targetProduct,
+        targetSize || "",
+        targetColor || "",
+        1,
+      );
       if (res.success) {
         toast.success(res.message);
       } else {
@@ -473,7 +582,7 @@ const ProductDetail = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.success("Added to cart successfully!");
@@ -497,7 +606,11 @@ const ProductDetail = () => {
         <Navbar />
         <CategoryNav />
         <div className="product-detail-container">
-          <LoadingSpinner message="Loading product details..." minHeight="55vh" size="large" />
+          <LoadingSpinner
+            message="Loading product details..."
+            minHeight="55vh"
+            size="large"
+          />
         </div>
         <Footer />
       </div>
@@ -509,9 +622,25 @@ const ProductDetail = () => {
       <div className="product-detail-page">
         <Navbar />
         <div className="product-detail-container">
-          <div style={{ minHeight: "450px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "14px" }}>
+          <div
+            style={{
+              minHeight: "450px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "14px",
+            }}
+          >
             <h2>{error || "Product Not Found"}</h2>
-            <Link to="/" style={{ color: "#3643ba", fontWeight: 600, textDecoration: "underline" }}>
+            <Link
+              to="/"
+              style={{
+                color: "#3643ba",
+                fontWeight: 600,
+                textDecoration: "underline",
+              }}
+            >
               Return to Homepage
             </Link>
           </div>
@@ -521,7 +650,9 @@ const ProductDetail = () => {
     );
   }
 
-  const images = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+  const images = Array.isArray(product.images)
+    ? product.images.filter(Boolean)
+    : [];
   const displayImages = images.slice(0, 4);
   const remainingImagesCount = images.length > 4 ? images.length - 4 : 0;
 
@@ -531,7 +662,6 @@ const ProductDetail = () => {
       <CategoryNav />
 
       <main className="product-detail-container">
-
         {/* =====================================================
             MAIN 2-COLUMN GRID (MOSAIC LEFT + BUYBOX RIGHT)
         ===================================================== */}
@@ -541,9 +671,14 @@ const ProductDetail = () => {
             {displayImages.length > 0 ? (
               displayImages.map((img, idx) => (
                 <div key={idx} className="pdp-mosaic-item">
-                  <img src={getImageUrl(img)} alt={`${product.name} view ${idx + 1}`} />
+                  <img
+                    src={getImageUrl(img)}
+                    alt={`${product.name} view ${idx + 1}`}
+                  />
                   {idx === 3 && remainingImagesCount > 0 && (
-                    <span className="pdp-mosaic-badge-more">{remainingImagesCount} more</span>
+                    <span className="pdp-mosaic-badge-more">
+                      {remainingImagesCount} more
+                    </span>
                   )}
                 </div>
               ))
@@ -570,10 +705,19 @@ const ProductDetail = () => {
           <div className="pdp-buybox-sticky">
             {/* Brand & ID Share */}
             <div className="pdp-brand-row">
-              <span className="pdp-brand-text">{product.brand || "DOMYOS"}</span>
+              <span className="pdp-brand-text">
+                {product.brand || "DOMYOS"}
+              </span>
               <div className="pdp-id-share-box">
-                <span>ID {product._id?.slice(-7).toUpperCase() || "8404222"}</span>
-                <button type="button" className="pdp-share-icon-btn" onClick={handleShare} aria-label="Share">
+                <span>
+                  ID {product._id?.slice(-7).toUpperCase() || "8404222"}
+                </span>
+                <button
+                  type="button"
+                  className="pdp-share-icon-btn"
+                  onClick={handleShare}
+                  aria-label="Share"
+                >
                   <FiShare2 />
                 </button>
               </div>
@@ -602,21 +746,40 @@ const ProductDetail = () => {
               {(product?.appliedOffer || priceComparison?.appliedOffer) && (
                 <div className="pdp-active-offer-banner">
                   <div className="pdp-offer-badge-tag">
-                    <FiTag /> {(product?.appliedOffer || priceComparison?.appliedOffer).badgeLabel || "Special Offer"}
+                    <FiTag />{" "}
+                    {(product?.appliedOffer || priceComparison?.appliedOffer)
+                      .badgeLabel || "Special Offer"}
                   </div>
-                  <span className="pdp-offer-title">{(product?.appliedOffer || priceComparison?.appliedOffer).title}</span>
-                  {(product?.appliedOffer || priceComparison?.appliedOffer).bannerText && (
-                    <span className="pdp-offer-subtext">{(product?.appliedOffer || priceComparison?.appliedOffer).bannerText}</span>
+                  <span className="pdp-offer-title">
+                    {
+                      (product?.appliedOffer || priceComparison?.appliedOffer)
+                        .title
+                    }
+                  </span>
+                  {(product?.appliedOffer || priceComparison?.appliedOffer)
+                    .bannerText && (
+                    <span className="pdp-offer-subtext">
+                      {
+                        (product?.appliedOffer || priceComparison?.appliedOffer)
+                          .bannerText
+                      }
+                    </span>
                   )}
                 </div>
               )}
               <div className="pdp-price-primary-row">
-                <span className="pdp-current-price-val">{formatPrice(currentPrice)}</span>
+                <span className="pdp-current-price-val">
+                  {formatPrice(currentPrice)}
+                </span>
                 {originalPrice > currentPrice && (
-                  <span className="pdp-mrp-strike-val">MRP {formatPrice(originalPrice)}</span>
+                  <span className="pdp-mrp-strike-val">
+                    MRP {formatPrice(originalPrice)}
+                  </span>
                 )}
                 {discountPercentage > 0 && (
-                  <span className="pdp-discount-pill">{discountPercentage}% OFF</span>
+                  <span className="pdp-discount-pill">
+                    {discountPercentage}% OFF
+                  </span>
                 )}
               </div>
 
@@ -624,14 +787,18 @@ const ProductDetail = () => {
               <div className="pdp-savings-callout-row">
                 {savingsAmount > 0 && (
                   <span className="pdp-save-badge">
-                    Save <strong>{formatPrice(savingsAmount)}</strong> ({discountPercentage}%)
+                    Save <strong>{formatPrice(savingsAmount)}</strong> (
+                    {discountPercentage}%)
                   </span>
                 )}
 
                 {priceDropAmount > 0 && (
                   <span className="pdp-price-drop-badge">
                     <FiTrendingDown />
-                    <span>Price dropped by <strong>{formatPrice(priceDropAmount)}</strong></span>
+                    <span>
+                      Price dropped by{" "}
+                      <strong>{formatPrice(priceDropAmount)}</strong>
+                    </span>
                   </span>
                 )}
               </div>
@@ -641,14 +808,18 @@ const ProductDetail = () => {
                 {previousPrice > 0 && previousPrice !== currentPrice && (
                   <div className="pdp-price-meta-item">
                     <span className="meta-label">Previous:</span>
-                    <strong className="meta-val">{formatPrice(previousPrice)}</strong>
+                    <strong className="meta-val">
+                      {formatPrice(previousPrice)}
+                    </strong>
                   </div>
                 )}
 
                 {lowestPriceIn30Days > 0 && (
                   <div className="pdp-price-meta-item">
                     <span className="meta-label">30-day low:</span>
-                    <strong className="meta-val highlight-lowest">{formatPrice(lowestPriceIn30Days)}</strong>
+                    <strong className="meta-val highlight-lowest">
+                      {formatPrice(lowestPriceIn30Days)}
+                    </strong>
                     {currentPrice <= lowestPriceIn30Days && (
                       <span className="pdp-best-price-tag">Best Price</span>
                     )}
@@ -666,7 +837,9 @@ const ProductDetail = () => {
                   }
                 >
                   <FiBell />
-                  <span>{isPriceTracking ? "Tracking Active" : "Track Price Drop"}</span>
+                  <span>
+                    {isPriceTracking ? "Tracking Active" : "Track Price Drop"}
+                  </span>
                 </button>
 
                 <button
@@ -693,40 +866,50 @@ const ProductDetail = () => {
               </div>
 
               <div className="pdp-colour-thumbnails-row">
-                {Array.isArray(product.color) && product.color.length > 0 ? (
-                  product.color.map((color, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className={`pdp-colour-card-btn ${selectedColor === color ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedColor(color);
-                        toast.success(`Selected color: ${color}`, { id: "pdp-color-toast" });
-                      }}
-                      title={color}
-                    >
-                      {images.length > 0 ? (
-                        <img src={getImageUrl(images[idx % images.length])} alt={color} />
-                      ) : (
-                        <span style={{ fontSize: 11, color: "#64748b" }}>{color}</span>
-                      )}
-                    </button>
-                  ))
-                ) : (
-                  [0, 1, 2, 3].map((idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className={`pdp-colour-card-btn ${idx === 0 ? "active" : ""}`}
-                    >
-                      {images.length > 0 ? (
-                        <img src={getImageUrl(images[idx % images.length])} alt={`Color option ${idx + 1}`} />
-                      ) : (
-                        <span style={{ fontSize: 11, color: "#64748b" }}>Option {idx + 1}</span>
-                      )}
-                    </button>
-                  ))
-                )}
+                {Array.isArray(product.color) && product.color.length > 0
+                  ? product.color.map((color, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`pdp-colour-card-btn ${selectedColor === color ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedColor(color);
+                          toast.success(`Selected color: ${color}`, {
+                            id: "pdp-color-toast",
+                          });
+                        }}
+                        title={color}
+                      >
+                        {images.length > 0 ? (
+                          <img
+                            src={getImageUrl(images[idx % images.length])}
+                            alt={color}
+                          />
+                        ) : (
+                          <span style={{ fontSize: 11, color: "#64748b" }}>
+                            {color}
+                          </span>
+                        )}
+                      </button>
+                    ))
+                  : [0, 1, 2, 3].map((idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`pdp-colour-card-btn ${idx === 0 ? "active" : ""}`}
+                      >
+                        {images.length > 0 ? (
+                          <img
+                            src={getImageUrl(images[idx % images.length])}
+                            alt={`Color option ${idx + 1}`}
+                          />
+                        ) : (
+                          <span style={{ fontSize: 11, color: "#64748b" }}>
+                            Option {idx + 1}
+                          </span>
+                        )}
+                      </button>
+                    ))}
               </div>
             </div>
 
@@ -736,7 +919,8 @@ const ProductDetail = () => {
                 <span className="pdp-size-label-text">Select size</span>
                 {Boolean(
                   product.category ||
-                    (Array.isArray(product.categories) && product.categories.length > 0)
+                  (Array.isArray(product.categories) &&
+                    product.categories.length > 0),
                 ) && (
                   <button
                     type="button"
@@ -750,38 +934,42 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              <div className="pdp-fit-text-muted">72% of users say this fits as expected</div>
+              <div className="pdp-fit-text-muted">
+                72% of users say this fits as expected
+              </div>
 
               <div className="pdp-size-boxes-row">
-                {Array.isArray(product.size) && product.size.length > 0 ? (
-                  product.size.map((sz, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      className={`pdp-size-btn-rect ${selectedSize === sz ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedSize(sz);
-                        toast.success(`Selected size: ${sz}`, { id: "pdp-size-toast" });
-                      }}
-                    >
-                      {sz}
-                    </button>
-                  ))
-                ) : (
-                  ["S", "M", "L", "XL", "2XL"].map((sz, idx) => (
-                    <button
-                      key={sz}
-                      type="button"
-                      className={`pdp-size-btn-rect ${selectedSize === sz || (!selectedSize && idx === 0) ? "active" : ""}`}
-                      onClick={() => {
-                        setSelectedSize(sz);
-                        toast.success(`Selected size: ${sz}`, { id: "pdp-size-toast" });
-                      }}
-                    >
-                      {sz}
-                    </button>
-                  ))
-                )}
+                {Array.isArray(product.size) && product.size.length > 0
+                  ? product.size.map((sz, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        className={`pdp-size-btn-rect ${selectedSize === sz ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedSize(sz);
+                          toast.success(`Selected size: ${sz}`, {
+                            id: "pdp-size-toast",
+                          });
+                        }}
+                      >
+                        {sz}
+                      </button>
+                    ))
+                  : ["S", "M", "L", "XL", "2XL"].map((sz, idx) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        className={`pdp-size-btn-rect ${selectedSize === sz || (!selectedSize && idx === 0) ? "active" : ""}`}
+                        onClick={() => {
+                          setSelectedSize(sz);
+                          toast.success(`Selected size: ${sz}`, {
+                            id: "pdp-size-toast",
+                          });
+                        }}
+                      >
+                        {sz}
+                      </button>
+                    ))}
               </div>
 
               {/* AI Virtual Try-On Trigger - Only shown for Clothing / Apparel */}
@@ -814,7 +1002,11 @@ const ProductDetail = () => {
                   onClick={() => handleToggle(product._id, product)}
                   aria-label="Wishlist"
                 >
-                  {isWishlisted(product._id) ? <MdFavorite /> : <MdFavoriteBorder />}
+                  {isWishlisted(product._id) ? (
+                    <MdFavorite />
+                  ) : (
+                    <MdFavoriteBorder />
+                  )}
                 </button>
 
                 <button
@@ -840,7 +1032,8 @@ const ProductDetail = () => {
               </div>
               <div className="pdp-guarantee-line">
                 <div className="pdp-guarantee-item">
-                  <FiRotateCcw style={{ color: "#f57c00" }} /> <span>30 days return</span>
+                  <FiRotateCcw style={{ color: "#f57c00" }} />{" "}
+                  <span>30 days return</span>
                 </div>
               </div>
             </div>
@@ -848,17 +1041,26 @@ const ProductDetail = () => {
             {/* Delivery & Services Box */}
             <div className="pdp-delivery-card-box">
               <div className="pdp-delivery-title-bold">Delivery & services</div>
-              <div className="pdp-sold-by-subtext">Sold and fulfilled by: Decathlon Sports India Pvt Ltd</div>
+              <div className="pdp-sold-by-subtext">
+                Sold and fulfilled by: Decathlon Sports India Pvt Ltd
+              </div>
 
               <div className="pdp-pincode-input-frame">
                 <input
                   type="text"
                   maxLength={6}
                   value={pincode}
-                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
+                  onChange={(e) =>
+                    setPincode(e.target.value.replace(/\D/g, ""))
+                  }
                   placeholder="560001"
                 />
-                <button type="button" className="pdp-pincode-edit-btn" onClick={handleCheckPincode} aria-label="Edit Pincode">
+                <button
+                  type="button"
+                  className="pdp-pincode-edit-btn"
+                  onClick={handleCheckPincode}
+                  aria-label="Edit Pincode"
+                >
                   <FiEdit2 />
                 </button>
               </div>
@@ -867,7 +1069,9 @@ const ProductDetail = () => {
                 <span className="pdp-green-dot"></span>
                 <div className="pdp-bullet-content">
                   <strong>Standard delivery by {deliveryDateString}</strong>
-                  <span className="pdp-green-order-timer">Order within 8hrs 8mins</span>
+                  <span className="pdp-green-order-timer">
+                    Order within 8hrs 8mins
+                  </span>
                 </div>
               </div>
 
@@ -877,7 +1081,9 @@ const ProductDetail = () => {
                   <strong>Pick up from store within 2 Hours for FREE</strong>
                   <span
                     className="pdp-view-stores-link"
-                    onClick={() => toast("Pickup available at nearest Decathlon store")}
+                    onClick={() =>
+                      toast("Pickup available at nearest Decathlon store")
+                    }
                   >
                     View stores
                   </span>
@@ -895,7 +1101,10 @@ const ProductDetail = () => {
         {/* =====================================================
             BENEFITS SECTION (SCREENSHOT 3 & 4)
         ===================================================== */}
-        <section className="pdp-benefits-section-decathlon" id="benefits-section">
+        <section
+          className="pdp-benefits-section-decathlon"
+          id="benefits-section"
+        >
           <h3>Benefits</h3>
 
           <div className="pdp-benefits-cards-grid">
@@ -935,7 +1144,11 @@ const ProductDetail = () => {
             <div>
               <div
                 className="pdp-accordion-trigger-row"
-                onClick={() => setOpenAccordion(openAccordion === "details" ? null : "details")}
+                onClick={() =>
+                  setOpenAccordion(
+                    openAccordion === "details" ? null : "details",
+                  )
+                }
               >
                 <span className="trigger-title">Product details</span>
                 <FiChevronRight />
@@ -943,7 +1156,9 @@ const ProductDetail = () => {
 
               <div
                 className="pdp-accordion-trigger-row"
-                onClick={() => setOpenAccordion(openAccordion === "tech" ? null : "tech")}
+                onClick={() =>
+                  setOpenAccordion(openAccordion === "tech" ? null : "tech")
+                }
               >
                 <span className="trigger-title">Technical information</span>
                 <FiChevronRight />
@@ -953,7 +1168,9 @@ const ProductDetail = () => {
             <div>
               <div
                 className="pdp-accordion-trigger-row"
-                onClick={() => setOpenAccordion(openAccordion === "specs" ? null : "specs")}
+                onClick={() =>
+                  setOpenAccordion(openAccordion === "specs" ? null : "specs")
+                }
               >
                 <span className="trigger-title">Product specifications</span>
                 <FiChevronRight />
@@ -970,12 +1187,16 @@ const ProductDetail = () => {
                 )}
                 {openAccordion === "specs" && (
                   <div>
-                    <strong>Main fabric:</strong> 100% Recycled Polyester | <strong>Fit:</strong> Slim Fit / Jogger Style | <strong>Brand:</strong> {product.brand || "DOMYOS"} | <strong>Model Code:</strong> 8404222
+                    <strong>Main fabric:</strong> 100% Recycled Polyester |{" "}
+                    <strong>Fit:</strong> Slim Fit / Jogger Style |{" "}
+                    <strong>Brand:</strong> {product.brand || "DOMYOS"} |{" "}
+                    <strong>Model Code:</strong> 8404222
                   </div>
                 )}
                 {openAccordion === "tech" && (
                   <div>
-                    <strong>Care Advice:</strong> Wash inside out at 30Â°C. Quick-dry synthetic mesh. Do not dry clean or bleach.
+                    <strong>Care Advice:</strong> Wash inside out at 30Â°C.
+                    Quick-dry synthetic mesh. Do not dry clean or bleach.
                   </div>
                 )}
               </div>
@@ -989,7 +1210,8 @@ const ProductDetail = () => {
         <section className="pdp-know-product-section">
           <h2>Know your Product</h2>
           <p className="subtext">
-            Our products are built to elevate experience and drive you to your full potential with comfort and ease like never before
+            Our products are built to elevate experience and drive you to your
+            full potential with comfort and ease like never before
           </p>
 
           <div className="pdp-know-grid">
@@ -1059,8 +1281,14 @@ const ProductDetail = () => {
 
       {/* Price Alert & Web Push Modal */}
       {showPriceAlertModal && (
-        <div className="pdp-modal-overlay" onClick={() => setShowPriceAlertModal(false)}>
-          <div className="pdp-price-alert-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="pdp-modal-overlay"
+          onClick={() => setShowPriceAlertModal(false)}
+        >
+          <div
+            className="pdp-price-alert-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="pdp-modal-header">
               <div className="modal-header-titles">
                 <h3>Track Price Drop & Web Push Alerts</h3>
@@ -1080,12 +1308,16 @@ const ProductDetail = () => {
               <div className="alert-price-preview">
                 <div className="alert-price-box">
                   <span className="box-label">Current Selling Price</span>
-                  <strong className="box-val">{formatPrice(currentPrice)}</strong>
+                  <strong className="box-val">
+                    {formatPrice(currentPrice)}
+                  </strong>
                 </div>
                 <div className="alert-arrow">➔</div>
                 <div className="alert-price-box target">
                   <span className="box-label">Alert Below Target</span>
-                  <strong className="box-val">{formatPrice(targetPriceInput || currentPrice)}</strong>
+                  <strong className="box-val">
+                    {formatPrice(targetPriceInput || currentPrice)}
+                  </strong>
                 </div>
               </div>
 
@@ -1100,7 +1332,9 @@ const ProductDetail = () => {
                   placeholder={`e.g. ${Math.round(currentPrice * 0.9)}`}
                   required
                 />
-                <small>Leave as default or set a custom target price threshold.</small>
+                <small>
+                  Leave as default or set a custom target price threshold.
+                </small>
               </div>
 
               <div className="pdp-alert-field">
@@ -1118,7 +1352,11 @@ const ProductDetail = () => {
                 <div className="callout-icon">🔔</div>
                 <div>
                   <strong>Instant Web Push Alerts Included</strong>
-                  <p>When you click 'Enable Price Alerts', your browser will ask to allow notifications so you get native OS alerts instantly on this device even if the browser is minimized.</p>
+                  <p>
+                    When you click 'Enable Price Alerts', your browser will ask
+                    to allow notifications so you get native OS alerts instantly
+                    on this device even if the browser is minimized.
+                  </p>
                 </div>
               </div>
 
@@ -1145,8 +1383,14 @@ const ProductDetail = () => {
 
       {/* Price History & Trends Modal */}
       {showPriceHistoryModal && (
-        <div className="pdp-modal-overlay" onClick={() => setShowPriceHistoryModal(false)}>
-          <div className="pdp-price-history-modal" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="pdp-modal-overlay"
+          onClick={() => setShowPriceHistoryModal(false)}
+        >
+          <div
+            className="pdp-price-history-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="pdp-modal-header">
               <div className="modal-header-titles">
                 <h3>Price History & Comparison</h3>
@@ -1165,19 +1409,27 @@ const ProductDetail = () => {
             <div className="pdp-history-summary-grid">
               <div className="summary-stat-box">
                 <span className="stat-label">Current Selling Price</span>
-                <strong className="stat-value current">{formatPrice(currentPrice)}</strong>
+                <strong className="stat-value current">
+                  {formatPrice(currentPrice)}
+                </strong>
               </div>
               <div className="summary-stat-box">
                 <span className="stat-label">Original MRP</span>
-                <strong className="stat-value">{formatPrice(originalPrice)}</strong>
+                <strong className="stat-value">
+                  {formatPrice(originalPrice)}
+                </strong>
               </div>
               <div className="summary-stat-box">
                 <span className="stat-label">Previous Price</span>
-                <strong className="stat-value">{formatPrice(previousPrice)}</strong>
+                <strong className="stat-value">
+                  {formatPrice(previousPrice)}
+                </strong>
               </div>
               <div className="summary-stat-box">
                 <span className="stat-label">30-Day Lowest</span>
-                <strong className="stat-value lowest">{formatPrice(lowestPriceIn30Days)}</strong>
+                <strong className="stat-value lowest">
+                  {formatPrice(lowestPriceIn30Days)}
+                </strong>
               </div>
             </div>
 
@@ -1190,39 +1442,58 @@ const ProductDetail = () => {
               />
 
               <h4>Historical Product Pricing Records</h4>
-              <p className="timeline-subtitle">Track price adjustments over time to make informed purchasing decisions</p>
+              <p className="timeline-subtitle">
+                Track price adjustments over time to make informed purchasing
+                decisions
+              </p>
 
               <div className="pdp-timeline-list">
                 {priceHistoryTimeline.map((item, index) => {
                   const effPrice = item.effectivePrice || item.price;
-                  const percentOfMRP = Math.round((effPrice / (originalPrice || 1)) * 100);
+                  const percentOfMRP = Math.round(
+                    (effPrice / (originalPrice || 1)) * 100,
+                  );
                   const isCurrent = index === priceHistoryTimeline.length - 1;
 
                   return (
-                    <div key={index} className={`pdp-timeline-item ${isCurrent ? "current" : ""}`}>
+                    <div
+                      key={index}
+                      className={`pdp-timeline-item ${isCurrent ? "current" : ""}`}
+                    >
                       <div className="timeline-date-col">
                         <span className="timeline-date">
-                          {new Date(item.effectiveDate).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          })}
+                          {new Date(item.effectiveDate).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            },
+                          )}
                         </span>
-                        <span className="timeline-reason">{item.reason || "Price update"}</span>
+                        <span className="timeline-reason">
+                          {item.reason || "Price update"}
+                        </span>
                       </div>
 
                       <div className="timeline-bar-col">
                         <div className="timeline-progress-track">
                           <div
                             className={`timeline-progress-fill ${isCurrent ? "current" : ""}`}
-                            style={{ width: `${Math.min(100, Math.max(15, percentOfMRP))}%` }}
+                            style={{
+                              width: `${Math.min(100, Math.max(15, percentOfMRP))}%`,
+                            }}
                           />
                         </div>
                       </div>
 
                       <div className="timeline-price-col">
-                        <strong className="timeline-price-val">{formatPrice(effPrice)}</strong>
-                        {isCurrent && <span className="timeline-current-pill">Current</span>}
+                        <strong className="timeline-price-val">
+                          {formatPrice(effPrice)}
+                        </strong>
+                        {isCurrent && (
+                          <span className="timeline-current-pill">Current</span>
+                        )}
                       </div>
                     </div>
                   );
@@ -1232,7 +1503,8 @@ const ProductDetail = () => {
 
             <div className="pdp-history-footer">
               <span className="history-transparency-note">
-                <FiInfo /> Historical pricing recorded from verified Decathlon catalog adjustments.
+                <FiInfo /> Historical pricing recorded from verified Decathlon
+                catalog adjustments.
               </span>
               <button
                 type="button"
@@ -1256,10 +1528,10 @@ const ProductDetail = () => {
           selectedColorIndex >= 0 && images[selectedColorIndex]
             ? getImageUrl(images[selectedColorIndex])
             : images[0]
-            ? getImageUrl(images[0])
-            : product?.image
-            ? getImageUrl(product.image)
-            : "";
+              ? getImageUrl(images[0])
+              : product?.image
+                ? getImageUrl(product.image)
+                : "";
 
         return (
           <VirtualTryOnModal
@@ -1279,4 +1551,3 @@ const ProductDetail = () => {
 };
 
 export default ProductDetail;
-

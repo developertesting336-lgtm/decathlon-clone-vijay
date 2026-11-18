@@ -2,31 +2,31 @@ import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 import Product from "../models/Product.js";
 import genlookService from "../services/genlookService.js";
 
-// Standard Decathlon Models permanently hosted on Cloudinary
+// Standard Decathlon Models permanently hosted on Cloudinary (All Full-Body Standing)
 const PRESET_MODELS = [
   {
     id: 0,
-    label: "Male Model (Decathlon Standard)",
+    label: "Male Model (Athletic Standing)",
     gender: "male",
     sampleIndex: 0,
     previewUrl:
-      "https://res.cloudinary.com/k08sqqki/image/upload/v1794996405/decathlon/models/x3r25h83smfzt6r4erzf.jpg",
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1794999501/decathlon/models/vwrytbqb1twoo2zw1has.jpg",
   },
   {
     id: 1,
-    label: "Female Model (Athletic)",
+    label: "Female Model (Decathlon Standing)",
     gender: "female",
     sampleIndex: 1,
     previewUrl:
-      "https://res.cloudinary.com/k08sqqki/image/upload/v1794996426/decathlon/models/uzugbozad3bjyyxlalmn.jpg",
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1794999499/decathlon/models/ht03hdxzyauxhpygqwic.jpg",
   },
   {
     id: 2,
-    label: "Female Model (Sportswear)",
+    label: "Female Model (Sportswear Standing)",
     gender: "female",
     sampleIndex: 2,
     previewUrl:
-      "https://res.cloudinary.com/k08sqqki/image/upload/v1794996427/decathlon/models/c0xgjwipg1gyy8rkwr5b.jpg",
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1794999640/decathlon/models/fajani6cccs7qebmrb5e.jpg",
   },
   {
     id: 3,
@@ -34,7 +34,7 @@ const PRESET_MODELS = [
     gender: "male",
     sampleIndex: 3,
     previewUrl:
-      "https://res.cloudinary.com/k08sqqki/image/upload/v1794996428/decathlon/models/b8x3ap3dyisdy3209ne1.jpg",
+      "https://res.cloudinary.com/k08sqqki/image/upload/v1794996405/decathlon/models/x3r25h83smfzt6r4erzf.jpg",
   },
 ];
 
