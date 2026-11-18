@@ -42,6 +42,7 @@ import priceAlertRoutes from "./routes/priceAlertRoutes.js";
 import recentlyViewedRoutes from "./routes/recentlyViewedRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import visualSearchRoutes from "./routes/visualSearchRoutes.js";
+import tryOnRoutes from "./routes/tryOnRoutes.js";
 import { seedAiKnowledge } from "./seedAiKnowledge.js";
 import { seedSupportData } from "./seedSupportData.js";
 
@@ -193,6 +194,9 @@ app.use("/api/categories", categoryRoutes);
 
 app.use("/api/products/visual-search", visualSearchRoutes);
 app.use("/products/visual-search", visualSearchRoutes);
+
+app.use("/api/try-on", tryOnRoutes);
+app.use("/try-on", tryOnRoutes);
 
 app.use("/api/products", productRoutes);
 

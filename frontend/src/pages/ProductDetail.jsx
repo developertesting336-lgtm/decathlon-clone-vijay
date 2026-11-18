@@ -18,7 +18,7 @@ import {
   FiX,
   FiTag,
 } from "react-icons/fi";
-import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
+import { MdFavorite, MdFavoriteBorder, MdAutoAwesome } from "react-icons/md";
 import toast from "react-hot-toast";
 
 import api, { useWishlist } from "../api/axios";
@@ -32,6 +32,7 @@ import SizeGuide from "../components/SizeGuide/SizeGuide";
 import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
 import NotifyMe from "../components/NotifyMe/NotifyMe";
 import PriceHistoryChart from "../components/PriceHistoryChart/PriceHistoryChart";
+import VirtualTryOnModal from "../components/VirtualTryOn/VirtualTryOnModal";
 import { useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/ProductDetail.css";
 
@@ -39,6 +40,40 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isWishlisted, handleToggle } = useWishlist();
+
+  // Helper: check if product is wearable clothing (apparel: tops, trackpants, jackets, shorts, etc.)
+  // (Excludes non-clothing: cycles, dumbbells, shoes, tents, bottles, backpacks, etc.)
+  const isClothingProduct = useCallback((item) => {
+    if (!item) return false;
+    const text = `${item.name || ""} ${typeof item.category === "string" ? item.category : item.category?.name || ""}`.toLowerCase();
+
+    // Hardware, gear, shoes, bags & accessories (NOT clothing)
+    const nonClothing = [
+      /\bcycles?\b/i, /\bbikes?\b/i, /\bbicycles?\b/i, /\bframe\b/i,
+      /\bdumbbells?\b/i, /\bkettlebells?\b/i, /\bweights?\b/i, /\bbench\b/i,
+      /\btents?\b/i, /\bsleeping bag\b/i, /\bmats?\b/i, /\byoga mat\b/i, /\btowels?\b/i,
+      /\bbottles?\b/i, /\bsippers?\b/i, /\bflasks?\b/i,
+      /\bbackpacks?\b/i, /\brucksacks?\b/i, /\bbags?\b/i, /\bpouches?\b/i,
+      /\bshoes?\b/i, /\bboots?\b/i, /\btrainers?\b/i, /\bsneakers?\b/i, /\bsandals?\b/i, /\bflipflops?\b/i,
+      /\bsunglasses\b/i, /\bgoggles\b/i, /\bwatches?\b/i,
+      /\bropes?\b/i, /\bhelmets?\b/i, /\bpumps?\b/i, /\brackets?\b/i, /\bballs?\b/i,
+      /\bskates?\b/i, /\bskateboards?\b/i, /\brollers?\b/i
+    ];
+    if (nonClothing.some((r) => r.test(text))) return false;
+
+    // Wearable apparel
+    const clothing = [
+      /\bshirts?\b/i, /\bt-?shirts?\b/i, /\btees?\b/i, /\bpolos?\b/i,
+      /\bjackets?\b/i, /\bcoats?\b/i, /\braincoats?\b/i, /\bwindproof\b/i,
+      /\bfleece\b/i, /\bvests?\b/i, /\bhoodies?\b/i, /\bsweatshirts?\b/i,
+      /\bsweaters?\b/i, /\bjerseys?\b/i, /\btops?\b/i, /\btanks?\b/i,
+      /\btrackpants?\b/i, /\bpants?\b/i, /\btrousers?\b/i, /\bshorts?\b/i,
+      /\bjoggers?\b/i, /\bleggings?\b/i, /\btights?\b/i, /\bbottoms?\b/i,
+      /\bjeans?\b/i, /\bskirts?\b/i, /\bactivewear\b/i, /\bsportswear\b/i,
+      /\bgym\b/i, /\bfitness\b/i
+    ];
+    return clothing.some((r) => r.test(text));
+  }, []);
 
   // Core product states
   const [product, setProduct] = useState(null);
@@ -73,6 +108,9 @@ const ProductDetail = () => {
 
   // Size chart modal
   const [showSizeModal, setShowSizeModal] = useState(false);
+
+  // Virtual Try-On modal
+  const [showTryOnModal, setShowTryOnModal] = useState(false);
 
   // Rating and reviews summary
   const [ratingSummary, setRatingSummary] = useState({
@@ -745,6 +783,19 @@ const ProductDetail = () => {
                   ))
                 )}
               </div>
+
+              {/* AI Virtual Try-On Trigger - Only shown for Clothing / Apparel */}
+              {isClothingProduct(product) && (
+                <button
+                  type="button"
+                  className="pdp-tryon-btn"
+                  onClick={() => setShowTryOnModal(true)}
+                  id="pdp-virtual-tryon-trigger"
+                  aria-label="Open Decathlon Fitting Room"
+                >
+                  <MdAutoAwesome /> Decathlon Fitting Room
+                </button>
+              )}
             </div>
 
             {/* Action Buttons: Wishlist + Add to Cart OR Notify Me When Available */}
@@ -1194,6 +1245,33 @@ const ProductDetail = () => {
           </div>
         </div>
       )}
+
+      {/* AI Virtual Try-On Modal */}
+      {(() => {
+        const selectedColorIndex =
+          Array.isArray(product?.color) && selectedColor
+            ? product.color.indexOf(selectedColor)
+            : -1;
+        const activeGarmentImageUrl =
+          selectedColorIndex >= 0 && images[selectedColorIndex]
+            ? getImageUrl(images[selectedColorIndex])
+            : images[0]
+            ? getImageUrl(images[0])
+            : product?.image
+            ? getImageUrl(product.image)
+            : "";
+
+        return (
+          <VirtualTryOnModal
+            isOpen={showTryOnModal}
+            onClose={() => setShowTryOnModal(false)}
+            product={product}
+            selectedGarmentImage={activeGarmentImageUrl}
+            selectedColor={selectedColor}
+            onAddToCart={() => handleAddToCart(product)}
+          />
+        );
+      })()}
 
       <Footer />
     </div>
