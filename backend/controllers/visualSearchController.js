@@ -96,6 +96,106 @@ CRITICAL RULES:
 }
 
 /**
+ * Extract semantic noun keywords from identified productType
+ */
+function extractProductTypeKeywords(productType = "") {
+  const lower = productType.toLowerCase();
+  const keywords = new Set();
+
+  const CATEGORY_MAP = [
+    {
+      keys: ["umbrella", "parasol"],
+      words: ["umbrella", "parasol"],
+    },
+    {
+      keys: ["shoe", "sneaker", "boot", "footwear", "trainer", "cleat"],
+      words: ["shoe", "shoes", "sneaker", "sneakers", "boot", "boots", "footwear", "trainer", "trainers"],
+    },
+    {
+      keys: ["bike", "bicycle", "cycle", "cycling"],
+      words: ["bike", "bikes", "bicycle", "bicycles", "cycle", "cycles"],
+    },
+    {
+      keys: ["tent", "shelter", "bivouac"],
+      words: ["tent", "tents", "shelter", "bivouac"],
+    },
+    {
+      keys: ["shirt", "t-shirt", "tee", "top", "jersey", "polo"],
+      words: ["shirt", "shirts", "t-shirt", "tee", "tees", "top", "tops", "jersey", "polo"],
+    },
+    {
+      keys: ["pant", "pants", "trackpant", "trackpants", "trouser", "trousers", "jogger", "joggers", "tight", "tights", "legging", "leggings"],
+      words: ["pant", "pants", "trackpant", "trackpants", "trouser", "trousers", "jogger", "joggers", "tight", "tights", "leggings"],
+    },
+    {
+      keys: ["short", "shorts"],
+      words: ["short", "shorts"],
+    },
+    {
+      keys: ["jacket", "coat", "windcheater", "fleece", "hoodie", "sweatshirt"],
+      words: ["jacket", "jackets", "coat", "coats", "windcheater", "fleece", "hoodie", "hoodies", "sweatshirt"],
+    },
+    {
+      keys: ["bag", "backpack", "rucksack", "duffel"],
+      words: ["bag", "bags", "backpack", "backpacks", "rucksack", "duffel"],
+    },
+    {
+      keys: ["bottle", "sipper", "flask", "hydration"],
+      words: ["bottle", "bottles", "sipper", "flask"],
+    },
+    {
+      keys: ["ball", "football", "basketball", "volleyball"],
+      words: ["ball", "balls", "football", "basketball"],
+    },
+    {
+      keys: ["racket", "racquet", "bat"],
+      words: ["racket", "rackets", "racquet", "bat"],
+    },
+    {
+      keys: ["dumbbell", "kettlebell", "weight", "barbell"],
+      words: ["dumbbell", "dumbbells", "kettlebell", "weight", "weights", "barbell"],
+    },
+    {
+      keys: ["mat", "yoga mat"],
+      words: ["mat", "mats", "yoga mat"],
+    },
+    {
+      keys: ["glove", "gloves", "mitt"],
+      words: ["glove", "gloves"],
+    },
+    {
+      keys: ["cap", "hat", "beanie", "headband"],
+      words: ["cap", "caps", "hat", "hats", "beanie"],
+    },
+    {
+      keys: ["watch", "fitness tracker", "band"],
+      words: ["watch", "watches", "tracker"],
+    },
+    {
+      keys: ["goggles", "glasses", "sunglasses"],
+      words: ["goggles", "sunglasses", "glasses"],
+    },
+  ];
+
+  for (const entry of CATEGORY_MAP) {
+    if (entry.keys.some((k) => lower.includes(k))) {
+      entry.words.forEach((w) => keywords.add(w));
+    }
+  }
+
+  if (keywords.size === 0) {
+    productType
+      .toLowerCase()
+      .split(/\s+/)
+      .forEach((w) => {
+        if (w.length > 2) keywords.add(w);
+      });
+  }
+
+  return Array.from(keywords);
+}
+
+/**
  * Fallback visual heuristics in case Gemini API is unreachable
  */
 function fallbackVisualAnalysis(filename = "") {
@@ -240,9 +340,10 @@ export const visualProductSearch = async (req, res) => {
       });
     }
 
-    // 4. Calculate Visual Similarity Score for each product
+    // 4. Extract semantic item keywords & calculate visual similarity score
+    const typeKeywords = extractProductTypeKeywords(productType);
+
     const scoredProducts = candidates.map((prod) => {
-      let score = 0;
       const pName = (prod.name || "").toLowerCase();
       const pCat = (prod.category?.name || "").toLowerCase();
       const pSub = (prod.subcategory || "").toLowerCase();
@@ -250,74 +351,99 @@ export const visualProductSearch = async (req, res) => {
       const pColors = Array.isArray(prod.color)
         ? prod.color.map((c) => String(c).toLowerCase())
         : [String(prod.color || "").toLowerCase()];
+      const pText = `${pName} ${pCat} ${pSub}`;
 
-      if (isRealProduct) {
-        // Direct Category / Subcategory Match (+60 pts)
-        const targetType = productType.toLowerCase();
-        const targetSport = sport.toLowerCase();
-        if (
-          pCat.includes(targetSport) ||
-          pCat.includes(targetType) ||
-          pSub.includes(targetSport) ||
-          pSub.includes(targetType)
-        ) {
-          score += 60;
-        }
+      // 1. Direct item type check: does this catalog item match the requested product type noun?
+      const isTypeMatch = typeKeywords.some((kw) => {
+        const regex = new RegExp(`\\b${kw}s?\\b`, "i");
+        return regex.test(pText);
+      });
 
-        // Name Term Matches (+15 pts per term)
-        uniqueTerms.forEach((term) => {
-          if (pName.includes(term)) score += 15;
-          if (pCat.includes(term)) score += 10;
-          if (pSub.includes(term)) score += 10;
-          if (pBrand.includes(term)) score += 5;
+      let score = 0;
+
+      if (isTypeMatch) {
+        // High base score for actually being the requested item type (e.g. Shoes matching shoes)
+        score += 150;
+        typeKeywords.forEach((kw) => {
+          if (pName.includes(kw)) score += 25;
         });
+      } else {
+        // Different item type (e.g. Shoes when user uploaded an Umbrella):
+        // Heavily downweight so it never impersonates an exact visual match
+        score += 5;
       }
 
-      // Color Affinity (+25 pts)
+      // 2. Sport affinity
+      const targetSport = (sport || "").toLowerCase();
+      if (targetSport && targetSport !== "none") {
+        if (pCat.includes(targetSport) || pSub.includes(targetSport) || pName.includes(targetSport)) {
+          score += isTypeMatch ? 30 : 15;
+        }
+      }
+
+      // 3. Color affinity
       colors.forEach((col) => {
         const cLower = col.toLowerCase();
         if (pColors.some((pc) => pc.includes(cLower)) || pName.includes(cLower)) {
-          score += 25;
+          score += isTypeMatch ? 20 : 10;
         }
       });
 
-      // Ratings & Quality Boost
-      if (prod.rating >= 4.5) score += 10;
+      // 4. Rating & Discount Boost
+      if (prod.rating >= 4.5) score += 5;
       if (prod.discountPrice && prod.discountPrice < prod.price) score += 5;
 
       return {
         product: prod,
         rawScore: score,
+        isTypeMatch,
       };
     });
 
-    // Sort by highest similarity
-    scoredProducts.sort((a, b) => b.rawScore - a.rawScore);
+    // Check if any candidates in the catalog are actual direct type matches
+    const hasDirectMatches = scoredProducts.some((p) => p.isTypeMatch);
 
-    // Pick top matching products (up to 12 items)
+    // Sort: direct type matches first, then by score
+    scoredProducts.sort((a, b) => {
+      if (a.isTypeMatch !== b.isTypeMatch) {
+        return a.isTypeMatch ? -1 : 1;
+      }
+      return b.rawScore - a.rawScore;
+    });
+
     const topScored = scoredProducts.slice(0, 12);
     const maxScore = topScored[0]?.rawScore || 1;
 
-    // Convert rawScore into realistic match percentage
+    // Convert rawScore into realistic, truthful match percentage
     const results = topScored.map((item, index) => {
       let matchPercent = 95 - index * 2;
-      if (isRealProduct && maxScore > 0 && item.rawScore > 0) {
+
+      if (item.isTypeMatch) {
+        // True physical item type match (e.g. Shoes matching shoes): 82% to 98%
         const ratio = Math.min(1, item.rawScore / maxScore);
-        matchPercent = Math.max(75, Math.min(98, Math.round(75 + ratio * 23)));
-      } else if (!isRealProduct) {
-        // For non-product images, color matches have modest similarity (e.g. 50-68%)
-        matchPercent = Math.max(45, Math.min(68, 55 - index * 2));
+        matchPercent = Math.max(82, Math.min(98, Math.round(82 + ratio * 16)));
+      } else if (hasDirectMatches) {
+        // Catalog had direct matches, non-matches rank as secondary related gear
+        matchPercent = Math.max(30, Math.min(52, 45 - index * 2));
+      } else {
+        // NO direct matches exist in the catalog (e.g. Umbrella uploaded):
+        // Truthful "Related Gear" percentage (40% - 55%) — NEVER 98%!
+        matchPercent = Math.max(35, Math.min(55, 50 - index * 2));
       }
+
       return {
         ...item.product,
         visualMatchPercentage: matchPercent,
+        isTypeMatch: item.isTypeMatch,
       };
     });
 
-    // Human-readable notice if image is not a product
+    // Helpful, truthful user notice
     let userNotice = "";
     if (!isRealProduct) {
       userNotice = `No sports equipment or apparel was detected in this photo (Identified: "${productType}"). Showing sports items in a similar color palette (${colors.join(", ")}).`;
+    } else if (!hasDirectMatches) {
+      userNotice = `No ${productType}s found in our catalog. Showing related ${sport !== "None" ? sport : "outdoor"} gear in a matching color palette (${colors.join(", ")}).`;
     }
 
     return res.status(200).json({
@@ -330,6 +456,7 @@ export const visualProductSearch = async (req, res) => {
         keyAttributes,
         searchQuery,
         description,
+        hasDirectMatches,
         userNotice,
       },
       products: results,

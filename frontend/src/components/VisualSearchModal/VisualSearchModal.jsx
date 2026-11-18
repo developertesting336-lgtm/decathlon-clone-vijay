@@ -303,7 +303,9 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
                       <span>
                         {results.visualAnalysis?.isProduct === false
                           ? `Identified: ${results.visualAnalysis.productType}`
-                          : `Found ${results.products?.length || 0} visually similar products`}
+                          : results.visualAnalysis?.hasDirectMatches
+                          ? `Found ${results.products?.length || 0} matching ${results.visualAnalysis.productType}s`
+                          : `No direct ${results.visualAnalysis?.productType || "item"}s in catalog — showing related gear`}
                       </span>
                     </div>
                     {results.visualAnalysis && (
@@ -364,17 +366,28 @@ const VisualSearchModal = ({ isOpen, onClose }) => {
 
                   const wishlisted = isWishlisted(prod._id);
                   const isReal = results.visualAnalysis?.isProduct !== false;
+                  const isDirect = prod.isTypeMatch;
 
                   return (
                     <div key={prod._id} className="visual-product-card">
                       {/* Match Badge */}
                       {prod.visualMatchPercentage && (
-                        <div className={`visual-match-pill ${isReal ? "" : "color-match-pill"}`}>
+                        <div
+                          className={`visual-match-pill ${
+                            !isReal
+                              ? "color-match-pill"
+                              : isDirect
+                              ? ""
+                              : "related-match-pill"
+                          }`}
+                        >
                           <MdAutoAwesome size={11} />
                           <span>
-                            {isReal
+                            {!isReal
+                              ? `${prod.visualMatchPercentage}% Color Match`
+                              : isDirect
                               ? `${prod.visualMatchPercentage}% Match`
-                              : `${prod.visualMatchPercentage}% Color Match`}
+                              : `${prod.visualMatchPercentage}% Related Gear`}
                           </span>
                         </div>
                       )}
