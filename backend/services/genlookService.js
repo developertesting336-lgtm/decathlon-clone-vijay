@@ -1,7 +1,23 @@
 import crypto from "crypto";
 
-const GENLOOK_API_BASE_URL =
-  process.env.GENLOOK_API_BASE_URL || "https://api.genlook.app/tryon/v1";
+const OFFICIAL_GENLOOK_BASE_URL = "https://api.genlook.app/tryon/v1";
+
+/**
+ * Robust base URL resolver:
+ * Automatically sanitizes or falls back to the official Genlook endpoint
+ * if the environment variable contains typos (e.g. /tryon/v16. or trailing dots).
+ */
+const getBaseUrl = () => {
+  const envUrl = process.env.GENLOOK_API_BASE_URL;
+  if (!envUrl || typeof envUrl !== "string") {
+    return OFFICIAL_GENLOOK_BASE_URL;
+  }
+  const clean = envUrl.trim().replace(/[/.]+$/, "");
+  if (!clean.startsWith("http") || clean.includes("v16") || !clean.includes("genlook.app")) {
+    return OFFICIAL_GENLOOK_BASE_URL;
+  }
+  return clean;
+};
 
 /**
  * Helper to get clean API key
@@ -54,7 +70,7 @@ const formatGenlookError = (code, rawMessage) => {
  */
 export const getCredits = async () => {
   const apiKey = getApiKey();
-  const url = `${GENLOOK_API_BASE_URL}/account/credits`;
+  const url = `${getBaseUrl()}/account/credits`;
 
   const res = await fetch(url, {
     method: "GET",
@@ -92,7 +108,7 @@ export const uploadPersonImage = async (
   filename = "person.jpg"
 ) => {
   const apiKey = getApiKey();
-  const url = `${GENLOOK_API_BASE_URL}/images/upload`;
+  const url = `${getBaseUrl()}/images/upload`;
 
   const formData = new FormData();
   formData.append(
@@ -138,7 +154,7 @@ export const pollGeneration = async (
   delayMs = 2500
 ) => {
   const apiKey = getApiKey();
-  const url = `${GENLOOK_API_BASE_URL}/generations/${generationId}`;
+  const url = `${getBaseUrl()}/generations/${generationId}`;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     await new Promise((resolve) => setTimeout(resolve, delayMs));
@@ -199,7 +215,7 @@ export const createVirtualTryOn = async ({
   mock = false,
 }) => {
   const apiKey = getApiKey();
-  const url = `${GENLOOK_API_BASE_URL}/try-on/sync`;
+  const url = `${getBaseUrl()}/try-on/sync`;
 
   if (!garmentImageUrl) {
     throw new Error("Garment image URL is required for Virtual Try-On.");
