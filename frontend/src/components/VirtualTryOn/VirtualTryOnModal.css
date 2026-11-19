@@ -931,3 +931,670 @@
     flex-direction: column;
   }
 }
+
+/* ==========================================================================
+   DRAG & DROP AI VIRTUAL TRY-ON EXTENSIONS
+   ========================================================================== */
+
+.vton-modal.vton-modal-dnd {
+  max-width: 980px;
+  width: 95vw;
+  max-height: 92vh;
+}
+
+.vton-body.vton-body-dnd {
+  padding: 1.1rem 1.4rem;
+  overflow-y: auto;
+}
+
+.vton-workspace-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 1.4rem;
+  align-items: stretch;
+}
+
+/* Left: Model Stage */
+.vton-model-stage {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.vton-stage-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.vton-stage-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.vton-model-pills {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.vton-model-pill {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.vton-model-pill:hover {
+  border-color: #0082c3;
+  color: #0082c3;
+}
+
+.vton-model-pill.active {
+  background: #0082c3;
+  color: #ffffff;
+  border-color: #0082c3;
+}
+
+/* Canvas Frame & Model */
+.vton-canvas-frame {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0f172a;
+  border: 2px solid #e2e8f0;
+  min-height: 480px;
+  max-height: 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.vton-canvas-frame.drag-over {
+  border-color: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.35), 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.vton-canvas-model-img {
+  width: 100%;
+  height: 100%;
+  max-height: 540px;
+  object-fit: cover;
+  display: block;
+}
+
+.vton-canvas-model-img.result-mode {
+  object-fit: cover;
+  background: #f8fafc;
+}
+
+.vton-canvas-result-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vton-result-badge-floating {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: linear-gradient(135deg, #0082c3, #0284c7);
+  color: #ffffff;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 5;
+}
+
+/* Drop Target Overlay over Model */
+.vton-drop-target-overlay {
+  position: absolute;
+  inset: 1.15rem;
+  border: 2.5px dashed rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.vton-drop-target-overlay.highlight {
+  border-color: #10b981;
+  background: rgba(6, 78, 59, 0.75);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.65);
+  transform: scale(1.02);
+}
+
+.vton-drop-target-overlay.fitted {
+  background: rgba(15, 23, 42, 0.32);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.vton-drop-target-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  padding: 1.25rem;
+}
+
+.vton-drop-target-icon {
+  font-size: 2.3rem;
+  margin-bottom: 0.5rem;
+  color: #38bdf8;
+}
+
+.vton-drop-target-icon .fitted-icon {
+  color: #10b981;
+}
+
+@keyframes vtonBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.bounce-arrow {
+  animation: vtonBounce 1.4s ease-in-out infinite;
+}
+
+.spin-pulse {
+  animation: vtonSpin 2s linear infinite;
+  color: #34d399;
+  font-size: 2.7rem;
+}
+
+.vton-drop-target-text {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.vton-drop-target-subtext {
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 0.3rem;
+  max-width: 280px;
+}
+
+.vton-model-fitted-garment-pill {
+  margin-top: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #0f172a;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.vton-fitted-mini-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #cbd5e1;
+}
+
+/* Canvas Loading Overlay */
+.vton-canvas-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  color: #ffffff;
+  padding: 2rem;
+  text-align: center;
+}
+
+.vton-canvas-loading-overlay .vton-loading-title {
+  color: #ffffff;
+  font-size: 1.3rem;
+  margin-top: 0.5rem;
+}
+
+.vton-canvas-loading-overlay .vton-loading-step {
+  color: #38bdf8;
+  font-size: 0.88rem;
+}
+
+/* Right: Sidebar Product Stage */
+.vton-sidebar-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vton-product-preview-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.vton-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vton-preview-title-tag {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.vton-brand-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #0082c3;
+  background: #e0f2fe;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.vton-selected-product-box {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.vton-product-preview-thumb-wrap {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  flex-shrink: 0;
+}
+
+.vton-product-preview-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.vton-thumb-placeholder {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  border: 2px dashed #cbd5e1;
+  background: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 0.2rem;
+  flex-shrink: 0;
+}
+
+.vton-thumb-color-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #047857;
+  color: #ffffff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.vton-selected-product-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.vton-product-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.25;
+}
+
+.vton-product-price-strip {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0082c3;
+  margin-bottom: 0.25rem;
+}
+
+.vton-product-fit-status {
+  font-size: 0.74rem;
+}
+
+.status-ready {
+  color: #047857;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.status-waiting {
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Draggables Gallery Strip inside Modal */
+.vton-gallery-draggables-container {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.75rem;
+}
+
+.vton-gallery-strip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.vton-drag-hint {
+  color: #0082c3;
+  font-weight: 600;
+  font-size: 0.72rem;
+}
+
+.vton-gallery-drag-row {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.vton-draggable-thumb-item {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+  cursor: grab;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #f8fafc;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  touch-action: none;
+}
+
+.vton-draggable-thumb-item:active {
+  cursor: grabbing;
+}
+
+.vton-draggable-thumb-item:hover {
+  border-color: #0082c3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 130, 195, 0.2);
+}
+
+.vton-draggable-thumb-item.active-selected {
+  border-color: #0082c3;
+  box-shadow: 0 0 0 2px rgba(0, 130, 195, 0.4);
+}
+
+.vton-draggable-thumb-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.vton-drag-grip-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(15, 23, 42, 0.65);
+  color: #ffffff;
+  border-radius: 3px;
+  font-size: 0.62rem;
+  padding: 0 3px;
+  line-height: 1.2;
+}
+
+/* Gemini Drape & Fit Note inside Modal */
+.vton-gemini-hint-box {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.78rem;
+  color: #0369a1;
+  line-height: 1.45;
+}
+
+.vton-gemini-hint-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 800;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.hint-sparkle {
+  color: #0284c7;
+  font-size: 0.95rem;
+}
+
+.vton-gemini-hint-box p {
+  margin: 0;
+  color: #1e293b;
+}
+
+/* Result Split Compare Details */
+.vton-result-details-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.vton-split-compare-box {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 0.75rem;
+}
+
+.vton-compare-garment-img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.vton-compare-info {
+  font-size: 0.82rem;
+  color: #1e293b;
+}
+
+.vton-color-tag {
+  display: inline-block;
+  background: #d1fae5;
+  color: #047857;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+}
+
+/* Touch Drag Ghost */
+.vton-touch-drag-ghost {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  border: 2.5px solid #0082c3;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  background: #ffffff;
+  transform: translate(-50%, -50%);
+  animation: vtonPulseGhost 1s infinite alternate;
+}
+
+.vton-ghost-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes vtonPulseGhost {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+
+.vton-footer-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.vton-footer-actions-row .vton-submit-btn {
+  width: auto;
+  min-width: 200px;
+}
+
+.vton-footer-actions-row .vton-btn-secondary {
+  flex: none;
+  min-width: 100px;
+}
+
+/* Mobile Responsiveness for Drag & Drop */
+@media (max-width: 768px) {
+  .vton-workspace-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .vton-canvas-frame {
+    min-height: 380px;
+    max-height: 420px;
+  }
+  .vton-footer-actions-row {
+    flex-direction: column-reverse;
+  }
+  .vton-footer-actions-row .vton-submit-btn,
+  .vton-footer-actions-row .vton-btn-secondary {
+    width: 100%;
+  }
+  .vton-result-actions {
+    flex-direction: column;
+  }
+}
+
+/* PDP Draggable Mosaic & Touch Drag Styles */
+.pdp-draggable-mosaic-item {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  transition: box-shadow 0.2s ease;
+}
+
+.pdp-draggable-mosaic-item:hover {
+  box-shadow: inset 0 0 0 2.5px #0082c3 !important;
+}
+
+.pdp-draggable-mosaic-item:active {
+  cursor: grabbing;
+}
+
+.pdp-mosaic-drag-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pdp-draggable-mosaic-item:hover .pdp-mosaic-drag-badge {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pdp-colour-card-btn {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.pdp-colour-card-btn:active {
+  cursor: grabbing;
+}

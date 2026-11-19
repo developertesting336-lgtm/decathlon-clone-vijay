@@ -4,6 +4,7 @@ import {
   generateVirtualTryOn,
   getPresetModels,
   getTryOnCredits,
+  validateGarment,
 } from "../controllers/tryOnController.js";
 
 const router = express.Router();
@@ -13,6 +14,9 @@ router.get("/models", getPresetModels);
 
 // GET /api/try-on/credits - Get available Genlook credit balance
 router.get("/credits", getTryOnCredits);
+
+// POST /api/try-on/validate-garment - Validate garment & get Gemini fit hint
+router.post("/validate-garment", validateGarment);
 
 // POST /api/try-on/generate - Run AI Virtual Try-On via Genlook API
 router.post(

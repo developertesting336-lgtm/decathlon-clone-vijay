@@ -177,6 +177,101 @@ const ProductDetail = () => {
 
   // Virtual Try-On modal
   const [showTryOnModal, setShowTryOnModal] = useState(false);
+  const [initialDroppedGarment, setInitialDroppedGarment] = useState(null);
+  const [activeDragItem, setActiveDragItem] = useState(null);
+  const [touchPointerPos, setTouchPointerPos] = useState({ x: 0, y: 0 });
+
+  // Thumbnail drag-and-drop triggers for AI Virtual Try-On
+  const handleThumbnailDragStart = (e, img, colorName = "") => {
+    const fullUrl = getImageUrl(img);
+    if (!fullUrl) return;
+    setInitialDroppedGarment(fullUrl);
+    setShowTryOnModal(true);
+
+    if (e.dataTransfer) {
+      const data = {
+        imageUrl: fullUrl,
+        name: product?.name,
+        color: colorName || selectedColor,
+      };
+      e.dataTransfer.setData("application/json", JSON.stringify(data));
+      e.dataTransfer.setData("text/plain", fullUrl);
+      e.dataTransfer.effectAllowed = "copy";
+    }
+  };
+
+  const handleThumbnailPointerDown = (e, img, colorName = "") => {
+    if (e.button !== undefined && e.button !== 0) return;
+    const fullUrl = getImageUrl(img);
+    if (!fullUrl) return;
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    let dragTriggered = false;
+
+    const onPointerMove = (moveEvent) => {
+      const dist = Math.hypot(
+        moveEvent.clientX - startX,
+        moveEvent.clientY - startY
+      );
+      if (dist > 8) {
+        dragTriggered = true;
+        setActiveDragItem({
+          imageUrl: fullUrl,
+          color: colorName || selectedColor,
+        });
+        setTouchPointerPos({ x: moveEvent.clientX, y: moveEvent.clientY });
+        setShowTryOnModal(true);
+        setInitialDroppedGarment(fullUrl);
+
+        const dropZone = document.querySelector('[data-drop-zone="vton-model"]');
+        if (dropZone) {
+          const rect = dropZone.getBoundingClientRect();
+          const isInside =
+            moveEvent.clientX >= rect.left &&
+            moveEvent.clientX <= rect.right &&
+            moveEvent.clientY >= rect.top &&
+            moveEvent.clientY <= rect.bottom;
+          if (isInside) {
+            dropZone.classList.add("drag-over");
+          } else {
+            dropZone.classList.remove("drag-over");
+          }
+        }
+      }
+    };
+
+    const onPointerUp = (upEvent) => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+
+      if (dragTriggered) {
+        const dropZone = document.querySelector('[data-drop-zone="vton-model"]');
+        if (dropZone) {
+          dropZone.classList.remove("drag-over");
+          const rect = dropZone.getBoundingClientRect();
+          const isInside =
+            upEvent.clientX >= rect.left &&
+            upEvent.clientX <= rect.right &&
+            upEvent.clientY >= rect.top &&
+            upEvent.clientY <= rect.bottom;
+          if (isInside) {
+            setInitialDroppedGarment(fullUrl);
+            toast.success("Garment dropped onto model! Ready to generate.", {
+              id: "pdp-drop-success",
+              icon: "✨",
+            });
+          }
+        }
+      }
+      setActiveDragItem(null);
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+  };
 
   // Rating and reviews summary
   const [ratingSummary, setRatingSummary] = useState({
@@ -670,11 +765,21 @@ const ProductDetail = () => {
           <div className="pdp-mosaic-container">
             {displayImages.length > 0 ? (
               displayImages.map((img, idx) => (
-                <div key={idx} className="pdp-mosaic-item">
+                <div
+                  key={idx}
+                  className="pdp-mosaic-item pdp-draggable-mosaic-item"
+                  draggable={true}
+                  onDragStart={(e) => handleThumbnailDragStart(e, img)}
+                  onPointerDown={(e) => handleThumbnailPointerDown(e, img)}
+                  title="Drag to Decathlon Fitting Room model to try on"
+                >
                   <img
                     src={getImageUrl(img)}
                     alt={`${product.name} view ${idx + 1}`}
                   />
+                  <div className="pdp-mosaic-drag-badge">
+                    <span>⠿ Drag to Try-On</span>
+                  </div>
                   {idx === 3 && remainingImagesCount > 0 && (
                     <span className="pdp-mosaic-badge-more">
                       {remainingImagesCount} more
@@ -867,31 +972,41 @@ const ProductDetail = () => {
 
               <div className="pdp-colour-thumbnails-row">
                 {Array.isArray(product.color) && product.color.length > 0
-                  ? product.color.map((color, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        className={`pdp-colour-card-btn ${selectedColor === color ? "active" : ""}`}
-                        onClick={() => {
-                          setSelectedColor(color);
-                          toast.success(`Selected color: ${color}`, {
-                            id: "pdp-color-toast",
-                          });
-                        }}
-                        title={color}
-                      >
-                        {images.length > 0 ? (
-                          <img
-                            src={getImageUrl(images[idx % images.length])}
-                            alt={color}
-                          />
-                        ) : (
-                          <span style={{ fontSize: 11, color: "#64748b" }}>
-                            {color}
-                          </span>
-                        )}
-                      </button>
-                    ))
+                  ? product.color.map((color, idx) => {
+                      const colorImg = images[idx % images.length];
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          className={`pdp-colour-card-btn ${selectedColor === color ? "active" : ""}`}
+                          draggable={Boolean(colorImg)}
+                          onDragStart={(e) =>
+                            colorImg && handleThumbnailDragStart(e, colorImg, color)
+                          }
+                          onPointerDown={(e) =>
+                            colorImg && handleThumbnailPointerDown(e, colorImg, color)
+                          }
+                          onClick={() => {
+                            setSelectedColor(color);
+                            toast.success(`Selected color: ${color}`, {
+                              id: "pdp-color-toast",
+                            });
+                          }}
+                          title={`Color: ${color} (Drag onto model to try on)`}
+                        >
+                          {images.length > 0 ? (
+                            <img
+                              src={getImageUrl(colorImg)}
+                              alt={color}
+                            />
+                          ) : (
+                            <span style={{ fontSize: 11, color: "#64748b" }}>
+                              {color}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })
                   : [0, 1, 2, 3].map((idx) => (
                       <button
                         key={idx}
@@ -1525,25 +1640,58 @@ const ProductDetail = () => {
             ? product.color.indexOf(selectedColor)
             : -1;
         const activeGarmentImageUrl =
-          selectedColorIndex >= 0 && images[selectedColorIndex]
+          initialDroppedGarment ||
+          (selectedColorIndex >= 0 && images[selectedColorIndex]
             ? getImageUrl(images[selectedColorIndex])
             : images[0]
               ? getImageUrl(images[0])
               : product?.image
                 ? getImageUrl(product.image)
-                : "";
+                : "");
 
         return (
           <VirtualTryOnModal
             isOpen={showTryOnModal}
-            onClose={() => setShowTryOnModal(false)}
+            onClose={() => {
+              setShowTryOnModal(false);
+              setInitialDroppedGarment(null);
+            }}
             product={product}
             selectedGarmentImage={activeGarmentImageUrl}
             selectedColor={selectedColor}
             onAddToCart={() => handleAddToCart(product)}
+            initialDroppedGarment={initialDroppedGarment}
           />
         );
       })()}
+
+      {/* Floating Touch Drag Avatar for Mobile */}
+      {activeDragItem && (
+        <div
+          className="pdp-touch-drag-avatar"
+          style={{
+            position: "fixed",
+            left: `${touchPointerPos.x - 30}px`,
+            top: `${touchPointerPos.y - 30}px`,
+            pointerEvents: "none",
+            zIndex: 9999999,
+          }}
+        >
+          <img
+            src={activeDragItem.imageUrl}
+            alt="Dragging"
+            style={{
+              width: "60px",
+              height: "60px",
+              borderRadius: "12px",
+              objectFit: "cover",
+              border: "2.5px solid #0082c3",
+              boxShadow: "0 8px 24px rgba(0, 130, 195, 0.4)",
+              background: "#fff",
+            }}
+          />
+        </div>
+      )}
 
       <Footer />
     </div>
