@@ -18,7 +18,7 @@ import {
   FiX,
   FiTag,
 } from "react-icons/fi";
-import { MdFavorite, MdFavoriteBorder, MdAutoAwesome } from "react-icons/md";
+import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import toast from "react-hot-toast";
 
 import api, { useWishlist } from "../api/axios";
@@ -35,6 +35,7 @@ import RelatedProducts from "../components/RelatedProducts/RelatedProducts";
 import NotifyMe from "../components/NotifyMe/NotifyMe";
 import PriceHistoryChart from "../components/PriceHistoryChart/PriceHistoryChart";
 import VirtualTryOnModal from "../components/VirtualTryOn/VirtualTryOnModal";
+import FittingRoomModal from "../components/FittingRoomModal/FittingRoomModal";
 import { useDeliveryLocation } from "../utils/deliveryLocation";
 import "../styles/ProductDetail.css";
 
@@ -177,6 +178,7 @@ const ProductDetail = () => {
 
   // Virtual Try-On modal
   const [showTryOnModal, setShowTryOnModal] = useState(false);
+  const [isFittingRoomOpen, setIsFittingRoomOpen] = useState(false);
   const [initialDroppedGarment, setInitialDroppedGarment] = useState(null);
   const [activeDragItem, setActiveDragItem] = useState(null);
   const [touchPointerPos, setTouchPointerPos] = useState({ x: 0, y: 0 });
@@ -1087,16 +1089,16 @@ const ProductDetail = () => {
                     ))}
               </div>
 
-              {/* AI Virtual Try-On Trigger - Only shown for Clothing / Apparel */}
+              {/* Decathlon Fitting Room Trigger - Exactly below Select size and above Add to cart */}
               {isClothingProduct(product) && (
                 <button
                   type="button"
-                  className="pdp-tryon-btn"
-                  onClick={() => setShowTryOnModal(true)}
+                  className="pdp-fitting-room-trigger-btn"
+                  onClick={() => setIsFittingRoomOpen(true)}
                   id="pdp-virtual-tryon-trigger"
                   aria-label="Open Decathlon Fitting Room"
                 >
-                  <MdAutoAwesome /> Decathlon Fitting Room
+                  <span className="pdp-sparkle-emoji">✨</span> Decathlon Fitting Room
                 </button>
               )}
             </div>
@@ -1664,6 +1666,26 @@ const ProductDetail = () => {
           />
         );
       })()}
+
+      {/* Decathlon Fitting Room Modal */}
+      <FittingRoomModal
+        isOpen={isFittingRoomOpen}
+        onClose={() => setIsFittingRoomOpen(false)}
+        product={product}
+        selectedGarmentImage={
+          Array.isArray(product?.color) &&
+          selectedColor &&
+          product.color.indexOf(selectedColor) >= 0 &&
+          images[product.color.indexOf(selectedColor)]
+            ? getImageUrl(images[product.color.indexOf(selectedColor)])
+            : images[0]
+            ? getImageUrl(images[0])
+            : product?.image
+            ? getImageUrl(product.image)
+            : ""
+        }
+        selectedColor={selectedColor}
+      />
 
       {/* Floating Touch Drag Avatar for Mobile */}
       {activeDragItem && (

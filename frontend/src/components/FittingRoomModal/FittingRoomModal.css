@@ -1,0 +1,510 @@
+/* ==========================================================================
+   DECATHLON FITTING ROOM MODAL STYLES (FittingRoomModal.css)
+   ========================================================================== */
+
+.frm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: frmFadeIn 0.2s ease-out;
+}
+
+@keyframes frmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.frm-modal {
+  background: #ffffff;
+  border-radius: 18px;
+  max-width: 880px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 130, 195, 0.3), 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  animation: frmScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes frmScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Header */
+.frm-header {
+  padding: 1rem 1.4rem;
+  background: linear-gradient(135deg, #0082c3 0%, #006699 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.frm-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.frm-sparkle-icon {
+  font-size: 1.25rem;
+}
+
+.frm-title-wrap h2 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.frm-close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.frm-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Body Split (2 Columns) */
+.frm-body {
+  padding: 1.2rem 1.4rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.frm-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.frm-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.frm-col-tag {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.frm-drag-hint {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #0082c3;
+}
+
+/* Upload Button */
+.frm-upload-btn {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  color: #0369a1;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s;
+}
+
+.frm-upload-btn:hover {
+  background: #e0f2fe;
+  border-color: #0082c3;
+  color: #0082c3;
+}
+
+/* Left: Product Card (Draggable) */
+.frm-product-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.frm-draggable-container {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  aspect-ratio: 3 / 4;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px dashed #0082c3;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
+}
+
+.frm-draggable-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 130, 195, 0.2);
+}
+
+.frm-draggable-container:active {
+  cursor: grabbing;
+}
+
+.frm-product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.frm-drag-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+
+.frm-product-meta {
+  width: 100%;
+  text-align: left;
+}
+
+.frm-product-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.35rem 0;
+  line-height: 1.3;
+}
+
+.frm-color-pill {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.6rem;
+}
+
+.frm-price {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0082c3;
+}
+
+.frm-instruction-note {
+  margin-top: 0.75rem;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  color: #1e40af;
+  line-height: 1.4;
+}
+
+.frm-instruction-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+/* Right: Avatar Dropzone */
+.frm-dropzone-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  max-width: 340px;
+  margin: 0 auto;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f1f5f9;
+  border: 2px dashed #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.frm-dropzone-frame.drag-over {
+  border-color: #10b981;
+  background: #ecfdf5;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25);
+}
+
+.frm-dropzone-frame.fitted {
+  border-style: solid;
+  border-color: #0082c3;
+}
+
+.frm-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlaid garment on avatar */
+.frm-overlay-garment {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: frmPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes frmPop {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.frm-overlaid-cloth {
+  width: 62%;
+  height: 55%;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25));
+  margin-top: -10%;
+}
+
+.frm-fitted-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #0082c3;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Drop Highlight Overlay */
+.frm-drop-highlight-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(16, 185, 129, 0.65);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.frm-drop-glow-box {
+  background: #ffffff;
+  color: #065f46;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.frm-sparkle-pulse {
+  font-size: 1.4rem;
+}
+
+/* Processing Overlay */
+.frm-processing-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.frm-spinner {
+  width: 38px;
+  height: 38px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: frmSpin 0.8s linear infinite;
+}
+
+@keyframes frmSpin {
+  to { transform: rotate(360deg); }
+}
+
+.frm-reset-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s;
+}
+
+.frm-reset-btn:hover {
+  background: #0f172a;
+}
+
+.frm-avatar-caption {
+  text-align: center;
+  font-size: 0.74rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+.frm-footer {
+  padding: 0.85rem 1.4rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.frm-footer-status {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.frm-status-done {
+  color: #047857;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.frm-status-idle {
+  color: #64748b;
+}
+
+.frm-btn-close-bottom {
+  background: #ffffff;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.84rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.frm-btn-close-bottom:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* ==========================================================================
+   DECATHLON FITTING ROOM TRIGGER BUTTON (Placed below size selector)
+   ========================================================================== */
+.pdp-fitting-room-trigger-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #f0f9ff;
+  border: 1.5px solid #0082c3;
+  color: #0082c3;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 0.72rem 1.25rem;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  margin-bottom: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 130, 195, 0.08);
+}
+
+.pdp-fitting-room-trigger-btn:hover {
+  background: #e0f2fe;
+  border-color: #006699;
+  color: #006699;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 130, 195, 0.18);
+}
+
+.pdp-sparkle-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .frm-body {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .frm-draggable-container,
+  .frm-dropzone-frame {
+    max-width: 260px;
+  }
+}
