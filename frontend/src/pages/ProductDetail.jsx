@@ -1098,7 +1098,9 @@ const ProductDetail = () => {
                   id="pdp-virtual-tryon-trigger"
                   aria-label="Open Decathlon Fitting Room"
                 >
-                  <span className="pdp-sparkle-emoji">✨</span> Decathlon Fitting Room
+                  <span className="pdp-sparkle-emoji">✨</span>
+                  <span className="pdp-fitting-room-text">Decathlon Fitting Room</span>
+                  <span className="pdp-fitting-room-badge">Virtual Try-On</span>
                 </button>
               )}
             </div>
@@ -1672,6 +1674,7 @@ const ProductDetail = () => {
         isOpen={isFittingRoomOpen}
         onClose={() => setIsFittingRoomOpen(false)}
         product={product}
+        allImages={Array.isArray(images) ? images.map((img) => getImageUrl(img)) : []}
         selectedGarmentImage={
           Array.isArray(product?.color) &&
           selectedColor &&

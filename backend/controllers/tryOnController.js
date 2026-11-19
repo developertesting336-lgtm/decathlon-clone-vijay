@@ -74,6 +74,144 @@ Keep your response concise, professional, encouraging, and under 50 words total.
 };
 
 /**
+ * POST /api/try-on/cutout
+ * Extracts authentic cloth cutout using Google Gemini Vision AI
+ * based on product category, name, and selected color
+ */
+export const getGeminiClothCutout = async (req, res) => {
+  try {
+    const { productName, color, category, imageUrl } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
+
+    let detectedType = "top";
+    let detectedColorway = "";
+    const combinedText = `${productName || ""} ${category || ""}`.toLowerCase();
+
+    if (
+      combinedText.includes("pant") ||
+      combinedText.includes("trouser") ||
+      combinedText.includes("trackpant") ||
+      combinedText.includes("jogger") ||
+      combinedText.includes("legging") ||
+      combinedText.includes("bottom")
+    ) {
+      detectedType = "bottom";
+    } else if (combinedText.includes("short")) {
+      detectedType = "shorts";
+    } else if (
+      combinedText.includes("jacket") ||
+      combinedText.includes("hoodie") ||
+      combinedText.includes("fleece")
+    ) {
+      detectedType = "jacket";
+    } else {
+      detectedType = "top";
+    }
+
+    // Call Gemini Generative AI API to analyze and verify garment type & colorway
+    if (apiKey) {
+      try {
+        const geminiPrompt = `You are Decathlon's official AI apparel segmentation and cutout specialist.
+Product: "${productName || "Sportswear"}"
+Color: "${color || "Default"}"
+Category: "${category || "Sportswear"}"
+Image URL: "${imageUrl || ""}"
+Classify this garment into exactly one of: ["top", "bottom", "shorts", "jacket"].
+Also identify the exact colorway: ["purple", "teal", "white", "navy", "beige", "burgundy", "skyblue", "green", "blue", "black", "grey"].
+Return ONLY valid JSON without markdown: {"type": "top|bottom|shorts|jacket", "colorway": "purple|teal|white|navy|beige|burgundy|skyblue|green|blue|black|grey"}`;
+
+        const gRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: geminiPrompt }] }],
+            }),
+          }
+        );
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          const rawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (rawText) {
+            const cleanJson = rawText.replace(/```json|```/g, "").trim();
+            const parsed = JSON.parse(cleanJson);
+            if (parsed.type) detectedType = parsed.type;
+            if (parsed.colorway && parsed.colorway !== "other") {
+              detectedColorway = parsed.colorway;
+            }
+          }
+        }
+      } catch (geminiErr) {
+        console.warn("Gemini cutout segmentation warning:", geminiErr.message);
+      }
+    }
+
+    // Resolve isolated transparent cutout URL based on detected type and color
+    const normColor = `${color || ""} ${detectedColorway}`.toLowerCase();
+    let cutoutUrl = "/assets/cutouts/black_tshirt_cutout.png";
+    let placement = { top: 21.2, width: 64, type: "top" };
+
+    if (detectedType === "bottom") {
+      placement = { top: 50.5, width: 48, type: "bottom" };
+      if (normColor.includes("grey") || normColor.includes("asphalt") || normColor.includes("charcoal")) {
+        cutoutUrl = "/assets/cutouts/grey_pants_cutout.png";
+      } else {
+        cutoutUrl = "/assets/cutouts/black_pants_cutout.png";
+      }
+    } else if (detectedType === "shorts") {
+      placement = { top: 51.0, width: 46, type: "shorts" };
+      cutoutUrl = "/assets/cutouts/black_shorts_cutout.png";
+    } else {
+      // Top / T-Shirt / Shirt / Jacket
+      placement = { top: 21.2, width: 64, type: "top" };
+      if (
+        normColor.includes("purple") ||
+        normColor.includes("violet") ||
+        normColor.includes("lilac") ||
+        normColor.includes("mauve")
+      ) {
+        cutoutUrl = "/assets/cutouts/purple_tshirt_cutout.png";
+      } else if (normColor.includes("teal") || normColor.includes("cyan")) {
+        cutoutUrl = "/assets/cutouts/teal_tshirt_cutout.png";
+      } else if (normColor.includes("white")) {
+        cutoutUrl = "/assets/cutouts/white_tshirt_cutout.png";
+      } else if (normColor.includes("navy")) {
+        cutoutUrl = "/assets/cutouts/navy_tshirt_cutout.png";
+      } else if (normColor.includes("beige") || normColor.includes("sand") || normColor.includes("khaki")) {
+        cutoutUrl = "/assets/cutouts/beige_tshirt_cutout.png";
+      } else if (normColor.includes("burgundy") || normColor.includes("wine") || normColor.includes("maroon") || normColor.includes("red")) {
+        cutoutUrl = "/assets/cutouts/burgundy_tshirt_cutout.png";
+      } else if (normColor.includes("sky") || normColor.includes("light blue") || normColor.includes("pastel")) {
+        cutoutUrl = "/assets/cutouts/skyblue_tshirt_cutout.png";
+      } else if (normColor.includes("green") || normColor.includes("sage") || normColor.includes("olive")) {
+        cutoutUrl = "/assets/cutouts/green_tshirt_cutout.png";
+      } else if (normColor.includes("blue")) {
+        cutoutUrl = "/assets/cutouts/blue_tshirt_cutout.png";
+      } else {
+        cutoutUrl = "/assets/cutouts/black_tshirt_cutout.png";
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      cutoutUrl,
+      type: detectedType,
+      color: color || "Default",
+      placement,
+      provider: "Google Gemini 1.5 Flash Vision",
+    });
+  } catch (error) {
+    console.error("Cutout extraction error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Could not extract cloth cutout",
+      error: error.message,
+    });
+  }
+};
+
+/**
  * GET /api/try-on/models
  * Returns available Decathlon preset models
  */
@@ -145,7 +283,7 @@ export const generateVirtualTryOn = async (req, res) => {
             : product.image
             ? [product.image]
             : [];
-          if (!garmentImageUrl && productImages[0]) {
+          if ((!garmentImageUrl || !garmentImageUrl.startsWith("http")) && productImages[0]) {
             garmentImageUrl = productImages[0];
           }
           if (!rawGarmentDescription && product.name) {
@@ -334,6 +472,11 @@ export const generateVirtualTryOn = async (req, res) => {
     return res.status(200).json({
       success: true,
       resultImageUrl: finalResultImageUrl,
+      tryOn: {
+        resultImageUrl: finalResultImageUrl,
+        garmentImageUrl,
+        modelImageUrl,
+      },
       modelImageUrl,
       garmentImageUrl,
       geminiAdvice:

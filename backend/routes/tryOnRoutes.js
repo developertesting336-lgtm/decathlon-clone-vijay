@@ -5,9 +5,13 @@ import {
   getPresetModels,
   getTryOnCredits,
   validateGarment,
+  getGeminiClothCutout,
 } from "../controllers/tryOnController.js";
 
 const router = express.Router();
+
+// POST /api/try-on/cutout - Extract cloth cutout via Google Gemini Vision API
+router.post("/cutout", getGeminiClothCutout);
 
 // GET /api/try-on/models - Get preset standard Decathlon models
 router.get("/models", getPresetModels);

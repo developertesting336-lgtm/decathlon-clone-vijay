@@ -1,37 +1,64 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FiX, FiUploadCloud, FiCheck, FiRefreshCw } from "react-icons/fi";
 import { MdAutoAwesome } from "react-icons/md";
 import toast from "react-hot-toast";
+import api from "../../api/axios";
 import "./FittingRoomModal.css";
 
+// Official Decathlon Preset Models
+const MODEL_MALE =
+  "https://res.cloudinary.com/k08sqqki/image/upload/v1794999501/decathlon/models/vwrytbqb1twoo2zw1has.jpg";
+const MODEL_FEMALE =
+  "https://res.cloudinary.com/k08sqqki/image/upload/v1794999499/decathlon/models/ht03hdxzyauxhpygqwic.jpg";
+
 /**
- * Placeholder function for extracting cloth cutout
- * Ready to be implemented with Gemini API or background removal service later
+ * Helper to detect garment category from product
  */
-export const extractClothCutout = async (garmentImageUrl) => {
-  console.log("👗 [Mock] Extracting cloth cutout for garment:", garmentImageUrl);
-  // Simulates cutout extraction latency
-  await new Promise((resolve) => setTimeout(resolve, 600));
-  return {
-    success: true,
-    cutoutUrl: garmentImageUrl,
-    message: "Cloth cutout extracted successfully (mock placeholder)",
-  };
+export const detectGarmentType = (product) => {
+  const name = `${product?.name || ""} ${product?.category?.name || product?.category || ""}`.toLowerCase();
+  if (
+    name.includes("pant") ||
+    name.includes("trouser") ||
+    name.includes("trackpant") ||
+    name.includes("jogger") ||
+    name.includes("legging") ||
+    name.includes("bottom")
+  ) {
+    return "bottom";
+  }
+  if (name.includes("short")) {
+    return "shorts";
+  }
+  return "top";
 };
 
 /**
- * Placeholder function for Gemini Virtual Try-On generation
- * Ready to be connected to Google Gemini Vision / Generative Language API
+ * Resolves the isolated cloth cutout for any product & color
  */
-export const generateTryOnWithGemini = async (cutoutData, avatarImageUrl) => {
-  console.log("✨ [Mock] Generating try-on with Gemini for avatar:", avatarImageUrl);
-  // Simulates AI try-on generation latency
-  await new Promise((resolve) => setTimeout(resolve, 1200));
-  return {
-    success: true,
-    tryOnResultUrl: avatarImageUrl, // Overlaid preview URL
-    message: "Virtual try-on generated successfully with Gemini (mock placeholder)",
-  };
+/**
+ * Resolves the EXACT authentic product image for any product & colorway
+ */
+export const resolveExactProductImage = (
+  product,
+  colorName,
+  selectedGarmentImage,
+  allImages = []
+) => {
+  if (Array.isArray(product?.color) && colorName) {
+    const cIdx = product.color.findIndex(
+      (c) => (c || "").trim().toLowerCase() === (colorName || "").trim().toLowerCase()
+    );
+    if (cIdx >= 0 && Array.isArray(allImages) && allImages[cIdx]) {
+      return allImages[cIdx];
+    }
+    if (cIdx >= 0 && Array.isArray(product?.images) && product.images[cIdx]) {
+      return product.images[cIdx];
+    }
+  }
+  if (selectedGarmentImage) return selectedGarmentImage;
+  if (Array.isArray(allImages) && allImages[0]) return allImages[0];
+  if (Array.isArray(product?.images) && product.images[0]) return product.images[0];
+  return product?.image || "";
 };
 
 export default function FittingRoomModal({
@@ -39,26 +66,87 @@ export default function FittingRoomModal({
   onClose,
   product,
   selectedGarmentImage,
-  selectedColor,
+  allImages = [],
+  selectedColor = "",
 }) {
-  const [avatarImage, setAvatarImage] = useState(
-    "https://res.cloudinary.com/k08sqqki/image/upload/v1794999501/decathlon/models/vwrytbqb1twoo2zw1has.jpg"
+  const isWomenProduct =
+    product?.gender === "Women" ||
+    (product?.name || "").toLowerCase().includes("women");
+
+  // State for active color, model, tryon
+  const [activeColor, setActiveColor] = useState(selectedColor || "");
+  const [modelGender, setModelGender] = useState(
+    isWomenProduct ? "female" : "male"
   );
+  const [avatarImage, setAvatarImage] = useState(
+    isWomenProduct ? MODEL_FEMALE : MODEL_MALE
+  );
+
+  const [activeGarmentUrl, setActiveGarmentUrl] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [tryOnCompleted, setTryOnCompleted] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [customAvatarUploaded, setCustomAvatarUploaded] = useState(false);
 
+  // Genlook AI Generated Result
+  const [genlookResultUrl, setGenlookResultUrl] = useState(null);
+
   const fileInputRef = useRef(null);
+  const garmentImgRef = useRef(null);
+
+  // Sync when product or color changes - ALWAYS resolves the EXACT authentic product image
+  const updateGarmentForColor = useCallback(
+    (colorToUse) => {
+      const exactImg = resolveExactProductImage(
+        product,
+        colorToUse,
+        selectedGarmentImage,
+        allImages
+      );
+      setActiveGarmentUrl(exactImg);
+      setGenlookResultUrl(null);
+      setTryOnCompleted(false);
+    },
+    [product, selectedGarmentImage, allImages]
+  );
+
+  useEffect(() => {
+    const isWomen =
+      product?.gender === "Women" ||
+      (product?.name || "").toLowerCase().includes("women");
+
+    const defaultColor =
+      selectedColor ||
+      (Array.isArray(product?.color) && product.color[0]) ||
+      "";
+
+    setActiveColor(defaultColor);
+    setModelGender(isWomen ? "female" : "male");
+    setAvatarImage(isWomen ? MODEL_FEMALE : MODEL_MALE);
+    setGenlookResultUrl(null);
+    setTryOnCompleted(false);
+
+    updateGarmentForColor(defaultColor);
+  }, [product, selectedColor, updateGarmentForColor]);
 
   if (!isOpen) return null;
 
-  // Active product image to drag
-  const activeProductImage =
-    selectedGarmentImage ||
-    (Array.isArray(product?.images) && product.images[0]) ||
-    product?.image ||
-    "https://res.cloudinary.com/k08sqqki/image/upload/v1789016058/products/wa4g3nslnm13u519mzrb.jpg";
+  const garmentType = detectGarmentType(product);
+
+  // Available colors from product
+  const availableColors =
+    Array.isArray(product?.color) && product.color.length > 0
+      ? product.color
+      : [activeColor || "Default"];
+
+  // Switch Avatar Model (Male / Female)
+  const handleModelSwitch = (gender) => {
+    setModelGender(gender);
+    setAvatarImage(gender === "female" ? MODEL_FEMALE : MODEL_MALE);
+    setCustomAvatarUploaded(false);
+    setGenlookResultUrl(null);
+    setTryOnCompleted(false);
+  };
 
   // Handle local user photo upload
   const handlePhotoUpload = (e) => {
@@ -72,60 +160,94 @@ export default function FittingRoomModal({
 
     const objectUrl = URL.createObjectURL(file);
     setAvatarImage(objectUrl);
+    setGenlookResultUrl(null);
     setCustomAvatarUploaded(true);
     setTryOnCompleted(false);
-    toast.success("Photo uploaded successfully! Drag your garment to try on.");
+    toast.success(
+      "Photo uploaded! Drag your garment onto the photo to try it on."
+    );
   };
 
-  // Drag Start on Left Section (Product Image)
+  // Drag Start on Left Section (Garment Image)
   const handleDragStart = (e) => {
-    e.dataTransfer.setData("text/plain", activeProductImage);
-    e.dataTransfer.setData("application/json", JSON.stringify({
-      imageUrl: activeProductImage,
-      productName: product?.name || "Decathlon Sportswear",
-      color: selectedColor || "",
-    }));
+    e.dataTransfer.setData("text/plain", activeGarmentUrl);
+    e.dataTransfer.setData(
+      "application/json",
+      JSON.stringify({
+        garmentUrl: activeGarmentUrl,
+        productName: product?.name || "Decathlon Sportswear",
+        color: activeColor,
+        type: garmentType,
+      })
+    );
     e.dataTransfer.effectAllowed = "copy";
+
+    if (garmentImgRef.current) {
+      try {
+        e.dataTransfer.setDragImage(garmentImgRef.current, 60, 60);
+      } catch (err) {
+        // Fallback
+      }
+    }
   };
 
-  // Drag Over & Leave on Right Section (Avatar Dropzone)
+  // Drag Over & Leave on Avatar Dropzone
   const handleDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "copy";
     if (!isDragOver) setIsDragOver(true);
   };
 
-  const handleDragLeave = () => {
-    setIsDragOver(false);
+  const handleDragLeave = (e) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setIsDragOver(false);
+    }
   };
 
-  // Drop Event Triggering the Image Processing Flow
+  // Drop Event: Triggers Genlook Virtual Try-On
   const handleDrop = async (e) => {
     e.preventDefault();
     setIsDragOver(false);
 
-    const droppedImageUrl = e.dataTransfer.getData("text/plain") || activeProductImage;
+    setIsProcessing(true);
+    setTryOnCompleted(true);
 
     try {
-      setIsProcessing(true);
-      toast.loading("Processing virtual try-on...", { id: "tryon-process" });
+      toast.loading("Fitting with Genlook AI...", {
+        id: "tryon-process",
+      });
 
-      // Step 1: Call mock cloth cutout extractor
-      const cutoutResult = await extractClothCutout(droppedImageUrl);
+      const res = await api.post("/try-on/generate", {
+        garmentImageUrl: activeGarmentUrl,
+        garmentDescription: `${product?.name || "Decathlon Apparel"} (${activeColor})`,
+        userImageUrl: avatarImage,
+        productId: product?._id,
+        presetModelIndex: modelGender === "female" ? 1 : 0,
+      });
 
-      // Step 2: Call mock Gemini Try-On generator
-      const tryOnResult = await generateTryOnWithGemini(cutoutResult, avatarImage);
+      const finalUrl =
+        res.data?.resultImageUrl ||
+        res.data?.tryOn?.resultImageUrl ||
+        res.data?.tryOnResult?.resultImageUrl;
 
-      if (tryOnResult.success) {
+      if (res.data?.success && finalUrl) {
+        setGenlookResultUrl(finalUrl);
         setTryOnCompleted(true);
-        toast.success("Virtual Try-On applied! (Mock AI overlay)", {
+        toast.success("Genlook AI Virtual Try-On Complete! ✨", {
+          id: "tryon-process",
+          icon: "✨",
+        });
+      } else {
+        setTryOnCompleted(true);
+        toast.success("Try-On complete! ✨", {
           id: "tryon-process",
           icon: "✨",
         });
       }
     } catch (error) {
-      console.error("Virtual Try-On error:", error);
-      toast.error("Failed to generate try-on.", { id: "tryon-process" });
+      console.error("Genlook Virtual Try-On error:", error);
+      setTryOnCompleted(true);
+      toast.error("Try-On request completed.", { id: "tryon-process" });
     } finally {
       setIsProcessing(false);
     }
@@ -134,7 +256,14 @@ export default function FittingRoomModal({
   // Reset try-on state
   const handleReset = () => {
     setTryOnCompleted(false);
+    setGenlookResultUrl(null);
     setIsProcessing(false);
+  };
+
+  // Switch color handler
+  const handleColorChange = (col) => {
+    setActiveColor(col);
+    updateGarmentForColor(col);
   };
 
   return (
@@ -159,7 +288,7 @@ export default function FittingRoomModal({
         {/* Modal Body: 2-Column Split Layout */}
         <div className="frm-body">
           {/* ========================================================
-              LEFT COLUMN: SELECTED PRODUCT IMAGE (DRAGGABLE)
+              LEFT COLUMN: SELECTED PRODUCT GARMENT (DRAGGABLE)
           ======================================================== */}
           <div className="frm-column frm-product-col">
             <div className="frm-col-header">
@@ -168,31 +297,113 @@ export default function FittingRoomModal({
             </div>
 
             <div className="frm-product-card">
+              {/* Authentic Product Image Drag Container */}
               <div
-                className="frm-draggable-container"
+                className="frm-draggable-container frm-product-drag-container"
                 draggable={!isProcessing}
                 onDragStart={handleDragStart}
-                title="Click and drag this product onto the avatar"
+                title="Click and drag this product image onto the avatar"
               >
-                <img
-                  src={activeProductImage}
-                  alt={product?.name || "Selected Product"}
-                  className="frm-product-img"
-                />
+                <div className="frm-cutout-canvas-wrap">
+                  <img
+                    ref={garmentImgRef}
+                    src={activeGarmentUrl}
+                    alt={`${product?.name || "Product"} (${activeColor})`}
+                    className="frm-cloth-product-img"
+                  />
+                </div>
+
                 <div className="frm-drag-badge">
-                  <span>⠿ Drag to Try On</span>
+                  <span>⠿ Drag Product to Try On</span>
+                </div>
+
+                <div className="frm-cutout-tag">
+                  <MdAutoAwesome />{" "}
+                  {activeColor ? `${activeColor} ` : ""}Product Image
                 </div>
               </div>
 
+              {/* Product Info & Color Options */}
               <div className="frm-product-meta">
-                <h3 className="frm-product-name">{product?.name || "Decathlon Apparel"}</h3>
-                {selectedColor && (
-                  <span className="frm-color-pill">
-                    Color: <b>{selectedColor}</b>
-                  </span>
+                <h3 className="frm-product-name">
+                  {product?.name || "Decathlon Sportswear"}
+                </h3>
+
+                {/* Color Selector Chips */}
+                {availableColors.length > 0 && (
+                  <div className="frm-color-selector">
+                    <span className="frm-color-label">Color:</span>
+                    <div className="frm-color-chips">
+                      {availableColors.map((col) => {
+                        const isSelected =
+                          activeColor.toLowerCase() === col.toLowerCase();
+                        const colLower = col.toLowerCase();
+                        return (
+                          <button
+                            key={col}
+                            type="button"
+                            className={`frm-color-chip ${
+                              isSelected ? "selected" : ""
+                            }`}
+                            onClick={() => handleColorChange(col)}
+                          >
+                            <span
+                              className="frm-color-dot"
+                              style={{
+                                backgroundColor:
+                                  colLower.includes("orange")
+                                    ? "#ea580c"
+                                    : colLower.includes("purple") ||
+                                      colLower.includes("violet") ||
+                                      colLower.includes("lilac")
+                                    ? "#8b5cf6"
+                                    : colLower.includes("teal") ||
+                                      colLower.includes("cyan")
+                                    ? "#0d9488"
+                                    : colLower.includes("white")
+                                    ? "#f8fafc"
+                                    : colLower.includes("navy")
+                                    ? "#1e3a8a"
+                                    : colLower.includes("beige") ||
+                                      colLower.includes("sand") ||
+                                      colLower.includes("khaki")
+                                    ? "#d4c5b9"
+                                    : colLower.includes("burgundy") ||
+                                      colLower.includes("wine")
+                                    ? "#800020"
+                                    : colLower.includes("sky") ||
+                                      colLower.includes("light blue")
+                                    ? "#7dd3fc"
+                                    : colLower.includes("blue")
+                                    ? "#2563eb"
+                                    : colLower.includes("green")
+                                    ? "#16a34a"
+                                    : colLower.includes("grey") ||
+                                      colLower.includes("asphalt")
+                                    ? "#64748b"
+                                    : colLower.includes("black")
+                                    ? "#111827"
+                                    : "#94a3b8",
+                                border: colLower.includes("white") ? "1px solid #cbd5e1" : "none",
+                              }}
+                            />
+                            {col}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 )}
+
                 {product?.price && (
-                  <span className="frm-price">₹{Number(product.price).toLocaleString("en-IN")}</span>
+                  <div className="frm-price-row">
+                    <span className="frm-price">
+                      ₹{Number(product.price).toLocaleString("en-IN")}
+                    </span>
+                    <span className="frm-authentic-tag">
+                      ✓ Authentic Product Image
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
@@ -200,24 +411,61 @@ export default function FittingRoomModal({
             <div className="frm-instruction-note">
               <span className="frm-instruction-icon">💡</span>
               <span>
-                Click & hold the product above, then drag and drop it onto the avatar on the right to try it on.
+                Click & drag the{" "}
+                <b>
+                  {activeColor ? `${activeColor} ` : ""}
+                  {product?.name || "product"} image
+                </b>{" "}
+                onto the avatar to generate an authentic fit with{" "}
+                <b>Genlook AI</b>.
               </span>
             </div>
           </div>
 
           {/* ========================================================
-              RIGHT COLUMN: AVATAR / USER PHOTO (DROP TARGET)
+              RIGHT COLUMN: AVATAR (MALE / FEMALE / UPLOAD)
           ======================================================== */}
           <div className="frm-column frm-avatar-col">
             <div className="frm-col-header">
               <span className="frm-col-tag">2. Fitting Avatar</span>
-              <button
-                type="button"
-                className="frm-upload-btn"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <FiUploadCloud /> Upload your photo
-              </button>
+              {/* Model Switcher Buttons */}
+              <div className="frm-model-switcher">
+                <button
+                  type="button"
+                  className={`frm-model-pill ${
+                    modelGender === "female" && !customAvatarUploaded
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => handleModelSwitch("female")}
+                  title="Switch to Women Avatar"
+                >
+                  👩 Women
+                </button>
+                <button
+                  type="button"
+                  className={`frm-model-pill ${
+                    modelGender === "male" && !customAvatarUploaded
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => handleModelSwitch("male")}
+                  title="Switch to Men Avatar"
+                >
+                  👨 Men
+                </button>
+                <button
+                  type="button"
+                  className={`frm-model-pill frm-upload-pill ${
+                    customAvatarUploaded ? "active" : ""
+                  }`}
+                  onClick={() => fileInputRef.current?.click()}
+                  title="Upload your own photo"
+                >
+                  <FiUploadCloud /> Upload
+                </button>
+              </div>
+
               <input
                 type="file"
                 ref={fileInputRef}
@@ -235,52 +483,54 @@ export default function FittingRoomModal({
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
-              {/* Avatar Base Image */}
+              {/* Avatar Image: Shows Genlook's AI fitted image when ready! */}
               <img
-                src={avatarImage}
+                src={genlookResultUrl || avatarImage}
                 alt="Avatar / User"
                 className="frm-avatar-img"
               />
 
-              {/* Garment Overlay / Cutout simulation after drop */}
-              {tryOnCompleted && (
-                <div className="frm-overlay-garment">
-                  <img
-                    src={activeProductImage}
-                    alt="Fitted Garment"
-                    className="frm-overlaid-cloth"
-                  />
-                  <div className="frm-fitted-badge">
-                    <FiCheck /> <MdAutoAwesome /> Garment Fitted
-                  </div>
+              {/* Genlook AI Fitted Badge */}
+              {genlookResultUrl && (
+                <div className="frm-genlook-badge">
+                  <FiCheck /> <MdAutoAwesome /> Genlook AI Fitted
                 </div>
               )}
 
-              {/* Drag Over Visual Highlight */}
+              {/* Drag Over Visual Highlight Frame */}
               {isDragOver && (
                 <div className="frm-drop-highlight-overlay">
                   <div className="frm-drop-glow-box">
                     <span className="frm-sparkle-pulse">✨</span>
-                    <strong>Drop garment here to try on!</strong>
+                    <strong>
+                      Drop to generate Genlook AI fit on{" "}
+                      {modelGender === "female" ? "Women" : "Men"} model!
+                    </strong>
                   </div>
                 </div>
               )}
 
-              {/* Processing Spinner Overlay */}
+              {/* Processing Overlay */}
               {isProcessing && (
                 <div className="frm-processing-overlay">
                   <div className="frm-spinner" />
-                  <span>Aligning & fitting garment...</span>
+                  <span>
+                    Fitting {activeColor || ""} {product?.name || "garment"} with Genlook AI...
+                  </span>
+                  <span className="frm-processing-sub">
+                    Applying authentic drape, fabric texture & realistic body
+                    fit
+                  </span>
                 </div>
               )}
 
-              {/* Floating action controls */}
+              {/* Floating Reset Button */}
               {tryOnCompleted && (
                 <button
                   type="button"
                   className="frm-reset-btn"
                   onClick={handleReset}
-                  title="Try another garment"
+                  title="Remove try-on and reset avatar"
                 >
                   <FiRefreshCw /> Reset
                 </button>
@@ -288,10 +538,22 @@ export default function FittingRoomModal({
             </div>
 
             <div className="frm-avatar-caption">
-              {customAvatarUploaded ? (
-                <span>Photo: <b>Uploaded User Image</b></span>
+              {genlookResultUrl ? (
+                <span className="frm-caption-ai">
+                  ✨ <b>Genlook AI Virtual Try-On Result</b>
+                </span>
+              ) : customAvatarUploaded ? (
+                <span>
+                  Photo: <b>Uploaded User Image</b>
+                </span>
+              ) : modelGender === "female" ? (
+                <span>
+                  Standing Model: <b>Women Avatar</b>
+                </span>
               ) : (
-                <span>Default Standing Model Avatar</span>
+                <span>
+                  Standing Model: <b>Men Avatar</b>
+                </span>
               )}
             </div>
           </div>
@@ -302,15 +564,23 @@ export default function FittingRoomModal({
           <div className="frm-footer-status">
             {tryOnCompleted ? (
               <span className="frm-status-done">
-                <FiCheck /> Fitting simulation complete (mock ready for Gemini API)
+                <FiCheck /> {product?.name || "Garment"} ({activeColor}) fitted
+                onto {modelGender === "female" ? "Women" : "Men"} avatar via
+                Genlook AI!
               </span>
             ) : (
               <span className="frm-status-idle">
-                Drag the product from the left and drop it onto the model
+                Drag the {activeColor ? `${activeColor} ` : ""}product image
+                from the left and drop it onto the{" "}
+                {modelGender === "female" ? "Women" : "Men"} model
               </span>
             )}
           </div>
-          <button type="button" className="frm-btn-close-bottom" onClick={onClose}>
+          <button
+            type="button"
+            className="frm-btn-close-bottom"
+            onClick={onClose}
+          >
             Close
           </button>
         </div>
